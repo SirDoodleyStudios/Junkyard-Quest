@@ -32,8 +32,11 @@ public class DeckManager : MonoBehaviour
     //buttons that point to one method, just different lists to check
     public Button deckViewButton;
     public Button discardPileViewButton;
+    //the parent of all deckview objects, target for disabling and enabling
     public GameObject deckViewUI;
+    //Content gameobject, parent of all prefabs to be shown after button click
     public Transform deckScrollContent;
+    //contains the deckview prefab template
     public GameObject deckViewPrefab;
 
     
@@ -137,6 +140,7 @@ public class DeckManager : MonoBehaviour
     //receives the remaining drawcount and passes it back when it calls the draw function again after moving discard to deck and shuffling
     public void DeckReset(int remainingDraw)
     {
+
         battleDeck.AddRange(discardPile);
         discardPile.Clear();
         deckCount = battleDeck.Count;
@@ -191,26 +195,50 @@ public class DeckManager : MonoBehaviour
 
         if(button == deckViewButton)
         {
-            deckCheck.AddRange(battleDeck);
+            //deckCheck.AddRange(battleDeck);
+            deckCheck = battleDeck;
             //add default sorting, players should not be able to see order of cards
         }
         else if (button == discardPileViewButton)
         {
-            deckCheck.AddRange(discardPile);
+            //deckCheck.AddRange(discardPile);
+            deckCheck = discardPile;
         }
 
         foreach (Card deckCard in deckCheck)
         {
-            //just a cache
+            bool hasNoDisabledPrefabs = true;
             deckViewPrefab.GetComponent<Display>().card = deckCard;
-            Instantiate(deckViewPrefab, deckScrollContent);
+
+            foreach(Transform content in deckScrollContent)
+            {
+                GameObject disabledPrefabs = content.gameObject;
+                if (!disabledPrefabs.activeSelf)
+                {
+                    disabledPrefabs.GetComponent<Display>().card = deckCard;
+                    disabledPrefabs.SetActive(true);
+                    hasNoDisabledPrefabs = false;
+                    break;
+                }
+
+            }
+            if (hasNoDisabledPrefabs)
+            {
+                Instantiate(deckViewPrefab, deckScrollContent);
+            }
+
 
         }
+
 
     }
 
     public void BackFromDeckView()
     {
+        foreach (Transform content in deckScrollContent)
+        {
+            content.gameObject.SetActive(false);
+        }
         deckViewUI.SetActive(false);
     }
 
