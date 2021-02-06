@@ -6,7 +6,9 @@ using UnityEngine.UI;
 public class DeckManager : MonoBehaviour
 {
 
-    List<Card> playerDeck = new List<Card>();
+    List<Card> initialDeck = new List<Card>();
+
+    List<Card> battleDeck = new List<Card>();
     List<Card> discardPile = new List<Card>();
     List<Card> consumePile = new List<Card>();
     List<Card> playerHand = new List<Card>();
@@ -26,9 +28,15 @@ public class DeckManager : MonoBehaviour
     public int deckCount { get; private set; }
     public int discardCount { get; private set; }
 
+    //related to deck viewing
+    //buttons that point to one method, just different lists to check
+    public Button deckViewButton;
+    public Button discardPileViewButton;
+    public GameObject deckViewUI;
+    public Transform deckScrollContent;
+    public GameObject deckViewPrefab;
 
-
-
+    
     void Start()
     {
         //must depend on chosen character and class
@@ -39,19 +47,29 @@ public class DeckManager : MonoBehaviour
             //duplicates each card 3 times, for test only
             foreach(Card card in pool.listOfCards)
             {
-                for (int i = 0; 2 >= i; i++)
+                for (int i = 0; 5 >= i; i++)
                 {
                     instantiatedCard = Instantiate(card);
-                    playerDeck.Add(card);
+                    initialDeck.Add(card);
                 }
             }
 
         }
+        //assigns the same methodfor deck viewing on each button
+        deckViewButton.onClick.AddListener(() => DeckCollectionView(deckViewButton));
+        discardPileViewButton.onClick.AddListener(() => DeckCollectionView(discardPileViewButton));
+        InitializeBattleDeck();
 
-        deckCount = playerDeck.Count;
+
+    }
+
+    //first state of player deck every start of battle
+    public void InitializeBattleDeck()
+    {
+        battleDeck = initialDeck;
+        deckCount = battleDeck.Count;
         discardCount = discardPile.Count;
-        Shuffle(playerDeck);
-
+        Shuffle(battleDeck);
     }
 
 
@@ -62,7 +80,7 @@ public class DeckManager : MonoBehaviour
         //serves as counter when receiving draw count value
         int drawtemp = 0;        
 
-        foreach (Card deckCard in playerDeck)
+        foreach (Card deckCard in battleDeck)
         {           
 
             //for keeping count of current hand and cache
@@ -90,7 +108,7 @@ public class DeckManager : MonoBehaviour
             drawtemp++;
             //stops loop when deck runs out
             //stops loop when draw count runs out
-            if (playerDeck.Count - drawtemp == 0 
+            if (battleDeck.Count - drawtemp == 0 
                 || drawtemp >= drawCount)
             {
                 break;
@@ -99,17 +117,17 @@ public class DeckManager : MonoBehaviour
         }
 
         //ensures that when deck count is 0, only remaining cards are removed then calls the reset
-        if (playerDeck.Count - drawtemp == 0)
+        if (battleDeck.Count - drawtemp == 0)
         {
-            playerDeck.RemoveRange(0, drawtemp);
+            battleDeck.RemoveRange(0, drawtemp);
             DeckReset(drawCount - drawtemp);
         }
         //just removes card from deck if draw is less than deck
-        else if (playerDeck.Count > drawtemp)
+        else if (battleDeck.Count > drawtemp)
         {
             //this line removes from deck
-            playerDeck.RemoveRange(0, drawCount);
-            deckCount = playerDeck.Count;
+            battleDeck.RemoveRange(0, drawCount);
+            deckCount = battleDeck.Count;
         }
 
     }
@@ -119,11 +137,11 @@ public class DeckManager : MonoBehaviour
     //receives the remaining drawcount and passes it back when it calls the draw function again after moving discard to deck and shuffling
     public void DeckReset(int remainingDraw)
     {
-        playerDeck.AddRange(discardPile);
+        battleDeck.AddRange(discardPile);
         discardPile.Clear();
-        deckCount = playerDeck.Count;
+        deckCount = battleDeck.Count;
         discardCount = discardPile.Count;
-        Shuffle(playerDeck);
+        Shuffle(battleDeck);
         if (remainingDraw != 0)
         {
             DrawCards(remainingDraw);
@@ -164,12 +182,44 @@ public class DeckManager : MonoBehaviour
 
     //}
 
+    //single method for viewing a card collection in view
+    public void DeckCollectionView(Button button)
+    {
+        deckViewUI.SetActive(true);
+        List<Card> deckCheck = new List<Card>();
+
+
+        if(button == deckViewButton)
+        {
+            deckCheck.AddRange(battleDeck);
+            //add default sorting, players should not be able to see order of cards
+        }
+        else if (button == discardPileViewButton)
+        {
+            deckCheck.AddRange(discardPile);
+        }
+
+        foreach (Card deckCard in deckCheck)
+        {
+            //just a cache
+            deckViewPrefab.GetComponent<Display>().card = deckCard;
+            Instantiate(deckViewPrefab, deckScrollContent);
+
+        }
+
+    }
+
+    public void BackFromDeckView()
+    {
+        deckViewUI.SetActive(false);
+    }
+
 
     //LOGIC MUST BE CREATED THAT DOES NOT THROW AN ERROR IF DRAW COUNT IS BIGGER THAN DECK COUNT
     void Shuffle<Card>(List<Card> list)
     {
         //only shuffles if deck count is not 0
-        if(playerDeck.Count != 0)
+        if(battleDeck.Count != 0)
         {
             System.Random random = new System.Random();
             int n = list.Count;
