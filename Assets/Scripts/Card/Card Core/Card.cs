@@ -38,6 +38,8 @@ public class Card : ScriptableObject
     //none initially, must be added later
     public JigsawFormat jigsawEffect;
 
+    //public BaseScriptJigAbi JigsawOrAbility;
+
 
 
 

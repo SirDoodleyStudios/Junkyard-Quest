@@ -56,10 +56,11 @@ public class CombatManager : MonoBehaviour
         //for thedropfield moving up approach targetting system
         //originalDropFieldPosition = dropField.transform.localPosition;
 
-        Energy = defaultEnergy;
+        //Energy = defaultEnergy;
         Draw = defaultDraw;
         DrawHand();
-        EnergyUpdater();
+        //sends default energy to updater
+        EnergyUpdater(defaultEnergy);
         DeckUpdater();
         
 
@@ -127,7 +128,12 @@ public class CombatManager : MonoBehaviour
                     else if(activeCard.gameObject.GetComponent<Display>().card.energyCost > Energy)
                     {
                         Debug.Log("Not enough Energy");
-                    }                 
+                    }
+                    
+                    else if(pointedObject.collider != null && pointedObject.collider.gameObject.tag == "Card")
+                    {
+                        Debug.Log($"GameObject is {pointedObject.collider.gameObject.name}");
+                    }
                     
                 }
 
@@ -141,6 +147,7 @@ public class CombatManager : MonoBehaviour
                 
                 creativeUI.SetActive(true);
             }
+
 
         }
 
@@ -176,8 +183,8 @@ public class CombatManager : MonoBehaviour
                 if (targetObject.tag == "Enemy" && activeCardCard.cardMethod == CardMethod.Targetted)
                 {
                     activeEffectLoader.EffectLoaderActivate(targetObject);
-                    Energy = Energy - activeCard.gameObject.GetComponent<Display>().card.energyCost;
-                    EnergyUpdater();
+                    //Energy = Energy - activeCard.gameObject.GetComponent<Display>().card.energyCost;
+                    EnergyUpdater(-activeCard.gameObject.GetComponent<Display>().card.energyCost);
                     //calls discard method and puts active card in discard pile
                     DiscardFromHand();
                     activeCard.transform.SetAsLastSibling();
@@ -196,8 +203,8 @@ public class CombatManager : MonoBehaviour
                 else if (targetObject.layer == 13 && activeCardCard.cardMethod == CardMethod.Dropped)
                 {
                     activeEffectLoader.EffectLoaderActivate(targetObject);
-                    Energy = Energy - activeCard.gameObject.GetComponent<Display>().card.energyCost;
-                    EnergyUpdater();
+                    //Energy = Energy - activeCard.gameObject.GetComponent<Display>().card.energyCost;
+                    EnergyUpdater(-activeCard.gameObject.GetComponent<Display>().card.energyCost);
                     //calls discard method and puts active card in discard pile
                     DiscardFromHand();
                     activeCard.transform.SetAsLastSibling();
@@ -232,12 +239,12 @@ public class CombatManager : MonoBehaviour
                     //checks the scriptable attached in Display if cost can be accomodated by Energy
                     //checks if current chosen card's input link matches the output of the previous card
                     if (activeCardCard.energyCost <= Energy && creativeManager.CheckLinkEligibility(activeCardCard) 
-                                                            && activeCardCard.jigsawEffect != null
+                                                            && activeCardCard.jigsawEffect != null  //jigsawEffect
                                                             && creativeManager.creativityCost < Player.GetComponent<PlayerFunctions>().currCreativity)
                     {
                         //transfers the card in creative mode then disables the prefab                        
-                        Energy -= activeCardCard.energyCost;
-                        EnergyUpdater();
+                        //Energy -= activeCardCard.energyCost;
+                        EnergyUpdater(-activeCardCard.energyCost);
 
                         creativeManager.ChooseForCreative(activeCardCard);
                         creativeList.Add(activeCard);
@@ -256,7 +263,7 @@ public class CombatManager : MonoBehaviour
                     {
                         creativeManager.MessagePrompt("Jigsaw Links Doesn't Match");
                     }
-                    else if (activeCardCard.jigsawEffect == null)
+                    else if (activeCardCard.jigsawEffect == null) //jigsawEffect
                     {
                         creativeManager.MessagePrompt("Card Has No Jigsaw");
                     }
@@ -293,8 +300,8 @@ public class CombatManager : MonoBehaviour
                 {
                     int tempIndex = creativeManager.ReturnFromCreative();
                     //adds back energy when backing out
-                    Energy += creativeList[tempIndex].GetComponent<Display>().card.energyCost;
-                    EnergyUpdater();
+                    //Energy += creativeList[tempIndex].GetComponent<Display>().card.energyCost;
+                    EnergyUpdater(creativeList[tempIndex].GetComponent<Display>().card.energyCost);
 
                     creativeList[tempIndex].SetActive(true);
                     creativeList.Remove(creativeList[tempIndex]);
@@ -311,8 +318,8 @@ public class CombatManager : MonoBehaviour
                 foreach (GameObject card in creativeList)
                 {
                     int tempIndex = creativeManager.ReturnFromCreative();
-                    Energy += creativeList[tempIndex].GetComponent<Display>().card.energyCost;
-                    EnergyUpdater();
+                    //Energy += creativeList[tempIndex].GetComponent<Display>().card.energyCost;
+                    EnergyUpdater(creativeList[tempIndex].GetComponent<Display>().card.energyCost);
                     creativeList[tempIndex].SetActive(true);
                 }
                 creativeList.Clear();
@@ -337,7 +344,7 @@ public class CombatManager : MonoBehaviour
                 if (pointedObject.collider != null && linkMethod == CardMethod.Targetted && targetObject.tag == "Enemy" )
                 {
                     //access player stats and reduces their creativity meter
-                    Player.GetComponent<PlayerFunctions>().ReduceCreativity(creativeManager.creativityCost);
+                    Player.GetComponent<PlayerFunctions>().AlterPlayerCreativity(-creativeManager.creativityCost);
                     //initiates link effects in CreativeManager
                     //returns the cost for crativity
                     creativeManager.UnleashCreativity(targetObject);
@@ -347,7 +354,7 @@ public class CombatManager : MonoBehaviour
                 else if (pointedObject.collider != null && linkMethod == CardMethod.Dropped && targetObject.layer == 13 )
                 {
                     //access player stats and reduces their creativity meter
-                    Player.GetComponent<PlayerFunctions>().ReduceCreativity(creativeManager.creativityCost);
+                    Player.GetComponent<PlayerFunctions>().AlterPlayerCreativity(-creativeManager.creativityCost);
                     //initiates link effects in CreativeManager
                     //returns the cost for crativity
                     creativeManager.UnleashCreativity(targetObject);
@@ -441,8 +448,10 @@ public class CombatManager : MonoBehaviour
     }
 
     //updates energy number
-    public void EnergyUpdater()
+    //expect to receive negative ints for costs and positive ints for gains
+    public void EnergyUpdater(int value)
     {
+        Energy += value;
         energyText.text = Energy.ToString();
     }
 
@@ -495,8 +504,9 @@ public class CombatManager : MonoBehaviour
         Debug.Log("Losing block");
         yield return new WaitForSeconds(1f);
         state = CombatState.PlayerTurn;
-        Energy = defaultEnergy;
-        EnergyUpdater();
+        //Energy = defaultEnergy;
+        Energy = 0;
+        EnergyUpdater(defaultEnergy);
         DrawHand();
     }
 

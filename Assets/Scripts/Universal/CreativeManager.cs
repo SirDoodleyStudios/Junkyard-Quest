@@ -50,7 +50,7 @@ public class CreativeManager : MonoBehaviour
             return true;
         }
 
-        else if(chosenCard.jigsawEffect.inputLink == cardPrefabList[cardPrefabList.Count - 1].GetComponent<Display>().card.jigsawEffect.outputLink)
+        else if(chosenCard.jigsawEffect.inputLink == cardPrefabList[cardPrefabList.Count - 1].GetComponent<Display>().card.jigsawEffect.outputLink) // jigsawEffect
         {
             return true;
         }

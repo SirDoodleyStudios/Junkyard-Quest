@@ -20,7 +20,7 @@ public class EffectLoader : MonoBehaviour
 
         
         //ony for testing, JIGSAW EFFECTS ARE NOT TO BE EXECUTED DURING SINGLE CARD PLAY
-        if (card.jigsawEffect!=null)
+        if (card.jigsawEffect!=null)    //jigsawEffect
         {
             ActivateJigsawEffect(target);
         }
@@ -35,7 +35,7 @@ public class EffectLoader : MonoBehaviour
 
     public void ActivateJigsawEffect(GameObject target)
     {
-        JigsawFactory.GetJigsawEffect(card.jigsawEffect.enumJigsawName).CardEffectActivate(target);
+        JigsawFactory.GetJigsawEffect(card.jigsawEffect.enumJigsawName).CardEffectActivate(target);  //jigsawEffect
     }
 
 

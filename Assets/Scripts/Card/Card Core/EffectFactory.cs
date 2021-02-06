@@ -28,7 +28,7 @@ public static class EffectFactory
         foreach (var type in effectTypes)
         {
             var tempEffect = Activator.CreateInstance(type) as BaseCardEffect;
-            if (tempEffect.enumKeyCard != AllCards.Jigsaw)
+            if (tempEffect.enumKeyCard != AllCards.Jigsaw && tempEffect.enumKeyCard != AllCards.Ability)
             {
                 EffectDictionary.Add(tempEffect.enumKeyCard, type);
             }

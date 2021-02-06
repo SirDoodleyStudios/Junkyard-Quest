@@ -17,6 +17,9 @@ public class PlayerFunctions : BaseUnitFunctions
     public Slider CreativitySlider;    
     public Text CreativityText;
 
+    //for installing abilities in ability slots
+    
+
 
     public override void InitializeStats()
     {
@@ -33,11 +36,12 @@ public class PlayerFunctions : BaseUnitFunctions
 
     }
 
-    public void ReduceCreativity(int creativityValue)
+    //expect to receive negative ints for costs and positive ints for gains
+    public void AlterPlayerCreativity(int creativityValue)
     {
 
 
-        currCreativity -= creativityValue;
+        currCreativity += creativityValue;
         SliderValueUpdates();
 
     }
@@ -55,4 +59,11 @@ public class PlayerFunctions : BaseUnitFunctions
         CreativityText.text = $"{currCreativity}/{maxCreativity}";
 
     }
+
+    public void ActivateAbility(Button abilityButton)
+    {
+
+    }
+
+
 }

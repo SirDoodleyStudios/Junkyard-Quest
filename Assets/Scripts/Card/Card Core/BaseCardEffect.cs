@@ -10,7 +10,13 @@ public abstract class BaseCardEffect
     //Scanned by Effect factory when  enumKeyName is Jigsaw
     //public abstract AllJigsaws enumKeyJigsaw { get; }
 
-    protected GameObject targetUnit;
+    //generic cache for target Game Object
+    protected GameObject targetObject;
+    //cache for playing field, will get initialized if AffectPlayingField is called
+    PlayingField targetPlayingField;
+    //cache for BaseUnitFunctions applicable to all units, will get initialized
+    BaseUnitFunctions targetUnit;
+
     //determines if DealDamage() will affect a single unit or the children of the enemy holder
     protected bool AOE;
 
@@ -19,13 +25,19 @@ public abstract class BaseCardEffect
     protected int hits;
     protected int multiplier;
     protected int draw;
+    protected int discard;
+    protected int creativity;
+    protected int energy;
 
+
+    //Activator Function
     public abstract void CardEffectActivate(GameObject target);
 
     //set target to actual choice target
     public  void AffectSingleEnemy(GameObject target)
     {
-        targetUnit = target;
+        targetObject = target;
+        targetUnit = targetObject.GetComponent<BaseUnitFunctions>();
     }
 
     //set target to player when card is dropped
@@ -34,17 +46,20 @@ public abstract class BaseCardEffect
     {
         if (target.tag == "Player")
         {
-            targetUnit = target;
+            targetObject = target;
+            targetUnit = targetObject.GetComponent<BaseUnitFunctions>();
         }
-        if (target.tag == "Enemy")
+        else if (target.tag == "Enemy")
         {
             //gets parent enemy holder then gets parent playing field
             GameObject enemyHolder = target.transform.parent.gameObject;
-            targetUnit = enemyHolder.transform.parent.gameObject.transform.GetChild(1).gameObject;
+            targetObject = enemyHolder.transform.parent.gameObject.transform.GetChild(1).gameObject;
+            targetUnit = targetObject.GetComponent<BaseUnitFunctions>();
         }
         else
         {
-            targetUnit = target.transform.parent.GetChild(1).gameObject;
+            targetObject = target.transform.parent.GetChild(1).gameObject;
+            targetUnit = targetObject.GetComponent<BaseUnitFunctions>();
         }
 
     }
@@ -60,12 +75,14 @@ public abstract class BaseCardEffect
         {
             //gets parent enemy holder then gets parent playing field
             GameObject enemyHolder = target.transform.parent.gameObject;
-            targetUnit = enemyHolder.transform.parent.gameObject;
+            targetObject = enemyHolder.transform.parent.gameObject;
+            targetUnit = targetObject.GetComponent<BaseUnitFunctions>();
         }
         else
         {
             //child index 2 is the enemy holder
-            targetUnit = target.transform.parent.GetChild(2).gameObject;
+            targetObject = target.transform.parent.GetChild(2).gameObject;
+            targetUnit = targetObject.GetComponent<BaseUnitFunctions>();
         }
         //for dropfield approach
         //child index 2 is the enemy holder
@@ -73,17 +90,20 @@ public abstract class BaseCardEffect
 
     }
 
+    //for effects that affects combat like draw and energy gain
     public void AffectPlayingField(GameObject target)
     {
         if (target.tag == "Enemy")
         {
             //gets parent enemy holder then gets parent playing field
             GameObject enemyHolder = target.transform.parent.gameObject;
-            targetUnit = enemyHolder.transform.parent.gameObject;
+            targetObject = enemyHolder.transform.parent.gameObject;
+            targetPlayingField = targetObject.GetComponent<PlayingField>();
         }
         else
         {
-            targetUnit = target.transform.parent.gameObject;
+            targetObject = target.transform.parent.gameObject;
+            targetPlayingField = targetObject.GetComponent<PlayingField>();
         }
         //for dropfield approach
         //targetUnit = target.transform.parent.gameObject;
@@ -98,16 +118,18 @@ public abstract class BaseCardEffect
         {
             for (int i = 1; hits >= i; i++)
             {
-                targetUnit.GetComponent<BaseUnitFunctions>().TakeDamage(damage);
+                targetUnit.TakeDamage(damage);
             }
         }
         else
         {
-            foreach (Transform enemy in targetUnit.transform)
+            foreach (Transform enemy in targetObject.transform)
             {
+                //cache override from AffectAll enemies
+                targetUnit = enemy.gameObject.GetComponent<BaseUnitFunctions>();
                 for (int i = 1; hits >= i; i++)
                 {
-                    enemy.gameObject.GetComponent<BaseUnitFunctions>().TakeDamage(damage);
+                    targetUnit.TakeDamage(damage);
                 }
             }
             AOE = false;
@@ -117,13 +139,36 @@ public abstract class BaseCardEffect
 
     public void GainBlock()
     {
-        targetUnit.GetComponent<BaseUnitFunctions>().GainBlock(block);
+        targetUnit.GainBlock(block);
     }
 
     public void DrawCard()
     {
-        targetUnit.GetComponent<PlayingField>().deckManager.DrawCards(draw);
+        targetPlayingField.deckManager.DrawCards(draw);
     }
+
+    public void DiscardCard()
+    {
+
+    }
+
+    public void AlterCreativity()
+    {
+        targetPlayingField.playerPrefab.GetComponent<PlayerFunctions>().AlterPlayerCreativity(creativity);
+
+    }
+
+    public void AlterEnergy()
+    {
+        targetPlayingField.combatManager.EnergyUpdater(energy);
+    }
+
+    public void GainAbility()
+    {
+
+    }
+
+    
 
 
 

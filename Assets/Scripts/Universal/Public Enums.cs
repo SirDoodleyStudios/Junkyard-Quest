@@ -12,6 +12,11 @@ public enum CardMethod { Targetted, Dropped}
 
 public enum JigsawLink { Circle, Triangle, Square, Finisher}
 
+public enum AllAbilities
+{
+    Neu_Abi_Brainstorm
+}
+
 public enum AllJigsaws
 {
     
@@ -26,14 +31,20 @@ public enum AllJigsaws
 //War = Warrior
 //OT = Offensive Targettable
 //UD = Utility Dropped
+//AD = Ability Dropped
 public enum AllCards
 {
     Jigsaw,
+    Ability,
     Neu_OT_Attack,
     Neu_OT_Strike,
     Neu_UD_Defend,
-    War_UD_Reinforce
+    Neu_AD_Brainstorm,
+    War_UD_Reinforce,
+
 }
+
+
 ////Status Effects//////////////////////////////////////////////////////////////////////////////////
 
 public enum StatusEffects
