@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class EffectLoader : MonoBehaviour
 {
+    //deckManager will assign this when card is enabled in hand
     public Card card;
     
 
@@ -23,8 +24,17 @@ public class EffectLoader : MonoBehaviour
         if (card.jigsawEffect!=null)    //jigsawEffect
         {
             ActivateJigsawEffect(target);
+            ActivateCardEffect(target);
         }
-        ActivateCardEffect(target);
+        else if (card.abilityEffect != null)
+        {
+            AssignAbility(target);
+        }
+        else
+        {
+            ActivateCardEffect(target);
+        }
+
 
     }
 
@@ -36,6 +46,11 @@ public class EffectLoader : MonoBehaviour
     public void ActivateJigsawEffect(GameObject target)
     {
         JigsawFactory.GetJigsawEffect(card.jigsawEffect.enumJigsawName).CardEffectActivate(target);  //jigsawEffect
+    }
+
+    public void AssignAbility(GameObject targetPlayer)
+    {
+        targetPlayer.GetComponent<AbilityManager>().InstallAbility(card.abilityEffect);
     }
 
 

@@ -39,9 +39,21 @@ public class PlayerFunctions : BaseUnitFunctions
     //expect to receive negative ints for costs and positive ints for gains
     public void AlterPlayerCreativity(int creativityValue)
     {
-
-
-        currCreativity += creativityValue;
+        //prevents from exeeding max
+        if (currCreativity + creativityValue > maxCreativity)
+        {
+            currCreativity = Mathf.Min(maxCreativity, currCreativity + creativityValue);
+        }
+        //prevents from going below 0
+        else if (currCreativity + creativityValue < 0)
+        {
+            currCreativity = Mathf.Max(0, currCreativity + creativityValue);
+        }
+        //change is within 0 to max range
+        else
+        {
+            currCreativity += creativityValue;
+        }
         SliderValueUpdates();
 
     }
@@ -60,10 +72,7 @@ public class PlayerFunctions : BaseUnitFunctions
 
     }
 
-    public void ActivateAbility(Button abilityButton)
-    {
 
-    }
 
 
 }

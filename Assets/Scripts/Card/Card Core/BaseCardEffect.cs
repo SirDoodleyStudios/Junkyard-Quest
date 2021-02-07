@@ -91,22 +91,45 @@ public abstract class BaseCardEffect
     }
 
     //for effects that affects combat like draw and energy gain
+    //layer 13 are all objects under PlayingField
     public void AffectPlayingField(GameObject target)
     {
-        if (target.tag == "Enemy")
+        //if (target.tag == "Enemy")
+        //{
+        //    //gets parent enemy holder then gets parent playing field
+        //    GameObject enemyHolder = target.transform.parent.gameObject;
+        //    targetObject = enemyHolder.transform.parent.gameObject;
+        //    targetPlayingField = targetObject.GetComponent<PlayingField>();
+        //}
+        //else
+        //{
+        //    targetObject = target.transform.parent.gameObject;
+        //    targetPlayingField = targetObject.GetComponent<PlayingField>();
+        //}
+
+        //checks if the target itself is the PlayingField
+        if (target.GetComponent<PlayingField>() != null)
+        {
+            targetObject = target;
+            targetPlayingField = target.GetComponent<PlayingField>();
+        }
+        //checks if the target's parent is the PlayingField
+        //target must be either player or EnemyHolder
+        else if (target.transform.parent.gameObject.GetComponent<PlayingField>() != null)
+        {
+            targetObject = target.transform.parent.gameObject;
+            targetPlayingField = targetObject.GetComponent<PlayingField>();
+        }
+        //checks if the target is an enemy
+        //gets parent of parent for PlayingField
+        else if (target.tag == "Enemy")
         {
             //gets parent enemy holder then gets parent playing field
             GameObject enemyHolder = target.transform.parent.gameObject;
             targetObject = enemyHolder.transform.parent.gameObject;
             targetPlayingField = targetObject.GetComponent<PlayingField>();
         }
-        else
-        {
-            targetObject = target.transform.parent.gameObject;
-            targetPlayingField = targetObject.GetComponent<PlayingField>();
-        }
-        //for dropfield approach
-        //targetUnit = target.transform.parent.gameObject;
+
 
     }
 

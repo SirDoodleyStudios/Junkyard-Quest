@@ -30,7 +30,8 @@ public class CombatManager : MonoBehaviour
 
     //related to energy
     int defaultEnergy = 3;
-    int Energy;
+    //Energy gets accessed by playingField
+    public int Energy;
     public Text energyText;
 
     //related to decks
@@ -53,6 +54,7 @@ public class CombatManager : MonoBehaviour
 
     public void Start()
     {
+        Debug.Log("Starting");
         //for thedropfield moving up approach targetting system
         //originalDropFieldPosition = dropField.transform.localPosition;
 
@@ -200,7 +202,8 @@ public class CombatManager : MonoBehaviour
                     /////////////////////////////////////
                 }
                 //layer 13 is Playing Field
-                else if (targetObject.layer == 13 && activeCardCard.cardMethod == CardMethod.Dropped)
+                //if its utility or offense dropped
+                else if (targetObject.layer == 13 && activeCardCard.cardMethod == CardMethod.Dropped && activeCardCard.cardType != CardType.Ability)
                 {
                     activeEffectLoader.EffectLoaderActivate(targetObject);
                     //Energy = Energy - activeCard.gameObject.GetComponent<Display>().card.energyCost;
@@ -217,6 +220,21 @@ public class CombatManager : MonoBehaviour
                     //for thedropfield moving up approach targetting system
                     ////returns dropfield to back after activate of card
                     //dropField.transform.localPosition = originalDropFieldPosition;
+                }
+                //if card is ablity, target object will always be player
+                else if (targetObject.layer == 13 && activeCardCard.cardMethod == CardMethod.Dropped && activeCardCard.cardType == CardType.Ability)
+                {
+                    activeEffectLoader.EffectLoaderActivate(Player);
+                    //Energy = Energy - activeCard.gameObject.GetComponent<Display>().card.energyCost;
+                    EnergyUpdater(-activeCard.gameObject.GetComponent<Display>().card.energyCost);
+                    //calls discard method and puts active card in discard pile
+                    DiscardFromHand();
+                    activeCard.transform.SetAsLastSibling();
+                    //retuns to player turn phase
+                    state = CombatState.PlayerTurn;
+                    //activeCard.GetComponent<DragNDrop>().StateChanger(state);////////////////////
+                    playerHand.StateChanger(state);
+                    DeckUpdater();
                 }
                 else
                 {

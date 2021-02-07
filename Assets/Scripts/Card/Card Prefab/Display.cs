@@ -30,13 +30,13 @@ public class Display : MonoBehaviour
         displayEffect.text = card.effect;
         //displayLeftEffect.text = card.leftEffect;
         //displayRightEffect.text = card.rightEffect;
-        displayJigsawText.text = card.jigsawText;
+        displayJigsawText.text = card.attachmentText;
         displayEnergyCost.text = card.energyCost.ToString();
         //displayCreativityCost.text = card.creativityCost.ToString();
         displayArtwork.sprite = card.artwork;
-        if(card.jigsawImage != null)
+        if(card.attachmentImage != null)
         {
-            displayJigsawImage.sprite = card.jigsawImage;
+            displayJigsawImage.sprite = card.attachmentImage;
         }
 
 

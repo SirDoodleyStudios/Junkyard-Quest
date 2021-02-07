@@ -13,13 +13,14 @@ MonoBehaviour:
   m_Name: Brainstorm
   m_EditorClassIdentifier: 
   cardName: Brainstorm
-  effect: Grans Brainstorm Ability
-  jigsawText: 
+  effect: Grants Brainstorm Ability
+  attachmentText: 'Ability Effect: Spend 2 Energy to recover 2 Creativity'
   energyCost: 2
   artwork: {fileID: 21300000, guid: 7aa320df90bed114ba0389dc584d1450, type: 3}
-  jigsawImage: {fileID: 0}
+  attachmentImage: {fileID: 21300000, guid: e1410210f30fa98419f0bc2a33a504de, type: 3}
   cardClass: 0
   cardType: 2
   cardMethod: 1
   enumCardName: 5
   jigsawEffect: {fileID: 0}
+  abilityEffect: {fileID: 11400000, guid: 66112b7e84bba2b459a5dc7755ac0811, type: 2}
