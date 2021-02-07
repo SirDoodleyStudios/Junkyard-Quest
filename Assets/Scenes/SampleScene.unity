@@ -365,7 +365,6 @@ GameObject:
   - component: {fileID: 219097633}
   - component: {fileID: 219097632}
   - component: {fileID: 219097631}
-  - component: {fileID: 219097630}
   m_Layer: 5
   m_Name: Execute Creativity Button
   m_TagString: Untagged
@@ -393,27 +392,6 @@ RectTransform:
   m_AnchoredPosition: {x: 721.76, y: 234.99}
   m_SizeDelta: {x: 385.96667, y: 84.86276}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!223 &219097630
-Canvas:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 219097628}
-  m_Enabled: 1
-  serializedVersion: 3
-  m_RenderMode: 2
-  m_Camera: {fileID: 0}
-  m_PlaneDistance: 100
-  m_PixelPerfect: 0
-  m_ReceivesEvents: 1
-  m_OverrideSorting: 1
-  m_OverridePixelPerfect: 0
-  m_SortingBucketNormalizedSize: 0
-  m_AdditionalShaderChannelsFlag: 0
-  m_SortingLayerID: -1867107583
-  m_SortingOrder: 0
-  m_TargetDisplay: 0
 --- !u!114 &219097631
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1436,6 +1414,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   abilityPanel: {fileID: 933151620}
+  EndTurnButton: {fileID: 1436910261}
 --- !u!1 &461257495
 GameObject:
   m_ObjectHideFlags: 0
@@ -6002,7 +5981,6 @@ GameObject:
   - component: {fileID: 2059557455}
   - component: {fileID: 2059557457}
   - component: {fileID: 2059557456}
-  - component: {fileID: 2059557458}
   m_Layer: 5
   m_Name: Creativity Cost Panel
   m_TagString: Untagged
@@ -6068,27 +6046,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2059557454}
   m_CullTransparentMesh: 0
---- !u!223 &2059557458
-Canvas:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2059557454}
-  m_Enabled: 1
-  serializedVersion: 3
-  m_RenderMode: 2
-  m_Camera: {fileID: 0}
-  m_PlaneDistance: 100
-  m_PixelPerfect: 0
-  m_ReceivesEvents: 1
-  m_OverrideSorting: 1
-  m_OverridePixelPerfect: 0
-  m_SortingBucketNormalizedSize: 0
-  m_AdditionalShaderChannelsFlag: 0
-  m_SortingLayerID: -1867107583
-  m_SortingOrder: 0
-  m_TargetDisplay: 0
 --- !u!1 &2068130164
 GameObject:
   m_ObjectHideFlags: 0
@@ -6761,6 +6718,22 @@ PrefabInstance:
       propertyPath: m_Colors.m_HighlightedColor.b
       value: 0.514151
       objectReference: {fileID: 0}
+    - target: {fileID: 426945293, guid: f20ee180e27b19b48a8d6fabda951463, type: 3}
+      propertyPath: m_Colors.m_DisabledColor.r
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 426945293, guid: f20ee180e27b19b48a8d6fabda951463, type: 3}
+      propertyPath: m_Colors.m_DisabledColor.g
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 426945293, guid: f20ee180e27b19b48a8d6fabda951463, type: 3}
+      propertyPath: m_Colors.m_DisabledColor.b
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 426945293, guid: f20ee180e27b19b48a8d6fabda951463, type: 3}
+      propertyPath: m_Navigation.m_Mode
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 657348163, guid: f20ee180e27b19b48a8d6fabda951463, type: 3}
       propertyPath: m_AnchorMin.y
       value: 0
@@ -6825,6 +6798,22 @@ PrefabInstance:
       propertyPath: m_Colors.m_HighlightedColor.b
       value: 0.514151
       objectReference: {fileID: 0}
+    - target: {fileID: 911404975, guid: f20ee180e27b19b48a8d6fabda951463, type: 3}
+      propertyPath: m_Colors.m_DisabledColor.r
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 911404975, guid: f20ee180e27b19b48a8d6fabda951463, type: 3}
+      propertyPath: m_Colors.m_DisabledColor.g
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 911404975, guid: f20ee180e27b19b48a8d6fabda951463, type: 3}
+      propertyPath: m_Colors.m_DisabledColor.b
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 911404975, guid: f20ee180e27b19b48a8d6fabda951463, type: 3}
+      propertyPath: m_Navigation.m_Mode
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 911404976, guid: f20ee180e27b19b48a8d6fabda951463, type: 3}
       propertyPath: m_RaycastTarget
       value: 1
@@ -6872,6 +6861,22 @@ PrefabInstance:
     - target: {fileID: 1809733085, guid: f20ee180e27b19b48a8d6fabda951463, type: 3}
       propertyPath: m_Colors.m_HighlightedColor.b
       value: 0.514151
+      objectReference: {fileID: 0}
+    - target: {fileID: 1809733085, guid: f20ee180e27b19b48a8d6fabda951463, type: 3}
+      propertyPath: m_Colors.m_DisabledColor.r
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1809733085, guid: f20ee180e27b19b48a8d6fabda951463, type: 3}
+      propertyPath: m_Colors.m_DisabledColor.g
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1809733085, guid: f20ee180e27b19b48a8d6fabda951463, type: 3}
+      propertyPath: m_Colors.m_DisabledColor.b
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1809733085, guid: f20ee180e27b19b48a8d6fabda951463, type: 3}
+      propertyPath: m_Navigation.m_Mode
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1904608593, guid: f20ee180e27b19b48a8d6fabda951463, type: 3}
       propertyPath: m_AnchorMin.y
@@ -6924,6 +6929,22 @@ PrefabInstance:
     - target: {fileID: 1904608594, guid: f20ee180e27b19b48a8d6fabda951463, type: 3}
       propertyPath: m_Colors.m_HighlightedColor.b
       value: 0.514151
+      objectReference: {fileID: 0}
+    - target: {fileID: 1904608594, guid: f20ee180e27b19b48a8d6fabda951463, type: 3}
+      propertyPath: m_Colors.m_DisabledColor.r
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1904608594, guid: f20ee180e27b19b48a8d6fabda951463, type: 3}
+      propertyPath: m_Colors.m_DisabledColor.g
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1904608594, guid: f20ee180e27b19b48a8d6fabda951463, type: 3}
+      propertyPath: m_Colors.m_DisabledColor.b
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1904608594, guid: f20ee180e27b19b48a8d6fabda951463, type: 3}
+      propertyPath: m_Navigation.m_Mode
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1904608595, guid: f20ee180e27b19b48a8d6fabda951463, type: 3}
       propertyPath: m_RaycastTarget

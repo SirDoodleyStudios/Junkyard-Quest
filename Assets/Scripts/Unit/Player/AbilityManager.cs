@@ -7,9 +7,12 @@ public class AbilityManager : MonoBehaviour
 {
     public Transform abilityPanel;
     List<AbilityFormat> abilityList = new List<AbilityFormat>();
+    public Button EndTurnButton;
 
     private void Start()
     {
+        EndTurnButton.onClick.AddListener(() => DisableAbilities());
+        
     }
     
 
@@ -33,7 +36,7 @@ public class AbilityManager : MonoBehaviour
                 //once assigned, it will also attach that abilityData to the curent button being checked in foreachloop
                 //the abilityData assigned in the index will be sent to the activate function once the assigned button is clicked
                 abilityList.Add(abilityData);
-                abilityButton.onClick.AddListener(() => ActivateAbilitySlot(abilityList[abilitySlot.GetSiblingIndex()]));
+                abilityButton.onClick.AddListener(() => ActivateAbilitySlot(abilityList[abilitySlot.GetSiblingIndex()], abilityButton));
                 break;
             }
 
@@ -43,7 +46,7 @@ public class AbilityManager : MonoBehaviour
         Debug.Log("Ability Slots Full");
     }
 
-    public void ActivateAbilitySlot(AbilityFormat abilityEffect)
+    public void ActivateAbilitySlot(AbilityFormat abilityEffect, Button abilityButton)
     {
         
         if(abilityEffect != null)
@@ -55,11 +58,40 @@ public class AbilityManager : MonoBehaviour
             //if requirement check returns true
             if (AbilityFactory.GetAbilityEffect(abilityEffect.enumAbilityName).RequirementCheck(playingField))
             {
+                //activates effect then disables button because abilities are once per turn only
                 AbilityFactory.GetAbilityEffect(abilityEffect.enumAbilityName).CardEffectActivate(playingField);
+                abilityButton.interactable = false;
             }
             else
             {
                 Debug.Log("not enough Energy");
+            }
+
+        }
+    }
+
+    //listens to EndTurnButton and resets cooldowns
+    public void DisableAbilities()
+    {
+        foreach(Transform abilitySlot in abilityPanel)
+        {
+            Button abilityButton = abilitySlot.gameObject.GetComponent<Button>();
+            if (abilityButton.transform.GetChild(0).GetComponent<Image>().sprite != null)
+            {
+                abilityButton.interactable = false;
+            }
+           
+        }
+    }
+
+    public void EnableAbilities()
+    {
+        foreach (Transform abilitySlot in abilityPanel)
+        {
+            Button abilityButton = abilitySlot.gameObject.GetComponent<Button>();
+            if (abilityButton.transform.GetChild(0).GetComponent<Image>().sprite != null)
+            {
+                abilityButton.interactable = true;
             }
 
         }

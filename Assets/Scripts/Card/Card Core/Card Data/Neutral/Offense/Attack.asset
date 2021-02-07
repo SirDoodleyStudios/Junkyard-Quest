@@ -14,12 +14,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cardName: Attack
   effect: Deal 5 Damage
-  jigsawText: Gain 10 block
+  attachmentText: Gain 5 Block
   energyCost: 1
   artwork: {fileID: 21300000, guid: 67e661768a015ce4b9eb3f059fa0de78, type: 3}
-  jigsawImage: {fileID: 21300000, guid: a458c0544a385794ab63eed75ff17728, type: 3}
+  attachmentImage: {fileID: 21300000, guid: a458c0544a385794ab63eed75ff17728, type: 3}
   cardClass: 0
   cardType: 0
   cardMethod: 0
   enumCardName: 2
   jigsawEffect: {fileID: 11400000, guid: 270ea47949d12fc40aca3376a748765c, type: 2}
+  abilityEffect: {fileID: 0}

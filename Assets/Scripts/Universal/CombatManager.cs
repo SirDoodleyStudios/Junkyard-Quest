@@ -7,6 +7,8 @@ using UnityEngine.UI;
 
 public class CombatManager : MonoBehaviour
 {
+    public delegate void D_StartTurn();
+    public event D_StartTurn d_StartTurn;
 
     CombatState state;
     //for thedropfield moving up approach targetting system
@@ -29,7 +31,7 @@ public class CombatManager : MonoBehaviour
     public PlayerHand playerHand;
 
     //related to energy
-    int defaultEnergy = 3;
+    int defaultEnergy = 5;
     //Energy gets accessed by playingField
     public int Energy;
     public Text energyText;
@@ -60,12 +62,24 @@ public class CombatManager : MonoBehaviour
 
         //Energy = defaultEnergy;
         Draw = defaultDraw;
-        DrawHand();
-        //sends default energy to updater
-        EnergyUpdater(defaultEnergy);
-        DeckUpdater();
+        //DrawHand();
+        ////sends default energy to updater
+        //EnergyUpdater(defaultEnergy);
+        //DeckUpdater();
+        d_StartTurn += StartTurn;
+        d_StartTurn += Player.GetComponent<AbilityManager>().EnableAbilities;
+        d_StartTurn();
         
 
+    }
+
+    public void StartTurn()
+    {
+        state = CombatState.PlayerTurn;
+        //Energy = defaultEnergy;
+        Energy = 0;
+        EnergyUpdater(defaultEnergy);
+        DrawHand();
     }
 
     public void Update()
@@ -484,10 +498,10 @@ public class CombatManager : MonoBehaviour
     }
 
 
-
     //Ending turn to enemy action to new player phase
     public void EndTurnButton()
     {
+        //iterates through each card in hand and calls on disCardFromHand dor each
         foreach(Transform cardInHand in playerHand.transform)
         {
             if(cardInHand.gameObject.activeSelf == true)
@@ -521,11 +535,8 @@ public class CombatManager : MonoBehaviour
         Player.GetComponent<BaseUnitFunctions>().RemoveBlock();
         Debug.Log("Losing block");
         yield return new WaitForSeconds(1f);
-        state = CombatState.PlayerTurn;
-        //Energy = defaultEnergy;
-        Energy = 0;
-        EnergyUpdater(defaultEnergy);
-        DrawHand();
+        //delegate for startTurn Event
+        d_StartTurn();
     }
 
 }
