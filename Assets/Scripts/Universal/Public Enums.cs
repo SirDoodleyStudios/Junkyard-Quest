@@ -27,20 +27,36 @@ public enum AllJigsaws
 
 }
 
-//Neu = Neutral
-//War = Warrior
-//OT = Offensive Targettable
-//UD = Utility Dropped
-//AD = Ability Dropped
+
+//Neu = Neutral = 1XXXX
+//War = Warrior = 2XXXX
+//Rog = Rogue = 3XXXX
+//Mag = Mage = 4XXXX
+//Arl = Arlen = 5XXXX
+//Ced = Cedric = 6XXXX
+//Fra = Francine = 7XXXX
+//Til = Tilly = 8XXXX
+//Pri = Princess = 9XXXX
+//OX = Offensive = X1XXX
+//UX = Utility = X2XXX
+//AX = Ability = X3XXX
+//XT = Targettable = XX1XX
+//XD = Dropped =  XX2XX
 public enum AllCards
 {
-    Jigsaw,
+    //Non-Cards Classifiers
+    Jigsaw = 0,
     Ability,
-    Neu_OT_Attack,
+    //Neutral Offensive Targetted
+    Neu_OT_Attack = 11100,
     Neu_OT_Strike,
-    Neu_UD_Defend,
-    Neu_AD_Brainstorm,
-    War_UD_Reinforce,
+    //Neutral Utility Dropped
+    Neu_UD_Defend = 12200,
+    //Neutral Ability Dropped
+    Neu_AD_Brainstorm = 13200,
+    Neu_AD_Rest,
+    //Warrior Utility Dropped
+    War_UD_Reinforce = 22200,
 
 }
 
