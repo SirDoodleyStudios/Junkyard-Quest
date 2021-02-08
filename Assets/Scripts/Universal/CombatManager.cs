@@ -198,7 +198,9 @@ public class CombatManager : MonoBehaviour
 
                 if (targetObject.tag == "Enemy" && activeCardCard.cardMethod == CardMethod.Targetted)
                 {
-                    activeEffectLoader.EffectLoaderActivate(targetObject);
+                    
+                    //activeEffectLoader.EffectLoaderActivate(targetObject);
+                    activeEffectLoader.ActivateCardEffect(targetObject);
                     //Energy = Energy - activeCard.gameObject.GetComponent<Display>().card.energyCost;
                     EnergyUpdater(-activeCard.gameObject.GetComponent<Display>().card.energyCost);
                     //calls discard method and puts active card in discard pile
@@ -219,7 +221,9 @@ public class CombatManager : MonoBehaviour
                 //if its utility or offense dropped
                 else if (targetObject.layer == 13 && activeCardCard.cardMethod == CardMethod.Dropped && activeCardCard.cardType != CardType.Ability)
                 {
-                    activeEffectLoader.EffectLoaderActivate(targetObject);
+                   
+                    //activeEffectLoader.EffectLoaderActivate(targetObject);
+                    activeEffectLoader.ActivateCardEffect(targetObject);
                     //Energy = Energy - activeCard.gameObject.GetComponent<Display>().card.energyCost;
                     EnergyUpdater(-activeCard.gameObject.GetComponent<Display>().card.energyCost);
                     //calls discard method and puts active card in discard pile
@@ -260,7 +264,7 @@ public class CombatManager : MonoBehaviour
 
         else if (state == CombatState.CreativeMode)
         {           
-
+            //for choosing cards to go in creative mode
             if (Input.GetMouseButtonDown(0))
             {
                 if (pointedObject.collider != null && pointedObject.collider.gameObject.tag == "Card")
@@ -310,8 +314,10 @@ public class CombatManager : MonoBehaviour
             //for executing the link
             else if (Input.GetKeyDown(KeyCode.Space))
             {
-                if (creativeList.Count == 0)
+                //prevents single cards for using creative mode
+                if (creativeList.Count <= 1)
                 {
+                    Debug.Log("got here");
                     creativeManager.MessagePrompt("No Card Selected");
                 }
                 else

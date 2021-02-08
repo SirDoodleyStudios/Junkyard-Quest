@@ -13,11 +13,11 @@ public class EffectLoader : MonoBehaviour
 
     }
 
-    //Activate Effect should fetch the delegate itself
+    //Used for a mjore generic approach
     public void EffectLoaderActivate(GameObject target)
     {
         //working old
-        //card.Activate(target);   
+        //card.Activate(target);  
 
         
         //ony for testing, JIGSAW EFFECTS ARE NOT TO BE EXECUTED DURING SINGLE CARD PLAY
@@ -34,9 +34,8 @@ public class EffectLoader : MonoBehaviour
         {
             ActivateCardEffect(target);
         }
-
-
     }
+
 
     public void ActivateCardEffect(GameObject target)
     {

@@ -55,7 +55,7 @@ public enum AllCards: int
     Jigsaw = 0,
     Ability,
     //Neutral Offensive Targetted
-    Neu_OT_Attack = 100,
+    Neu_OT_Attack = 10,
     Neu_OT_Strike,
     //Neutral Utility Dropped
     Neu_UD_Defend = 2700,

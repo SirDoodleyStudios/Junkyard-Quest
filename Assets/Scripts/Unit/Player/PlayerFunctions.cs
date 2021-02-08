@@ -5,7 +5,9 @@ using UnityEngine.UI;
 
 public class PlayerFunctions : BaseUnitFunctions
 {
-
+    //delegate for calling all methods on scripts inside the player prefab
+    public delegate void D_StartPlayerUpdates();
+    public event D_StartPlayerUpdates d_StartPlayerUpdates;
     
     [SerializeField]
     int maxCreativity;
@@ -33,6 +35,12 @@ public class PlayerFunctions : BaseUnitFunctions
         CreativitySlider.minValue = 0;
         CreativitySlider.value = currCreativity;
         CreativityText.text = $"{currCreativity}/{maxCreativity}";
+
+    }
+    //called by StartTurn event from combat manager
+    //activates all functions related to the start of turn
+    public void StartTurnUpdates(int? i = null)
+    {
 
     }
 

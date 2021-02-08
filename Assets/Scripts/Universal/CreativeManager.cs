@@ -44,6 +44,7 @@ public class CreativeManager : MonoBehaviour
     public bool CheckLinkEligibility(Card chosenCard)
     {
         //logic will always run if creatielist is empty
+        //original condition is ==0, changed it to >1 to preven single card links
         if (cardPrefabList.Count == 0)
         {
             totalEnergyCost += chosenCard.energyCost;
@@ -77,8 +78,12 @@ public class CreativeManager : MonoBehaviour
                     cardPrefab.gameObject.GetComponent<EffectLoader>().card = chosenCard;
                     cardPrefab.gameObject.SetActive(true);
                     cardPrefabList.Add(cardPrefab.gameObject);
-                    //adds one creativity cost per card in link
-                    creativityCost++;
+                    //adds one creativity cost per link
+                    if (cardPrefabList.Count > 1)
+                    {
+                        creativityCost++;
+                    }
+                    
                     creativityCostText.text = creativityCost.ToString();
                     break;
                 }
@@ -95,8 +100,11 @@ public class CreativeManager : MonoBehaviour
         int tempCount = cardPrefabList.Count - 1;
         cardPrefabList[tempCount].SetActive(false);
         cardPrefabList.Remove(cardPrefabList[tempCount]);
-        //increases creativity cost after removing card
-        creativityCost--;
+        //decreases creativity cost after removing a link
+        if (cardPrefabList.Count >= 1)
+        {
+            creativityCost--;
+        }
         creativityCostText.text = creativityCost.ToString();
         return tempCount;
     }
@@ -125,6 +133,7 @@ public class CreativeManager : MonoBehaviour
 
     }
 
+    //dictates how the unleash should be its targetted mode
     public CardMethod FinalizeLinks()
     {
         foreach (GameObject cardPrefab in cardPrefabList)
