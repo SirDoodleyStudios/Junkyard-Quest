@@ -22,6 +22,7 @@ public class DeckManager : MonoBehaviour
     Card instantiatedCard;
 
     // maybe for testing only
+    //list of pools, not the cardpool itself
     public List<CardPool> cardPools = new List<CardPool>();
 
     //can be called by combat manager for updating texts

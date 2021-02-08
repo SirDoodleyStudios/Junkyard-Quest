@@ -27,8 +27,9 @@ public static class EffectFactory
         //input Card types in dictionary with their AllCards enum as teir key
         foreach (var type in effectTypes)
         {
+            //will ignore jigsaws and enemyActions sice they are derived from BaseCardEffect
             var tempEffect = Activator.CreateInstance(type) as BaseCardEffect;
-            if (tempEffect.enumKeyCard != AllCards.Jigsaw && tempEffect.enumKeyCard != AllCards.Ability)
+            if (tempEffect.enumKeyCard != AllCards.Jigsaw && tempEffect.enumKeyCard != AllCards.Ability && tempEffect.enumKeyCard != AllCards.EnemyAction)
             {
                 EffectDictionary.Add(tempEffect.enumKeyCard, type);
             }

@@ -2,10 +2,13 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "New Unit", menuName = "Unit")]
+//[CreateAssetMenu(fileName = "New Unit", menuName = "Unit")]
 public class Unit : ScriptableObject
 {
     public int HP;
     public int Creativity;
+    public int draw;
+
+
 
 }

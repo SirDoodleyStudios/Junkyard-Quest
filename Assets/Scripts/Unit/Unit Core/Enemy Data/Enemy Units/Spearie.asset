@@ -1,0 +1,29 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f76e23768d43ea64c86d4c4328119601, type: 3}
+  m_Name: Spearie
+  m_EditorClassIdentifier: 
+  HP: 50
+  Creativity: 3
+  draw: 3
+  actionList:
+  - {fileID: 11400000, guid: 488b18fa501eb2f46808b9184ab41ea4, type: 2}
+  - {fileID: 11400000, guid: a210047a51bfa994aaddd34dd183f81e, type: 2}
+  - {fileID: 11400000, guid: a210047a51bfa994aaddd34dd183f81e, type: 2}
+  - {fileID: 11400000, guid: 488b18fa501eb2f46808b9184ab41ea4, type: 2}
+  - {fileID: 11400000, guid: a210047a51bfa994aaddd34dd183f81e, type: 2}
+  normalDamage: 10
+  smallDamage: 0
+  bigDamage: 0
+  normalBlock: 8
+  smallBlock: 0
+  bigBlock: 0

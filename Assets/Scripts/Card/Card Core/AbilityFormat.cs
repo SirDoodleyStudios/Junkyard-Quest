@@ -10,4 +10,5 @@ public class AbilityFormat : ScriptableObject
     public Sprite abilityIconSprite;
     public AllAbilities enumAbilityName;
 
+
 }

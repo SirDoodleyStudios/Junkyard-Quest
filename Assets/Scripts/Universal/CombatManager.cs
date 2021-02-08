@@ -17,7 +17,8 @@ public class CombatManager : MonoBehaviour
     //Vector3 originalDropFieldPosition;
 
     //related to player
-    public GameObject Player;
+    public GameObject player;
+    public PlayerFunctions playerFunctions;
     //list of enemies
     //public List<GameObject> enemyList = new List<GameObject>();
     public GameObject enemyHolder;
@@ -31,13 +32,13 @@ public class CombatManager : MonoBehaviour
     public PlayerHand playerHand;
 
     //related to energy
-    int defaultEnergy = 5;
+    int defaultEnergy;
     //Energy gets accessed by playingField
     public int Energy;
     public Text energyText;
 
     //related to decks
-    int defaultDraw = 5;
+    //int defaultDraw = 5;
     int Draw;
     public Text deckText;
     public Text discardText;
@@ -57,17 +58,24 @@ public class CombatManager : MonoBehaviour
     public void Start()
     {
         Debug.Log("Starting");
-        //for thedropfield moving up approach targetting system
-        //originalDropFieldPosition = dropField.transform.localPosition;
 
-        //Energy = defaultEnergy;
-        Draw = defaultDraw;
+        //initial caching of player stats
+        playerFunctions = player.GetComponent<PlayerFunctions>();
+        
+        //for just copying the default energy and draws from playerFunctions
+        //defaultEnergy = player.GetComponent<PlayerFunctions>().defaultEnergy;
+        //Draw = player.GetComponent<PlayerFunctions>().defaultDraw;
+
         //DrawHand();
         ////sends default energy to updater
         //EnergyUpdater(defaultEnergy);
         //DeckUpdater();
+
         d_StartTurn += StartTurn;
-        d_StartTurn += Player.GetComponent<AbilityManager>().EnableAbilities;
+        d_StartTurn += enemyHolder.GetComponent<EnemyAIManager>().EnemyStart;
+        //d_StartTurn += Player.GetComponent<AbilityManager>().EnableAbilities;
+        //d_StartTurn += Player.GetComponent<PlayerFunctions>().AlterPlayerCreativity;
+        //d_StartTurn += playerFunctions.StartTurnUpdates;
         d_StartTurn();
         
 
@@ -76,9 +84,12 @@ public class CombatManager : MonoBehaviour
     public void StartTurn()
     {
         state = CombatState.PlayerTurn;
-        //Energy = defaultEnergy;
-        Energy = 0;
-        EnergyUpdater(defaultEnergy);
+
+        //Energy = 0;
+        //EnergyUpdater(defaultEnergy);
+
+        playerFunctions.currEnergy = 0;
+        EnergyUpdater(playerFunctions.defaultEnergy);
         DrawHand();
     }
 
@@ -134,14 +145,16 @@ public class CombatManager : MonoBehaviour
                     //}
 
                     //checks the scriptable attached in Display if cost can be accomodated by Energy
-                    if (activeCardCard.energyCost <= Energy)
+                    //if (activeCardCard.energyCost <= Energy)
+                    if (activeCardCard.energyCost <= playerFunctions.currEnergy)
                     {
                         state = CombatState.ActiveCard;
                         //activeCard.GetComponent<DragNDrop>().StateChanger(state); /////////////////////
                         playerHand.StateChanger(state);
                         
                     }
-                    else if(activeCard.gameObject.GetComponent<Display>().card.energyCost > Energy)
+                    //else if(activeCard.gameObject.GetComponent<Display>().card.energyCost > Energy)
+                    else if (activeCard.gameObject.GetComponent<Display>().card.energyCost > playerFunctions.currEnergy)
                     {
                         Debug.Log("Not enough Energy");
                     }
@@ -242,7 +255,7 @@ public class CombatManager : MonoBehaviour
                 //if card is ablity, target object will always be player
                 else if (targetObject.layer == 13 && activeCardCard.cardMethod == CardMethod.Dropped && activeCardCard.cardType == CardType.Ability)
                 {
-                    activeEffectLoader.EffectLoaderActivate(Player);
+                    activeEffectLoader.EffectLoaderActivate(player);
                     //Energy = Energy - activeCard.gameObject.GetComponent<Display>().card.energyCost;
                     EnergyUpdater(-activeCard.gameObject.GetComponent<Display>().card.energyCost);
                     //calls discard method and puts active card in discard pile
@@ -274,9 +287,10 @@ public class CombatManager : MonoBehaviour
 
                     //checks the scriptable attached in Display if cost can be accomodated by Energy
                     //checks if current chosen card's input link matches the output of the previous card
-                    if (activeCardCard.energyCost <= Energy && creativeManager.CheckLinkEligibility(activeCardCard) 
-                                                            && activeCardCard.jigsawEffect != null  //jigsawEffect
-                                                            && creativeManager.creativityCost < Player.GetComponent<PlayerFunctions>().currCreativity)
+                    if (activeCardCard.energyCost <= playerFunctions.currEnergy // activeCardCard.energyCost <= playerFunctions.currEnergy 
+                        && creativeManager.CheckLinkEligibility(activeCardCard) 
+                        && activeCardCard.jigsawEffect != null  //jigsawEffect
+                        && creativeManager.creativityCost < player.GetComponent<PlayerFunctions>().currCreativity)
                     {
                         //transfers the card in creative mode then disables the prefab                        
                         //Energy -= activeCardCard.energyCost;
@@ -287,11 +301,8 @@ public class CombatManager : MonoBehaviour
                         //cardDictionary.Add(activeCard.transform.GetSiblingIndex(), activeCard);
                         activeCard.SetActive(false);
                     }
-                    //else if
-                    //{
-                    //    creativeManager.MessagePrompt(Energy, Player.GetComponent<PlayerFunctions>().currCreativity, activeCardCard);
-                    //}
-                    else if (activeCardCard.energyCost > Energy)
+                    //else if (activeCardCard.energyCost > playerFunctions.currEnergy)
+                    else if (activeCardCard.energyCost > playerFunctions.currEnergy)
                     {
                         creativeManager.MessagePrompt("Insufficient Energy");
                     }
@@ -303,7 +314,7 @@ public class CombatManager : MonoBehaviour
                     {
                         creativeManager.MessagePrompt("Card Has No Jigsaw");
                     }
-                    else if (creativeManager.creativityCost >= Player.GetComponent<PlayerFunctions>().currCreativity)
+                    else if (creativeManager.creativityCost >= player.GetComponent<PlayerFunctions>().currCreativity)
                     {
                         creativeManager.MessagePrompt("Insufficient Creativity");
                     }
@@ -382,7 +393,7 @@ public class CombatManager : MonoBehaviour
                 if (pointedObject.collider != null && linkMethod == CardMethod.Targetted && targetObject.tag == "Enemy" )
                 {
                     //access player stats and reduces their creativity meter
-                    Player.GetComponent<PlayerFunctions>().AlterPlayerCreativity(-creativeManager.creativityCost);
+                    player.GetComponent<PlayerFunctions>().AlterPlayerCreativity(-creativeManager.creativityCost);
                     //initiates link effects in CreativeManager
                     //returns the cost for crativity
                     creativeManager.UnleashCreativity(targetObject);
@@ -392,7 +403,7 @@ public class CombatManager : MonoBehaviour
                 else if (pointedObject.collider != null && linkMethod == CardMethod.Dropped && targetObject.layer == 13 )
                 {
                     //access player stats and reduces their creativity meter
-                    Player.GetComponent<PlayerFunctions>().AlterPlayerCreativity(-creativeManager.creativityCost);
+                    player.GetComponent<PlayerFunctions>().AlterPlayerCreativity(-creativeManager.creativityCost);
                     //initiates link effects in CreativeManager
                     //returns the cost for crativity
                     creativeManager.UnleashCreativity(targetObject);
@@ -477,8 +488,15 @@ public class CombatManager : MonoBehaviour
     //function for drawing during start of turn
     public void DrawHand()
     {
+        //state = CombatState.DrawPahase;
+        //deckManager.DrawCards(Draw);
+        //DeckUpdater();
+        //playerHand.StateChanger(state);
+        //state = CombatState.PlayerTurn;
+        //playerHand.StateChanger(state);
+
         state = CombatState.DrawPahase;
-        deckManager.DrawCards(Draw);
+        deckManager.DrawCards(playerFunctions.defaultDraw);
         DeckUpdater();
         playerHand.StateChanger(state);
         state = CombatState.PlayerTurn;
@@ -489,8 +507,12 @@ public class CombatManager : MonoBehaviour
     //expect to receive negative ints for costs and positive ints for gains
     public void EnergyUpdater(int value)
     {
-        Energy += value;
-        energyText.text = Energy.ToString();
+        //Energy += value;
+        //energyText.text = Energy.ToString();
+
+        //playerFunctions.currEnergy += value;
+        playerFunctions.AlterEnergy(value);
+        energyText.text = playerFunctions.currEnergy.ToString();
     }
 
     //updates deck and discardpile numbers
@@ -534,11 +556,14 @@ public class CombatManager : MonoBehaviour
 
         foreach(Transform enemy in enemyHolder.transform)
         {
-            enemy.gameObject.GetComponent<BasicEnemy>().EnemyAct();
+            //enemy.gameObject.GetComponent<EnemyActionsLogic>().EnemyAct();
+            //yield return new WaitForSeconds(.5f);
+            EnemyFunctions enemyFunctions = enemy.gameObject.GetComponent<EnemyFunctions>();
+            enemyFunctions.EnemyAct();
             yield return new WaitForSeconds(.5f);
         }
 
-        Player.GetComponent<BaseUnitFunctions>().RemoveBlock();
+        player.GetComponent<BaseUnitFunctions>().RemoveBlock();
         Debug.Log("Losing block");
         yield return new WaitForSeconds(1f);
         //delegate for startTurn Event

@@ -29,7 +29,6 @@ public abstract class BaseCardEffect
     protected int creativity;
     protected int energy;
 
-
     //Activator Function
     public abstract void CardEffectActivate(GameObject target);
 
@@ -47,19 +46,19 @@ public abstract class BaseCardEffect
         if (target.tag == "Player")
         {
             targetObject = target;
-            targetUnit = targetObject.GetComponent<BaseUnitFunctions>();
+            targetUnit = targetObject.GetComponent<PlayerFunctions>();
         }
         else if (target.tag == "Enemy")
         {
             //gets parent enemy holder then gets parent playing field
             GameObject enemyHolder = target.transform.parent.gameObject;
             targetObject = enemyHolder.transform.parent.gameObject.transform.GetChild(1).gameObject;
-            targetUnit = targetObject.GetComponent<BaseUnitFunctions>();
+            targetUnit = targetObject.GetComponent<PlayerFunctions>();
         }
         else
         {
             targetObject = target.transform.parent.GetChild(1).gameObject;
-            targetUnit = targetObject.GetComponent<BaseUnitFunctions>();
+            targetUnit = targetObject.GetComponent<PlayerFunctions>();
         }
 
     }
@@ -177,6 +176,7 @@ public abstract class BaseCardEffect
 
     public void AlterCreativity()
     {
+        //make this applicable to enemies as well
         targetPlayingField.playerPrefab.GetComponent<PlayerFunctions>().AlterPlayerCreativity(creativity);
 
     }

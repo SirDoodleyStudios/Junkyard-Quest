@@ -19,28 +19,24 @@ public enum AllAbilities
 
 public enum AllJigsaws
 {
-    
+    //Player Jigsaws
     Deal_10_Damage,
     Gain_10_Block,
-    Draw_1_Card
+    Draw_1_Card,
+
+
 
 
 }
-//Readcode from right to left
-//XT = Targettable = 1XXXX
-//XD = Dropped =  2XXXX
-//OX = Offensive = X1XXX
-//UX = Utility = X2XXX
-//AX = Ability = X3XXX
-//Neu = Neutral = XX1XX
-//War = Warrior = XX2XX
-//Rog = Rogue = XX3XX
-//Mag = Mage = XX4XX
-//Arl = Arlen = XX5XX
-//Ced = Cedric = XX6XX
-//Fra = Francine = XX7XX
-//Til = Tilly = XX8XX
-//Pri = Princess = XX9XX
+
+public enum EnemyActionType { Offense, Block, Enhance, Debilitate, Summon, Special}
+public enum AllEnemyActions
+{
+    Enemy_Deal_X_Damage,
+    Enemy_Gain_X_Block,
+}
+
+
 
 //Non-Card 0
 //Neu_OT=10    War_OT=100   Rog_OT=200   Mag_OT=300   Arl_OT=400   Ced_OT=500   Fra_OT=600   Til_OT=700   Pri_OT=800    
@@ -54,6 +50,7 @@ public enum AllCards: int
     //Non-Cards Classifiers
     Jigsaw = 0,
     Ability,
+    EnemyAction,
     //Neutral Offensive Targetted
     Neu_OT_Attack = 10,
     Neu_OT_Strike,

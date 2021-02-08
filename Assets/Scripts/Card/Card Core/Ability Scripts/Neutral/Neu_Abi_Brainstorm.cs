@@ -15,12 +15,13 @@ public class Neu_Abi_Brainstorm: BaseAbilityEffect
         AlterCreativity();
     }
 
-    public override bool RequirementCheck(GameObject targetPlayingField)
+    public override bool RequirementCheck(GameObject target)
     {
+
         energy = -2;
-        PlayingField playField = targetPlayingField.GetComponent<PlayingField>();
+        PlayingField playField = target.GetComponent<PlayingField>();
         //-energy because its cost
-        if(playField.combatManager.Energy >= -energy)
+        if(playField.combatManager.playerFunctions.currEnergy >= -energy)
         {
             return true;
         }
@@ -28,6 +29,7 @@ public class Neu_Abi_Brainstorm: BaseAbilityEffect
         {
             return false;
         }
+
 
         
     }
