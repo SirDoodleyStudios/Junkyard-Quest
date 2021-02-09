@@ -2315,6 +2315,12 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 695545197}
   m_CullTransparentMesh: 0
+--- !u!1 &721201735 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1215325448533852739, guid: b07c25aeaf419bc41811e1dae8b56a24,
+    type: 3}
+  m_PrefabInstance: {fileID: 2025454397}
+  m_PrefabAsset: {fileID: 0}
 --- !u!224 &750715417 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 1074423846794374599, guid: ac0f89316f4883744ab6e3e7d36f8e42,
@@ -5940,6 +5946,10 @@ PrefabInstance:
       propertyPath: intentSlots.Array.data[2]
       value: 
       objectReference: {fileID: 2025454403}
+    - target: {fileID: 2025454400, guid: b07c25aeaf419bc41811e1dae8b56a24, type: 3}
+      propertyPath: actionPanel
+      value: 
+      objectReference: {fileID: 721201735}
     - target: {fileID: 267135983108860465, guid: b07c25aeaf419bc41811e1dae8b56a24,
         type: 3}
       propertyPath: m_AnchorMin.y
@@ -6394,6 +6404,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_SizeDelta.y
       value: 65
+      objectReference: {fileID: 0}
+    - target: {fileID: 9144420118271706978, guid: b07c25aeaf419bc41811e1dae8b56a24,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: b07c25aeaf419bc41811e1dae8b56a24, type: 3}
