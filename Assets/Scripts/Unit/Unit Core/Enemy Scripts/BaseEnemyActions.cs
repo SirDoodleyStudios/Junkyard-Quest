@@ -16,5 +16,5 @@ public abstract class BaseEnemyActions : BaseCardEffect
     //public abstract void EnemyActionActivate(GameObject target);
     public abstract AllEnemyActions enumKeyEnemyAction{ get; }
 
-    public abstract void InitializeEnemyAction(EnemyUnit enemyStats);
+    public abstract void InitializeEnemyAction(EnemyUnit enemyStats, GameObject target);
 }
