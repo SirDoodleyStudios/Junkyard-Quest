@@ -46,6 +46,7 @@ public class PlayerFunctions : BaseUnitFunctions
     public void StartTurnUpdates()
     {
         Debug.Log("stuff");
+        base.RemoveBlock();
     }
 
     //expect to receive negative ints for costs and positive ints for gains

@@ -563,7 +563,7 @@ public class CombatManager : MonoBehaviour
             yield return new WaitForSeconds(.5f);
         }
 
-        player.GetComponent<BaseUnitFunctions>().RemoveBlock();
+        //player.GetComponent<BaseUnitFunctions>().RemoveBlock();
         Debug.Log("Losing block");
         yield return new WaitForSeconds(1f);
         //delegate for startTurn Event

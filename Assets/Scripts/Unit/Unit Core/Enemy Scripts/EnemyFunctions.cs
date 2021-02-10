@@ -32,12 +32,15 @@ public class EnemyFunctions : BaseUnitFunctions
     //for action intent panel
     public GameObject intentPanel;
     //list that contains the gameObjects under the intent panel
-    public List<GameObject> intentSlots;
+    //public List<GameObject> intentSlots;
 
     //EnemyActionformat from enemy hand, intendedAction becomes the actual action at player's end turn
     //intendedActionHolder is the gameObject to enable and disable that contains the indededAction
     EnemyActionFormat intendedAction;
     GameObject intendedActionHolder;
+
+    List<EnemyActionFormat> intendedActions = new List<EnemyActionFormat>();
+    List<GameObject> intendedActionHolders = new List<GameObject>();
 
 
     public override void InitializeStats()
@@ -71,6 +74,7 @@ public class EnemyFunctions : BaseUnitFunctions
 
     public void EnemyPrepare()
     {
+
         if (actionHand.Count <= 0)
         {
             EnemyDrawHand();
@@ -82,12 +86,32 @@ public class EnemyFunctions : BaseUnitFunctions
 
     public void EnemyAct()
     {
-        EnemyActionFactory.GetEnemyActionEffect(intendedAction.enumEnemyAction).InitializeEnemyAction(enemyUnit, gameObject);
-        //EnemyActionFactory.GetEnemyActionEffect(intendedAction.enumEnemyAction).InitializeEnemyAction(enemyUnit);
-        //EnemyActionFactory.GetEnemyActionEffect(intendedAction.enumEnemyAction).CardEffectActivate(gameObject);
-        intendedActionHolder.SetActive(false);
-        actionHand.Remove(intendedAction);
-        actionDeck.Add(intendedAction);
+        //base.RemoveBlock();
+        //EnemyActionFactory.GetEnemyActionEffect(intendedAction.enumEnemyAction).InitializeEnemyAction(enemyUnit, gameObject);
+        //intendedActionHolder.SetActive(false);
+        //intendedActionHolder.transform.SetAsLastSibling();
+        //actionHand.Remove(intendedAction);
+        //actionDeck.Add(intendedAction);
+
+        base.RemoveBlock();
+        foreach (EnemyActionFormat intendedAction in intendedActions)
+        {
+            for (int i = 0; intendedActions.IndexOf(intendedAction) >= i; i++)
+            {
+                EnemyActionFactory.GetEnemyActionEffect(intendedAction.enumEnemyAction).InitializeEnemyAction(enemyUnit, gameObject);
+            }
+            //intendedActionHolder.SetActive(false);
+            //intendedActionHolder.transform.SetAsLastSibling();
+
+            intendedActionHolders[intendedActions.IndexOf(intendedAction)].SetActive(false);
+            intendedActionHolders[intendedActions.IndexOf(intendedAction)].transform.SetAsLastSibling();
+
+            actionHand.Remove(intendedAction);
+            actionDeck.Add(intendedAction);
+
+        }
+
+
 
     }
 
@@ -139,38 +163,74 @@ public class EnemyFunctions : BaseUnitFunctions
 
     public void EnemyCastIntent()
     {
+        bool isNoMoreLinks;
+
         //display intent first
-        foreach (GameObject intent in intentSlots)
+        //foreach (GameObject intent in intentSlots)
+        foreach (Transform intentTransform in intentPanel.transform)
         {
+            GameObject intent = intentTransform.gameObject;
             if (intent.activeSelf == false)
             {
                 //cache for intent object's image
                 Image tempIntentImage = intent.GetComponent<Image>();
-                //picks a random EnemyActionformat from enemy hand, intendedAction becomes the actual action at player's end turn
-                int actionIntentIndexMatcher = Random.Range(0, actionHand.Count);
 
-                //caching of inteded intended action is so that we can remove it from list of actionHand and preserve the actual intended action for execution later
-                //EnemyActionFormat tempIntendedAction = actionHand[actionIntentIndexMatcher];
-                //intendedAction = tempIntendedAction;
+                //picks a random EnemyActionformat from enemy hand if intents are empty
+                //tries to pick a linkable action if not empty
+                //actions are added to intendedActionsList
+                int actionIntentIndexMatcher = new int();
+                if (intendedActions.Count <= 0)
+                {
+                    actionIntentIndexMatcher = Random.Range(0, actionHand.Count);
+                    isNoMoreLinks = false;
+                }
+                else 
+                {
+                    foreach (EnemyActionFormat action in actionHand)
+                    {
+                        if (action.inputLink == intendedActions[intendedActions.Count - 1].outputLink) //////////
+                        {
+                            actionIntentIndexMatcher = actionHand.IndexOf(action);
+                            isNoMoreLinks = false;
+                            break;
+                        }
 
-                intendedAction = actionHand[actionIntentIndexMatcher];
-                intendedActionHolder = intent;
+                    }
+                    //if we got here, there are no links
+                    isNoMoreLinks = true;
+                }
+
+                //intendedAction = actionHand[actionIntentIndexMatcher];
+                //intendedActionHolder = intent;
+
+                intendedActions.Add(actionHand[actionIntentIndexMatcher]);
+                intendedActionHolders.Add(intent);
 
                 //assigns image to intent slot and enables the intent slot
-                tempIntentImage.sprite = actionIconsDict[intendedAction.actionType];
+                tempIntentImage.sprite = actionIconsDict[intendedActions[intendedActions.Count -1].actionType];
                 intent.SetActive(true);
 
                 //disables the gameObject that holds the action then sets as last so that the Matcher sill matches the indices of actionSlotObjects and actionHand
                 actionSlotObjects[actionIntentIndexMatcher].SetActive(false);
-                Debug.Log(actionSlotObjects[actionIntentIndexMatcher].activeSelf);
-                actionPanel.transform.GetChild(actionIntentIndexMatcher).gameObject.transform.SetAsLastSibling();
+                actionSlotObjects[actionIntentIndexMatcher].transform.SetAsLastSibling();
+                actionSlotObjects.RemoveAt(actionIntentIndexMatcher);
+                //actionPanel.transform.GetChild(actionIntentIndexMatcher).gameObject.transform.SetAsLastSibling();
                 //actionSlotObjects[actionIntentIndexMatcher].transform.SetAsLastSibling();
+
+
+
+
+
+
 
                 //since an action from hand has been intended, remove it from hand list and add it back to deck
                 //actionHand.Remove(tempIntendedAction);
                 //actionDeck.Add(tempIntendedAction);
+                if(isNoMoreLinks == true)
+                {
+                    break;
+                }
                 
-                break;
             }
         }
     }

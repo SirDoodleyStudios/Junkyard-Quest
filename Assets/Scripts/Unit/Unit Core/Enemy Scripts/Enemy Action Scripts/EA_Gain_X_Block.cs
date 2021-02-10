@@ -16,6 +16,6 @@ public class EA_Gain_X_Block : BaseEnemyActions
     public override void CardEffectActivate(GameObject target)
     {
         AffectSingleEnemy(target);
-        DealDamage();
+        GainBlock();
     }
 }

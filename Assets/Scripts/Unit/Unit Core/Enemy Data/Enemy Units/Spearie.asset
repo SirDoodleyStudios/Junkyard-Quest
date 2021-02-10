@@ -17,10 +17,10 @@ MonoBehaviour:
   draw: 3
   actionList:
   - {fileID: 11400000, guid: 488b18fa501eb2f46808b9184ab41ea4, type: 2}
-  - {fileID: 11400000, guid: a210047a51bfa994aaddd34dd183f81e, type: 2}
+  - {fileID: 11400000, guid: 488b18fa501eb2f46808b9184ab41ea4, type: 2}
   - {fileID: 11400000, guid: 488b18fa501eb2f46808b9184ab41ea4, type: 2}
   - {fileID: 11400000, guid: a210047a51bfa994aaddd34dd183f81e, type: 2}
-  - {fileID: 11400000, guid: 488b18fa501eb2f46808b9184ab41ea4, type: 2}
+  - {fileID: 11400000, guid: a210047a51bfa994aaddd34dd183f81e, type: 2}
   normalDamage: 10
   smallDamage: 0
   bigDamage: 0
