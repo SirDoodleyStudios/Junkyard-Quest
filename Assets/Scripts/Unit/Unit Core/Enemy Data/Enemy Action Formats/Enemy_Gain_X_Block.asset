@@ -13,6 +13,6 @@ MonoBehaviour:
   m_Name: Enemy_Gain_X_Block
   m_EditorClassIdentifier: 
   inputLink: 2
-  outputLink: 2
+  outputLink: 1
   actionType: 1
   enumEnemyAction: 1

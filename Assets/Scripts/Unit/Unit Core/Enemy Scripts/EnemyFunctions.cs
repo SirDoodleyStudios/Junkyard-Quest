@@ -98,18 +98,32 @@ public class EnemyFunctions : BaseUnitFunctions
         {
             for (int i = 0; intendedActions.IndexOf(intendedAction) >= i; i++)
             {
-                EnemyActionFactory.GetEnemyActionEffect(intendedAction.enumEnemyAction).InitializeEnemyAction(enemyUnit, gameObject);
+                EnemyActionFactory.GetEnemyActionEffect(intendedActions[i].enumEnemyAction).InitializeEnemyAction(enemyUnit, gameObject);
+                //EnemyActionFactory.GetEnemyActionEffect(intendedAction.enumEnemyAction).InitializeEnemyAction(enemyUnit, gameObject);
             }
             //intendedActionHolder.SetActive(false);
-            //intendedActionHolder.transform.SetAsLastSibling();
+            //intendedActionHolder.transform.SetAsLastSibling(); 
 
             intendedActionHolders[intendedActions.IndexOf(intendedAction)].SetActive(false);
-            intendedActionHolders[intendedActions.IndexOf(intendedAction)].transform.SetAsLastSibling();
+            //intendedActionHolders[intendedActions.IndexOf(intendedAction)].transform.SetAsLastSibling();
 
-            actionHand.Remove(intendedAction);
-            actionDeck.Add(intendedAction);
+            //actionHand.Remove(intendedAction);
+            //actionDeck.Add(intendedAction);
+            Debug.Log(intendedActions.IndexOf(intendedAction));
+
 
         }
+
+        actionDeck.AddRange(intendedActions);
+        //foreach (EnemyActionFormat intendedAction in intendedActions)
+        //{
+            
+        //    actionHand.Remove(intendedAction);
+        //}
+        intendedActions.Clear();
+        
+        
+
 
 
 
@@ -163,7 +177,7 @@ public class EnemyFunctions : BaseUnitFunctions
 
     public void EnemyCastIntent()
     {
-        bool isNoMoreLinks;
+        bool isNoMoreLinks = false;
 
         //display intent first
         //foreach (GameObject intent in intentSlots)
@@ -186,50 +200,47 @@ public class EnemyFunctions : BaseUnitFunctions
                 }
                 else 
                 {
+                    //checks each remaining card in in actionHand if there are linkables
                     foreach (EnemyActionFormat action in actionHand)
                     {
-                        if (action.inputLink == intendedActions[intendedActions.Count - 1].outputLink) //////////
+                        //checks the last element of the link if its output link matches the elements iterated through
+                        if (action.inputLink == intendedActions[intendedActions.Count - 1].outputLink)
                         {
                             actionIntentIndexMatcher = actionHand.IndexOf(action);
                             isNoMoreLinks = false;
                             break;
                         }
+                        //if we got here as final, there are no links
+                        isNoMoreLinks = true;
 
                     }
-                    //if we got here, there are no links
-                    isNoMoreLinks = true;
+
                 }
 
-                //intendedAction = actionHand[actionIntentIndexMatcher];
-                //intendedActionHolder = intent;
+                //if searching for linkable failed and if the last search drained the actionHand
+                if (isNoMoreLinks == true || actionHand.Count <= 0)
+                {
+                    break;
+                }
 
+                //Adds the EnemyActionFormat that was randomized or deemed linkable by the else above
+                //this list contains all EnemyActionFormats to be executed later
                 intendedActions.Add(actionHand[actionIntentIndexMatcher]);
+                //instantly removes from actionhand when picked as linkable
+                actionHand.RemoveAt(actionIntentIndexMatcher);
+                //This list contains all gameObjects under intent panel to be enabled or disabled later on
                 intendedActionHolders.Add(intent);
 
                 //assigns image to intent slot and enables the intent slot
                 tempIntentImage.sprite = actionIconsDict[intendedActions[intendedActions.Count -1].actionType];
                 intent.SetActive(true);
 
-                //disables the gameObject that holds the action then sets as last so that the Matcher sill matches the indices of actionSlotObjects and actionHand
+                //disables the gameObject that holds the action then sets as last so that the Matcher still matches the indices of actionSlotObjects and actionHand
                 actionSlotObjects[actionIntentIndexMatcher].SetActive(false);
                 actionSlotObjects[actionIntentIndexMatcher].transform.SetAsLastSibling();
                 actionSlotObjects.RemoveAt(actionIntentIndexMatcher);
-                //actionPanel.transform.GetChild(actionIntentIndexMatcher).gameObject.transform.SetAsLastSibling();
-                //actionSlotObjects[actionIntentIndexMatcher].transform.SetAsLastSibling();
 
 
-
-
-
-
-
-                //since an action from hand has been intended, remove it from hand list and add it back to deck
-                //actionHand.Remove(tempIntendedAction);
-                //actionDeck.Add(tempIntendedAction);
-                if(isNoMoreLinks == true)
-                {
-                    break;
-                }
                 
             }
         }
