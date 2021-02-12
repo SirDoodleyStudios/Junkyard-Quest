@@ -94,6 +94,7 @@ public class EnemyFunctions : BaseUnitFunctions
         //actionDeck.Add(intendedAction);
 
         base.RemoveBlock();
+        Debug.Log($"intended actions count is {intendedActions.Count}");
         foreach (EnemyActionFormat intendedAction in intendedActions)
         {
             for (int i = 0; intendedActions.IndexOf(intendedAction) >= i; i++)
@@ -109,17 +110,12 @@ public class EnemyFunctions : BaseUnitFunctions
 
             //actionHand.Remove(intendedAction);
             //actionDeck.Add(intendedAction);
-            Debug.Log(intendedActions.IndexOf(intendedAction));
+            Debug.Log($"index is {intendedActions.IndexOf(intendedAction)}");
 
 
         }
 
         actionDeck.AddRange(intendedActions);
-        //foreach (EnemyActionFormat intendedAction in intendedActions)
-        //{
-            
-        //    actionHand.Remove(intendedAction);
-        //}
         intendedActions.Clear();
         
         
@@ -222,23 +218,31 @@ public class EnemyFunctions : BaseUnitFunctions
                 {
                     break;
                 }
+                else
+                {
+                    //Adds the EnemyActionFormat that was randomized or deemed linkable by the else above
+                    //this list contains all EnemyActionFormats to be executed later
+                    intendedActions.Add(actionHand[actionIntentIndexMatcher]);
+                    //instantly removes from actionhand when picked as linkable
+                    actionHand.RemoveAt(actionIntentIndexMatcher);
+                    //This list contains all gameObjects under intent panel to be enabled or disabled later on
+                    intendedActionHolders.Add(intent);
 
-                //Adds the EnemyActionFormat that was randomized or deemed linkable by the else above
-                //this list contains all EnemyActionFormats to be executed later
-                intendedActions.Add(actionHand[actionIntentIndexMatcher]);
-                //instantly removes from actionhand when picked as linkable
-                actionHand.RemoveAt(actionIntentIndexMatcher);
-                //This list contains all gameObjects under intent panel to be enabled or disabled later on
-                intendedActionHolders.Add(intent);
 
-                //assigns image to intent slot and enables the intent slot
-                tempIntentImage.sprite = actionIconsDict[intendedActions[intendedActions.Count -1].actionType];
-                intent.SetActive(true);
 
-                //disables the gameObject that holds the action then sets as last so that the Matcher still matches the indices of actionSlotObjects and actionHand
-                actionSlotObjects[actionIntentIndexMatcher].SetActive(false);
-                actionSlotObjects[actionIntentIndexMatcher].transform.SetAsLastSibling();
-                actionSlotObjects.RemoveAt(actionIntentIndexMatcher);
+
+                    //assigns image to intent slot and enables the intent slot
+                    tempIntentImage.sprite = actionIconsDict[intendedActions[intendedActions.Count - 1].actionType];
+                    intent.SetActive(true);
+
+                    //disables the gameObject that holds the action then sets as last so that the Matcher still matches the indices of actionSlotObjects and actionHand
+                    actionSlotObjects[actionIntentIndexMatcher].SetActive(false);
+                    actionSlotObjects[actionIntentIndexMatcher].transform.SetAsLastSibling();
+                    actionSlotObjects.RemoveAt(actionIntentIndexMatcher);
+                }
+
+
+
 
 
                 

@@ -10,6 +10,8 @@ public class CombatManager : MonoBehaviour
     public delegate void D_StartTurn();
     public event D_StartTurn d_StartTurn;
 
+
+
     CombatState state;
     //for thedropfield moving up approach targetting system
     //drop field for dropped cards
@@ -48,6 +50,8 @@ public class CombatManager : MonoBehaviour
     //cache that switches a card's state and interaction functions
     DragNDrop activeDragNDrop;
 
+    //references the EndTurn button to be disabled during enemyphase
+    public Button EndTurnButt;
 
     //for mouse pointing and clicking
     Vector2 PointRay;
@@ -73,6 +77,7 @@ public class CombatManager : MonoBehaviour
 
         d_StartTurn += StartTurn;
         d_StartTurn += enemyHolder.GetComponent<EnemyAIManager>().EnemyStart;
+        d_StartTurn += player.GetComponent<PlayerFunctions>().PlayerTurn;
         //d_StartTurn += Player.GetComponent<AbilityManager>().EnableAbilities;
         //d_StartTurn += Player.GetComponent<PlayerFunctions>().AlterPlayerCreativity;
         //d_StartTurn += playerFunctions.StartTurnUpdates;
@@ -91,6 +96,8 @@ public class CombatManager : MonoBehaviour
         playerFunctions.currEnergy = 0;
         EnergyUpdater(playerFunctions.defaultEnergy);
         DrawHand();
+        //makes the endTurnButton interactable again during player turn
+        EndTurnButt.interactable = true;
     }
 
     public void Update()
@@ -529,6 +536,8 @@ public class CombatManager : MonoBehaviour
     //Ending turn to enemy action to new player phase
     public void EndTurnButton()
     {
+        //makes the end turn button uninteractable
+        EndTurnButt.interactable = false;
         //iterates through each card in hand and calls on disCardFromHand dor each
         foreach(Transform cardInHand in playerHand.transform)
         {

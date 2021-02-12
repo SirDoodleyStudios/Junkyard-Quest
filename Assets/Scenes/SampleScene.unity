@@ -2866,7 +2866,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   combatManager: {fileID: 2085359251}
   deckManager: {fileID: 791457652}
-  playerPrefab: {fileID: 0}
+  playerPrefab: {fileID: 1712888391}
   enemyHolder: {fileID: 676333090}
 --- !u!222 &936478309
 CanvasRenderer:
@@ -7177,6 +7177,7 @@ MonoBehaviour:
   energyText: {fileID: 1296847235}
   deckText: {fileID: 2048802908}
   discardText: {fileID: 1959047759}
+  EndTurnButt: {fileID: 1436910261}
 --- !u!4 &2085359252
 Transform:
   m_ObjectHideFlags: 0

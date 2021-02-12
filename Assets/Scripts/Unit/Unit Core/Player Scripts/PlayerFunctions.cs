@@ -43,10 +43,11 @@ public class PlayerFunctions : BaseUnitFunctions
 
     //called by StartTurn event from combat manager
     //activates all functions related to the start of turn
-    public void StartTurnUpdates()
+    public void PlayerTurn()
     {
         Debug.Log("stuff");
         base.RemoveBlock();
+        gameObject.GetComponent<AbilityManager>().EnableAbilities();
     }
 
     //expect to receive negative ints for costs and positive ints for gains
