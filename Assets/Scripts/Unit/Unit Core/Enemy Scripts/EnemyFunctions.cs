@@ -34,6 +34,9 @@ public class EnemyFunctions : BaseUnitFunctions
     //list that contains the gameObjects under the intent panel
     //public List<GameObject> intentSlots;
 
+    //holds the action prefab to be generated at initizalization, determined by draw
+    public GameObject enemyActionPrefab;
+
     //EnemyActionformat from enemy hand, intendedAction becomes the actual action at player's end turn
     //intendedActionHolder is the gameObject to enable and disable that contains the indededAction
     EnemyActionFormat intendedAction;
@@ -53,6 +56,13 @@ public class EnemyFunctions : BaseUnitFunctions
 
         //List of EnemyActionFormats in enemyUnit, add range so that the original scriptableObject is not affected when moving stuff
         actionDeck.AddRange(enemyUnit.actionList);
+
+        //instantiates card prefabs
+        for (int i = 0; enemyUnit.draw > i; i++)
+        {
+            GameObject freshInstantiate = Instantiate(enemyActionPrefab, actionPanel.transform);
+            freshInstantiate.SetActive(false);
+        }
 
         //assigning icon sprites to actiontypenums
         actionIconsDict.Add(EnemyActionType.Offense, actionIconSprites[0]);
@@ -75,50 +85,83 @@ public class EnemyFunctions : BaseUnitFunctions
     public void EnemyPrepare()
     {
 
-        if (actionHand.Count <= 0)
+        //if (actionHand.Count <= 0)
+        //{
+        //    EnemyDrawHand();
+        //}
+        //EnemyCastIntent();
+
+        //if (actionHand.Count <= 0)
+        //{
+        //    EnemyDrawHand2();
+        //}
+        //EnemyCastIntent2();
+
+        
+
+        if (actionPanel.transform.GetChild(0).gameObject.activeSelf == false)
         {
-            EnemyDrawHand();
+            EnemyDrawHand2();
         }
-        EnemyCastIntent();
-
-
+        EnemyCastIntent2();
     }
 
     public void EnemyAct()
     {
+
         //base.RemoveBlock();
-        //EnemyActionFactory.GetEnemyActionEffect(intendedAction.enumEnemyAction).InitializeEnemyAction(enemyUnit, gameObject);
-        //intendedActionHolder.SetActive(false);
-        //intendedActionHolder.transform.SetAsLastSibling();
-        //actionHand.Remove(intendedAction);
-        //actionDeck.Add(intendedAction);
+        //foreach (EnemyActionFormat intendedAction in intendedActions)
+        //{
+        //    for (int i = 0; intendedActions.IndexOf(intendedAction) >= i; i++)
+        //    {
+        //        EnemyActionFactory.GetEnemyActionEffect(intendedActions[i].enumEnemyAction).InitializeEnemyAction(enemyUnit, gameObject);
+        //        //EnemyActionFactory.GetEnemyActionEffect(intendedAction.enumEnemyAction).InitializeEnemyAction(enemyUnit, gameObject);
+        //    }
+        //    //intendedActionHolder.SetActive(false);
+        //    //intendedActionHolder.transform.SetAsLastSibling(); 
 
+        //    intendedActionHolders[intendedActions.IndexOf(intendedAction)].SetActive(false);
+        //    //intendedActionHolders[intendedActions.IndexOf(intendedAction)].transform.SetAsLastSibling();
+
+        //    //actionHand.Remove(intendedAction);
+        //    //actionDeck.Add(intendedAction);
+        //    Debug.Log($"index is {intendedActions.IndexOf(intendedAction)}");
+
+
+        //}
+
+        //actionDeck.AddRange(intendedActions);
+        //intendedActions.Clear();
+
+        //removes block first before acting
         base.RemoveBlock();
-        Debug.Log($"intended actions count is {intendedActions.Count}");
-        foreach (EnemyActionFormat intendedAction in intendedActions)
+        //iterates through the intent panel and activate their effects
+        foreach (Transform intentTransforms in intentPanel.transform)
         {
-            for (int i = 0; intendedActions.IndexOf(intendedAction) >= i; i++)
+            //activates the first EnemyActionIcon first then carries over to the next before activating the second effect just like in creative mode
+            for (int i = 0; intentTransforms.GetSiblingIndex() >= i; i++)
             {
-                EnemyActionFactory.GetEnemyActionEffect(intendedActions[i].enumEnemyAction).InitializeEnemyAction(enemyUnit, gameObject);
-                //EnemyActionFactory.GetEnemyActionEffect(intendedAction.enumEnemyAction).InitializeEnemyAction(enemyUnit, gameObject);
+                EnemyActionFormat actionFormat = intentPanel.transform.GetChild(i).GetComponent<EnemyActionIcon>().enemyAction;
+                EnemyActionFactory.GetEnemyActionEffect(actionFormat.enumEnemyAction).InitializeEnemyAction(enemyUnit, gameObject);
+
             }
-            //intendedActionHolder.SetActive(false);
-            //intendedActionHolder.transform.SetAsLastSibling(); 
-
-            intendedActionHolders[intendedActions.IndexOf(intendedAction)].SetActive(false);
-            //intendedActionHolders[intendedActions.IndexOf(intendedAction)].transform.SetAsLastSibling();
-
-            //actionHand.Remove(intendedAction);
-            //actionDeck.Add(intendedAction);
-            Debug.Log($"index is {intendedActions.IndexOf(intendedAction)}");
-
-
+            intentTransforms.gameObject.SetActive(false);
+        }
+        //for transferring enemy actions back to the actionPanel 
+        //only checks index 0 because we're returning the prefabs to actionHand one by one
+        while (intentPanel.transform.childCount > 0)
+        {
+            Transform returningAction = intentPanel.transform.GetChild(0);
+            EnemyActionFormat returningActionFormat = returningAction.gameObject.GetComponent<EnemyActionIcon>().enemyAction;
+            //returns the EnemyActionFormat to deckHolder
+            actionDeck.Add(returningAction.gameObject.GetComponent<EnemyActionIcon>().enemyAction);
+            returningAction.SetParent(actionPanel.transform);
+            returningAction.SetAsLastSibling();
         }
 
-        actionDeck.AddRange(intendedActions);
-        intendedActions.Clear();
-        
-        
+
+
+
 
 
 
@@ -248,6 +291,94 @@ public class EnemyFunctions : BaseUnitFunctions
                 
             }
         }
+
+
+    }
+    public void EnemyDrawHand2()
+    {
+        //defaults the draw to enemy's EnemyActionFormat draw stat
+        for(int i = 0; enemyUnit.draw > i; i++)
+        {
+            EnemyActionFormat tempAction = actionDeck[Random.Range(0, actionDeck.Count)];
+            //for assigning sprites and enabling action slot gameObject
+            //iterates through the action panel to enable action slots and assign sprites
+            foreach (Transform actionSlot in actionPanel.transform)
+            {
+                //cache for the child transform's gameObject
+                GameObject actionObject = actionSlot.gameObject;
+                //iterates till it finds a disabled slot, enables it then breaks
+                if (actionObject.activeSelf == false)
+                {
+                    //removed from deck so that an action is not repeated during draw
+                    actionDeck.Remove(tempAction);
+
+                    //Each action has the EnemyActionIcon script that contains the sprite holder and EnemyActionFormat of the action itself
+                    EnemyActionIcon enemyActionIcon = actionSlot.GetComponent<EnemyActionIcon>();
+                    //assigns which sprite to use from the sprite dictionary
+                    enemyActionIcon.actionIcon.sprite = actionIconsDict[tempAction.actionType];
+                    //assigns the EnemyActionFormat from the deck to the EnemyActionIcon holder
+                    enemyActionIcon.enemyAction = tempAction;
+                    actionObject.SetActive(true);
+                    break;
+                }
+            }
+        }       
+
     }
 
+    public void EnemyCastIntent2()
+    {
+        //this bool is for determining whether we move on from finding links
+        bool isNoMoreLinks = false;
+        //do is for assuring that we find an initial intent
+        do
+        {
+            //for finding initial intent
+            if (intentPanel.transform.childCount <= 0)
+            {
+                //only finds from actions that are enabled
+                List<GameObject> tempList = new List<GameObject>();               
+                foreach (Transform actionTransform in actionPanel.transform)
+                {
+                    if (actionTransform.gameObject.activeSelf)
+                    {
+                        tempList.Add(actionTransform.gameObject);
+                    }
+                    
+                }
+                tempList[Random.Range(0, tempList.Count - 1)].transform.SetParent(intentPanel.transform);
+
+
+            }
+            //for finding available links for the initial intent
+            else
+            {
+                //checks each remaining card in in actionHand if there are linkables
+                foreach (Transform actionTransform in actionPanel.transform)
+                {
+                    if (actionTransform.gameObject.activeSelf == true)
+                    {
+                        EnemyActionIcon inputIntent = actionTransform.gameObject.GetComponent<EnemyActionIcon>();
+                        EnemyActionIcon outputIntent = intentPanel.transform.GetChild(intentPanel.transform.childCount - 1).gameObject.GetComponent<EnemyActionIcon>();
+
+                        //checks the last element of the link if its output link matches the elements iterated through
+                        if (inputIntent.enemyAction.inputLink == outputIntent.enemyAction.outputLink)
+                        {
+                            //transfers the gameObject itself to be under the intent panel
+                            actionTransform.SetParent(intentPanel.transform);
+                            isNoMoreLinks = false;
+                            break;
+                        }
+                        
+                    }
+                    //if we get here, no more available enemyActions
+                    isNoMoreLinks = true;
+
+                }
+            }
+        //will keep iterating and finding links until there are none
+        } while (isNoMoreLinks == false);
+
+    }
 }
+
