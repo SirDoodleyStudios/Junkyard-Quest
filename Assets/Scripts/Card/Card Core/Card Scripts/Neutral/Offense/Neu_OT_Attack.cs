@@ -13,6 +13,12 @@ public class Neu_OT_Attack : BaseCardEffect
         hits = 1;
         AffectSingleEnemy(target);
         DealDamage();
+
+    }
+
+    public void GetCardTag()
+    {
+
     }
 
 

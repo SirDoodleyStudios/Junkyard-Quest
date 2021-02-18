@@ -1,0 +1,23 @@
+fileFormatVersion: 2
+guid: ed677fdb76e677a4392b90dc2fe31d7a
+TrueTypeFontImporter:
+  externalObjects: {}
+  serializedVersion: 4
+  fontSize: 16
+  forceTextureCase: -2
+  characterSpacing: 0
+  characterPadding: 1
+  includeFontData: 1
+  fontName: Locanita
+  fontNames:
+  - Locanita
+  fallbackFontReferences:
+  - {fileID: 12800000, guid: ac4544b6a0a77534babfd96e91403730, type: 3}
+  customCharacters: 
+  fontRenderingMode: 0
+  ascentCalculationMode: 1
+  useLegacyBoundsCalculation: 0
+  shouldRoundAdvanceValue: 1
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

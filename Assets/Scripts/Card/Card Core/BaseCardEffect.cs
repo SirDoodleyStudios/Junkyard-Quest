@@ -17,8 +17,12 @@ public abstract class BaseCardEffect
     //cache for BaseUnitFunctions applicable to all units, will get initialized
     BaseUnitFunctions targetUnit;
 
+    //cache for UnitStatusHolder, this will be the reference after assigning it
+    UnitStatusHolder unitStatus;
+
     //determines if DealDamage() will affect a single unit or the children of the enemy holder
     protected bool AOE;
+    protected bool keep;
 
     protected int damage;
     protected int block;
@@ -29,8 +33,15 @@ public abstract class BaseCardEffect
     protected int creativity;
     protected int energy;
 
+
+
     //Activator Function
     public abstract void CardEffectActivate(GameObject target);
+
+    public virtual void UnitStatusLoad(UnitStatusHolder unitStatus)
+    {
+        this.unitStatus = unitStatus;
+    }
 
     //set target to actual choice target
     public  void AffectSingleEnemy(GameObject target)
@@ -136,11 +147,14 @@ public abstract class BaseCardEffect
     //hits needs to be populated
     public void DealDamage()
     {
+        int modifiedDamage = unitStatus.DamageModifierCalculator(damage);
+
         if(AOE == false)
         {
             for (int i = 1; hits >= i; i++)
             {
-                targetUnit.TakeDamage(damage);
+                //targetUnit.TakeDamage(damage);
+                targetUnit.TakeDamage(modifiedDamage);
             }
         }
         else
@@ -151,7 +165,8 @@ public abstract class BaseCardEffect
                 targetUnit = enemy.gameObject.GetComponent<BaseUnitFunctions>();
                 for (int i = 1; hits >= i; i++)
                 {
-                    targetUnit.TakeDamage(damage);
+                    //targetUnit.TakeDamage(damage);
+                    targetUnit.TakeDamage(modifiedDamage);
                 }
             }
             AOE = false;
@@ -190,6 +205,23 @@ public abstract class BaseCardEffect
     {
 
     }
+
+    public void Attune()
+    {
+
+    }
+
+    public void Discover()
+    {
+
+    }
+
+    public void Deplete()
+    {
+
+    }
+
+
 
     
 

@@ -25,7 +25,7 @@ public class Card : ScriptableObject
     //offense, utility, ability
     public CardType cardType;
 
-    //
+    //whether it's targetted or dropped
     public CardMethod cardMethod;
 
 
@@ -41,9 +41,12 @@ public class Card : ScriptableObject
     //must only be used for ability cardss
     public AbilityFormat abilityEffect;
 
-    //public BaseScriptJigAbi JigsawOrAbility;
+    //Card Tags that act like statuses and must be considered even when not played
+    public bool Keep;
+    public bool Combo;
 
-    //public BaseScriptJigAbi jigsawEffect;
+    //List of tags that the card have, only for displaying text during Hover
+    public List<CardMechanics> cardTags = new List<CardMechanics>();
 
 
 

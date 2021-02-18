@@ -6,11 +6,11 @@ public enum CombatState { PlayerTurn, CreativeMode, UnleashCreativity, ActiveCar
 
 public enum CardClass { Neutral, Warrior, Rogue, Mage, Arlen, Cedric, Francine, Tilly, Princess }
 
-public enum CardType { Offense, Utility, Ability }
+public enum CardType { Offense, Utility, Ability, Material, Prosthetic }
 
 public enum CardMethod { Targetted, Dropped}
 
-public enum JigsawLink { Circle, Triangle, Square, Finisher}
+public enum JigsawLink { Circle, Triangle, Square, Material, Finisher}
 
 public enum AllAbilities
 {
@@ -74,7 +74,21 @@ public enum StatusEffects
 
 //////Upgrades List//////////////////////////////////////////////////////////////////////////////
 
+public enum CardMechanics
+{
+    //Card only Mechanics
+    Deplete,
+    Keep,
+    Combo,
+    Discover,
+    Attune,
+    Riddle,
 
+    //Unit Statuses
+    Strong =20,
+    Forceful,
+    Feeble
+}
 
 
 
