@@ -13,8 +13,13 @@ public class EffectLoader : MonoBehaviour
 
     }
 
+    public void SetActingUnit()
+    {
+
+    }
+    //THE ACTOR PARAMETERS ARE FOR PASSING THE PLAYER GAMEOBJECT SO THAT CARD EFFECTS CAN CHECK STATUSES FIRST BEFORE ACTIVATING
     //Used for a mjore generic approach
-    public void EffectLoaderActivate(GameObject target)
+    public void EffectLoaderActivate(GameObject target, GameObject actor)
     {
         //working old
         //card.Activate(target);  
@@ -23,8 +28,10 @@ public class EffectLoader : MonoBehaviour
         //ony for testing, JIGSAW EFFECTS ARE NOT TO BE EXECUTED DURING SINGLE CARD PLAY
         if (card.jigsawEffect!=null)    //jigsawEffect
         {
-            ActivateJigsawEffect(target);
-            ActivateCardEffect(target);
+            //ActivateJigsawEffect(target);
+            //ActivateCardEffect(target);
+            ActivateJigsawEffect(target, actor);
+            ActivateCardEffect(target, actor);
         }
         else if (card.abilityEffect != null)
         {
@@ -32,19 +39,19 @@ public class EffectLoader : MonoBehaviour
         }
         else
         {
-            ActivateCardEffect(target);
+            ActivateCardEffect(target, actor);
         }
     }
 
 
-    public void ActivateCardEffect(GameObject target)
+    public void ActivateCardEffect(GameObject target, GameObject actor)
     {
-        EffectFactory.GetCardEffect(card.enumCardName).CardEffectActivate(target);
+        EffectFactory.GetCardEffect(card.enumCardName).CardEffectActivate(target, actor);
     }
 
-    public void ActivateJigsawEffect(GameObject target)
+    public void ActivateJigsawEffect(GameObject target, GameObject actor)
     {
-        JigsawFactory.GetJigsawEffect(card.jigsawEffect.enumJigsawName).CardEffectActivate(target);  //jigsawEffect
+        JigsawFactory.GetJigsawEffect(card.jigsawEffect.enumJigsawName).CardEffectActivate(target, actor);  //jigsawEffect
     }
 
     public void AssignAbility(GameObject targetPlayer)

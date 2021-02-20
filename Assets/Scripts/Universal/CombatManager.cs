@@ -49,9 +49,9 @@ public class CombatManager : MonoBehaviour
     GameObject activeCard;
     //cache that switches a card's state and interaction functions
     DragNDrop activeDragNDrop;
-
     //references the EndTurn button to be disabled during enemyphase
     public Button EndTurnButt;
+    //contains all card tag descriptions
 
     //for mouse pointing and clicking
     Vector2 PointRay;
@@ -62,6 +62,8 @@ public class CombatManager : MonoBehaviour
     public void Start()
     {
         Debug.Log("Starting");
+        //one time run to add dictionary entries of cardMechanic enums and text descriptions
+        CardTagManager.CardTagDictionaryInitialize();
 
         //initial caching of player stats
         playerFunctions = player.GetComponent<PlayerFunctions>();
@@ -191,6 +193,9 @@ public class CombatManager : MonoBehaviour
         {
             EffectLoader activeEffectLoader = activeCard.GetComponent<EffectLoader>();
             Card activeCardCard = activeCard.GetComponent<Display>().card;
+
+            ////////////
+            
             
 
             //Right-click is back function
@@ -219,8 +224,9 @@ public class CombatManager : MonoBehaviour
                 if (targetObject.tag == "Enemy" && activeCardCard.cardMethod == CardMethod.Targetted)
                 {
                     
-                    //activeEffectLoader.EffectLoaderActivate(targetObject);
-                    activeEffectLoader.ActivateCardEffect(targetObject);
+                    //activeEffectLoader.EffectLoaderActivate(targetObject, player); ---- This is to be used if single jigsaws ccan be activated without creative mode
+                    activeEffectLoader.ActivateCardEffect(targetObject, player);
+
                     //Energy = Energy - activeCard.gameObject.GetComponent<Display>().card.energyCost;
                     EnergyUpdater(-activeCard.gameObject.GetComponent<Display>().card.energyCost);
                     //calls discard method and puts active card in discard pile
@@ -242,8 +248,9 @@ public class CombatManager : MonoBehaviour
                 else if (targetObject.layer == 13 && activeCardCard.cardMethod == CardMethod.Dropped && activeCardCard.cardType != CardType.Ability)
                 {
                    
-                    //activeEffectLoader.EffectLoaderActivate(targetObject);
-                    activeEffectLoader.ActivateCardEffect(targetObject);
+                    //activeEffectLoader.EffectLoaderActivate(targetObject, player); ---- to be used if single jigsaw effect is to be able to activate without creative mode
+                    activeEffectLoader.ActivateCardEffect(targetObject, player);
+
                     //Energy = Energy - activeCard.gameObject.GetComponent<Display>().card.energyCost;
                     EnergyUpdater(-activeCard.gameObject.GetComponent<Display>().card.energyCost);
                     //calls discard method and puts active card in discard pile
@@ -262,7 +269,8 @@ public class CombatManager : MonoBehaviour
                 //if card is ablity, target object will always be player
                 else if (targetObject.layer == 13 && activeCardCard.cardMethod == CardMethod.Dropped && activeCardCard.cardType == CardType.Ability)
                 {
-                    activeEffectLoader.EffectLoaderActivate(player);
+                    //player as taget then pass player as actor
+                    activeEffectLoader.EffectLoaderActivate(player, player);
                     //Energy = Energy - activeCard.gameObject.GetComponent<Display>().card.energyCost;
                     EnergyUpdater(-activeCard.gameObject.GetComponent<Display>().card.energyCost);
                     //calls discard method and puts active card in discard pile
@@ -403,7 +411,7 @@ public class CombatManager : MonoBehaviour
                     player.GetComponent<PlayerFunctions>().AlterPlayerCreativity(-creativeManager.creativityCost);
                     //initiates link effects in CreativeManager
                     //returns the cost for crativity
-                    creativeManager.UnleashCreativity(targetObject);
+                    creativeManager.UnleashCreativity(targetObject, player);
 
                 }
                 //if dropped, click will wor on anything
@@ -413,7 +421,7 @@ public class CombatManager : MonoBehaviour
                     player.GetComponent<PlayerFunctions>().AlterPlayerCreativity(-creativeManager.creativityCost);
                     //initiates link effects in CreativeManager
                     //returns the cost for crativity
-                    creativeManager.UnleashCreativity(targetObject);
+                    creativeManager.UnleashCreativity(targetObject, player);
                     
                 }
                 //removes scale increase on all cards

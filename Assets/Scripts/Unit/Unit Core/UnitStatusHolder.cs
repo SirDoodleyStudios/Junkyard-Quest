@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+//THIS WILL BE ATTACHED TO UNIT PREFAB AND IT CONTAINS ALL THE STATUS EFFECTS ON A UNIT
 public class UnitStatusHolder : MonoBehaviour
 {
     // Start is called before the first frame update
@@ -18,7 +19,7 @@ public class UnitStatusHolder : MonoBehaviour
 
     public int DamageModifierCalculator(int baseDamage)
     {
-        int total = 0;
+        int total = 5;
         return total;
     }
 }

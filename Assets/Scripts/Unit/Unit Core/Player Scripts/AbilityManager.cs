@@ -59,7 +59,8 @@ public class AbilityManager : MonoBehaviour
             if (AbilityFactory.GetAbilityEffect(abilityEffect.enumAbilityName).RequirementCheck(playingField))
             {
                 //activates effect then disables button because abilities are once per turn only
-                AbilityFactory.GetAbilityEffect(abilityEffect.enumAbilityName).CardEffectActivate(playingField);
+                //second parameter gameObject is for sending the gameObject as the actor
+                AbilityFactory.GetAbilityEffect(abilityEffect.enumAbilityName).CardEffectActivate(playingField, gameObject);
                 abilityButton.interactable = false;
             }
             else

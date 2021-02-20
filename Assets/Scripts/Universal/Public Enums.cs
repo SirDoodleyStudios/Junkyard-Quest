@@ -77,12 +77,14 @@ public enum StatusEffects
 public enum CardMechanics
 {
     //Card only Mechanics
+    Block,
     Deplete,
     Keep,
     Combo,
     Discover,
     Attune,
     Riddle,
+    
 
     //Unit Statuses
     Strong =20,

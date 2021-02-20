@@ -156,7 +156,7 @@ public class CreativeManager : MonoBehaviour
     }
     //iterates through list of cardprefabs and activate their effects
     //returned int is creativity points to be subtracted to from player gauge
-    public void UnleashCreativity(GameObject target)
+    public void UnleashCreativity(GameObject target, GameObject actor)
     {
         foreach(GameObject cardPrefab in cardPrefabList)
         {
@@ -166,10 +166,10 @@ public class CreativeManager : MonoBehaviour
             
             for (int i = 0; cardPrefabList.IndexOf(cardPrefab) >= i; i++)
             {
-                cardPrefabList[i].GetComponent<EffectLoader>().ActivateJigsawEffect(target);
+                cardPrefabList[i].GetComponent<EffectLoader>().ActivateJigsawEffect(target, actor);
             }
             //the effect of the actual card will be activated last
-            cardPrefab.GetComponent<EffectLoader>().ActivateCardEffect(target);
+            cardPrefab.GetComponent<EffectLoader>().ActivateCardEffect(target, actor);
         }
 
         foreach(GameObject cardPrefab in cardPrefabList)

@@ -36,11 +36,14 @@ public abstract class BaseCardEffect
 
 
     //Activator Function
-    public abstract void CardEffectActivate(GameObject target);
+    public abstract void CardEffectActivate(GameObject target, GameObject actor);
 
-    public virtual void UnitStatusLoad(UnitStatusHolder unitStatus)
+    //NEEDS TO BE CALLED BY EFFECT LOADER
+    //the game object sent is determined in combat manager, if the effectloader is called during player phase, Acting unit will be player
+    //if Effect loader is called during enemyAI, then acting unit sent is the enemy gameObject
+    public virtual void ActingUnitStatusLoad(GameObject actingUnit)
     {
-        this.unitStatus = unitStatus;
+        unitStatus = actingUnit.GetComponent<UnitStatusHolder>();
     }
 
     //set target to actual choice target
@@ -147,6 +150,7 @@ public abstract class BaseCardEffect
     //hits needs to be populated
     public void DealDamage()
     {
+        
         int modifiedDamage = unitStatus.DamageModifierCalculator(damage);
 
         if(AOE == false)

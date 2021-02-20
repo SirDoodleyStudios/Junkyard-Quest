@@ -9,12 +9,17 @@ public class DragNDrop : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
     //Vector3 OriginalPosition;
     Vector3 OriginalScale;
     Canvas sortingCanvas;
+    CardDescriptionLayout cardDescriptionLayout;
 
 
     public void Start()
     {
         //gets its own canvas to activate sorting when hovered on
         sortingCanvas = gameObject.GetComponent<Canvas>();
+
+        //calls activate and deactivate popup methods in cardDescriptionLayout
+        cardDescriptionLayout = gameObject.GetComponent<CardDescriptionLayout>();
+
         //OriginalPosition = gameObject.transform.localPosition;
         OriginalScale = gameObject.transform.localScale;
         //resets position when in hand to prevent hovering showcase
@@ -27,6 +32,8 @@ public class DragNDrop : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
         {
             gameObject.transform.localScale = new Vector3(1.3f, 1.3f, gameObject.transform.localScale.z);
         }
+
+
 
         //state = CombatState.PlayerTurn;
     }
@@ -91,6 +98,9 @@ public class DragNDrop : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
             //gameObject.transform.localPosition = new Vector3(gameObject.transform.localPosition.x, gameObject.transform.localPosition.y, -11f);
             gameObject.GetComponent<BoxCollider2D>().enabled = true;
 
+            //shows popus per tag
+            cardDescriptionLayout.EnablePopups();
+
         }
         
     }
@@ -107,11 +117,16 @@ public class DragNDrop : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
             sortingCanvas.overrideSorting = false;
             //gameObject.transform.localPosition = new Vector3(gameObject.transform.localPosition.x, gameObject.transform.localPosition.y, (gameObject.transform.GetSiblingIndex() * -1));
             gameObject.GetComponent<BoxCollider2D>().enabled = false;
+
+            //prevents popup from appearing when mouse is no longer hovered on card
+            cardDescriptionLayout.DisablePopups();
         }
     }
+    
     public void OnPointerDown(PointerEventData eventData)
     {
-
+        //removes popup after player clicks on card
+        cardDescriptionLayout.DisablePopups();
     }
     public void OnBeginDrag(PointerEventData eventData)
     {

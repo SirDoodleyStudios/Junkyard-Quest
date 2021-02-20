@@ -24,3 +24,6 @@ MonoBehaviour:
   enumCardName: 2800
   jigsawEffect: {fileID: 0}
   abilityEffect: {fileID: 11400000, guid: 66112b7e84bba2b459a5dc7755ac0811, type: 2}
+  Keep: 0
+  Combo: 0
+  cardTags: 01000000
