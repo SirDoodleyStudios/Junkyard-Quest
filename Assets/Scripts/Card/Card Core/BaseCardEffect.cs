@@ -225,9 +225,18 @@ public abstract class BaseCardEffect
 
     }
 
+    public void ApplyStatus(CardMechanics enumKey, int stack)
+    {
+        if (targetObject.GetComponent<UnitStatusHolder>()!=null)
+        {
+            targetObject.GetComponent<UnitStatusHolder>().AlterStatusStack(enumKey, stack);
+        }
+        
+    }
 
 
-    
+
+
 
 
 

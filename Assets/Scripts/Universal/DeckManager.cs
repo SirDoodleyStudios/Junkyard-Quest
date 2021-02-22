@@ -51,7 +51,7 @@ public class DeckManager : MonoBehaviour
             //duplicates each card 3 times, for test only
             foreach(Card card in pool.listOfCards)
             {
-                for (int i = 0; 5 >= i; i++)
+                for (int i = 0; 2 >= i; i++)
                 {
                     instantiatedCard = Instantiate(card);
                     initialDeck.Add(card);

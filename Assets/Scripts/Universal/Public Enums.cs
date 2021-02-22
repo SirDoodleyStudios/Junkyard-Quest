@@ -54,12 +54,14 @@ public enum AllCards: int
     //Neutral Offensive Targetted
     Neu_OT_Attack = 10,
     Neu_OT_Strike,
+    Neu_OT_Strike2,
     //Neutral Utility Dropped
     Neu_UD_Defend = 2700,
     //Neutral Ability Dropped
     Neu_AD_Brainstorm = 3600,
     //Warrior Utility Dropped
     War_UD_Reinforce = 2800,
+    War_UD_WildSwings
 
 }
 
@@ -89,7 +91,8 @@ public enum CardMechanics
     //Unit Statuses
     Strong =20,
     Forceful,
-    Feeble
+    Feeble,
+    Confused
 }
 
 

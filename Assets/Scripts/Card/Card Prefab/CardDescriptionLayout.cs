@@ -36,8 +36,13 @@ public class CardDescriptionLayout : MonoBehaviour/*, IPointerEnterHandler, IPoi
             GameObject popupDesc = Instantiate(popupPrefab, descriptionLayoutHolder.transform);
             RectTransform popupDescRect = popupDesc.GetComponent<RectTransform>();
 
+
             uiText = popupDesc.GetComponent<TextMeshProUGUI>();
-            uiText.text = CardTagManager.GetCardTagDescriptions(tag);
+            if (gameObject.GetComponent<Display>().card.cardTags != null)
+            {
+                uiText.text = CardTagManager.GetCardTagDescriptions(tag);
+            }
+            
 
             //popupDesc.GetComponent<Text>().text = CardTagManager.GetCardTagDescriptions(tag);
 

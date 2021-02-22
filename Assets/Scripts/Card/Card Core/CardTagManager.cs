@@ -11,6 +11,8 @@ public class CardTagManager
     {
         popupDescriptions.Add(CardMechanics.Block, "Block: Prevents damage on HP by amount. Expires by next turn ");
         popupDescriptions.Add(CardMechanics.Deplete, "Deplete: Becomes unusable for the rest of the battle");
+        popupDescriptions.Add(CardMechanics.Forceful, "Forceful: Increases the damage of next attacks by 30%");
+        popupDescriptions.Add(CardMechanics.Confused, "Confused: Targets are chosen at random");
     }
 
     //returns descriptions when called depending on CardTag enum passed
@@ -18,4 +20,5 @@ public class CardTagManager
     {
         return popupDescriptions[cardTagKey];
     }
+
 }
