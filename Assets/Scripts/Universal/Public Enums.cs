@@ -85,14 +85,17 @@ public enum CardMechanics
     Combo,
     Discover,
     Attune,
-    Riddle,
-    
+    Riddle,    
 
-    //Unit Statuses
+    //Usage Stack Statuses
     Strong =20,
     Forceful,
     Feeble,
-    Confused
+
+    //Turn Stack Status
+    Confused = 40,
+
+
 }
 
 

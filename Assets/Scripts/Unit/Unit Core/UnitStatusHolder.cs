@@ -7,10 +7,10 @@ using UnityEngine;
 public class UnitStatusHolder : MonoBehaviour
 {
     //universal list that contains all statuses that can be applied on unit
-    Dictionary<CardMechanics, int> statusDictionary = new Dictionary<CardMechanics, int>();
+    Dictionary<CardMechanics, int> usageStatusDict = new Dictionary<CardMechanics, int>();
 
     //Dictionay of statuses that is currently applied on unit
-    Dictionary<CardMechanics, int> currentStatusDictionary = new Dictionary<CardMechanics, int>();
+    Dictionary<CardMechanics, int> turnStatusDict = new Dictionary<CardMechanics, int>();
 
     //maybe only a list of int references are needed?
     List<int> statusStacks = new List<int>();
@@ -29,16 +29,44 @@ public class UnitStatusHolder : MonoBehaviour
 
     public void Start()
     {
-        statusDictionary.Add(CardMechanics.Confused, Confused);
-        statusDictionary.Add(CardMechanics.Forceful, Forceful);
+        //usageStatusDict.Add(CardMechanics.Confused, Confused);
+        //usageStatusDict.Add(CardMechanics.Forceful, Forceful);
 
-        statusStacks.Add(Confused);
-        statusStacks.Add(Forceful);
+        //statusStacks.Add(Confused);
+        //statusStacks.Add(Forceful);
     }
 
     public void AlterStatusStack(CardMechanics enumKey, int stack)
     {
-        statusDictionary[enumKey] = statusDictionary[enumKey] + stack;
+        //statusDictionary[enumKey] = statusDictionary[enumKey] + stack;
+
+        //CarMechanics index 40+ are turn statuses
+        //turn and usage status are separated for decrementing function later
+        //checks first if unit already has status, if so, simply add it in dictionary
+        //if status already exists, just increment stacks
+
+        if ((int)enumKey >= 40)
+        {
+            if (!turnStatusDict.ContainsKey(enumKey))
+            {
+                turnStatusDict.Add(enumKey, stack);
+            }
+            else
+            {
+                turnStatusDict[enumKey] = turnStatusDict[enumKey] + stack;
+            }
+        }
+        else
+        {
+            if (!usageStatusDict.ContainsKey(enumKey))
+            {
+                usageStatusDict.Add(enumKey, stack);
+            }
+            else
+            {
+                usageStatusDict[enumKey] = usageStatusDict[enumKey] + stack;
+            }
+        }
 
         StatusVisualsUpdater();
     }
