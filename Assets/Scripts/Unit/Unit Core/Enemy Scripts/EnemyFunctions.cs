@@ -24,10 +24,12 @@ public class EnemyFunctions : BaseUnitFunctions
     //contains the gameobjects under the actions panel
     public GameObject actionPanel;
     List<GameObject> actionSlotObjects = new List<GameObject>();
-    //contains the list of sprites for each attack typem this is manually inserted in inspector
-    public List<Sprite> actionIconSprites = new List<Sprite>();
-    //Dictionary to identify what sprite will be used depending on the action type of the enemy action
-    public Dictionary<EnemyActionType, Sprite> actionIconsDict = new Dictionary<EnemyActionType, Sprite>();
+    //contains the list of sprites for each attack typem this is manually inserted in inspector\
+
+    //Decomissioned by 
+    //public List<Sprite> actionIconSprites = new List<Sprite>();
+    ////Dictionary to identify what sprite will be used depending on the action type of the enemy action
+    //public Dictionary<EnemyActionType, Sprite> actionIconsDict = new Dictionary<EnemyActionType, Sprite>();
 
     //for action intent panel
     public GameObject intentPanel;
@@ -65,12 +67,13 @@ public class EnemyFunctions : BaseUnitFunctions
         }
 
         //assigning icon sprites to actiontypenums
-        actionIconsDict.Add(EnemyActionType.Offense, actionIconSprites[0]);
-        actionIconsDict.Add(EnemyActionType.Block, actionIconSprites[1]);
-        actionIconsDict.Add(EnemyActionType.Enhance, actionIconSprites[2]);
-        actionIconsDict.Add(EnemyActionType.Debilitate, actionIconSprites[3]);
-        actionIconsDict.Add(EnemyActionType.Summon, actionIconSprites[4]);
-        actionIconsDict.Add(EnemyActionType.Special, actionIconSprites[5]);
+        //decomissioned by Resources.Load
+        //actionIconsDict.Add(EnemyActionType.Offense, actionIconSprites[0]);
+        //actionIconsDict.Add(EnemyActionType.Block, actionIconSprites[1]);
+        //actionIconsDict.Add(EnemyActionType.Enhance, actionIconSprites[2]);
+        //actionIconsDict.Add(EnemyActionType.Debilitate, actionIconSprites[3]);
+        //actionIconsDict.Add(EnemyActionType.Summon, actionIconSprites[4]);
+        //actionIconsDict.Add(EnemyActionType.Special, actionIconSprites[5]);
 
     }
 
@@ -205,7 +208,8 @@ public class EnemyFunctions : BaseUnitFunctions
                     actionDeck.Remove(tempAction);
 
                     Image tempActionImage = actionObject.GetComponent<Image>();
-                    tempActionImage.sprite = actionIconsDict[tempAction.actionType];
+                    //tempActionImage.sprite = actionIconsDict[tempAction.actionType];      //dictionaryApproach
+                    tempActionImage.sprite = Resources.Load<Sprite>($"EnemyActionIcon/{tempAction.actionType}");
                     actionObject.SetActive(true);
                     actionSlotObjects.Add(actionObject);
                     break;
@@ -275,7 +279,8 @@ public class EnemyFunctions : BaseUnitFunctions
 
 
                     //assigns image to intent slot and enables the intent slot
-                    tempIntentImage.sprite = actionIconsDict[intendedActions[intendedActions.Count - 1].actionType];
+                    //tempIntentImage.sprite = actionIconsDict[intendedActions[intendedActions.Count - 1].actionType];      //dictionary approach
+                    tempIntentImage.sprite = Resources.Load<Sprite>($"EnemyActionIcon/{intendedActions[intendedActions.Count - 1].actionType}");
                     intent.SetActive(true);
 
                     //disables the gameObject that holds the action then sets as last so that the Matcher still matches the indices of actionSlotObjects and actionHand
@@ -315,7 +320,8 @@ public class EnemyFunctions : BaseUnitFunctions
                     //Each action has the EnemyActionIcon script that contains the sprite holder and EnemyActionFormat of the action itself
                     EnemyActionIcon enemyActionIcon = actionSlot.GetComponent<EnemyActionIcon>();
                     //assigns which sprite to use from the sprite dictionary
-                    enemyActionIcon.actionIcon.sprite = actionIconsDict[tempAction.actionType];
+                    //enemyActionIcon.actionIcon.sprite = actionIconsDict[tempAction.actionType];       //sprite dictionary approach
+                    enemyActionIcon.actionIcon.sprite = Resources.Load<Sprite>($"EnemyActionIcon/{tempAction.actionType}");
                     //assigns the EnemyActionFormat from the deck to the EnemyActionIcon holder
                     enemyActionIcon.enemyAction = tempAction;
                     actionObject.SetActive(true);

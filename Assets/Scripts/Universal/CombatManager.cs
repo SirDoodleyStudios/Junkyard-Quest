@@ -80,6 +80,12 @@ public class CombatManager : MonoBehaviour
         d_StartTurn += StartTurn;
         d_StartTurn += enemyHolder.GetComponent<EnemyAIManager>().EnemyStart;
         d_StartTurn += player.GetComponent<PlayerFunctions>().PlayerTurn;
+        d_StartTurn += player.GetComponent<UnitStatusHolder>().TurnStatusUpdater;
+        foreach (Transform enemy in enemyHolder.transform)
+        {
+            d_StartTurn += enemy.gameObject.GetComponent<UnitStatusHolder>().TurnStatusUpdater;
+        }
+
         //d_StartTurn += Player.GetComponent<AbilityManager>().EnableAbilities;
         //d_StartTurn += Player.GetComponent<PlayerFunctions>().AlterPlayerCreativity;
         //d_StartTurn += playerFunctions.StartTurnUpdates;
@@ -88,6 +94,8 @@ public class CombatManager : MonoBehaviour
 
     }
 
+    //this is an event called everytime a player turn is started
+    //called by d_StartTurn()
     public void StartTurn()
     {
         state = CombatState.PlayerTurn;
@@ -583,6 +591,7 @@ public class CombatManager : MonoBehaviour
         //player.GetComponent<BaseUnitFunctions>().RemoveBlock();
         Debug.Log("Losing block");
         yield return new WaitForSeconds(1f);
+
         //delegate for startTurn Event
         d_StartTurn();
     }
