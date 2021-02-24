@@ -26,14 +26,6 @@ public class UnitStatusHolder : MonoBehaviour
     //creates an empty gameobject when statuses are added
     public GameObject statusPrefab;
 
-
-    //Turn Status Stacks
-    int Confused = new int();
-
-
-    //Usage Status Stacks
-    int Forceful = new int();
-
     public void Start()
     {
         //usageStatusDict.Add(CardMechanics.Confused, Confused);
@@ -51,7 +43,7 @@ public class UnitStatusHolder : MonoBehaviour
         //turn and usage status are separated for decrementing function later
         //checks first if unit already has status, if so, simply add it in dictionary
         //if status already exists, just increment stacks
-
+        //this function will receive stacks to add or subtract
         if ((int)enumKey >= 40)
         {
             if (!turnStatusDict.ContainsKey(enumKey))
@@ -61,8 +53,14 @@ public class UnitStatusHolder : MonoBehaviour
             }
             else
             {
+                //after adding or subtracting, calls visual updater
                 turnStatusDict[enumKey] = turnStatusDict[enumKey] + stack;
                 StatusVisualsUpdater(enumKey, turnStatusDict[enumKey]);
+                //if stack becomes 0 at the end, remove from the turnStatusDict
+                if (turnStatusDict[enumKey] <= 0)
+                {
+                    turnStatusDict.Remove(enumKey);
+                }
             }
             
         }
@@ -75,8 +73,14 @@ public class UnitStatusHolder : MonoBehaviour
             }
             else
             {
+                //after adding or subtracting, calls visual updater
                 usageStatusDict[enumKey] = usageStatusDict[enumKey] + stack;
                 StatusVisualsUpdater(enumKey, usageStatusDict[enumKey]);
+                //if stack becomes 0 at the end, remove from the usageStatusDict
+                if (usageStatusDict[enumKey] <= 0)
+                {
+                    usageStatusDict.Remove(enumKey);
+                }
             }
             
         }
@@ -84,24 +88,44 @@ public class UnitStatusHolder : MonoBehaviour
 
     public void TurnStatusUpdater()
     {
-        List<CardMechanics> tempList = new List<CardMechanics>();
+        //list to contain enumKeys to be removed once stack goes 0
+        List<CardMechanics> removeStackList = new List<CardMechanics>();
+        //list to contain enumkeys just to be decreased
+        Dictionary<CardMechanics, int> decreaseStackDict = new Dictionary<CardMechanics, int>();
         foreach (KeyValuePair<CardMechanics, int> tagStack in turnStatusDict)
         {
             int tempStack = tagStack.Value - 1;
             if (tempStack <= 0)
             {
-                tempList.Add(tagStack.Key);
+                removeStackList.Add(tagStack.Key);
             }
-            StatusVisualsUpdater(tagStack.Key, tempStack);
+            else
+            {
+                decreaseStackDict.Add(tagStack.Key, tagStack.Value);
+            }
+            //tempstack sent is negative cuz we removing stacks
+            //AlterStatusStack(tagStack.Key, -tempStack);
+            //StatusVisualsUpdater(tagStack.Key, tempStack);
         }
 
-        if (tempList.Count != 0)
+        if (decreaseStackDict.Count != 0)
         {
-            foreach (CardMechanics enumKey in tempList)
+            foreach (KeyValuePair<CardMechanics, int> decreaseStack in decreaseStackDict)
             {
-                turnStatusDict.Remove(enumKey);
+                AlterStatusStack(decreaseStack.Key, -1);
             }
         }
+
+        if (removeStackList.Count != 0)
+        {
+            foreach (CardMechanics enumKey in removeStackList)
+            {
+                AlterStatusStack(enumKey, -1);
+            }
+        }
+
+        decreaseStackDict.Clear();
+        removeStackList.Clear();
     }
 
 
@@ -140,11 +164,22 @@ public class UnitStatusHolder : MonoBehaviour
 
     }
 
-
+    //These Calculators are going to vary depending if a mechanicis added or subrtacted
     public int DamageModifierCalculator(int baseDamage)
     {
-        int total = 5;
-        return total;
+        //if Forceful is in tags, increase damage by 30%
+        if (usageStatusDict.ContainsKey(CardMechanics.Forceful))
+        {
+            int total = Mathf.FloorToInt(baseDamage * 1.3f);    
+            return total;
+        }
+        //if there are no cardd tags to affect calculations, just return base damage
+        else
+        {
+            return baseDamage;
+        }
+
+        
     }
 
     public int BlockModifierCalculator(int baseBlock)

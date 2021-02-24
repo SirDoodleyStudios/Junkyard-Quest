@@ -95,6 +95,9 @@ public enum CardMechanics
     //Turn Stack Status
     Confused = 40,
 
+    //Permanent Stack Statuses
+
+
 
 }
 
