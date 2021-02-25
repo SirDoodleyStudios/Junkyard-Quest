@@ -29,11 +29,25 @@ public enum AllJigsaws
 
 }
 
-public enum EnemyActionType { Offense, Block, Enhance, Debilitate, Summon, Special}
+public enum EnemyActionType { Offense, Block, Enhance, Debilitate, Special}
 public enum AllEnemyActions
 {
-    Enemy_Deal_X_Damage,
-    Enemy_Gain_X_Block,
+    Enemy_AttackPattern1,
+    Enemy_AttackPattern2,
+    Enemy_AttackPattern3,
+
+    Enemy_BlockPattern1,
+    Enemy_BlockPattern2,
+    Enemy_BlockPattern3,
+
+    Enemy_EnhancePattern1,
+    Enemy_EnhancePattern2,
+    Enemy_EnhancePattern3,
+
+    Enemy_DebilitatePattern1,
+    Enemy_DebilitatePattern2,
+    Enemy_DebilitatePattern3
+
 }
 
 
@@ -55,6 +69,8 @@ public enum AllCards: int
     Neu_OT_Attack = 10,
     Neu_OT_Strike,
     Neu_OT_Strike2,
+    //Warrior Offensive Targetted
+    War_OT_Sting = 100,
     //Neutral Utility Dropped
     Neu_UD_Defend = 2700,
     //Neutral Ability Dropped
@@ -78,22 +94,27 @@ public enum StatusEffects
 
 public enum CardMechanics
 {
-    //Card only Mechanics
+    //Miscellaneous
+    None,
+    Ability,
     Block,
-    Deplete,
+
+    //Card only Mechanics
+    Deplete = 10,
     Keep,
     Combo,
     Discover,
     Attune,
-    Riddle,    
+    Riddle, 
 
     //Usage Stack Statuses
-    Strong =20,
+    Strong = 40,
     Forceful,
     Feeble,
 
     //Turn Stack Status
-    Confused = 40,
+    Confused = 70,
+    Shocked
 
     //Permanent Stack Statuses
 

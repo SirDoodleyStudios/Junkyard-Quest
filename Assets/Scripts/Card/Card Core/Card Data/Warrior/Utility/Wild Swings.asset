@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Wild Swings
   m_EditorClassIdentifier: 
   cardName: Wild Swings
-  effect: Gain Forceful 2 and Confused 2
+  effect: Gain FORCEFUL 2 and CONFUSED 2
   attachmentText: Deal 10 Damage
   energyCost: 1
   artwork: {fileID: 6934086728263231946, guid: fdad304c0d77b634da8823590021649a, type: 3}
@@ -26,4 +26,4 @@ MonoBehaviour:
   abilityEffect: {fileID: 0}
   Keep: 0
   Combo: 0
-  cardTags: 1500000028000000
+  cardTags: 2900000046000000

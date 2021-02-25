@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 public class BaseUnitFunctions:MonoBehaviour
 {
@@ -18,21 +19,26 @@ public class BaseUnitFunctions:MonoBehaviour
 
     //for showing HP values in UI
     public Slider HPSlider;
-    public Text HPText;
+    //public Text HPText;
+    public TextMeshProUGUI HPText;
 
     public Slider CreativitySlider;
-    public Text CreativityText;
+    //public Text CreativityText;
+    public TextMeshProUGUI CreativityText;
 
     //for showing block values in UI
     public GameObject blockBackground;
-    public Text blockText;
+    //public Text blockText;
+    public TextMeshProUGUI blockText;
 
-
+    //The UnitStatusHolder attached to this unit
+    UnitStatusHolder unitStatusHolder;
 
 
     public void Start()
     {
         InitializeStats();
+        unitStatusHolder = gameObject.GetComponent<UnitStatusHolder>();
     }
 
     //Initialize HP for all units
@@ -71,11 +77,11 @@ public class BaseUnitFunctions:MonoBehaviour
     public virtual void TakeDamage(int damageValue)
     {
         //gets difference of currentHP and damage/heal value, prevents negatives
+
+        int modifiedValue = unitStatusHolder.DamageTakingModifierCalculator(damageValue);
         
-        
-        
-        int HPdamage = block - damageValue;
-        block = Mathf.Max(block - damageValue, 0);
+        int HPdamage = block - modifiedValue;
+        block = Mathf.Max(block - modifiedValue, 0);
         if (HPdamage < 0)
         {
             currHP = Mathf.Max(currHP - Mathf.Abs(HPdamage), 0);

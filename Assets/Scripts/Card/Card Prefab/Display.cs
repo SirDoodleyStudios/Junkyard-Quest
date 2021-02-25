@@ -2,26 +2,35 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 public class Display : MonoBehaviour
 {
     public Card card;
 
-    public Text displayCardName;
-    public Text displayEffect;
+    //public Text displayCardName;
+    //public Text displayEffect;
+    ////public Text displayLeftEffect;
+    ////public Text displayRightEffect;
+    //public Text displayJigsawText;
+
+    //public Text displayEnergyCost;
+    ////public Text displayCreativityCost;
+
+    public TextMeshProUGUI displayCardName;
+    public TextMeshProUGUI displayEffect;
     //public Text displayLeftEffect;
     //public Text displayRightEffect;
-    public Text displayJigsawText;
+    public TextMeshProUGUI displayJigsawText;
 
-    public Text displayEnergyCost;
-    //public Text displayCreativityCost;
+    public TextMeshProUGUI displayEnergyCost;
+
 
     public Image displayArtwork;
     public Image displayJigsawImage;
 
     private void Start()
     {
-        
     }
     private void OnEnable()
     {

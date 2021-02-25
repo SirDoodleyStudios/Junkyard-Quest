@@ -98,11 +98,13 @@ public class DragNDrop : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
             //gameObject.transform.localPosition = new Vector3(gameObject.transform.localPosition.x, gameObject.transform.localPosition.y, -11f);
             gameObject.GetComponent<BoxCollider2D>().enabled = true;
 
-            //shows popus per tag
-            cardDescriptionLayout.EnablePopups();
+
 
         }
-        
+        //shows popus per tag
+        cardDescriptionLayout.EnablePopups();
+
+
     }
 
     public void OnPointerExit(PointerEventData eventData)
@@ -118,9 +120,10 @@ public class DragNDrop : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
             //gameObject.transform.localPosition = new Vector3(gameObject.transform.localPosition.x, gameObject.transform.localPosition.y, (gameObject.transform.GetSiblingIndex() * -1));
             gameObject.GetComponent<BoxCollider2D>().enabled = false;
 
-            //prevents popup from appearing when mouse is no longer hovered on card
-            cardDescriptionLayout.DisablePopups();
+
         }
+        //prevents popup from appearing when mouse is no longer hovered on card
+        cardDescriptionLayout.DisablePopups();
     }
     
     public void OnPointerDown(PointerEventData eventData)

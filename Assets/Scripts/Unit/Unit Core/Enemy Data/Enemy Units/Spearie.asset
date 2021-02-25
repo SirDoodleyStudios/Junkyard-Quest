@@ -16,16 +16,30 @@ MonoBehaviour:
   Creativity: 3
   draw: 4
   actionList:
-  - {fileID: 11400000, guid: 488b18fa501eb2f46808b9184ab41ea4, type: 2}
-  - {fileID: 11400000, guid: a210047a51bfa994aaddd34dd183f81e, type: 2}
-  - {fileID: 11400000, guid: a210047a51bfa994aaddd34dd183f81e, type: 2}
-  - {fileID: 11400000, guid: a210047a51bfa994aaddd34dd183f81e, type: 2}
+  - {fileID: 11400000, guid: 3c5d32bc0d2369e45bd1c54530675f85, type: 2}
+  - {fileID: 11400000, guid: a440eb396f9b07946bb30d49f187be34, type: 2}
   - {fileID: 11400000, guid: 488b18fa501eb2f46808b9184ab41ea4, type: 2}
   - {fileID: 11400000, guid: 488b18fa501eb2f46808b9184ab41ea4, type: 2}
+  - {fileID: 11400000, guid: 3c5d32bc0d2369e45bd1c54530675f85, type: 2}
   - {fileID: 11400000, guid: a210047a51bfa994aaddd34dd183f81e, type: 2}
-  normalDamage: 10
-  smallDamage: 0
-  bigDamage: 0
-  normalBlock: 8
-  smallBlock: 0
-  bigBlock: 0
+  AttackPattern1: 10
+  HitsPattern1: 1
+  AttackPattern2: 6
+  HitsPattern2: 2
+  AttackPattern3: 0
+  HitsPattern3: 0
+  BlockPattern1: 10
+  BlockPattern2: 0
+  BlockPattern3: 0
+  EnhancePattern1: 0
+  EnhanceStackPattern1: 0
+  EnhancePattern2: 0
+  EnhanceStackPattern2: 0
+  EnhancePattern3: 0
+  EnhanceStackPattern3: 0
+  DebilitatePattern1: 42
+  DebilitateStackPattern1: 2
+  DebilitatePattern2: 0
+  DebilitateStackPattern2: 0
+  DebilitatePattern3: 0
+  DebilitateStackPattern3: 0

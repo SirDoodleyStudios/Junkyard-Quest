@@ -24,8 +24,13 @@ public class War_UD_WildSwings : BaseCardEffect
     {
         ActingUnitStatusLoad(actor);
         AffectPlayer(target);
-        ApplyStatus(CardMechanics.Forceful, 1);
-        ApplyStatus(CardMechanics.Confused, 1);
+
+        status = CardMechanics.Forceful;
+        stack = 1;
+        ApplyStatus();
+
+        status = CardMechanics.Confused;
+        ApplyStatus();
 
     }
 

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 public class EnemyFunctions : BaseUnitFunctions
 {
@@ -209,9 +210,12 @@ public class EnemyFunctions : BaseUnitFunctions
 
                     Image tempActionImage = actionObject.GetComponent<Image>();
                     //tempActionImage.sprite = actionIconsDict[tempAction.actionType];      //dictionaryApproach
+                    //CONSIDER USING SCRIPTABLE OBJECTS INSTEAD OF RESOURCE FOLDER
                     tempActionImage.sprite = Resources.Load<Sprite>($"EnemyActionIcon/{tempAction.actionType}");
                     actionObject.SetActive(true);
                     actionSlotObjects.Add(actionObject);
+
+
                     break;
                 }
             }
@@ -280,6 +284,7 @@ public class EnemyFunctions : BaseUnitFunctions
 
                     //assigns image to intent slot and enables the intent slot
                     //tempIntentImage.sprite = actionIconsDict[intendedActions[intendedActions.Count - 1].actionType];      //dictionary approach
+                    //CONSIDER USING SCRIPTABLE OBJECTS INSTEAD OF RESOURCE FOLDER
                     tempIntentImage.sprite = Resources.Load<Sprite>($"EnemyActionIcon/{intendedActions[intendedActions.Count - 1].actionType}");
                     intent.SetActive(true);
 
@@ -311,6 +316,7 @@ public class EnemyFunctions : BaseUnitFunctions
             {
                 //cache for the child transform's gameObject
                 GameObject actionObject = actionSlot.gameObject;
+                TextMeshProUGUI actionObjectNumberText = actionObject.transform.GetChild(0).GetComponent<TextMeshProUGUI>();
                 //iterates till it finds a disabled slot, enables it then breaks
                 if (actionObject.activeSelf == false)
                 {
@@ -321,15 +327,93 @@ public class EnemyFunctions : BaseUnitFunctions
                     EnemyActionIcon enemyActionIcon = actionSlot.GetComponent<EnemyActionIcon>();
                     //assigns which sprite to use from the sprite dictionary
                     //enemyActionIcon.actionIcon.sprite = actionIconsDict[tempAction.actionType];       //sprite dictionary approach
+                    //CONSIDER USING SCRIPTABLE OBJECTS INSTEAD OF RESOURCE FOLDER
                     enemyActionIcon.actionIcon.sprite = Resources.Load<Sprite>($"EnemyActionIcon/{tempAction.actionType}");
                     //assigns the EnemyActionFormat from the deck to the EnemyActionIcon holder
                     enemyActionIcon.enemyAction = tempAction;
+                    //calls local function to get respective action pattern number texts, potency for attacks and blocks, stacks for enhance and debilitates
+                    actionObjectNumberText.text = ActionNumbersGet(tempAction.enumEnemyAction);
                     actionObject.SetActive(true);
                     break;
                 }
             }
         }       
 
+    }
+
+    //This function is solely for getting text numbers to be displayed on enemy action and intents
+    private string ActionNumbersGet(AllEnemyActions actions)
+    {
+        string numberText;
+        switch (actions)
+        {
+            //AttackPatterns
+            case AllEnemyActions.Enemy_AttackPattern1:
+                if (enemyUnit.HitsPattern1 > 1)
+                {
+                    numberText = $"{enemyUnit.AttackPattern1}X{enemyUnit.HitsPattern1}";
+                }
+                else
+                {
+                    numberText = enemyUnit.AttackPattern1.ToString();
+                }                
+                break;
+            case AllEnemyActions.Enemy_AttackPattern2:
+                if (enemyUnit.HitsPattern2 > 1)
+                {
+                    numberText = $"{enemyUnit.AttackPattern2}X{enemyUnit.HitsPattern2}";
+                }
+                else
+                {
+                    numberText = enemyUnit.AttackPattern2.ToString();
+                }
+                break;
+            case AllEnemyActions.Enemy_AttackPattern3:
+                if (enemyUnit.HitsPattern3 > 1)
+                {
+                    numberText = $"{enemyUnit.AttackPattern3}X{enemyUnit.HitsPattern3}";
+                }
+                else
+                {
+                    numberText = enemyUnit.AttackPattern3.ToString();
+                }
+                break;
+            //BlockPatterns
+            case AllEnemyActions.Enemy_BlockPattern1:
+                numberText = enemyUnit.AttackPattern1.ToString();
+                break;
+            case AllEnemyActions.Enemy_BlockPattern2:
+                numberText = enemyUnit.AttackPattern2.ToString();
+                break;
+            case AllEnemyActions.Enemy_BlockPattern3:
+                numberText = enemyUnit.AttackPattern3.ToString();
+                break;
+            //EnhancePatterns
+            case AllEnemyActions.Enemy_EnhancePattern1:
+                numberText = enemyUnit.EnhanceStackPattern1.ToString();
+                break;
+            case AllEnemyActions.Enemy_EnhancePattern2:
+                numberText = enemyUnit.EnhanceStackPattern2.ToString();
+                break;
+            case AllEnemyActions.Enemy_EnhancePattern3:
+                numberText = enemyUnit.EnhanceStackPattern3.ToString();
+                break;
+            //DebilitatePatterns
+            case AllEnemyActions.Enemy_DebilitatePattern1:
+                numberText = enemyUnit.DebilitateStackPattern1.ToString();
+                break;
+            case AllEnemyActions.Enemy_DebilitatePattern2:
+                numberText = enemyUnit.DebilitateStackPattern2.ToString();
+                break;
+            case AllEnemyActions.Enemy_DebilitatePattern3:
+                numberText = enemyUnit.DebilitateStackPattern3.ToString();
+                break;
+
+            default:
+                numberText = "";
+                break;
+        }
+        return numberText;
     }
 
     public void EnemyCastIntent2()
@@ -357,7 +441,8 @@ public class EnemyFunctions : BaseUnitFunctions
 
             }
             //for finding available links for the initial intent
-            else
+            //limit of 2 links only or 3 actions
+            else if (intentPanel.transform.childCount < 3)
             {
                 //checks each remaining card in in actionHand if there are linkables
                 foreach (Transform actionTransform in actionPanel.transform)
@@ -382,6 +467,12 @@ public class EnemyFunctions : BaseUnitFunctions
 
                 }
             }
+            //if 3 intent slots are picked, immediately break
+            else
+            {
+                isNoMoreLinks = true;
+            }
+
         //will keep iterating and finding links until there are none
         } while (isNoMoreLinks == false);
 

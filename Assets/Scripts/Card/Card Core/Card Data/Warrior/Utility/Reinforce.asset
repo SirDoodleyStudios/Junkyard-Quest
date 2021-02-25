@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Reinforce
   m_EditorClassIdentifier: 
   cardName: Reinforce
-  effect: Gain 20 Block
+  effect: Gain 20 BLOCK
   attachmentText: Gain 10 Block
   energyCost: 2
   artwork: {fileID: 21300000, guid: 382fc813f7404ff4fb0ee61b9524f238, type: 3}
@@ -26,4 +26,4 @@ MonoBehaviour:
   abilityEffect: {fileID: 0}
   Keep: 0
   Combo: 0
-  cardTags: 0000000001000000
+  cardTags: 02000000

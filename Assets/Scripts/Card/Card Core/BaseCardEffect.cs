@@ -20,10 +20,15 @@ public abstract class BaseCardEffect
     //cache for UnitStatusHolder, this will be the reference after assigning it
     UnitStatusHolder unitStatus;
 
-    //determines if DealDamage() will affect a single unit or the children of the enemy holder
+    //ticked if an offense card is dropped I think
     protected bool AOE;
+    //will be used as indicator whether gameBOject is to be discarderd at end turn
     protected bool keep;
+    //will be used to determine if the method being called is for card or enemy
+    //MAYBE STATUSES ARE ONLY AFFECTED BY CARDS OR ENEMYACTIONS
+    protected bool isCardOrEnemyAction;
 
+    //variables for values
     protected int damage;
     protected int block;
     protected int hits;
@@ -32,6 +37,9 @@ public abstract class BaseCardEffect
     protected int discard;
     protected int creativity;
     protected int energy;
+
+    protected CardMechanics status;
+    protected int stack;
 
 
 
@@ -150,8 +158,9 @@ public abstract class BaseCardEffect
     //hits needs to be populated
     public void DealDamage()
     {
-        
-        int modifiedDamage = unitStatus.DamageModifierCalculator(damage);
+        //calls the unitStatusHolder to calculate damage based on existing statuses on unit actor
+
+        int modifiedDamage = unitStatus.DamageDealingModifierCalculator(damage);
 
         if(AOE == false)
         {
@@ -180,7 +189,8 @@ public abstract class BaseCardEffect
 
     public void GainBlock()
     {
-        targetUnit.GainBlock(block);
+        int modifiedBlock = unitStatus.BlockModifierCalculator(block);
+        targetUnit.GainBlock(modifiedBlock);
     }
 
     public void DrawCard()
@@ -225,11 +235,12 @@ public abstract class BaseCardEffect
 
     }
 
-    public void ApplyStatus(CardMechanics enumKey, int stack)
+    public void ApplyStatus()
     {
         if (targetObject.GetComponent<UnitStatusHolder>()!=null)
         {
-            targetObject.GetComponent<UnitStatusHolder>().AlterStatusStack(enumKey, stack);
+            //targetObject.GetComponent<UnitStatusHolder>().AlterStatusStack(enumKey, stack);
+            targetObject.GetComponent<UnitStatusHolder>().AlterStatusStack(status, stack);
         }
         
     }
