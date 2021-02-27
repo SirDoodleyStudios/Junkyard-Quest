@@ -17,6 +17,7 @@ public class DeckManager : MonoBehaviour
 
     //panel that shows the player had of cards
     public GameObject playerHandPanel;
+    CustomHandLayout handLayout;
     public GameObject cardPrefab;
 
     Card instantiatedCard;
@@ -43,6 +44,9 @@ public class DeckManager : MonoBehaviour
     
     void Start()
     {
+        //assigning cache for playerHand's layouting logic
+        handLayout = playerHandPanel.GetComponent<CustomHandLayout>();
+
         //must depend on chosen character and class
 
         //look through pools first, LOGIC MIGHT CHANGE
@@ -106,7 +110,10 @@ public class DeckManager : MonoBehaviour
                 enabledCard.GetComponent<EffectLoader>().card = deckCard;
                 //setactive must be called after the the GetComponents Display and EffectLoader
                 //this is because Display function will start at OnEnable
+                ///////////////////////////////////////////////////////////////////////////////////////////////////////
+                ///create a logic that warps position of card gameObject from deck first then enable it then show animation going from deck to hand
                 enabledCard.SetActive(true);
+                handLayout.ActivateRearrange(playerHand.Count);
             }
 
             drawtemp++;
@@ -154,8 +161,9 @@ public class DeckManager : MonoBehaviour
     }
 
     // can only be called when card is discarded via combat
-    public void DiscardCards(Card discardedCard)
+    public void DiscardCards(GameObject discardedCardObject)
     {
+        Card discardedCard = discardedCardObject.GetComponent<Display>().card;
         //for moving the card to discard and removing from player hand
         //Card discardedCard = discardedPrefab.GetComponent<Display>().card; not needed since combat manager will only be sending the Card
         discardPile.Add(discardedCard);
@@ -164,6 +172,8 @@ public class DeckManager : MonoBehaviour
         //discardedPrefab.SetActive(false);
         //discardedPrefab.transform.SetAsLastSibling();
         discardCount = discardPile.Count;
+        discardedCardObject.SetActive(false);
+        handLayout.ActivateRearrange(playerHand.Count);
     }
 
 

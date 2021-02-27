@@ -238,13 +238,16 @@ public class CombatManager : MonoBehaviour
                     //Energy = Energy - activeCard.gameObject.GetComponent<Display>().card.energyCost;
                     EnergyUpdater(-activeCard.gameObject.GetComponent<Display>().card.energyCost);
                     //calls discard method and puts active card in discard pile
-                    DiscardFromHand();
+                    //Set sibling as last must be called first before discarding because it messes with the card hand arangement logic
                     activeCard.transform.SetAsLastSibling();
+                    deckManager.DiscardCards(activeCard);
+
                     //retuns to player turn phase
                     state = CombatState.PlayerTurn;
                     //activeCard.GetComponent<DragNDrop>().StateChanger(state);////////////////////
                     playerHand.StateChanger(state);
                     DeckUpdater();
+                    playerHand.ResetOriginal();
 
                     //////just for testing unli attacks///
                     //state = CombatState.PlayerTurn;
@@ -262,13 +265,17 @@ public class CombatManager : MonoBehaviour
                     //Energy = Energy - activeCard.gameObject.GetComponent<Display>().card.energyCost;
                     EnergyUpdater(-activeCard.gameObject.GetComponent<Display>().card.energyCost);
                     //calls discard method and puts active card in discard pile
-                    DiscardFromHand();
+                    //Set sibling as last must be called first before discarding because it messes with the card hand arangement logic
                     activeCard.transform.SetAsLastSibling();
+                    deckManager.DiscardCards(activeCard);
+
                     //retuns to player turn phase
                     state = CombatState.PlayerTurn;
                     //activeCard.GetComponent<DragNDrop>().StateChanger(state);////////////////////
                     playerHand.StateChanger(state);
                     DeckUpdater();
+                    //every time a card is played, reset it's scale down from
+                    playerHand.ResetOriginal();
 
                     //for thedropfield moving up approach targetting system
                     ////returns dropfield to back after activate of card
@@ -282,18 +289,23 @@ public class CombatManager : MonoBehaviour
                     //Energy = Energy - activeCard.gameObject.GetComponent<Display>().card.energyCost;
                     EnergyUpdater(-activeCard.gameObject.GetComponent<Display>().card.energyCost);
                     //calls discard method and puts active card in discard pile
-                    DiscardFromHand();
+                    //Set sibling as last must be called first before discarding because it messes with the card hand arangement logic
                     activeCard.transform.SetAsLastSibling();
+                    deckManager.DiscardCards(activeCard);
+
                     //retuns to player turn phase
                     state = CombatState.PlayerTurn;
                     //activeCard.GetComponent<DragNDrop>().StateChanger(state);////////////////////
                     playerHand.StateChanger(state);
                     DeckUpdater();
+                    //every time a card is played, reset it's scale down from
+                    playerHand.ResetOriginal();
                 }
                 else
                 {
                     Debug.Log("no target here");
                 }
+                
             }
         }
 
@@ -439,7 +451,7 @@ public class CombatManager : MonoBehaviour
                 {
                     activeCard = linkedCard;
                     //calls discard method and puts active card in discard pile
-                    DiscardFromHand();
+                    deckManager.DiscardCards(activeCard);
                 }
                 //clearing CardObjects 
                 creativeList.Clear();
@@ -503,7 +515,7 @@ public class CombatManager : MonoBehaviour
     public void DiscardFromHand()
     {
         Card activeCardCard = activeCard.GetComponent<Display>().card;
-        deckManager.DiscardCards(activeCardCard);
+        deckManager.DiscardCards(activeCard);
         activeCard.SetActive(false);
         
     }
@@ -560,7 +572,7 @@ public class CombatManager : MonoBehaviour
             if(cardInHand.gameObject.activeSelf == true)
             {
                 activeCard = cardInHand.gameObject;
-                DiscardFromHand();
+                deckManager.DiscardCards(activeCard);
             }
            
         }
