@@ -14,5 +14,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   HP: 100
   Creativity: 10
-  draw: 3
+  draw: 9
   energy: 90

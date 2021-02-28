@@ -26,6 +26,8 @@ public class UnitStatusHolder : MonoBehaviour
     //creates an empty gameobject when statuses are added
     public GameObject statusPrefab;
 
+    //all instantiated icons are in here
+
     public void Start()
     {
         //usageStatusDict.Add(CardMechanics.Confused, Confused);
@@ -161,6 +163,7 @@ public class UnitStatusHolder : MonoBehaviour
             GameObject instantiatedIcon = Instantiate(statusPrefab, statusPanel.transform);
             existingStatusDict.Add(enumKey, instantiatedIcon);
 
+
             //CONSIDER USING SCRIPTABLE OBJECTS INSTEAD OF RESOURCE FOLDER
             Image statusImage = instantiatedIcon.GetComponent<Image>();
             statusImage.sprite = Resources.Load<Sprite>($"UnitStatus/{enumKey}");
@@ -174,11 +177,24 @@ public class UnitStatusHolder : MonoBehaviour
             statusIconDesc.AssignIconDescription(CardTagManager.GetCardTagDescriptions(enumKey));
 
         }
+
+        if (existingStatusDict.ContainsKey(enumKey) && !existingStatusDict[enumKey].activeSelf)
+        {
+            //enables the status icon
+            existingStatusDict[enumKey].SetActive(true);
+            //Gets the first child which is the stack text
+            TextMeshProUGUI stackText = existingStatusDict[enumKey].transform.GetChild(0).gameObject.GetComponent<TextMeshProUGUI>();
+            stackText.text = stack.ToString();
+
+        }
         //Destroy initialized Icons if stack becomes 0
         else if (existingStatusDict.ContainsKey(enumKey) && stack <= 0)
         {
-            Destroy(existingStatusDict[enumKey]);
-            existingStatusDict.Remove(enumKey);
+            //Destroy(existingStatusDict[enumKey]);
+            //existingStatusDict.Remove(enumKey);
+
+            existingStatusDict[enumKey].SetActive(false);
+
             
         }
         //if mechanic key already exists, only update the stack text

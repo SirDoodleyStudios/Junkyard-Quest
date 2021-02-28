@@ -10,6 +10,7 @@ public class DragNDrop : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
     Vector3 OriginalScale;
     Canvas sortingCanvas;
     CardDescriptionLayout cardDescriptionLayout;
+    Transform objecTransform;
 
 
     public void Start()
@@ -17,20 +18,22 @@ public class DragNDrop : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
         //gets its own canvas to activate sorting when hovered on
         sortingCanvas = gameObject.GetComponent<Canvas>();
 
+        objecTransform = gameObject.transform;
+
         //calls activate and deactivate popup methods in cardDescriptionLayout
         cardDescriptionLayout = gameObject.GetComponent<CardDescriptionLayout>();
 
         //OriginalPosition = gameObject.transform.localPosition;
-        OriginalScale = gameObject.transform.localScale;
+        OriginalScale = objecTransform.localScale;
         //resets position when in hand to prevent hovering showcase
-        if (gameObject.transform.GetComponentInParent<PlayerHand>() != null)
+        if (objecTransform.GetComponentInParent<PlayerHand>() != null)
         {
-            gameObject.transform.GetComponentInParent<PlayerHand>().d_originalPosition += PositionReset;
+            objecTransform.GetComponentInParent<PlayerHand>().d_originalPosition += PositionReset;
         }
         //automatically zooms object when in creative field
-        else if (gameObject.transform.GetComponentInParent<CreativeManager>() != null)
+        else if (objecTransform.GetComponentInParent<CreativeManager>() != null)
         {
-            gameObject.transform.localScale = new Vector3(1.3f, 1.3f, gameObject.transform.localScale.z);
+            objecTransform.localScale = new Vector3(1.3f, 1.3f, objecTransform.localScale.z);
         }
 
 
@@ -75,7 +78,7 @@ public class DragNDrop : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
     //called by playerHand for reseting when action is cancelled
     public void PositionReset()
     {
-        gameObject.transform.localScale = OriginalScale;
+        objecTransform.localScale = OriginalScale;
         //this is a hack, assigns a Z position based on index, so child 0 will have 0 z, child 1 has -1 z and 2 will have -2
         // this allows each card will stack in from of each other in a proper manner from left to right
         //gameObject.transform.localPosition = new Vector3(gameObject.transform.localPosition.x, gameObject.transform.localPosition.y, (gameObject.transform.GetSiblingIndex()*-1));
@@ -89,17 +92,16 @@ public class DragNDrop : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
     public void OnPointerEnter(PointerEventData eventData)
     {
         //OriginalPosition = gameObject.transform.localPosition;
-        if (gameObject.transform.GetComponentInParent<PlayerHand>() != null &&
-            gameObject.transform.GetComponentInParent<PlayerHand>().state == CombatState.PlayerTurn)
+        if (objecTransform.GetComponentInParent<PlayerHand>() != null &&
+            objecTransform.GetComponentInParent<PlayerHand>().state == CombatState.PlayerTurn)
         {
-            gameObject.transform.localScale = new Vector3(1.3f, 1.3f, gameObject.transform.localScale.z);
+            objecTransform.localScale = new Vector3(1.3f, 1.3f, objecTransform.localScale.z);
+            
             //sets zoomed card to showcase area
             //gameObject.GetComponent<Canvas>().sortingOrder = 1;
             sortingCanvas.overrideSorting = true;
             //gameObject.transform.localPosition = new Vector3(gameObject.transform.localPosition.x, gameObject.transform.localPosition.y, -11f);
             gameObject.GetComponent<BoxCollider2D>().enabled = true;
-
-
 
         }
         //shows popus per tag
@@ -111,10 +113,10 @@ public class DragNDrop : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
     public void OnPointerExit(PointerEventData eventData)
     {
         
-        if (gameObject.transform.GetComponentInParent<PlayerHand>() != null &&
-            gameObject.transform.GetComponentInParent<PlayerHand>().state == CombatState.PlayerTurn)
+        if (objecTransform.GetComponentInParent<PlayerHand>() != null &&
+            objecTransform.GetComponentInParent<PlayerHand>().state == CombatState.PlayerTurn)
         {
-            gameObject.transform.localScale = OriginalScale;
+            objecTransform.localScale = OriginalScale;
             //sets zoomed card to showcase area
             //gameObject.GetComponent<Canvas>().sortingOrder = 0;
             sortingCanvas.overrideSorting = false;

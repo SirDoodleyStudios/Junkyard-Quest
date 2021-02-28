@@ -33,10 +33,11 @@ public class CustomHandLayout : MonoBehaviour
         oddIncrement = handRect.rect.width / 10;
         evenIncrement = handRect.rect.width / 11;
         //Assignment of Vector points
-        pointAodd = new Vector2(oddIncrement, handRect.rect.height / (2 * 2f));
-        pointAeven = new Vector2(evenIncrement, handRect.rect.height / (2 * 2f));
-        pointBodd = new Vector2((9 * oddIncrement), handRect.rect.height / (2 * 2f));
-        pointBeven = new Vector2((10 * evenIncrement), handRect.rect.height / (2 * 2f));
+        float yVariable = 2.8f;
+        pointAodd = new Vector2(oddIncrement, handRect.rect.height / (2 * yVariable));
+        pointAeven = new Vector2(evenIncrement, handRect.rect.height / (2 * yVariable));
+        pointBodd = new Vector2((9 * oddIncrement), handRect.rect.height / (2 * yVariable));
+        pointBeven = new Vector2((10 * evenIncrement), handRect.rect.height / (2 * yVariable));
         pointCodd = new Vector2 (5 * oddIncrement, 0);
         pointCeven = new Vector2 (5 * evenIncrement, 0);
         //Immediate assignment of center X
@@ -63,17 +64,20 @@ public class CustomHandLayout : MonoBehaviour
     }
 
     IEnumerator RearrangeOddHand(int handCount)
-    {
+    {   
+        //temp index is the last index of the card hand
         int tempIndex = handCount - 1;
         Transform cardTransform = gameObject.transform;
         for (int i = 0; tempIndex >= i; i++ )
         {
-            RectTransform cardRect = cardTransform.GetChild(i).GetComponent<RectTransform>();
+            Transform childTransform = cardTransform.GetChild(i);
+            RectTransform cardRect = childTransform.GetComponent<RectTransform>();
             float x = (oddIncrement * ((5 - tempIndex / 2) + i));
             float y = YPositionOddFormula((oddIncrement * ((5 - tempIndex / 2) + i)));
             //cardRect.anchoredPosition = new Vector2((oddIncrement * ((5 - tempIndex / 2) + i)), YPositionOddFormula((oddIncrement * ((5 - tempIndex / 2) + i))));
             cardRect.anchoredPosition = new Vector2(x, y);
-            //cardRect.Rotate(0, 0, RotationAngleCalculatorOdd(x, y));
+            //sets perfect rotation angles depending on index
+            childTransform.rotation = Quaternion.Euler(0, 0, -RotationAngleCalculatorOdd(x, y));
         }
         yield return null;
     }
@@ -84,12 +88,15 @@ public class CustomHandLayout : MonoBehaviour
         Transform cardTransform = gameObject.transform;
         for (int i = 0; tempIndex >= i; i++)
         {
-            RectTransform cardRect = cardTransform.GetChild(i).GetComponent<RectTransform>();
+            Transform childTransform = cardTransform.GetChild(i);
+            RectTransform cardRect = childTransform.GetComponent<RectTransform>();
             float x = (evenIncrement * ((5 - (tempIndex - 1) / 2) + i));
             float y = YPositionEvenFormula((evenIncrement * ((5 - (tempIndex - 1) / 2) + i)));
             //cardRect.anchoredPosition = new Vector2((evenIncrement * ((5 - (tempIndex -1) / 2) + i)), YPositionEvenFormula((evenIncrement * ((5 - (tempIndex - 1) / 2) + i))));
             cardRect.anchoredPosition = new Vector2(x, y);
-            //cardRect.Rotate(0, 0, RotationAngleCalculatorEven(x, y));
+            //sets perfect rotation angles depending on index
+            childTransform.rotation = Quaternion.Euler(0, 0, -RotationAngleCalculatorEven(x, y));
+
         }
         yield return null;
     }
@@ -117,6 +124,8 @@ public class CustomHandLayout : MonoBehaviour
         centerYodd = perpGradient * (centerXodd - ACBisectorX) + ACBisectorY;
 
         radiusodd = Mathf.Sqrt(Mathf.Pow((pointCodd.x - centerXodd), 2) + Mathf.Pow((pointCodd.y - centerYodd), 2));
+
+
     }
 
     void EvenEquationGenerator()
@@ -132,23 +141,34 @@ public class CustomHandLayout : MonoBehaviour
 
     float RotationAngleCalculatorOdd(float x, float y)
     {
-        
-        float angleRad = Mathf.Atan(Mathf.Abs((y - centerYodd)/(x - centerXodd)));
-        float angleDeg = angleRad * (180 / Mathf.PI);
+
+        //float angleRad = Mathf.Atan(Mathf.Abs((y - centerYodd)/(x - centerXodd)));
+        //float angleDeg = angleRad * (180 / Mathf.PI);
+        //return angleDeg;
+
+        float perpGrad = Mathf.Pow(((y - centerYodd) / (x - centerXodd)), -1);
+        //float yIntercept = y - (perpGrad * x);
+        float angleDeg = Mathf.Atan(perpGrad) * Mathf.Rad2Deg;
+        //float angleDeg = Mathf.Atan(perpGrad);
         return angleDeg;
+
+
+
 
     }
     float RotationAngleCalculatorEven(float x, float y)
     {
-        float angleRad = Mathf.Atan(Mathf.Abs((y - centerYeven)/(x - centerXeven)));  
-        float angleDeg = angleRad * (180 / Mathf.PI);
+        //float angleRad = Mathf.Atan(Mathf.Abs((y - centerYeven)/(x - centerXeven)));  
+        //float angleDeg = angleRad * (180 / Mathf.PI);
+        //return angleDeg;
+
+
+        float perpGrad = Mathf.Pow(((y - centerYeven) / (x - centerXeven)), -1);
+        //float yIntercept = y - (perpGrad * x);
+        float angleDeg = Mathf.Atan(perpGrad) * Mathf.Rad2Deg;
+        //float angleDeg = Mathf.Atan(perpGrad);
         return angleDeg;
 
     }
-
-
-
-
-
 
 }
