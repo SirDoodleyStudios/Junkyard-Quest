@@ -240,14 +240,17 @@ public class CombatManager : MonoBehaviour
                     //calls discard method and puts active card in discard pile
                     //Set sibling as last must be called first before discarding because it messes with the card hand arangement logic
                     activeCard.transform.SetAsLastSibling();
+                    //reset oiginal must come first before discarding, beccause overridesorting can only be set if object is active
+                    playerHand.ResetOriginal();
                     deckManager.DiscardCards(activeCard);
 
                     //retuns to player turn phase
                     state = CombatState.PlayerTurn;
                     //activeCard.GetComponent<DragNDrop>().StateChanger(state);////////////////////
                     playerHand.StateChanger(state);
+
                     DeckUpdater();
-                    playerHand.ResetOriginal();
+
 
                     //////just for testing unli attacks///
                     //state = CombatState.PlayerTurn;
@@ -267,15 +270,18 @@ public class CombatManager : MonoBehaviour
                     //calls discard method and puts active card in discard pile
                     //Set sibling as last must be called first before discarding because it messes with the card hand arangement logic
                     activeCard.transform.SetAsLastSibling();
+                    //reset oiginal must come first before discarding, beccause overridesorting can only be set if object is active
+                    //every time a card is played, reset it's scale down from
+                    playerHand.ResetOriginal();
                     deckManager.DiscardCards(activeCard);
 
                     //retuns to player turn phase
                     state = CombatState.PlayerTurn;
                     //activeCard.GetComponent<DragNDrop>().StateChanger(state);////////////////////
                     playerHand.StateChanger(state);
+
                     DeckUpdater();
-                    //every time a card is played, reset it's scale down from
-                    playerHand.ResetOriginal();
+
 
                     //for thedropfield moving up approach targetting system
                     ////returns dropfield to back after activate of card
@@ -291,15 +297,18 @@ public class CombatManager : MonoBehaviour
                     //calls discard method and puts active card in discard pile
                     //Set sibling as last must be called first before discarding because it messes with the card hand arangement logic
                     activeCard.transform.SetAsLastSibling();
+                    //reset oiginal must come first before discarding, beccause overridesorting can only be set if object is active
+                    //every time a card is played, reset it's scale down from
+                    playerHand.ResetOriginal();
                     deckManager.DiscardCards(activeCard);
 
                     //retuns to player turn phase
                     state = CombatState.PlayerTurn;
                     //activeCard.GetComponent<DragNDrop>().StateChanger(state);////////////////////
                     playerHand.StateChanger(state);
+
                     DeckUpdater();
-                    //every time a card is played, reset it's scale down from
-                    playerHand.ResetOriginal();
+
                 }
                 else
                 {
@@ -451,6 +460,11 @@ public class CombatManager : MonoBehaviour
                 {
                     activeCard = linkedCard;
                     //calls discard method and puts active card in discard pile
+                    activeCard.transform.SetAsLastSibling();
+                    //reset oiginal must come first before discarding, beccause overridesorting can only be set if object is active
+                    //every time a card is played, reset it's scale down from
+                    playerHand.ResetOriginal();
+
                     deckManager.DiscardCards(activeCard);
                 }
                 //clearing CardObjects 

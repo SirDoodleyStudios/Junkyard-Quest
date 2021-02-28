@@ -21,55 +21,82 @@ public class CardDescriptionLayout : MonoBehaviour/*, IPointerEnterHandler, IPoi
     TextMeshProUGUI uiText;
 
     //formula not yet done but me bored
-    //public is for testing only
+    //to hold the card's tagls list so that the SO's info doesnt get affected
     List<CardMechanics> tagsList = new List<CardMechanics>();
+    //existing popups instantiated for the card
+    List<GameObject> existingDescObjList = new List<GameObject>();
+    //cached list of this card SO's tags list
+    List<CardMechanics> tagsListinCard = new List<CardMechanics>();
 
     public bool isInCardCollider;
 
-    void Start()
+    //cache once
+    void Awake()
     {
-        //takes card SO list of tags and imports to card tag list here
-        tagsList.AddRange(gameObject.GetComponent<Display>().card.cardTags);
-        foreach (CardMechanics tag in tagsList)
+
+    }
+    //on enable assign descriptions
+    void OnEnable()
+    {
+        tagsListinCard = gameObject.GetComponent<Display>().card.cardTags;
+        if (tagsList != null)
         {
-            //create popup fields
-            GameObject popupDesc = Instantiate(popupPrefab, descriptionLayoutHolder.transform);
-            RectTransform popupDescRect = popupDesc.GetComponent<RectTransform>();
-
-
-            uiText = popupDesc.GetComponent<TextMeshProUGUI>();
-            if (gameObject.GetComponent<Display>().card.cardTags != null)
-            {
-                uiText.text = CardTagManager.GetCardTagDescriptions(tag);
-            }
-            
-
-            //popupDesc.GetComponent<Text>().text = CardTagManager.GetCardTagDescriptions(tag);
-
-            popupPosList.Add(popupDescRect);
-
+            tagsList.Clear();
         }
+        AssignDescriptions();
+
+    }
+    //everytim the card is disabled, it's discarded or out of use
+    private void OnDisable()
+    {
 
     }
 
-    //public void OnPointerEnter(PointerEventData eventData)
-    //{
-    //    isInCardCollider = true;
-    //    StartCoroutine(OrderPopups());
+    void AssignDescriptions()
+    {
+        //takes card SO list of tags and imports to card tag list here
+        tagsList.AddRange(tagsListinCard);
+        foreach (CardMechanics tag in tagsList)
+        {
+            //this allows recycling of game objects, we just enable them if it already exists
+            if (existingDescObjList.Count >= tagsList.Count)
+            {
+                //gets gameobject from existingList based on how many elements there are in the tagslist
+                RectTransform popupDesc = existingDescObjList[tagsList.IndexOf(tag)].GetComponent<RectTransform>();
+                uiText = popupDesc.GetComponent<TextMeshProUGUI>();
+                if (gameObject.GetComponent<Display>().card.cardTags != null)
+                {
+                    uiText.text = CardTagManager.GetCardTagDescriptions(tag);
+                }                    
 
-    //}
+            }
+            //create popup fields
+            else
+            {
+                //create gameObject if the count of existing is lacking then set them to inactive
+                //the popup prefab is inactive in the prefab itself
+                GameObject popupDesc = Instantiate(popupPrefab, descriptionLayoutHolder.transform);
 
+                //records the gameObject as added for recycling
+                existingDescObjList.Add(popupDesc);
+                RectTransform popupDescRect = popupDesc.GetComponent<RectTransform>();
+                uiText = popupDesc.GetComponent<TextMeshProUGUI>();
+                if (gameObject.GetComponent<Display>().card.cardTags != null)
+                {
+                    uiText.text = CardTagManager.GetCardTagDescriptions(tag);
+                }
+                //popupDesc.GetComponent<Text>().text = CardTagManager.GetCardTagDescriptions(tag);
+                popupPosList.Add(popupDescRect);
+            }           
 
-    //public void OnPointerExit(PointerEventData eventData)
-    //{
-    //    isInCardCollider = false;
-    //    descriptionLayoutHolder.SetActive(false);
-    //}
+        }
+    }
 
     //These will be called by DragNDrop since they have the onpointer enter and onexitevents
     public void EnablePopups()
     {
         isInCardCollider = true;
+        descriptionLayoutHolder.SetActive(true);
         StartCoroutine(OrderPopups());
     }
 
@@ -77,6 +104,10 @@ public class CardDescriptionLayout : MonoBehaviour/*, IPointerEnterHandler, IPoi
     {
         isInCardCollider = false;
         descriptionLayoutHolder.SetActive(false);
+        foreach (GameObject obj in existingDescObjList)
+        {
+            obj.SetActive(false);
+        }
     }
 
 
@@ -95,13 +126,32 @@ public class CardDescriptionLayout : MonoBehaviour/*, IPointerEnterHandler, IPoi
                 descriptionLayoutHolder.SetActive(true);
 
                 //waits for next frame because rectTransform updates will only apply on next frame
-                yield return null;
+                //yield return null;
 
-                foreach (RectTransform popupDescRect in popupPosList)
+                //sets position of card description
+                //foreach (RectTransform popupDescRect in popupPosList)
+                //{
+                //    //enables children as well, so that we can recycle popup gameObjects
+                //    popupDescRect.gameObject.SetActive(true);
+
+                //    yield return null;
+                //    popupDescRect.anchoredPosition = new Vector2(10, nextPosY);
+                //    nextPosY = nextPosY + popupDescRect.rect.height + padding;
+
+                //}
+
+                for (int i = 0; tagsList.Count > i; i++)
                 {
+                    RectTransform popupDescRect = popupPosList[i];
+
+                    //enables children as well, so that we can recycle popup gameObjects
+                    popupDescRect.gameObject.SetActive(true);
+
+                    yield return null;
                     popupDescRect.anchoredPosition = new Vector2(10, nextPosY);
                     nextPosY = nextPosY + popupDescRect.rect.height + padding;
                 }
+
 
                 yield break;
             }

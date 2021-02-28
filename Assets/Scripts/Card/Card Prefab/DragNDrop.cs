@@ -81,6 +81,7 @@ public class DragNDrop : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
         //gameObject.transform.localPosition = new Vector3(gameObject.transform.localPosition.x, gameObject.transform.localPosition.y, (gameObject.transform.GetSiblingIndex()*-1));
         //removes sorting canvas of all cards in hand so hat stacking relies on heirarchy
         sortingCanvas.overrideSorting = false;
+        gameObject.GetComponent<BoxCollider2D>().enabled = false;
         //gameObject.GetComponent<Canvas>().sortingOrder = 0;
         //gameObject.transform.localPosition = OriginalPosition;
     }
