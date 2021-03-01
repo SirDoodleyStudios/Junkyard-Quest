@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
+
+//MAKE SURE THAT THE CARD PREFAB IS  ANCHOR PRESET IS AT MIDDLE LEFT
 public class CustomHandLayout : MonoBehaviour
 {
     RectTransform handRect;
@@ -61,6 +63,11 @@ public class CustomHandLayout : MonoBehaviour
         {
             StartCoroutine(RearrangeOddHand(handCount));
         }
+    }
+
+    public void HoverRearrange()
+    {
+
     }
 
     IEnumerator RearrangeOddHand(int handCount)

@@ -10,30 +10,45 @@ public class DragNDrop : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
     Vector3 OriginalScale;
     Canvas sortingCanvas;
     CardDescriptionLayout cardDescriptionLayout;
-    Transform objecTransform;
+    //cache of card's transform
+    Transform objectTransform;
+    //cache of card's and hand's rectTransform
+    RectTransform objectRect;
+    RectTransform handRect;
+    //cache for card object's anchored position
+    Vector2 cardAnchor;
+    //original positions for reference when changing them during hover
+    Quaternion OriginalOrientation;
+    Vector2 OriginalPosition;
+
 
 
     public void Start()
     {
         //gets its own canvas to activate sorting when hovered on
         sortingCanvas = gameObject.GetComponent<Canvas>();
+        //transform caches
+        objectTransform = gameObject.transform;
+        objectRect = gameObject.GetComponent<RectTransform>();
+        handRect = gameObject.transform.parent.gameObject.GetComponent<RectTransform>();
 
-        objecTransform = gameObject.transform;
+
+
 
         //calls activate and deactivate popup methods in cardDescriptionLayout
         cardDescriptionLayout = gameObject.GetComponent<CardDescriptionLayout>();
 
         //OriginalPosition = gameObject.transform.localPosition;
-        OriginalScale = objecTransform.localScale;
+        OriginalScale = objectTransform.localScale;
         //resets position when in hand to prevent hovering showcase
-        if (objecTransform.GetComponentInParent<PlayerHand>() != null)
+        if (objectTransform.GetComponentInParent<PlayerHand>() != null)
         {
-            objecTransform.GetComponentInParent<PlayerHand>().d_originalPosition += PositionReset;
+            objectTransform.GetComponentInParent<PlayerHand>().d_originalPosition += PositionReset;
         }
         //automatically zooms object when in creative field
-        else if (objecTransform.GetComponentInParent<CreativeManager>() != null)
+        else if (objectTransform.GetComponentInParent<CreativeManager>() != null)
         {
-            objecTransform.localScale = new Vector3(1.3f, 1.3f, objecTransform.localScale.z);
+            objectTransform.localScale = new Vector3(1.3f, 1.3f, objectTransform.localScale.z);
         }
 
 
@@ -78,7 +93,7 @@ public class DragNDrop : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
     //called by playerHand for reseting when action is cancelled
     public void PositionReset()
     {
-        objecTransform.localScale = OriginalScale;
+        objectTransform.localScale = OriginalScale;
         //this is a hack, assigns a Z position based on index, so child 0 will have 0 z, child 1 has -1 z and 2 will have -2
         // this allows each card will stack in from of each other in a proper manner from left to right
         //gameObject.transform.localPosition = new Vector3(gameObject.transform.localPosition.x, gameObject.transform.localPosition.y, (gameObject.transform.GetSiblingIndex()*-1));
@@ -91,12 +106,24 @@ public class DragNDrop : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
 
     public void OnPointerEnter(PointerEventData eventData)
     {
+
+
         //OriginalPosition = gameObject.transform.localPosition;
-        if (objecTransform.GetComponentInParent<PlayerHand>() != null &&
-            objecTransform.GetComponentInParent<PlayerHand>().state == CombatState.PlayerTurn)
+        if (objectTransform.GetComponentInParent<PlayerHand>() != null &&
+            objectTransform.GetComponentInParent<PlayerHand>().state == CombatState.PlayerTurn)
         {
-            objecTransform.localScale = new Vector3(1.3f, 1.3f, objecTransform.localScale.z);
-            
+            //records original position, scale, and rotation first for reverting later on
+
+            //card object anchored position, it's cached here so that the original position is always reset at hover
+            cardAnchor = objectRect.anchoredPosition;
+            OriginalPosition = cardAnchor;
+            OriginalOrientation = objectTransform.rotation;
+            //actual setting of scale, rotation and position
+            objectTransform.localScale = new Vector3(1.3f, 1.3f, objectTransform.localScale.z);
+            objectRect.anchoredPosition = new Vector2(cardAnchor.x, 15);
+            objectTransform.rotation = Quaternion.Euler(0,0,0);
+
+
             //sets zoomed card to showcase area
             //gameObject.GetComponent<Canvas>().sortingOrder = 1;
             sortingCanvas.overrideSorting = true;
@@ -112,11 +139,16 @@ public class DragNDrop : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
 
     public void OnPointerExit(PointerEventData eventData)
     {
-        
-        if (objecTransform.GetComponentInParent<PlayerHand>() != null &&
-            objecTransform.GetComponentInParent<PlayerHand>().state == CombatState.PlayerTurn)
+
+
+
+        if (objectTransform.GetComponentInParent<PlayerHand>() != null &&
+            objectTransform.GetComponentInParent<PlayerHand>().state == CombatState.PlayerTurn)
         {
-            objecTransform.localScale = OriginalScale;
+
+            objectRect.anchoredPosition = OriginalPosition;
+            objectTransform.rotation = OriginalOrientation;
+            objectTransform.localScale = OriginalScale;
             //sets zoomed card to showcase area
             //gameObject.GetComponent<Canvas>().sortingOrder = 0;
             sortingCanvas.overrideSorting = false;

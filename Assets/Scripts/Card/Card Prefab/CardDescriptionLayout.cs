@@ -7,8 +7,7 @@ using UnityEngine.EventSystems;
 
 public class CardDescriptionLayout : MonoBehaviour/*, IPointerEnterHandler, IPointerExitHandler*/
 {
-    //contains card tag descriptions
-    CardTagManager cardTagManager;
+    
     //parent empty object of popup decriptions and it's RectTransform cache
     public GameObject descriptionLayoutHolder;
     RectTransform descriptionRect;
@@ -17,10 +16,13 @@ public class CardDescriptionLayout : MonoBehaviour/*, IPointerEnterHandler, IPoi
     public GameObject popupPrefab;
     //constant space between popus
     const float padding = 10;
-
+    //text of actual description
     TextMeshProUGUI uiText;
+    //canvasgroup cache for making it invisible during activating coroutine
+    //this will prevent stuttering of popup visuals
+    CanvasGroup canvasGroup;
 
-    //formula not yet done but me bored
+
     //to hold the card's tagls list so that the SO's info doesnt get affected
     List<CardMechanics> tagsList = new List<CardMechanics>();
     //existing popups instantiated for the card
@@ -33,17 +35,24 @@ public class CardDescriptionLayout : MonoBehaviour/*, IPointerEnterHandler, IPoi
     //cache once
     void Awake()
     {
+        //cache of canvasgroup
+        //gets the last child of card prefab which is the tag description holder
+        canvasGroup = gameObject.transform.GetChild(gameObject.transform.childCount - 1).gameObject.GetComponent<CanvasGroup>();
 
     }
     //on enable assign descriptions
     void OnEnable()
     {
+        //cache the SO's card list
         tagsListinCard = gameObject.GetComponent<Display>().card.cardTags;
+        //always clear this prefab's list of tags cuz it will change depending on what card is assigned to it during draw
         if (tagsList != null)
         {
             tagsList.Clear();
         }
+        //actual assignment of string to popup text objects
         AssignDescriptions();
+
 
     }
     //everytim the card is disabled, it's discarded or out of use
@@ -96,14 +105,17 @@ public class CardDescriptionLayout : MonoBehaviour/*, IPointerEnterHandler, IPoi
     public void EnablePopups()
     {
         isInCardCollider = true;
-        descriptionLayoutHolder.SetActive(true);
+        //descriptionLayoutHolder.SetActive(true);
         StartCoroutine(OrderPopups());
+
     }
 
     public void DisablePopups()
     {
         isInCardCollider = false;
-        descriptionLayoutHolder.SetActive(false);
+        //make popups invisible when hover is ended
+        canvasGroup.alpha = 0;
+        //descriptionLayoutHolder.SetActive(false);
         foreach (GameObject obj in existingDescObjList)
         {
             obj.SetActive(false);
@@ -122,35 +134,30 @@ public class CardDescriptionLayout : MonoBehaviour/*, IPointerEnterHandler, IPoi
             {
                 //Cache for a rectTransform's height
                 descriptionRect = descriptionLayoutHolder.GetComponent<RectTransform>();
-                float nextPosY = -descriptionRect.rect.height;
-                descriptionLayoutHolder.SetActive(true);
+                //will allow popup tags to start at multiplier's height
+                float nextPosY = -descriptionRect.rect.height * .8f;
 
-                //waits for next frame because rectTransform updates will only apply on next frame
-                //yield return null;
 
-                //sets position of card description
-                //foreach (RectTransform popupDescRect in popupPosList)
-                //{
-                //    //enables children as well, so that we can recycle popup gameObjects
-                //    popupDescRect.gameObject.SetActive(true);
-
-                //    yield return null;
-                //    popupDescRect.anchoredPosition = new Vector2(10, nextPosY);
-                //    nextPosY = nextPosY + popupDescRect.rect.height + padding;
-
-                //}
-
+                //for assigining positions of popups based on it's order
                 for (int i = 0; tagsList.Count > i; i++)
                 {
                     RectTransform popupDescRect = popupPosList[i];
 
                     //enables children as well, so that we can recycle popup gameObjects
                     popupDescRect.gameObject.SetActive(true);
+                    //this frame yield is needed so that UI positions and sizes are set first before getting them
+                    yield return new WaitForEndOfFrame();
 
-                    yield return null;
                     popupDescRect.anchoredPosition = new Vector2(10, nextPosY);
+
+                    //will keep adding to nextPosY so that later popus are placed heigher
                     nextPosY = nextPosY + popupDescRect.rect.height + padding;
+
                 }
+                //descriptionLayoutHolder.SetActive(true);
+                //makes popups visible during hover
+                canvasGroup.alpha = 1f;
+
 
 
                 yield break;
