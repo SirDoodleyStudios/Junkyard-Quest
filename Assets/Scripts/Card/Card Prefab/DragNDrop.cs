@@ -93,6 +93,8 @@ public class DragNDrop : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
     //called by playerHand for reseting when action is cancelled
     public void PositionReset()
     {
+        objectRect.anchoredPosition = OriginalPosition;
+        objectTransform.rotation = OriginalOrientation;
         objectTransform.localScale = OriginalScale;
         //this is a hack, assigns a Z position based on index, so child 0 will have 0 z, child 1 has -1 z and 2 will have -2
         // this allows each card will stack in from of each other in a proper manner from left to right
