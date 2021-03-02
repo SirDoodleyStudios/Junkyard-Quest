@@ -7,6 +7,9 @@ using UnityEngine.UI;
 //MAKE SURE THAT THE CARD PREFAB IS  ANCHOR PRESET IS AT MIDDLE LEFT
 public class CustomHandLayout : MonoBehaviour
 {
+    public delegate void D_FixOriginalPositions();
+    public event D_FixOriginalPositions d_FixOriginalPositions;
+
     RectTransform handRect;
     float oddIncrement;
     float evenIncrement;
@@ -24,8 +27,6 @@ public class CustomHandLayout : MonoBehaviour
     float centerYeven;
     float radiusodd;
     float radiuseven;
-    float equationX;
-    float equationY;
 
     public void Start()
     {
@@ -35,7 +36,7 @@ public class CustomHandLayout : MonoBehaviour
         oddIncrement = handRect.rect.width / 10;
         evenIncrement = handRect.rect.width / 11;
         //Assignment of Vector points
-        float yVariable = 2.8f;
+        float yVariable = 3f;
         pointAodd = new Vector2(oddIncrement, handRect.rect.height / (2 * yVariable));
         pointAeven = new Vector2(evenIncrement, handRect.rect.height / (2 * yVariable));
         pointBodd = new Vector2((9 * oddIncrement), handRect.rect.height / (2 * yVariable));
@@ -87,6 +88,7 @@ public class CustomHandLayout : MonoBehaviour
             childTransform.rotation = Quaternion.Euler(0, 0, -RotationAngleCalculatorOdd(x, y));
         }
         yield return null;
+        d_FixOriginalPositions();
     }
 
     IEnumerator RearrangeEvenHand(int handCount)
@@ -106,6 +108,7 @@ public class CustomHandLayout : MonoBehaviour
 
         }
         yield return null;
+        d_FixOriginalPositions();
     }
 
     //actual equation for finding Y position based on determined X

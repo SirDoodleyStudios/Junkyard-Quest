@@ -16,14 +16,12 @@ public class DragNDrop : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
     RectTransform objectRect;
     RectTransform handRect;
     //cache for card object's anchored position
-    Vector2 cardAnchor;
+    Vector2 cardAnchor { get; set; }
     //original positions for reference when changing them during hover
-    Quaternion OriginalOrientation;
-    Vector2 OriginalPosition;
+    Quaternion OriginalOrientation { get; set; }
+    Vector2 OriginalPosition { get; set; }
 
-
-
-    public void Start()
+    public void Awake()
     {
         //gets its own canvas to activate sorting when hovered on
         sortingCanvas = gameObject.GetComponent<Canvas>();
@@ -32,12 +30,20 @@ public class DragNDrop : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
         objectRect = gameObject.GetComponent<RectTransform>();
         handRect = gameObject.transform.parent.gameObject.GetComponent<RectTransform>();
 
+        if (objectTransform.GetComponentInParent<PlayerHand>() != null)
+        {
+            //assign the original position assigner to delegate in custom hand layout so that it's position can be reset everytime a rearrange is called
+            objectTransform.parent.gameObject.GetComponent<CustomHandLayout>().d_FixOriginalPositions += AssignInitialPositions;
+        }
+
+    }
 
 
-
+    public void Start()
+    {
         //calls activate and deactivate popup methods in cardDescriptionLayout
         cardDescriptionLayout = gameObject.GetComponent<CardDescriptionLayout>();
-
+        //in here so that cards are drawn at original scale?
         //OriginalPosition = gameObject.transform.localPosition;
         OriginalScale = objectTransform.localScale;
         //resets position when in hand to prevent hovering showcase
@@ -55,40 +61,15 @@ public class DragNDrop : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
 
         //state = CombatState.PlayerTurn;
     }
-    //public void OnEnable()
-    //{
-    //    OriginalPosition = gameObject.transform.localPosition;
-    //    OriginalScale = gameObject.transform.localScale;
-    //    //resets position when in hand to prevent hovering showcase
-    //    if (gameObject.transform.GetComponentInParent<PlayerHand>() != null)
-    //    {
-    //        gameObject.transform.GetComponentInParent<PlayerHand>().d_originalPosition += PositionReset;
-    //    }
-    //    //automatically zooms object when in creative field
-    //    else if (gameObject.transform.GetComponentInParent<CreativeManager>() != null)
-    //    {
-    //        gameObject.transform.localScale = new Vector3(1.3f, 1.3f, gameObject.transform.localScale.z);
-    //    }
-    //}
 
-    //gets called by combatmanager
-    //public void StateChanger(CombatState tempstate)
-    //{
-    //    state = tempstate;
-    //    //removes zoom effect from card if rightclicked from combatmanager
-    //    if(state == CombatState.PlayerTurn)
-    //    {
-    //        gameObject.transform.localScale = OriginalScale;
-    //    }
-    //}
+    //called by event in CustomHandLayout so that original poisitions are reset everytime a rearrange happens
+    public void AssignInitialPositions()
+    {
+        cardAnchor = objectRect.anchoredPosition;
+        OriginalPosition = cardAnchor;
+        OriginalOrientation = objectTransform.rotation;
+    }
 
-    //public void StateChanger(CombatState combatManagerState)
-    //{
-    //    if (gameObject.transform.GetComponentInParent<PlayerHand>().state == CombatState.PlayerTurn)
-    //    {
-    //        gameObject.transform.localScale = OriginalScale;
-    //    }
-    //}
 
     //called by playerHand for reseting when action is cancelled
     public void PositionReset()
@@ -117,9 +98,10 @@ public class DragNDrop : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
             //records original position, scale, and rotation first for reverting later on
 
             //card object anchored position, it's cached here so that the original position is always reset at hover
-            cardAnchor = objectRect.anchoredPosition;
-            OriginalPosition = cardAnchor;
-            OriginalOrientation = objectTransform.rotation;
+            //cardAnchor = objectRect.anchoredPosition;
+            //OriginalPosition = cardAnchor;
+            //OriginalOrientation = objectTransform.rotation;
+
             //actual setting of scale, rotation and position
             objectTransform.localScale = new Vector3(1.3f, 1.3f, objectTransform.localScale.z);
             objectRect.anchoredPosition = new Vector2(cardAnchor.x, 15);

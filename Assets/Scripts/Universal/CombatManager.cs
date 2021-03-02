@@ -58,6 +58,8 @@ public class CombatManager : MonoBehaviour
     Ray ray;
     RaycastHit2D pointedObject;
     RaycastHit2D pointedTarget;
+    //for arrow pointing dynamic position
+    TargetArrowHandler targetArrowHandler;
 
     public void Start()
     {
@@ -67,6 +69,7 @@ public class CombatManager : MonoBehaviour
 
         //initial caching of player stats
         playerFunctions = player.GetComponent<PlayerFunctions>();
+
         
         //for just copying the default energy and draws from playerFunctions
         //defaultEnergy = player.GetComponent<PlayerFunctions>().defaultEnergy;
@@ -152,6 +155,8 @@ public class CombatManager : MonoBehaviour
 
                     activeCard = pointedObject.collider.gameObject;
                     Card activeCardCard = activeCard.GetComponent<Display>().card;
+                    //assigning targetArrowHandler in Object prefab
+                    targetArrowHandler = activeCard.GetComponent<TargetArrowHandler>();
 
                     //makes the dropzone move up so that becomes the target for drop cards
                     //for thedropfield moving up approach targetting system
@@ -213,13 +218,13 @@ public class CombatManager : MonoBehaviour
                 //activeCard.GetComponent<DragNDrop>().StateChanger(state); ///////////////////////////
                 playerHand.StateChanger(state);
                 playerHand.ResetOriginal();
+            }
 
-                //for thedropfield moving up approach targetting system
-                //if (activeCardCard.cardMethod == CardMethod.Dropped)
-                //{
-                //    //returns dropfield to back after activate of card
-                //    dropField.transform.localPosition = originalDropFieldPosition;
-                //}
+            //if card is targettable, enable logic for dynamic arrow morphing
+            if (activeCardCard.cardMethod == CardMethod.Targetted)
+            {
+                Vector3 mousePos = Input.mousePosition;
+                targetArrowHandler.dynamicPositionArrow(mousePos);
 
             }
 
@@ -231,6 +236,7 @@ public class CombatManager : MonoBehaviour
 
                 if (targetObject.tag == "Enemy" && activeCardCard.cardMethod == CardMethod.Targetted)
                 {
+
                     
                     //activeEffectLoader.EffectLoaderActivate(targetObject, player); ---- This is to be used if single jigsaws ccan be activated without creative mode
                     activeEffectLoader.ActivateCardEffect(targetObject, player);
