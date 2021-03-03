@@ -158,14 +158,6 @@ public class CombatManager : MonoBehaviour
                     //assigning targetArrowHandler in Object prefab
                     targetArrowHandler = activeCard.GetComponent<TargetArrowHandler>();
 
-                    //makes the dropzone move up so that becomes the target for drop cards
-                    //for thedropfield moving up approach targetting system
-                    //if (activeCardCard.cardMethod == CardMethod.Dropped)
-                    //{                        
-                    //    Vector3 dropFieldShift = dropField.transform.localPosition;
-                    //    dropField.transform.localPosition = new Vector3(dropFieldShift.x, dropFieldShift.y, -1);
-                    //}
-
                     //checks the scriptable attached in Display if cost can be accomodated by Energy
                     //if (activeCardCard.energyCost <= Energy)
                     if (activeCardCard.energyCost <= playerFunctions.currEnergy)
@@ -173,6 +165,12 @@ public class CombatManager : MonoBehaviour
                         state = CombatState.ActiveCard;
                         //activeCard.GetComponent<DragNDrop>().StateChanger(state); /////////////////////
                         playerHand.StateChanger(state);
+
+                        //if card is targetted type, enable the dots and arrowhead holder in TargetArrowHandler script
+                        if (activeCardCard.cardMethod == CardMethod.Targetted)
+                        {
+                            targetArrowHandler.EnableArrow();
+                        }
                         
                     }
                     //else if(activeCard.gameObject.GetComponent<Display>().card.energyCost > Energy)
@@ -218,13 +216,20 @@ public class CombatManager : MonoBehaviour
                 //activeCard.GetComponent<DragNDrop>().StateChanger(state); ///////////////////////////
                 playerHand.StateChanger(state);
                 playerHand.ResetOriginal();
+
+                if (activeCardCard.cardMethod == CardMethod.Targetted)
+                {
+                    targetArrowHandler.DisableArrow();
+                }
             }
 
             //if card is targettable, enable logic for dynamic arrow morphing
+            //this is continuous
             if (activeCardCard.cardMethod == CardMethod.Targetted)
             {
-                Vector3 mousePos = Input.mousePosition;
-                targetArrowHandler.dynamicPositionArrow(mousePos);
+                //sends mouse position to active card's target arrow handlker and calculates all of the dot's positions
+                Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+                targetArrowHandler.DynamicPositionArrow(mousePos);
 
             }
 
@@ -246,6 +251,13 @@ public class CombatManager : MonoBehaviour
                     //calls discard method and puts active card in discard pile
                     //Set sibling as last must be called first before discarding because it messes with the card hand arangement logic
                     activeCard.transform.SetAsLastSibling();
+
+                    //for disabling arrows
+                    if (activeCardCard.cardMethod == CardMethod.Targetted)
+                    {
+                        targetArrowHandler.DisableArrow();
+                    }
+
                     //reset oiginal must come first before discarding, beccause overridesorting can only be set if object is active
                     playerHand.ResetOriginal();
                     deckManager.DiscardCards(activeCard);
@@ -256,6 +268,8 @@ public class CombatManager : MonoBehaviour
                     playerHand.StateChanger(state);
 
                     DeckUpdater();
+
+
 
 
                     //////just for testing unli attacks///
