@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 1762508281}
   - component: {fileID: 1762508283}
   - component: {fileID: 1762508282}
-  m_Layer: 0
+  m_Layer: 15
   m_Name: Jigsaw Image
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -85,7 +85,7 @@ GameObject:
   - component: {fileID: 1163390445977428918}
   - component: {fileID: 5499234884955777687}
   - component: {fileID: 1801031085}
-  m_Layer: 0
+  m_Layer: 15
   m_Name: Effect Text
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -218,7 +218,7 @@ GameObject:
   - component: {fileID: 121708558438344007}
   - component: {fileID: 525908877479819367}
   - component: {fileID: 7740216426908014471}
-  m_Layer: 0
+  m_Layer: 15
   m_Name: Artwork
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -292,7 +292,7 @@ GameObject:
   - component: {fileID: 8442661271863818447}
   - component: {fileID: 3992361960563694009}
   - component: {fileID: 1597487004}
-  m_Layer: 0
+  m_Layer: 15
   m_Name: Card Name
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -425,7 +425,7 @@ GameObject:
   - component: {fileID: 3241418062872416306}
   - component: {fileID: 62466618487274117}
   - component: {fileID: 327958376}
-  m_Layer: 0
+  m_Layer: 15
   m_Name: Energy Cost
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -563,7 +563,7 @@ GameObject:
   - component: {fileID: 7796352439554441540}
   - component: {fileID: 6464637262997976180}
   - component: {fileID: 1319250700}
-  m_Layer: 0
+  m_Layer: 15
   m_Name: Card Deck View Template
   m_TagString: Card
   m_Icon: {fileID: 0}
@@ -645,7 +645,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 54d9f41070aa4ba4aa844af511b9fdd3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  card: {fileID: 11400000, guid: f8da9032880073f4f9a930263f9ea61e, type: 2}
+  card: {fileID: 11400000, guid: 47f782c40aa3b63468c99f1e77c885f5, type: 2}
   displayCardName: {fileID: 1597487004}
   displayEffect: {fileID: 1801031085}
   displayJigsawText: {fileID: 1707610334}
@@ -729,7 +729,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5457994288791303516}
   - component: {fileID: 4911017144017089866}
-  m_Layer: 0
+  m_Layer: 15
   m_Name: Tag Description Holder
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -778,7 +778,7 @@ GameObject:
   - component: {fileID: 2407971728137195494}
   - component: {fileID: 1843629874596107906}
   - component: {fileID: 1707610334}
-  m_Layer: 0
+  m_Layer: 15
   m_Name: Jigsaw Text
   m_TagString: Untagged
   m_Icon: {fileID: 0}

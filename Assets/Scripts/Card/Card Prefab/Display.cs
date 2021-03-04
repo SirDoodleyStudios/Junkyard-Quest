@@ -51,20 +51,20 @@ public class Display : MonoBehaviour
 
         //Determines Card layer from CardType enum
         //9 is offense, 10 is util, 11 is ability
-        switch (card.cardType)
-        {
-            case CardType.Offense:
-                gameObject.layer = 9;
-                break;
+        //switch (card.cardType)
+        //{
+        //    case CardType.Offense:
+        //        gameObject.layer = 9;
+        //        break;
 
-            case CardType.Utility:
-                gameObject.layer = 10;
-                break;
+        //    case CardType.Utility:
+        //        gameObject.layer = 10;
+        //        break;
 
-            case CardType.Ability:
-                gameObject.layer = 11;
-                break;
-        }
+        //    case CardType.Ability:
+        //        gameObject.layer = 11;
+        //        break;
+        //}
     }
 
 }

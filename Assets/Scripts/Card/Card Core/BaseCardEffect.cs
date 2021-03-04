@@ -77,6 +77,7 @@ public abstract class BaseCardEffect
             targetObject = enemyHolder.transform.parent.gameObject.transform.GetChild(1).gameObject;
             targetUnit = targetObject.GetComponent<PlayerFunctions>();
         }
+        //if enemyholder
         else
         {
             targetObject = target.transform.parent.GetChild(1).gameObject;

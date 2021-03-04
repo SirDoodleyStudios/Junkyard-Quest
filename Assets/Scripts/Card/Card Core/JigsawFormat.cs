@@ -17,5 +17,8 @@ public class JigsawFormat : ScriptableObject
     //THIS SHOULD BE ADDED AFTER RANDOMIZING
     public AllJigsaws enumJigsawName;
 
+    //For Creative mode to determine whether it's targetted or not
+    public CardMethod jigsawMethod;
+
 
 }

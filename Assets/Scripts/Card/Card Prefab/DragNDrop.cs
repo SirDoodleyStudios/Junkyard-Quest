@@ -6,6 +6,9 @@ using UnityEngine.UI;
 
 public class DragNDrop : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IPointerDownHandler, IBeginDragHandler, IDragHandler, IEndDragHandler, IPointerClickHandler
 {
+    //cache for card's parent
+    PlayerHand playerHand;
+
     //Vector3 OriginalPosition;
     Vector3 OriginalScale;
     Canvas sortingCanvas;
@@ -21,8 +24,15 @@ public class DragNDrop : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
     Quaternion OriginalOrientation { get; set; }
     Vector2 OriginalPosition { get; set; }
 
+
+    //for one clock drag
+    PointerEventData pointerEventData;
+    bool isDragging; //identifier for drag and end drag when to stop
+
     public void Awake()
     {
+        
+
         //gets its own canvas to activate sorting when hovered on
         sortingCanvas = gameObject.GetComponent<Canvas>();
         //transform caches
@@ -30,7 +40,9 @@ public class DragNDrop : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
         objectRect = gameObject.GetComponent<RectTransform>();
         handRect = gameObject.transform.parent.gameObject.GetComponent<RectTransform>();
 
-        if (objectTransform.GetComponentInParent<PlayerHand>() != null)
+        playerHand = objectTransform.GetComponentInParent<PlayerHand>();
+
+        if (playerHand != null)
         {
             //assign the original position assigner to delegate in custom hand layout so that it's position can be reset everytime a rearrange is called
             objectTransform.parent.gameObject.GetComponent<CustomHandLayout>().d_FixOriginalPositions += AssignInitialPositions;
@@ -47,12 +59,12 @@ public class DragNDrop : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
         //OriginalPosition = gameObject.transform.localPosition;
         OriginalScale = objectTransform.localScale;
         //resets position when in hand to prevent hovering showcase
-        if (objectTransform.GetComponentInParent<PlayerHand>() != null)
+        if (playerHand != null)
         {
-            objectTransform.GetComponentInParent<PlayerHand>().d_originalPosition += PositionReset;
+            playerHand.d_originalPosition += PositionReset;
         }
         //automatically zooms object when in creative field
-        else if (objectTransform.GetComponentInParent<CreativeManager>() != null)
+        else if (playerHand != null)
         {
             objectTransform.localScale = new Vector3(1.3f, 1.3f, objectTransform.localScale.z);
         }
@@ -92,8 +104,7 @@ public class DragNDrop : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
 
 
         //OriginalPosition = gameObject.transform.localPosition;
-        if (objectTransform.GetComponentInParent<PlayerHand>() != null &&
-            objectTransform.GetComponentInParent<PlayerHand>().state == CombatState.PlayerTurn)
+        if (playerHand != null && playerHand.state == CombatState.PlayerTurn)
         {
             //records original position, scale, and rotation first for reverting later on
 
@@ -126,8 +137,7 @@ public class DragNDrop : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
 
 
 
-        if (objectTransform.GetComponentInParent<PlayerHand>() != null &&
-            objectTransform.GetComponentInParent<PlayerHand>().state == CombatState.PlayerTurn)
+        if (playerHand != null && playerHand.state == CombatState.PlayerTurn)
         {
 
             objectRect.anchoredPosition = OriginalPosition;
@@ -145,24 +155,68 @@ public class DragNDrop : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
         cardDescriptionLayout.DisablePopups();
     }
     
+
+    //on firs instance of click, assign event data so that we can pass it to OnDrag using ActivateSingleClickDrag
     public void OnPointerDown(PointerEventData eventData)
     {
         //removes popup after player clicks on card
         cardDescriptionLayout.DisablePopups();
+
+
+
+
+        //can only do the dragging function during PlayerTurn
+        //will allow to drag card until player rightclicks or left clocks a target
+        isDragging = true;
+        //if card is a dropped card, proceed with card drag
+        OnBeginDrag(eventData);
+
+
+
     }
     public void OnBeginDrag(PointerEventData eventData)
     {
+
+    }
+    //called by combatManager update to emulate a drag function
+    public void ActivateSingleClickDrag()
+    {
+        if (isDragging)
+        {
+            OnDrag(pointerEventData);
+            //makes card ignore raycast so that combat manager can register target units
+            gameObject.layer = 2;
+        }
+
+    }
+    public void DeactivateDrag()
+    {
+        if (isDragging)
+        {
+            //layer 15 is Card Layer
+            gameObject.layer = 15;
+            isDragging = false;
+            OnEndDrag(pointerEventData);
+        }
 
     }
 
     public void OnDrag(PointerEventData eventData)
     {
 
+        gameObject.transform.position = Camera.main.ScreenToWorldPoint(Input.mousePosition);
     }
 
     public void OnEndDrag(PointerEventData eventData)
     {
-
+        objectRect.anchoredPosition = OriginalPosition;
+        objectTransform.rotation = OriginalOrientation;
+        objectTransform.localScale = OriginalScale;
+        //sets zoomed card to showcase area
+        //gameObject.GetComponent<Canvas>().sortingOrder = 0;
+        sortingCanvas.overrideSorting = false;
+        //gameObject.transform.localPosition = new Vector3(gameObject.transform.localPosition.x, gameObject.transform.localPosition.y, (gameObject.transform.GetSiblingIndex() * -1));
+        gameObject.GetComponent<BoxCollider2D>().enabled = false;
     }
 
     public void OnPointerClick(PointerEventData eventData)

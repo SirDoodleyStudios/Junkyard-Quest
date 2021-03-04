@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 986456805790976801}
   - component: {fileID: 986456805790976803}
   - component: {fileID: 986456805790976802}
-  m_Layer: 0
+  m_Layer: 15
   m_Name: Jigsaw Image
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -85,7 +85,7 @@ GameObject:
   - component: {fileID: 2131795056790394222}
   - component: {fileID: 4747266525327793231}
   - component: {fileID: 986456805752454005}
-  m_Layer: 0
+  m_Layer: 15
   m_Name: Effect Text
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -218,7 +218,7 @@ GameObject:
   - component: {fileID: 8690472352449711639}
   - component: {fileID: 4239894071018254177}
   - component: {fileID: 986456806493126980}
-  m_Layer: 0
+  m_Layer: 15
   m_Name: Card Name
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -351,7 +351,7 @@ GameObject:
   - component: {fileID: 864968706045383583}
   - component: {fileID: 791787370496462527}
   - component: {fileID: 7411338296279916895}
-  m_Layer: 0
+  m_Layer: 15
   m_Name: Artwork
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -425,7 +425,7 @@ GameObject:
   - component: {fileID: 2399096646969730794}
   - component: {fileID: 967557259816946781}
   - component: {fileID: 986456807779174832}
-  m_Layer: 0
+  m_Layer: 15
   m_Name: Energy Cost
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -563,7 +563,7 @@ GameObject:
   - component: {fileID: 7026367492320212892}
   - component: {fileID: 6054975811512091308}
   - component: {fileID: 986456806217719252}
-  m_Layer: 0
+  m_Layer: 15
   m_Name: Card Creative Template
   m_TagString: Card
   m_Icon: {fileID: 0}
@@ -730,7 +730,7 @@ GameObject:
   - component: {fileID: 3231980045189822782}
   - component: {fileID: 1451701313428840538}
   - component: {fileID: 986456805862647302}
-  m_Layer: 0
+  m_Layer: 15
   m_Name: Jigsaw Text
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -862,7 +862,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5048018266861699972}
   - component: {fileID: 6062143526471101436}
-  m_Layer: 0
+  m_Layer: 15
   m_Name: Tag Description Holder
   m_TagString: Untagged
   m_Icon: {fileID: 0}

@@ -27,7 +27,10 @@ public class CombatManager : MonoBehaviour
     //for creativeField
     public GameObject creativeUI;
     public GameObject creativeUnleash;
+    TargetArrowHandler creativeUnleashArrow;
     List<GameObject> creativeList = new List<GameObject>();
+    //playing field, automatically sent when a card is a dropped type and not an ability
+    public GameObject playingField;
 
     public DeckManager deckManager;
     public CreativeManager creativeManager;
@@ -69,6 +72,9 @@ public class CombatManager : MonoBehaviour
 
         //initial caching of player stats
         playerFunctions = player.GetComponent<PlayerFunctions>();
+
+        //initial caching of creativeUnleash object's arrow handler
+        creativeUnleashArrow = creativeUnleash.GetComponent<TargetArrowHandler>();
 
         
         //for just copying the default energy and draws from playerFunctions
@@ -203,11 +209,27 @@ public class CombatManager : MonoBehaviour
         else if (state == CombatState.ActiveCard)
         {
             EffectLoader activeEffectLoader = activeCard.GetComponent<EffectLoader>();
+            DragNDrop activeCardDragNDrop = activeCard.GetComponent<DragNDrop>();
             Card activeCardCard = activeCard.GetComponent<Display>().card;
 
-            ////////////
+            ////////////        
             
-            
+
+
+
+            //if card is targettable, enable logic for dynamic arrow morphing
+            //this is continuous
+            if (activeCardCard.cardMethod == CardMethod.Targetted)
+            {
+                //sends mouse position to active card's target arrow handlker and calculates all of the dot's positions
+                Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+                targetArrowHandler.DynamicPositionArrow(mousePos);
+            }
+            else if (activeCardCard.cardMethod == CardMethod.Dropped)
+            {
+                activeCardDragNDrop.ActivateSingleClickDrag();
+            }
+
 
             //Right-click is back function
             if (Input.GetMouseButtonDown(1))
@@ -221,20 +243,14 @@ public class CombatManager : MonoBehaviour
                 {
                     targetArrowHandler.DisableArrow();
                 }
-            }
-
-            //if card is targettable, enable logic for dynamic arrow morphing
-            //this is continuous
-            if (activeCardCard.cardMethod == CardMethod.Targetted)
-            {
-                //sends mouse position to active card's target arrow handlker and calculates all of the dot's positions
-                Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-                targetArrowHandler.DynamicPositionArrow(mousePos);
-
+                else if (activeCardCard.cardMethod == CardMethod.Dropped)
+                {
+                    activeCardDragNDrop.DeactivateDrag();
+                }
             }
 
             //pass targetted object
-            if (Input.GetMouseButtonDown(0))
+            if (Input.GetMouseButtonDown(0) && pointedObject.collider!=null)
             {
 
                 GameObject targetObject = pointedObject.collider.gameObject;
@@ -252,11 +268,9 @@ public class CombatManager : MonoBehaviour
                     //Set sibling as last must be called first before discarding because it messes with the card hand arangement logic
                     activeCard.transform.SetAsLastSibling();
 
-                    //for disabling arrows
-                    if (activeCardCard.cardMethod == CardMethod.Targetted)
-                    {
-                        targetArrowHandler.DisableArrow();
-                    }
+                    //for disabling the targetting arrow
+                    targetArrowHandler.DisableArrow();
+
 
                     //reset oiginal must come first before discarding, beccause overridesorting can only be set if object is active
                     playerHand.ResetOriginal();
@@ -279,10 +293,12 @@ public class CombatManager : MonoBehaviour
                 }
                 //layer 13 is Playing Field
                 //if its utility or offense dropped
-                else if (targetObject.layer == 13 && activeCardCard.cardMethod == CardMethod.Dropped && activeCardCard.cardType != CardType.Ability)
+                //else if (targetObject.layer == 13 && activeCardCard.cardMethod == CardMethod.Dropped && activeCardCard.cardType != CardType.Ability)
+                else if (activeCardCard.cardMethod == CardMethod.Dropped && activeCardCard.cardType != CardType.Ability)
                 {
                    
                     //activeEffectLoader.EffectLoaderActivate(targetObject, player); ---- to be used if single jigsaw effect is to be able to activate without creative mode
+                    //playing field target, player actor //////////this one is temporary
                     activeEffectLoader.ActivateCardEffect(targetObject, player);
 
                     //Energy = Energy - activeCard.gameObject.GetComponent<Display>().card.energyCost;
@@ -290,6 +306,10 @@ public class CombatManager : MonoBehaviour
                     //calls discard method and puts active card in discard pile
                     //Set sibling as last must be called first before discarding because it messes with the card hand arangement logic
                     activeCard.transform.SetAsLastSibling();
+
+                    //for stopping the drag
+                    activeCardDragNDrop.DeactivateDrag();
+
                     //reset oiginal must come first before discarding, beccause overridesorting can only be set if object is active
                     //every time a card is played, reset it's scale down from
                     playerHand.ResetOriginal();
@@ -308,7 +328,8 @@ public class CombatManager : MonoBehaviour
                     //dropField.transform.localPosition = originalDropFieldPosition;
                 }
                 //if card is ablity, target object will always be player
-                else if (targetObject.layer == 13 && activeCardCard.cardMethod == CardMethod.Dropped && activeCardCard.cardType == CardType.Ability)
+                //else if (targetObject.layer == 13 && activeCardCard.cardMethod == CardMethod.Dropped && activeCardCard.cardType == CardType.Ability)
+                else if (activeCardCard.cardMethod == CardMethod.Dropped && activeCardCard.cardType == CardType.Ability)
                 {
                     //player as taget then pass player as actor
                     activeEffectLoader.EffectLoaderActivate(player, player);
@@ -317,6 +338,10 @@ public class CombatManager : MonoBehaviour
                     //calls discard method and puts active card in discard pile
                     //Set sibling as last must be called first before discarding because it messes with the card hand arangement logic
                     activeCard.transform.SetAsLastSibling();
+
+                    //for stopping the drag
+                    activeCardDragNDrop.DeactivateDrag();
+
                     //reset oiginal must come first before discarding, beccause overridesorting can only be set if object is active
                     //every time a card is played, reset it's scale down from
                     playerHand.ResetOriginal();
@@ -446,37 +471,75 @@ public class CombatManager : MonoBehaviour
         //when picking target for unleasing creativity
         else if (state == CombatState.UnleashCreativity)
         {
-            //lift click in targetting during unleash
-            if (Input.GetMouseButtonDown(0))
+            
+            //this method takes the cardMethod of linked cards and jigsaws
+            //if there is a targetted card, the linked are all targetted, it is dropped if there are no targetted cards
+            CardMethod linkMethod = creativeManager.FinalizeLinks();
+
+
+            if (linkMethod == CardMethod.Targetted)
             {
-                GameObject targetObject = pointedObject.collider.gameObject;
-                //this method takes the cardMethod of linked cards
-                //if there is a targetted card, the linked are all targetted, it is dropped if there are no targetted cards
-                CardMethod linkMethod = creativeManager.FinalizeLinks();
-                //if targetted, click will work one specific enemy units only
-                if (pointedObject.collider != null && linkMethod == CardMethod.Targetted && targetObject.tag == "Enemy" )
+                //sends mouse position to active card's target arrow handlker and calculates all of the dot's positions
+                Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+                creativeUnleashArrow.EnableArrow();
+                creativeUnleashArrow.DynamicPositionArrow(mousePos);
+
+
+                //lift click in targetting during unleash
+                if (Input.GetMouseButtonDown(0))
                 {
-                    //access player stats and reduces their creativity meter
-                    player.GetComponent<PlayerFunctions>().AlterPlayerCreativity(-creativeManager.creativityCost);
-                    //initiates link effects in CreativeManager
-                    //returns the cost for crativity
-                    creativeManager.UnleashCreativity(targetObject, player);
+                    GameObject targetObject = pointedObject.collider.gameObject;
+
+                    //if targetted, click will work one specific enemy units only
+                    if (pointedObject.collider != null && targetObject.tag == "Enemy")
+                    {
+                        //access player stats and reduces their creativity meter
+                        player.GetComponent<PlayerFunctions>().AlterPlayerCreativity(-creativeManager.creativityCost);
+                        //initiates link effects in CreativeManager
+                        //returns the cost for crativity
+                        creativeManager.UnleashCreativity(targetObject, player);
+
+                        //removes scale increase on all cards
+                        playerHand.ResetOriginal();
+                        //Discards cards used in creative mode
+                        foreach (GameObject linkedCard in creativeList)
+                        {
+                            activeCard = linkedCard;
+                            //calls discard method and puts active card in discard pile
+                            activeCard.transform.SetAsLastSibling();
+                            //reset oiginal must come first before discarding, beccause overridesorting can only be set if object is active
+                            //every time a card is played, reset it's scale down from
+                            playerHand.ResetOriginal();
+
+                            deckManager.DiscardCards(activeCard);
+                        }
+                        //clearing CardObjects 
+                        creativeList.Clear();
+                        state = CombatState.PlayerTurn;
+                        creativeUnleash.SetActive(false);
+                        //playerHand.StateChanger(state); -- not yet sure
+                        DeckUpdater();
+
+                    }
+                    //disables arrow after use
+                    creativeUnleashArrow.DisableArrow();
+
+
 
                 }
-                //if dropped, click will wor on anything
-                else if (pointedObject.collider != null && linkMethod == CardMethod.Dropped && targetObject.layer == 13 )
-                {
-                    //access player stats and reduces their creativity meter
-                    player.GetComponent<PlayerFunctions>().AlterPlayerCreativity(-creativeManager.creativityCost);
-                    //initiates link effects in CreativeManager
-                    //returns the cost for crativity
-                    creativeManager.UnleashCreativity(targetObject, player);
-                    
-                }
-                //removes scale increase on all cards
-                playerHand.ResetOriginal();                
+
+            }
+            else if (linkMethod == CardMethod.Dropped)
+            {
+                //access player stats and reduces their creativity meter
+                player.GetComponent<PlayerFunctions>().AlterPlayerCreativity(-creativeManager.creativityCost);
+                //initiates link effects in CreativeManager
+                //returns the cost for crativity
+                creativeManager.UnleashCreativity(enemyHolder, player);
+
+                playerHand.ResetOriginal();
                 //Discards cards used in creative mode
-                foreach(GameObject linkedCard in creativeList)
+                foreach (GameObject linkedCard in creativeList)
                 {
                     activeCard = linkedCard;
                     //calls discard method and puts active card in discard pile
@@ -493,8 +556,63 @@ public class CombatManager : MonoBehaviour
                 creativeUnleash.SetActive(false);
                 //playerHand.StateChanger(state); -- not yet sure
                 DeckUpdater();
-
             }
+
+            //OLD LOGIC
+            //lift click in targetting during unleash
+            //if (Input.GetMouseButtonDown(0))
+            //{
+
+            //    //if targetted, click will work one specific enemy units only
+            //    if (pointedObject.collider != null && linkMethod == CardMethod.Targetted && targetObject.tag == "Enemy")
+            //    {
+            //        GameObject targetObject = pointedObject.collider.gameObject;
+            //        //this method takes the cardMethod of linked cards and jigsaws
+            //        //if there is a targetted card, the linked are all targetted, it is dropped if there are no targetted cards
+            //        CardMethod linkMethod = creativeManager.FinalizeLinks();
+            //        //access player stats and reduces their creativity meter
+            //        player.GetComponent<PlayerFunctions>().AlterPlayerCreativity(-creativeManager.creativityCost);
+            //        //initiates link effects in CreativeManager
+            //        //returns the cost for crativity
+            //        creativeManager.UnleashCreativity(targetObject, player);
+
+            //    }
+            //    //might remove this entirely
+            //    //if dropped, click will wor on anything
+            //    else if (pointedObject.collider != null && linkMethod == CardMethod.Dropped && targetObject.layer == 13)
+            //    {
+            //        //access player stats and reduces their creativity meter
+            //        player.GetComponent<PlayerFunctions>().AlterPlayerCreativity(-creativeManager.creativityCost);
+            //        //initiates link effects in CreativeManager
+            //        //returns the cost for crativity
+            //        creativeManager.UnleashCreativity(targetObject, player);
+
+            //    }
+
+            //    //removes scale increase on all cards
+            //    playerHand.ResetOriginal();
+            //    //Discards cards used in creative mode
+            //    foreach (GameObject linkedCard in creativeList)
+            //    {
+            //        activeCard = linkedCard;
+            //        //calls discard method and puts active card in discard pile
+            //        activeCard.transform.SetAsLastSibling();
+            //        //reset oiginal must come first before discarding, beccause overridesorting can only be set if object is active
+            //        //every time a card is played, reset it's scale down from
+            //        playerHand.ResetOriginal();
+
+            //        deckManager.DiscardCards(activeCard);
+            //    }
+            //    //clearing CardObjects 
+            //    creativeList.Clear();
+            //    state = CombatState.PlayerTurn;
+            //    creativeUnleash.SetActive(false);
+            //    //playerHand.StateChanger(state); -- not yet sure
+            //    DeckUpdater();
+
+            //}
+
+
             //back button, goes back to last state of creativity panel and re-enables it
             else if (Input.GetMouseButtonDown(1))
             {

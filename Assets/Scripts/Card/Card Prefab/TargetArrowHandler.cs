@@ -6,8 +6,10 @@ public class TargetArrowHandler : MonoBehaviour
 {
     //dots and arrowhead holder
     public GameObject targettingArrowParent;
-
+    //list of all dots gameObject
     List<GameObject> arrowDots = new List<GameObject>();
+    //list of dots Rect Transforms
+    List<RectTransform> arrowDotsRect = new List<RectTransform>();
 
     //for calculating dot positions
     float basePosRefY;
@@ -29,11 +31,19 @@ public class TargetArrowHandler : MonoBehaviour
         {
             arrowDots.Add(dot.gameObject);
         }
-        //makes the smallest dot which is nearest to arrow head, the first object in list
+        //reverse list so that last object ehich is arrowhead is rendered last
         arrowDots.Reverse();
-
+        //cache firs object in reversed list as the arrowhead
         arrowHead = arrowDots[0];
         arrowHeadRect = arrowHead.GetComponent<RectTransform>();
+
+        //cache dots' rectTransforms for faster disabling later
+        foreach (GameObject dot in arrowDots)
+        {
+            arrowDotsRect.Add(dot.GetComponent<RectTransform>());
+        }
+
+
 
 
     }
@@ -70,6 +80,10 @@ public class TargetArrowHandler : MonoBehaviour
     public void DisableArrow()
     {
         targettingArrowParent.SetActive(false);
+        foreach (RectTransform dots in arrowDotsRect)
+        {
+            dots.anchoredPosition = new Vector3(0, 0, 0);
+        }
     }
 
 }

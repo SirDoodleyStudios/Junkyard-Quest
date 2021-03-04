@@ -138,7 +138,9 @@ public class CreativeManager : MonoBehaviour
     {
         foreach (GameObject cardPrefab in cardPrefabList)
         {
-            if (cardPrefab.GetComponent<Display>().card.cardMethod == CardMethod.Targetted)
+            //if a card or jigsaw needs a target, the finalized link is a targetted
+            Card cardScriptable = cardPrefab.GetComponent<Display>().card;
+            if (cardScriptable.cardMethod == CardMethod.Targetted || cardScriptable.jigsawEffect.jigsawMethod == CardMethod.Targetted)
             {
 
                 //returns targetted
