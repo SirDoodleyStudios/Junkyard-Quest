@@ -37,7 +37,7 @@ public class Display : MonoBehaviour
     {
         //For displaying values in scriptable object to card prefab
         displayCardName.text = card.cardName;
-        displayEffect.text = card.effect;
+        displayEffect.text = card.effectText;
         displayEnergyCost.text = card.energyCost.ToString();
         displayArtwork.sprite = card.artwork;
 

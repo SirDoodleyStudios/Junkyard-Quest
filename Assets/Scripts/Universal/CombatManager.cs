@@ -68,6 +68,7 @@ public class CombatManager : MonoBehaviour
     {
         //one time run to add dictionary entries of cardMechanic enums and text descriptions
         CardTagManager.InitializeTextDescriptionDictionaries();
+        EffectFactory.InitializeCardFactory();
     }
 
     //Tried making this Awake(), destroyed some logic in EnemyFunctions

@@ -75,13 +75,31 @@ public enum AllCards: int
     Neu_OT_Strike2,
     //Warrior Offensive Targetted
     War_OT_Sting = 100,
+    War_OT_UnrelentingStrike,
+    War_OT_FinishingBlow,
+    War_OT_ContinentalSmash,
+    War_OT_EfficientAttack,
+    //Warrior Offensive Dropped
+    War_OD_Cleave = 1000,
+
     //Neutral Utility Dropped
     Neu_UD_Defend = 2700,
-    //Neutral Ability Dropped
-    Neu_AD_Brainstorm = 3600,
+
     //Warrior Utility Dropped
     War_UD_Reinforce = 2800,
-    War_UD_WildSwings
+    War_UD_WildSwings,
+    War_UD_SteadyImprovement,
+    War_UD_BreathOfBattle,
+    War_UD_Juggernaut,
+    War_UD_AllOrNothing,
+
+    //Neutral Ability Dropped
+    Neu_AD_Brainstorm = 3600,
+
+    //Warrior Ability Dropped
+    War_AD_BruteForce = 3700,
+
+
 
 }
 

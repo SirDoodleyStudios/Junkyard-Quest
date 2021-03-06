@@ -61,6 +61,7 @@ public class DeckManager : MonoBehaviour
                 for (int i = 0; 2 >= i; i++)
                 {
                     instantiatedCard = Instantiate(card);
+                    instantiatedCard.effectText = CardTagManager.GetCardEffectDescriptions(instantiatedCard.enumCardName);
 
                     //test script for randomly assigning jigsawFormat to Cards
                     //test script for randomly assigning jigsaws to cards FOR TEST USE ONLY /////////////////////////////////////////////////////
@@ -74,7 +75,7 @@ public class DeckManager : MonoBehaviour
                         assignedJigsaw.outputLink = (JigsawLink)Random.Range(0, 2);
 
                         assignedJigsaw.jigsawDescription = CardTagManager.GetJigsawDescriptions(assignedJigsaw.enumJigsawName);
-                        assignedJigsaw.jigsawImage = CardModificationManager.DetermineJigsawImage(assignedJigsaw.inputLink, assignedJigsaw.outputLink);
+                        assignedJigsaw.jigsawImage = CardTagManager.DetermineJigsawImage(assignedJigsaw.inputLink, assignedJigsaw.outputLink);
                     }
 
 

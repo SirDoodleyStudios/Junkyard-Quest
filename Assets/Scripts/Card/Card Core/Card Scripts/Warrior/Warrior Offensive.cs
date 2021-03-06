@@ -16,4 +16,23 @@ public class War_OT_Sting : BaseCardEffect
         ApplyStatus();
         DealDamage();
     }
+
+
+}
+
+
+public class War_OD_Cleave : BaseCardEffect
+{
+    public override AllCards enumKeyCard => AllCards.War_OD_Cleave;
+    public override void CardEffectActivate(GameObject target, GameObject actor)
+    {
+        damage = 8;
+        hits = 1;
+
+        ActingUnitStatusLoad(actor);
+        AffectAllEnemies(target);
+        DealDamage();
+    }
+
+
 }

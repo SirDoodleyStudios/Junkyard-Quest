@@ -8,7 +8,7 @@ public class Card : ScriptableObject
 {
     public string cardName;
 
-    public string effect;
+    public string effectText;
 
     //commented out for testing, putting jigsaw text description in JigsawFormat////////////////////////
     //public string attachmentText;

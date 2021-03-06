@@ -8,7 +8,7 @@ public static class EffectFactory
     private static Dictionary<AllCards, Type> EffectDictionary;
     private static bool IsCardsInitialized => EffectDictionary != null;
 
-    private static void InitializeCardFactory()
+    public static void InitializeCardFactory()
     {
         //if effect factory is not yet initialized, proceed
         if (IsCardsInitialized)
@@ -41,7 +41,8 @@ public static class EffectFactory
 
     public static BaseCardEffect GetCardEffect (AllCards cardKey)
     {
-        InitializeCardFactory();
+        //tried putting Initialize trigger in CombatManager
+        //InitializeCardFactory();
 
         //does not activate effects that has Jigsaw key
         //JigsawFactory has the effect for that
