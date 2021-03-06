@@ -4,10 +4,20 @@ using UnityEngine;
 
 public class CardTagManager
 {
+    //for card mechanics when hovering over cards and stuff
     public static Dictionary<CardMechanics, string> popupDescriptions = new Dictionary<CardMechanics, string>();
-    
+
+    //for Jigsaw Descriptions to be copied to Vard itself for display
+    public static Dictionary<AllJigsaws, string> jigsawDescriptions = new Dictionary<AllJigsaws, string>();
+
+
+    public static void InitializeTextDescriptionDictionaries()
+    {
+        CardTagDictionaryInitialize();
+        JigsawDescriptionInitialize();
+    }
     //will only be called at the beginningg of combat, applies descriptions in dictionary
-    public static void CardTagDictionaryInitialize()
+    static void CardTagDictionaryInitialize()
     {
         popupDescriptions.Add(CardMechanics.Ability, "Ability: Grants the player an active action that can be used once per turn");
         popupDescriptions.Add(CardMechanics.Block, "Block: Prevents damage on HP by amount. Expires by next turn ");
@@ -22,6 +32,19 @@ public class CardTagManager
     public static string GetCardTagDescriptions(CardMechanics cardTagKey)
     {
         return popupDescriptions[cardTagKey];
+    }
+
+    //called by Deckmanager
+    static void JigsawDescriptionInitialize()
+    {
+        jigsawDescriptions.Add(AllJigsaws.Deal_10_Damage, "Deal 10 damage to target");
+        jigsawDescriptions.Add(AllJigsaws.Draw_1_Card, "Draw 1 card");
+        jigsawDescriptions.Add(AllJigsaws.Gain_10_Block, "Gain 10 BLOCK");
+    }
+
+    public static string GetJigsawDescriptions(AllJigsaws jigsawKey)
+    {
+        return jigsawDescriptions[jigsawKey];
     }
 
 }

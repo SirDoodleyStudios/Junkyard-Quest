@@ -1,5 +1,5 @@
 ﻿using UnityEngine;
-
+using UnityEngine.UI;
 [CreateAssetMenu(fileName = "Jigsaw", menuName = "Jigsaw")]
 public class JigsawFormat : ScriptableObject
 {
@@ -20,5 +20,9 @@ public class JigsawFormat : ScriptableObject
     //For Creative mode to determine whether it's targetted or not
     public CardMethod jigsawMethod;
 
+    //image of jigsawa pattern based on input and output links
+    public Sprite jigsawImage;
 
+    //description to be determined 
+    public string jigsawDescription;
 }

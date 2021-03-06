@@ -10,8 +10,11 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 3aab7b3c2d06ea94680b9c5b66007c66, type: 3}
-  m_Name: C2F
+  m_Name: S2S Draw
   m_EditorClassIdentifier: 
-  inputLink: 0
-  outputLink: 3
-  enumJigsawName: 0
+  inputLink: 2
+  outputLink: 2
+  enumJigsawName: 2
+  jigsawMethod: 1
+  jigsawImage: {fileID: 0}
+  jigsawDescription: 

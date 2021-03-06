@@ -41,6 +41,9 @@ public class DeckManager : MonoBehaviour
     //contains the deckview prefab template
     public GameObject deckViewPrefab;
 
+    //for test only, randomly apply jigsaw effects to instantiated cards///////////////
+    public List<JigsawFormat> testJigsawList = new List<JigsawFormat>();
+
     
     void Start()
     {
@@ -55,10 +58,29 @@ public class DeckManager : MonoBehaviour
             //duplicates each card 3 times, for test only
             foreach(Card card in pool.listOfCards)
             {
-                for (int i = 0; 4 >= i; i++)
+                for (int i = 0; 2 >= i; i++)
                 {
                     instantiatedCard = Instantiate(card);
-                    initialDeck.Add(card);
+
+                    //test script for randomly assigning jigsawFormat to Cards
+                    //test script for randomly assigning jigsaws to cards FOR TEST USE ONLY /////////////////////////////////////////////////////
+                    if (instantiatedCard.cardType == CardType.Offense || instantiatedCard.cardType == CardType.Utility)
+                    {
+                        JigsawFormat instantiatedJigsaw = Instantiate(testJigsawList[Random.Range(0, testJigsawList.Count)]);
+                        instantiatedCard.jigsawEffect = instantiatedJigsaw;
+                        JigsawFormat assignedJigsaw = instantiatedCard.jigsawEffect;
+
+                        assignedJigsaw.inputLink = (JigsawLink)Random.Range(0, 2);
+                        assignedJigsaw.outputLink = (JigsawLink)Random.Range(0, 2);
+
+                        assignedJigsaw.jigsawDescription = CardTagManager.GetJigsawDescriptions(assignedJigsaw.enumJigsawName);
+                        assignedJigsaw.jigsawImage = CardModificationManager.DetermineJigsawImage(assignedJigsaw.inputLink, assignedJigsaw.outputLink);
+                    }
+
+
+                    //initialDeck.Add(card);
+                    initialDeck.Add(instantiatedCard);
+
                 }
             }
 

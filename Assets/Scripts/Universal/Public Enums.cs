@@ -19,8 +19,12 @@ public enum AllAbilities
 
 public enum AllJigsaws
 {
-    //Player Jigsaws
-    Deal_10_Damage,
+    // The division will determine the cardmethod of jigsaws
+
+    // Targetted Jigsaws
+    Deal_10_Damage=0,
+
+    //Droped Jigsaws
     Gain_10_Block,
     Draw_1_Card,
 

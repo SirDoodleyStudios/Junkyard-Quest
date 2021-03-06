@@ -2157,6 +2157,16 @@ MonoBehaviour:
   deckScrollContent: {fileID: 1772752767}
   deckViewPrefab: {fileID: 6316217203015278146, guid: 191eefc74efead747a6056aa6c5faf27,
     type: 3}
+  testJigsawList:
+  - {fileID: 11400000, guid: 38e593de1e83fc545961ebe7f58847d1, type: 2}
+  - {fileID: 11400000, guid: 270ea47949d12fc40aca3376a748765c, type: 2}
+  - {fileID: 11400000, guid: 513005b0278bb21409c36fa9231127ff, type: 2}
+  - {fileID: 11400000, guid: 3b5baf30f57edb049a638cecfa4c74e4, type: 2}
+  - {fileID: 11400000, guid: 2ad871fdf5c51144c93161f93ef3f434, type: 2}
+  - {fileID: 11400000, guid: e1507b17654ad234a9609689b2244a6b, type: 2}
+  - {fileID: 11400000, guid: 59676f07ca7de1f4aa37d122c3f2ccba, type: 2}
+  - {fileID: 11400000, guid: 55568b6561732154495c765c537480bf, type: 2}
+  - {fileID: 11400000, guid: 72a4013edf4c9414ebd3fb131d7a5485, type: 2}
 --- !u!4 &791457653
 Transform:
   m_ObjectHideFlags: 0

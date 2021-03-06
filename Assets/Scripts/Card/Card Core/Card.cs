@@ -9,15 +9,16 @@ public class Card : ScriptableObject
     public string cardName;
 
     public string effect;
-    //public string leftEffect;
-    //public string rightEffect;
-    public string attachmentText;
+
+    //commented out for testing, putting jigsaw text description in JigsawFormat////////////////////////
+    //public string attachmentText;
+    //public Sprite attachmentImage;
 
     public int energyCost;
     //public int creativityCost;
 
     public Sprite artwork;
-    public Sprite attachmentImage;
+
 
     //Which Cardpool is it
     public CardClass cardClass;
@@ -37,7 +38,11 @@ public class Card : ScriptableObject
 
     //none initially, must be added later
     //must only be added for offense and utility cards
+
     public JigsawFormat jigsawEffect;
+
+
+
     //must only be used for ability cardss
     public AbilityFormat abilityEffect;
 

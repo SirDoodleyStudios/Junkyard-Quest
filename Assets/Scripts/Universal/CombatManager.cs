@@ -64,11 +64,17 @@ public class CombatManager : MonoBehaviour
     //for arrow pointing dynamic position
     TargetArrowHandler targetArrowHandler;
 
+    public void Awake()
+    {
+        //one time run to add dictionary entries of cardMechanic enums and text descriptions
+        CardTagManager.InitializeTextDescriptionDictionaries();
+    }
+
+    //Tried making this Awake(), destroyed some logic in EnemyFunctions
     public void Start()
     {
         Debug.Log("Starting");
-        //one time run to add dictionary entries of cardMechanic enums and text descriptions
-        CardTagManager.CardTagDictionaryInitialize();
+
 
         //initial caching of player stats
         playerFunctions = player.GetComponent<PlayerFunctions>();
@@ -250,7 +256,7 @@ public class CombatManager : MonoBehaviour
             }
 
             //pass targetted object
-            if (Input.GetMouseButtonDown(0) && pointedObject.collider!=null)
+            if (Input.GetMouseButtonUp(0) && pointedObject.collider!=null )
             {
 
                 GameObject targetObject = pointedObject.collider.gameObject;

@@ -14,15 +14,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cardName: Wild Swings
   effect: Gain FORCEFUL 2 and CONFUSED 2
-  attachmentText: Deal 10 Damage
   energyCost: 1
   artwork: {fileID: 6934086728263231946, guid: fdad304c0d77b634da8823590021649a, type: 3}
-  attachmentImage: {fileID: 21300000, guid: 3842d00da9fca4940b331fa2818131c3, type: 3}
   cardClass: 1
   cardType: 1
   cardMethod: 1
   enumCardName: 2801
-  jigsawEffect: {fileID: 11400000, guid: 38e593de1e83fc545961ebe7f58847d1, type: 2}
+  jigsawEffect: {fileID: 0}
   abilityEffect: {fileID: 0}
   Keep: 0
   Combo: 0

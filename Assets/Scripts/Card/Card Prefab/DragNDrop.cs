@@ -28,7 +28,8 @@ public class DragNDrop : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
     //for one clock drag
     PointerEventData pointerEventData;
     bool isDragging; //identifier for drag and end drag when to stop
-
+    //identifier if card is Dropped or targetted, if true, it can be dragged naturally
+    CardMethod cardMethod; 
     public void Awake()
     {
         
@@ -53,6 +54,9 @@ public class DragNDrop : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
 
     public void Start()
     {
+        // everytime the prefab is enabled, determine if the card is a targetted or a  dropped card
+        cardMethod = gameObject.GetComponent<Display>().card.cardMethod;
+
         //calls activate and deactivate popup methods in cardDescriptionLayout
         cardDescriptionLayout = gameObject.GetComponent<CardDescriptionLayout>();
         //in here so that cards are drawn at original scale?
@@ -194,8 +198,8 @@ public class DragNDrop : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
         if (isDragging)
         {
             //layer 15 is Card Layer
-            gameObject.layer = 15;
-            isDragging = false;
+            //gameObject.layer = 15;
+            //isDragging = false;
             OnEndDrag(pointerEventData);
         }
 
@@ -203,21 +207,33 @@ public class DragNDrop : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
 
     public void OnDrag(PointerEventData eventData)
     {
+        //dragging only works if its a dropped card
+        if (cardMethod == CardMethod.Dropped)
+        {
+            gameObject.transform.position = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        }
 
-        gameObject.transform.position = Camera.main.ScreenToWorldPoint(Input.mousePosition);
     }
 
     public void OnEndDrag(PointerEventData eventData)
     {
-        objectRect.anchoredPosition = OriginalPosition;
-        objectTransform.rotation = OriginalOrientation;
-        objectTransform.localScale = OriginalScale;
-        //sets zoomed card to showcase area
-        //gameObject.GetComponent<Canvas>().sortingOrder = 0;
-        sortingCanvas.overrideSorting = false;
-        //gameObject.transform.localPosition = new Vector3(gameObject.transform.localPosition.x, gameObject.transform.localPosition.y, (gameObject.transform.GetSiblingIndex() * -1));
-        gameObject.GetComponent<BoxCollider2D>().enabled = false;
+        if(cardMethod == CardMethod.Dropped)
+        {
+            gameObject.layer = 15;
+            isDragging = false;
+
+            objectRect.anchoredPosition = OriginalPosition;
+            objectTransform.rotation = OriginalOrientation;
+            objectTransform.localScale = OriginalScale;
+            //sets zoomed card to showcase area
+            //gameObject.GetComponent<Canvas>().sortingOrder = 0;
+            sortingCanvas.overrideSorting = false;
+            //gameObject.transform.localPosition = new Vector3(gameObject.transform.localPosition.x, gameObject.transform.localPosition.y, (gameObject.transform.GetSiblingIndex() * -1));
+            gameObject.GetComponent<BoxCollider2D>().enabled = false;
+        }
+
     }
+
 
     public void OnPointerClick(PointerEventData eventData)
     {
