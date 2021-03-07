@@ -17,6 +17,9 @@ public class BaseUnitFunctions:MonoBehaviour
     public int currDraw;
     protected int block;
 
+    //Hit counter for cards that need the hit count per turn like steadyImprovement
+    protected int hitsCounter;
+
     //for showing HP values in UI
     public Slider HPSlider;
     //public Text HPText;

@@ -87,8 +87,9 @@ public class CustomHandLayout : MonoBehaviour
             //sets perfect rotation angles depending on index
             childTransform.rotation = Quaternion.Euler(0, 0, -RotationAngleCalculatorOdd(x, y));
         }
-        yield return null;
         d_FixOriginalPositions();
+        yield return null;
+
     }
 
     IEnumerator RearrangeEvenHand(int handCount)
@@ -107,8 +108,9 @@ public class CustomHandLayout : MonoBehaviour
             childTransform.rotation = Quaternion.Euler(0, 0, -RotationAngleCalculatorEven(x, y));
 
         }
-        yield return null;
         d_FixOriginalPositions();
+        yield return null;
+
     }
 
     //actual equation for finding Y position based on determined X

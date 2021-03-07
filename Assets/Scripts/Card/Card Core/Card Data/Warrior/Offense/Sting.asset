@@ -13,11 +13,9 @@ MonoBehaviour:
   m_Name: Sting
   m_EditorClassIdentifier: 
   cardName: Sting
-  effect: Apply SHOCKED 1. Deal 1 damage 2 times.
-  attachmentText: 
+  effectText: 
   energyCost: 1
-  artwork: {fileID: 8049885976776599914, guid: b11d4b29af8759843a22e14154d1af0b, type: 3}
-  attachmentImage: {fileID: 0}
+  artwork: {fileID: 21300000, guid: abefbccadcc0fc548b84a7d93e3126a4, type: 3}
   cardClass: 1
   cardType: 0
   cardMethod: 0

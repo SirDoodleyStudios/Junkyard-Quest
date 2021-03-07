@@ -12,5 +12,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f434433563e523d45adae9c6eb138841, type: 3}
   m_Name: Brainstorm
   m_EditorClassIdentifier: 
-  abilityIconSprite: {fileID: 21300000, guid: 7aa320df90bed114ba0389dc584d1450, type: 3}
+  abilityIconSprite: {fileID: 21300000, guid: ac7af2faef4b5b54aa98ee71549e1a3f, type: 3}
   enumAbilityName: 0

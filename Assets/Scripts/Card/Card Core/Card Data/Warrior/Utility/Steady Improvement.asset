@@ -10,18 +10,18 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 4a897b88c8a00a84f947c79947532218, type: 3}
-  m_Name: Strike
+  m_Name: Steady Improvement
   m_EditorClassIdentifier: 
-  cardName: Strike
+  cardName: Steady Improvement
   effectText: 
-  energyCost: 2
-  artwork: {fileID: 21300000, guid: 6ed9c688cf592f44f8bed4ba252de204, type: 3}
-  cardClass: 0
-  cardType: 0
-  cardMethod: 0
-  enumCardName: 11
+  energyCost: 1
+  artwork: {fileID: 21300000, guid: 1c08c22f14dcf864ab2c580339ed14fd, type: 3}
+  cardClass: 1
+  cardType: 1
+  cardMethod: 1
+  enumCardName: 2802
   jigsawEffect: {fileID: 0}
   abilityEffect: {fileID: 0}
   Keep: 0
   Combo: 0
-  cardTags: 
+  cardTags: 8200000029000000

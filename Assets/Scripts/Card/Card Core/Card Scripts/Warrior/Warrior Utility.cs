@@ -34,7 +34,22 @@ public class War_UD_WildSwings : BaseCardEffect
 
     }
 
+}
 
+//find a way to register hit count
+public class War_UD_SteadyImprovement : BaseCardEffect
 
+{
+    public override AllCards enumKeyCard => AllCards.War_UD_SteadyImprovement;
+    public override void CardEffectActivate(GameObject target, GameObject actor)
+    {
+        ActingUnitStatusLoad(actor);
+        AffectPlayer(target);
+
+        status = CardMechanics.GenerateForceful;
+        stack = 1;
+        actor.GetComponent<UnitStatusHolder>().isHitCounting = true;
+        ApplyStatusByCounter();
+    }
 
 }

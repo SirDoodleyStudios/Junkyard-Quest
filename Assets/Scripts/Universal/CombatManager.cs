@@ -69,6 +69,7 @@ public class CombatManager : MonoBehaviour
         //one time run to add dictionary entries of cardMechanic enums and text descriptions
         CardTagManager.InitializeTextDescriptionDictionaries();
         EffectFactory.InitializeCardFactory();
+
     }
 
     //Tried making this Awake(), destroyed some logic in EnemyFunctions
@@ -93,14 +94,19 @@ public class CombatManager : MonoBehaviour
         //EnergyUpdater(defaultEnergy);
         //DeckUpdater();
 
-        d_StartTurn += StartTurn;
+        d_StartTurn += StartTurnInCombatManager;
         d_StartTurn += enemyHolder.GetComponent<EnemyAIManager>().EnemyStart;
         d_StartTurn += player.GetComponent<PlayerFunctions>().PlayerTurn;
-        d_StartTurn += player.GetComponent<UnitStatusHolder>().TurnStatusUpdater;
+        d_StartTurn += player.GetComponent<UnitStatusHolder>().StatusUpdateForNewTurn;
+        //d_StartTurn += player.GetComponent<UnitStatusHolder>().TurnStatusUpdater;
+        //d_StartTurn += player.GetComponent<UnitStatusHolder>().ConsumeTurnStackUpdate;
         foreach (Transform enemy in enemyHolder.transform)
         {
-            d_StartTurn += enemy.gameObject.GetComponent<UnitStatusHolder>().TurnStatusUpdater;
+            d_StartTurn += enemy.GetComponent<UnitStatusHolder>().StatusUpdateForNewTurn;
+            //d_StartTurn += enemy.gameObject.GetComponent<UnitStatusHolder>().TurnStatusUpdater;
+            //d_StartTurn += enemy.GetComponent<UnitStatusHolder>().ConsumeTurnStackUpdate;
         }
+
 
         //d_StartTurn += Player.GetComponent<AbilityManager>().EnableAbilities;
         //d_StartTurn += Player.GetComponent<PlayerFunctions>().AlterPlayerCreativity;
@@ -112,7 +118,7 @@ public class CombatManager : MonoBehaviour
 
     //this is an event called everytime a player turn is started
     //called by d_StartTurn()
-    public void StartTurn()
+    public void StartTurnInCombatManager()
     {
         state = CombatState.PlayerTurn;
 
@@ -124,6 +130,8 @@ public class CombatManager : MonoBehaviour
         DrawHand();
         //makes the endTurnButton interactable again during player turn
         EndTurnButt.interactable = true;
+
+
     }
 
     public void Update()
@@ -160,11 +168,13 @@ public class CombatManager : MonoBehaviour
 
             //clicking cards during player phase
             //load delegate function effect of card
+            //if (Input.GetMouseButtonUp(0))
             if (Input.GetMouseButtonDown(0))
             {
 
                 if (pointedObject.collider != null && pointedObject.collider.gameObject.tag == "Card" )
-                {      
+                {
+                    Debug.Log("getting here");
 
                     activeCard = pointedObject.collider.gameObject;
                     Card activeCardCard = activeCard.GetComponent<Display>().card;
@@ -259,7 +269,6 @@ public class CombatManager : MonoBehaviour
             //pass targetted object
             if (Input.GetMouseButtonUp(0) && pointedObject.collider!=null )
             {
-
                 GameObject targetObject = pointedObject.collider.gameObject;
 
                 if (targetObject.tag == "Enemy" && activeCardCard.cardMethod == CardMethod.Targetted)
@@ -689,12 +698,16 @@ public class CombatManager : MonoBehaviour
         //state = CombatState.PlayerTurn;
         //playerHand.StateChanger(state);
 
-        state = CombatState.DrawPahase;
+        //setting the state of all cards to drawsphase will supposedly prevent accidental onPointerExit logic while drawing cards
+        //state = CombatState.DrawPhase;
+        //playerHand.StateChanger(state);
+        playerHand.StateChanger(CombatState.DrawPhase);
         deckManager.DrawCards(playerFunctions.defaultDraw);
         DeckUpdater();
-        playerHand.StateChanger(state);
-        state = CombatState.PlayerTurn;
-        playerHand.StateChanger(state);
+        //turn back to playerTurn phase after drawing
+        //state = CombatState.PlayerTurn;
+        //playerHand.StateChanger(state);
+        playerHand.StateChanger(CombatState.PlayerTurn);
     }
 
     //updates energy number

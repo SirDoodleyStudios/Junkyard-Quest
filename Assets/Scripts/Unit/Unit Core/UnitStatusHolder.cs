@@ -8,11 +8,16 @@ using TMPro;
 //THIS WILL BE ATTACHED TO UNIT PREFAB AND IT CONTAINS ALL THE STATUS EFFECTS ON A UNIT
 public class UnitStatusHolder : MonoBehaviour
 {
-    //universal list that contains all statuses that can be applied on unit
-    Dictionary<CardMechanics, int> usageStatusDict = new Dictionary<CardMechanics, int>();
 
-    //Dictionay of statuses that is currently applied on unit
+    //dictionary of applied statuses on unit
+    Dictionary<CardMechanics, int> usageStatusDict = new Dictionary<CardMechanics, int>();
     Dictionary<CardMechanics, int> turnStatusDict = new Dictionary<CardMechanics, int>();
+    Dictionary<CardMechanics, int> consumeUsageStatusDict = new Dictionary<CardMechanics, int>();
+    Dictionary<CardMechanics, int> consumeTurnStatusDict = new Dictionary<CardMechanics, int>();
+    Dictionary<CardMechanics, int> stackAlterByCountDict = new Dictionary<CardMechanics, int>();
+
+    //identifiers for the counting events in BaseCardEffect
+    public bool isHitCounting { get; set; }
 
     //maybe only a list of int references are needed?
     List<CardMechanics> existingStatus = new List<CardMechanics>();
@@ -26,15 +31,30 @@ public class UnitStatusHolder : MonoBehaviour
     //creates an empty gameobject when statuses are added
     public GameObject statusPrefab;
 
-    //all instantiated icons are in here
+
+
+    //Dictionary that stores all status and stacks to be applied o unit next turn
+    Dictionary<CardMechanics, int> nextTurnStackDict = new Dictionary<CardMechanics, int>();
+
 
     public void Start()
     {
+
+        isHitCounting = false;
         //usageStatusDict.Add(CardMechanics.Confused, Confused);
         //usageStatusDict.Add(CardMechanics.Forceful, Forceful);
 
         //statusStacks.Add(Confused);
         //statusStacks.Add(Forceful);
+    }
+
+    public void StatusUpdateForNewTurn()
+    {
+        ActivateUniqueStatusEffects();
+        ConsumeTurnStackUpdate();
+        TurnStatusUpdater();
+        stackAlterByCountDict.Clear();
+        isHitCounting = false;
     }
 
     //STACK AMOUNT ALTERERS/////////////////////
@@ -48,7 +68,30 @@ public class UnitStatusHolder : MonoBehaviour
         //checks first if unit already has status, if so, simply add it in dictionary
         //if status already exists, just increment stacks
         //this function will receive stacks to add or subtract
-        if ((int)enumKey >= 70)
+
+        //for usage stacks
+        if ((int)enumKey >= 40 && (int)enumKey <= 69)
+        {
+            if (!usageStatusDict.ContainsKey(enumKey))
+            {
+                usageStatusDict.Add(enumKey, stack);
+                StatusVisualsUpdater(enumKey, stack);
+            }
+            else
+            {
+                //after adding or subtracting, calls visual updater
+                usageStatusDict[enumKey] = usageStatusDict[enumKey] + stack;
+                StatusVisualsUpdater(enumKey, usageStatusDict[enumKey]);
+                //if stack becomes 0 at the end, remove from the usageStatusDict
+                if (usageStatusDict[enumKey] <= 0)
+                {
+                    usageStatusDict.Remove(enumKey);
+                }
+            }
+
+        }
+        // for turn stacks
+        else if ((int)enumKey >= 70 && (int)enumKey <= 99)
         {
             if (!turnStatusDict.ContainsKey(enumKey))
             {
@@ -68,27 +111,78 @@ public class UnitStatusHolder : MonoBehaviour
             }
             
         }
-        else
+        //for consume usage stacks
+        else if ((int)enumKey >= 100 && (int)enumKey <= 129)
         {
-            if (!usageStatusDict.ContainsKey(enumKey))
+            if (!consumeUsageStatusDict.ContainsKey(enumKey))
             {
-                usageStatusDict.Add(enumKey, stack);
+                consumeUsageStatusDict.Add(enumKey, stack);
                 StatusVisualsUpdater(enumKey, stack);
             }
             else
             {
                 //after adding or subtracting, calls visual updater
-                usageStatusDict[enumKey] = usageStatusDict[enumKey] + stack;
-                StatusVisualsUpdater(enumKey, usageStatusDict[enumKey]);
+                consumeUsageStatusDict[enumKey] = consumeUsageStatusDict[enumKey] + stack;
+                StatusVisualsUpdater(enumKey, consumeUsageStatusDict[enumKey]);
                 //if stack becomes 0 at the end, remove from the usageStatusDict
-                if (usageStatusDict[enumKey] <= 0)
+                if (consumeUsageStatusDict[enumKey] <= 0)
                 {
-                    usageStatusDict.Remove(enumKey);
+                    consumeUsageStatusDict.Remove(enumKey);
                 }
             }
-            
+        }
+        //for consume turn stacks
+        else if ((int)enumKey >= 130)
+        {
+            if (!consumeTurnStatusDict.ContainsKey(enumKey))
+            {
+                consumeTurnStatusDict.Add(enumKey, stack);
+                StatusVisualsUpdater(enumKey, stack);
+            }
+            else
+            {
+                //after adding or subtracting, calls visual updater
+                consumeTurnStatusDict[enumKey] = consumeTurnStatusDict[enumKey] + stack;
+                StatusVisualsUpdater(enumKey, consumeTurnStatusDict[enumKey]);
+                //if stack becomes 0 at the end, remove from the usageStatusDict
+                if (consumeTurnStatusDict[enumKey] <= 0)
+                {
+                    consumeTurnStatusDict.Remove(enumKey);
+                }
+            }
+        }
+
+
+    }
+    //adds statuses that will be increased by other player actions
+    //Called by BaseCardEffect as the actual card effect
+    public void AddStatusStackToCountingDict(CardMechanics enumKey, int stackIncrement)
+    {
+        //add if not yet existing
+        if (!stackAlterByCountDict.ContainsKey(enumKey))
+        {
+            stackAlterByCountDict.Add(enumKey, stackIncrement);
+        }
+        //increase increment stack if status is already existing
+        else
+        {
+            stackAlterByCountDict[enumKey] += stackIncrement;
+        }
+
+    }
+
+    //called by DealDamage() as an event for status counters that rely on hits
+    public void AlterStatusStackByHitCounter()
+    {
+        //the stack that was defined in AddStatusStackToCountingDict() will be added to statuses everytime counter triggers are called
+        foreach (KeyValuePair<CardMechanics, int> stackCount in stackAlterByCountDict)
+        {
+            AlterStatusStack(stackCount.Key, stackCount.Value);
         }
     }
+
+
+
 
     //Called when start of player turn is triggered
     public void TurnStatusUpdater()
@@ -112,7 +206,7 @@ public class UnitStatusHolder : MonoBehaviour
             //AlterStatusStack(tagStack.Key, -tempStack);
             //StatusVisualsUpdater(tagStack.Key, tempStack);
         }
-
+        //for statuses that still has stacks
         if (decreaseStackDict.Count != 0)
         {
             foreach (KeyValuePair<CardMechanics, int> decreaseStack in decreaseStackDict)
@@ -120,7 +214,7 @@ public class UnitStatusHolder : MonoBehaviour
                 AlterStatusStack(decreaseStack.Key, -1);
             }
         }
-
+        // not even sure why we need this but it works
         if (removeStackList.Count != 0)
         {
             foreach (CardMechanics enumKey in removeStackList)
@@ -131,10 +225,27 @@ public class UnitStatusHolder : MonoBehaviour
 
         decreaseStackDict.Clear();
         removeStackList.Clear();
+
     }
 
+    //for statuses that removes all stacks at turn reset
+    public void ConsumeTurnStackUpdate()
+    {
+        //holder dictionary, before altering the real thing
+        Dictionary<CardMechanics, int> removeStackDict = new Dictionary<CardMechanics, int>();
 
+        //reduces the whole stack to 0 at start turn
+        foreach (KeyValuePair<CardMechanics, int> tagStack in consumeTurnStatusDict)
+        {
+            removeStackDict.Add(tagStack.Key, tagStack.Value);
 
+        }
+
+        foreach (KeyValuePair<CardMechanics, int> tagStack in removeStackDict)
+        {
+            AlterStatusStack(tagStack.Key, -tagStack.Value);
+        }
+    }
 
 
 
@@ -146,6 +257,16 @@ public class UnitStatusHolder : MonoBehaviour
         {
             AlterStatusStack(enumKey, stackAlter);
 
+        }
+    }
+
+    //Called by Calculators only
+    //stack accepted must always be the existing stack of the status and deplete it to 0
+    public void ConsumeUsageStatusUpdater(CardMechanics enumKey, int stackAlter)
+    {
+        if (consumeUsageStatusDict.ContainsKey(enumKey))
+        {
+            AlterStatusStack(enumKey, stackAlter);
         }
     }
 
@@ -257,5 +378,14 @@ public class UnitStatusHolder : MonoBehaviour
         }
     }
 
+    //Unique Status LOGICS//////////////////////
 
+    void ActivateUniqueStatusEffects()
+    {
+        //for applying Forceful based on GenerateForceful Stacks
+        if (consumeTurnStatusDict.ContainsKey(CardMechanics.GenerateForceful))
+        {
+            AlterStatusStack(CardMechanics.Forceful, consumeTurnStatusDict[CardMechanics.GenerateForceful]);
+        }
+    }
 }

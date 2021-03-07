@@ -13,11 +13,9 @@ MonoBehaviour:
   m_Name: Brainstorm
   m_EditorClassIdentifier: 
   cardName: Brainstorm
-  effect: Grants Brainstorm Ability
-  attachmentText: 'Ability Effect: Spend 2 Energy to recover 2 Creativity'
+  effectText: 
   energyCost: 2
-  artwork: {fileID: 21300000, guid: 7aa320df90bed114ba0389dc584d1450, type: 3}
-  attachmentImage: {fileID: 21300000, guid: e1410210f30fa98419f0bc2a33a504de, type: 3}
+  artwork: {fileID: 21300000, guid: ac7af2faef4b5b54aa98ee71549e1a3f, type: 3}
   cardClass: 0
   cardType: 2
   cardMethod: 1

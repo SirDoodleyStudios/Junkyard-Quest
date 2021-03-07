@@ -13,9 +13,9 @@ MonoBehaviour:
   m_Name: Defend
   m_EditorClassIdentifier: 
   cardName: Defend
-  effect: Gain 5 BLOCK
+  effectText: 
   energyCost: 1
-  artwork: {fileID: 21300000, guid: 58ea4388359252847a6c308caf76f7f2, type: 3}
+  artwork: {fileID: 21300000, guid: c8f293b29bd7d0c4cbb9dca813260ec9, type: 3}
   cardClass: 0
   cardType: 1
   cardMethod: 1

@@ -24,15 +24,19 @@ public class DragNDrop : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
     Quaternion OriginalOrientation { get; set; }
     Vector2 OriginalPosition { get; set; }
 
+    //gameobject cache for TagDescription Holder, to be disabled during isDragging so that it wont show up during drag
+    GameObject tagDescriptionHolder;
+    //identifier for drag and end drag when to stop
+    bool isDragging;
+    //identifiier if card can now be hovered on
+    bool isPositioned;
 
-    //for one clock drag
-    PointerEventData pointerEventData;
-    bool isDragging; //identifier for drag and end drag when to stop
     //identifier if card is Dropped or targetted, if true, it can be dragged naturally
-    CardMethod cardMethod; 
+    CardMethod cardMethod;
+
     public void Awake()
     {
-        
+        //tagDescriptionHolder = gameObject.transform.GetChild(gameObject.transform.childCount).gameObject;
 
         //gets its own canvas to activate sorting when hovered on
         sortingCanvas = gameObject.GetComponent<Canvas>();
@@ -54,11 +58,7 @@ public class DragNDrop : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
 
     public void Start()
     {
-        // everytime the prefab is enabled, determine if the card is a targetted or a  dropped card
-        cardMethod = gameObject.GetComponent<Display>().card.cardMethod;
 
-        //calls activate and deactivate popup methods in cardDescriptionLayout
-        cardDescriptionLayout = gameObject.GetComponent<CardDescriptionLayout>();
         //in here so that cards are drawn at original scale?
         //OriginalPosition = gameObject.transform.localPosition;
         OriginalScale = objectTransform.localScale;
@@ -73,9 +73,18 @@ public class DragNDrop : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
             objectTransform.localScale = new Vector3(1.3f, 1.3f, objectTransform.localScale.z);
         }
 
+    }
 
+    void OnEnable()
+    {
+        //initially, isPositioned is false so that the hover logic is not initiated when drawing
+        isPositioned = false;
 
-        //state = CombatState.PlayerTurn;
+        // everytime the prefab is enabled, determine if the card is a targetted or a  dropped card
+        cardMethod = gameObject.GetComponent<Display>().card.cardMethod;
+
+        //calls activate and deactivate popup methods in cardDescriptionLayout
+        cardDescriptionLayout = gameObject.GetComponent<CardDescriptionLayout>();
     }
 
     //called by event in CustomHandLayout so that original poisitions are reset everytime a rearrange happens
@@ -84,6 +93,7 @@ public class DragNDrop : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
         cardAnchor = objectRect.anchoredPosition;
         OriginalPosition = cardAnchor;
         OriginalOrientation = objectTransform.rotation;
+        isPositioned = true;
     }
 
 
@@ -106,7 +116,7 @@ public class DragNDrop : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
     public void OnPointerEnter(PointerEventData eventData)
     {
 
-
+        Debug.Log(playerHand.state);
         //OriginalPosition = gameObject.transform.localPosition;
         if (playerHand != null && playerHand.state == CombatState.PlayerTurn)
         {
@@ -129,21 +139,23 @@ public class DragNDrop : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
             //gameObject.transform.localPosition = new Vector3(gameObject.transform.localPosition.x, gameObject.transform.localPosition.y, -11f);
             gameObject.GetComponent<BoxCollider2D>().enabled = true;
 
-        }
-        //shows popus per tag
-        cardDescriptionLayout.EnablePopups();
 
+            //prevents from showing up during drag
+            if (!isDragging)
+            {
+                //shows popus per tag
+                cardDescriptionLayout.EnablePopups();
+            }
+        }
 
     }
 
     public void OnPointerExit(PointerEventData eventData)
     {
 
-
-
         if (playerHand != null && playerHand.state == CombatState.PlayerTurn)
         {
-
+            
             objectRect.anchoredPosition = OriginalPosition;
             objectTransform.rotation = OriginalOrientation;
             objectTransform.localScale = OriginalScale;
@@ -166,20 +178,26 @@ public class DragNDrop : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
         //removes popup after player clicks on card
         cardDescriptionLayout.DisablePopups();
 
-
-
-
         //can only do the dragging function during PlayerTurn
         //will allow to drag card until player rightclicks or left clocks a target
-        isDragging = true;
-        //if card is a dropped card, proceed with card drag
-        OnBeginDrag(eventData);
+        if (cardMethod == CardMethod.Dropped)
+        {
+            isDragging = true;
+        }
+
+
 
 
 
     }
     public void OnBeginDrag(PointerEventData eventData)
     {
+        //dragging only works if its a dropped card
+        //if (cardMethod == CardMethod.Dropped)
+        //{
+
+        //    gameObject.layer = 2;
+        //}
 
     }
     //called by combatManager update to emulate a drag function
@@ -187,38 +205,23 @@ public class DragNDrop : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
     {
         if (isDragging)
         {
-            OnDrag(pointerEventData);
+
             //makes card ignore raycast so that combat manager can register target units
-            gameObject.layer = 2;
+            if (cardMethod == CardMethod.Dropped)
+            {
+                gameObject.layer = 2;
+                gameObject.transform.position = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+                //tagDescriptionHolder.SetActive(false);
+
+            }
         }
 
     }
     public void DeactivateDrag()
     {
-        if (isDragging)
+        if (cardMethod == CardMethod.Dropped && isDragging)
         {
-            //layer 15 is Card Layer
-            //gameObject.layer = 15;
-            //isDragging = false;
-            OnEndDrag(pointerEventData);
-        }
-
-    }
-
-    public void OnDrag(PointerEventData eventData)
-    {
-        //dragging only works if its a dropped card
-        if (cardMethod == CardMethod.Dropped)
-        {
-            gameObject.transform.position = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        }
-
-    }
-
-    public void OnEndDrag(PointerEventData eventData)
-    {
-        if(cardMethod == CardMethod.Dropped)
-        {
+            Debug.Log("Beginning Drag");
             gameObject.layer = 15;
             isDragging = false;
 
@@ -230,7 +233,37 @@ public class DragNDrop : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
             sortingCanvas.overrideSorting = false;
             //gameObject.transform.localPosition = new Vector3(gameObject.transform.localPosition.x, gameObject.transform.localPosition.y, (gameObject.transform.GetSiblingIndex() * -1));
             gameObject.GetComponent<BoxCollider2D>().enabled = false;
-        }
+        }       
+
+    }
+
+    public void OnDrag(PointerEventData eventData)
+    {
+        //dragging only works if its a dropped card
+        //if (cardMethod == CardMethod.Dropped)
+        //{
+        //    gameObject.transform.position = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        //}
+
+    }
+
+    public void OnEndDrag(PointerEventData eventData)
+    {
+        //if(cardMethod == CardMethod.Dropped)
+        //{
+        //    Debug.Log("Beginning Drag");
+        //    gameObject.layer = 15;
+        //    isDragging = false;
+
+        //    objectRect.anchoredPosition = OriginalPosition;
+        //    objectTransform.rotation = OriginalOrientation;
+        //    objectTransform.localScale = OriginalScale;
+        //    //sets zoomed card to showcase area
+        //    //gameObject.GetComponent<Canvas>().sortingOrder = 0;
+        //    sortingCanvas.overrideSorting = false;
+        //    //gameObject.transform.localPosition = new Vector3(gameObject.transform.localPosition.x, gameObject.transform.localPosition.y, (gameObject.transform.GetSiblingIndex() * -1));
+        //    gameObject.GetComponent<BoxCollider2D>().enabled = false;
+        //}
 
     }
 

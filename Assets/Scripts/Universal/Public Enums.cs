@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public enum CombatState { PlayerTurn, CreativeMode, UnleashCreativity, ActiveCard, DrawPahase, EnemyTurn }
+public enum CombatState { PlayerTurn, CreativeMode, UnleashCreativity, ActiveCard, DrawPhase, EnemyTurn }
 
 public enum CardClass { Neutral, Warrior, Rogue, Mage, Arlen, Cedric, Francine, Tilly, Princess }
 
@@ -136,7 +136,13 @@ public enum CardMechanics
 
     //Turn Stack Status
     Confused = 70,
-    Shocked
+    Shocked,
+    
+    //Consume Usage Stack Statuses
+
+
+    //Consume Turn Stack Statuses
+    GenerateForceful = 130
 
     //Permanent Stack Statuses
 

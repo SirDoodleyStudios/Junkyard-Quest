@@ -33,6 +33,7 @@ public class CardTagManager
         popupDescriptions.Add(CardMechanics.Feeble, "Feeble: Decreaseses next block gains by 30%");
         popupDescriptions.Add(CardMechanics.Confused, "Confused: Targets are chosen at random");
         popupDescriptions.Add(CardMechanics.Shocked, "Shocked: Receives additional damage equal to stack.");
+        popupDescriptions.Add(CardMechanics.GenerateForceful, "Generate Forceful: Applies FORCEFUL stacks next turn");
     }
 
     //returns descriptions when called depending on CardTag enum passed

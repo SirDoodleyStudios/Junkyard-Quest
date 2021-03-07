@@ -5,6 +5,7 @@ using UnityEngine;
 
 public abstract class BaseCardEffect
 {
+
     //Scanned by EffectFactory for identifying which Effect class to activate
     public abstract AllCards enumKeyCard { get; }
     //Scanned by Effect factory when  enumKeyName is Jigsaw
@@ -18,7 +19,7 @@ public abstract class BaseCardEffect
     BaseUnitFunctions targetUnit;
 
     //cache for UnitStatusHolder, this will be the reference after assigning it
-    UnitStatusHolder unitStatus;
+    UnitStatusHolder actorUnitStatus;
 
     //ticked if an offense card is dropped I think
     protected bool AOE;
@@ -43,6 +44,8 @@ public abstract class BaseCardEffect
 
 
 
+
+
     //Activator Function
     public abstract void CardEffectActivate(GameObject target, GameObject actor);
 
@@ -51,7 +54,8 @@ public abstract class BaseCardEffect
     //if Effect loader is called during enemyAI, then acting unit sent is the enemy gameObject
     public virtual void ActingUnitStatusLoad(GameObject actingUnit)
     {
-        unitStatus = actingUnit.GetComponent<UnitStatusHolder>();
+        actorUnitStatus = actingUnit.GetComponent<UnitStatusHolder>();
+
     }
 
     //set target to actual choice target
@@ -96,8 +100,7 @@ public abstract class BaseCardEffect
         if (target.tag == "Enemy")
         {
             //gets parent enemy holder then gets parent playing field
-            GameObject enemyHolder = target.transform.parent.gameObject;
-            targetObject = enemyHolder.transform.parent.gameObject;
+            targetObject = target.transform.parent.gameObject;
             targetUnit = targetObject.GetComponent<BaseUnitFunctions>();
         }
         else
@@ -161,7 +164,7 @@ public abstract class BaseCardEffect
     {
         //calls the unitStatusHolder to calculate damage based on existing statuses on unit actor
 
-        int modifiedDamage = unitStatus.DamageDealingModifierCalculator(damage);
+        int modifiedDamage = actorUnitStatus.DamageDealingModifierCalculator(damage);
 
         if(AOE == false)
         {
@@ -169,8 +172,16 @@ public abstract class BaseCardEffect
             {
                 //targetUnit.TakeDamage(damage);
                 targetUnit.TakeDamage(modifiedDamage);
+                //if the hit counter in actor's UnitStatusHolder is active, start counting hits
+                if (actorUnitStatus.isHitCounting)
+                {
+                    actorUnitStatus.AlterStatusStackByHitCounter();
+                }
+
+
             }
         }
+        //AOE true affects all enemies
         else
         {
             foreach (Transform enemy in targetObject.transform)
@@ -181,16 +192,28 @@ public abstract class BaseCardEffect
                 {
                     //targetUnit.TakeDamage(damage);
                     targetUnit.TakeDamage(modifiedDamage);
+                    //if the hit counter in actor's UnitStatusHolder is active, start counting hits
+                    if (actorUnitStatus.isHitCounting)
+                    {
+                        actorUnitStatus.AlterStatusStackByHitCounter();
+                    }
+
                 }
+
+                
             }
             AOE = false;
-        }        
+        }
+
+
+        
+
     }
     
 
     public void GainBlock()
     {
-        int modifiedBlock = unitStatus.BlockModifierCalculator(block);
+        int modifiedBlock = actorUnitStatus.BlockModifierCalculator(block);
         targetUnit.GainBlock(modifiedBlock);
     }
 
@@ -244,6 +267,23 @@ public abstract class BaseCardEffect
             targetObject.GetComponent<UnitStatusHolder>().AlterStatusStack(status, stack);
         }
         
+    }
+
+    //AlterStatusNextTurn updates the UnitStatusHolder's TurnStatusUpdate which is run as part of the event turn start
+    public void ApplyStatusByCounter()
+    {
+        if (targetObject.GetComponent<UnitStatusHolder>() != null)
+        {
+            targetObject.GetComponent<UnitStatusHolder>().AddStatusStackToCountingDict(status, stack);
+        }
+
+
+    }
+
+    //used by cards that need hits to apply their effect
+    public void StartHitsCounter()
+    {
+
     }
 
 
