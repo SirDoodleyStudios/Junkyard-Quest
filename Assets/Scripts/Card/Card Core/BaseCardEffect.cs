@@ -28,6 +28,8 @@ public abstract class BaseCardEffect
     //will be used to determine if the method being called is for card or enemy
     //MAYBE STATUSES ARE ONLY AFFECTED BY CARDS OR ENEMYACTIONS
     protected bool isCardOrEnemyAction;
+    //indicator if an enemy is slain during card activate, cards will have an if(isSlain) segment then add the effects in the card script itself
+    protected bool isSlain;
 
     //variables for values
     protected int damage;
@@ -284,11 +286,16 @@ public abstract class BaseCardEffect
 
     }
 
-    //used by cards that need hits to apply their effect
-    public void StartHitsCounter()
+    //check if the target is still enabled or not
+    //not enabled means it met its death
+    public void SlayCheck()
     {
-
+        if (!targetObject.activeSelf)
+        {
+            isSlain = true;
+        }
     }
+
 
 
 

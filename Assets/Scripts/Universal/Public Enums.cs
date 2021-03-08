@@ -121,6 +121,7 @@ public enum CardMechanics
     None,
     Ability,
     Block,
+    Slay,
 
     //Card only Mechanics
     Deplete = 10,

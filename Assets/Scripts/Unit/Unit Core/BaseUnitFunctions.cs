@@ -6,6 +6,10 @@ using TMPro;
 
 public class BaseUnitFunctions:MonoBehaviour
 {
+    //death event delegate
+    public delegate void D_Death();
+    public D_Death d_death;
+
     //Contains  Unit scriptableobject
     //public Unit unit;
 
@@ -91,6 +95,16 @@ public class BaseUnitFunctions:MonoBehaviour
             SliderValueUpdates();
         }
         ShowBlock();
+
+        //at death
+        if (currHP <= 0)
+        {
+            //Comment out for Testing
+            gameObject.SetActive(false);
+
+            //nothing in death delegate yet
+            //d_death();
+        }
 
     }
 

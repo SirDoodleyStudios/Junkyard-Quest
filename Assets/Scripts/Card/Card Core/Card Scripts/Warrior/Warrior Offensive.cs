@@ -85,3 +85,27 @@ public class War_OT_CleanHit : BaseCardEffect
     }
 
 }
+//Deal 6 DAMAGE. Gain 5 FORCEFUL at SLAY.
+public class War_OT_FinishingBlow : BaseCardEffect
+{
+    public override AllCards enumKeyCard => AllCards.War_OT_FinishingBlow;
+    public override void CardEffectActivate(GameObject target, GameObject actor)
+    {
+        damage = 6;
+        hits = 1;
+        ActingUnitStatusLoad(actor);
+        AffectSingleEnemy(target);
+        DealDamage();
+        SlayCheck();
+
+        if (isSlain)
+        {
+            status = CardMechanics.Forceful;
+            stack = 5;
+            AffectPlayer(target);
+            ApplyStatus();
+        }
+
+    }
+
+}
