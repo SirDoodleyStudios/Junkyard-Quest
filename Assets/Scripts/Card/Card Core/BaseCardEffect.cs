@@ -39,6 +39,10 @@ public abstract class BaseCardEffect
     protected int creativity;
     protected int energy;
 
+    //baseMomentum is when checking momentum requirement
+    protected int baseMomentum;
+
+    //status and stack
     protected CardMechanics status;
     protected int stack;
 

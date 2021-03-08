@@ -79,6 +79,7 @@ public enum AllCards: int
     War_OT_FinishingBlow,
     War_OT_ContinentalSmash,
     War_OT_EfficientAttack,
+    War_OT_CleanHit,
     //Warrior Offensive Dropped
     War_OD_Cleave = 1000,
 
@@ -142,7 +143,8 @@ public enum CardMechanics
 
 
     //Consume Turn Stack Statuses
-    GenerateForceful = 130
+    GenerateForceful = 130,
+    Momentum
 
     //Permanent Stack Statuses
 

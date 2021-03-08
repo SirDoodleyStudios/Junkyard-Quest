@@ -53,6 +53,7 @@ public class UnitStatusHolder : MonoBehaviour
         ActivateUniqueStatusEffects();
         ConsumeTurnStackUpdate();
         TurnStatusUpdater();
+        //clears counting logic from last turn
         stackAlterByCountDict.Clear();
         isHitCounting = false;
     }
@@ -379,13 +380,27 @@ public class UnitStatusHolder : MonoBehaviour
     }
 
     //Unique Status LOGICS//////////////////////
-
+    // this function is for activating statuses that does something at start Turn
     void ActivateUniqueStatusEffects()
     {
         //for applying Forceful based on GenerateForceful Stacks
         if (consumeTurnStatusDict.ContainsKey(CardMechanics.GenerateForceful))
         {
             AlterStatusStack(CardMechanics.Forceful, consumeTurnStatusDict[CardMechanics.GenerateForceful]);
+        }
+    }
+
+    //called by cards that needs momentum checking, returns the current momentum level
+    public int MomentumLevelChecker()
+    {
+        //returns current stack or 0 if none
+        if (consumeTurnStatusDict.ContainsKey(CardMechanics.Momentum))
+        {
+            return consumeTurnStatusDict[CardMechanics.Momentum];
+        }
+        else
+        {
+            return 0;
         }
     }
 }

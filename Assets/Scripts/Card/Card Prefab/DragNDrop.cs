@@ -28,8 +28,7 @@ public class DragNDrop : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
     GameObject tagDescriptionHolder;
     //identifier for drag and end drag when to stop
     bool isDragging;
-    //identifiier if card can now be hovered on
-    bool isPositioned;
+
 
     //identifier if card is Dropped or targetted, if true, it can be dragged naturally
     CardMethod cardMethod;
@@ -78,7 +77,7 @@ public class DragNDrop : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
     void OnEnable()
     {
         //initially, isPositioned is false so that the hover logic is not initiated when drawing
-        isPositioned = false;
+
 
         // everytime the prefab is enabled, determine if the card is a targetted or a  dropped card
         cardMethod = gameObject.GetComponent<Display>().card.cardMethod;
@@ -93,7 +92,7 @@ public class DragNDrop : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
         cardAnchor = objectRect.anchoredPosition;
         OriginalPosition = cardAnchor;
         OriginalOrientation = objectTransform.rotation;
-        isPositioned = true;
+
     }
 
 

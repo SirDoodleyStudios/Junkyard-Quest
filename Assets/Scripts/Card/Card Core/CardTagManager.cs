@@ -34,6 +34,7 @@ public class CardTagManager
         popupDescriptions.Add(CardMechanics.Confused, "Confused: Targets are chosen at random");
         popupDescriptions.Add(CardMechanics.Shocked, "Shocked: Receives additional damage equal to stack.");
         popupDescriptions.Add(CardMechanics.GenerateForceful, "Generate Forceful: Applies FORCEFUL stacks next turn");
+        popupDescriptions.Add(CardMechanics.Momentum, "Momentum: Improve certain card effects when played if Momentum stack level is met.");
     }
 
     //returns descriptions when called depending on CardTag enum passed
@@ -134,7 +135,8 @@ public class CardTagManager
         cardEffectDescriptions.Add(AllCards.War_OT_ContinentalSmash, "Deal 5 DAMAGE.");
         cardEffectDescriptions.Add(AllCards.War_OT_EfficientAttack, "Deal 9 DAMAGE. Does not deplete FORCEFUL.");
         cardEffectDescriptions.Add(AllCards.War_OT_FinishingBlow, "Deal 6 DAMAGE. Gain 2 FORCEFUL at SLAY.");
-        cardEffectDescriptions.Add(AllCards.War_OT_UnrelentingStrike, "Deal 8 DAMAGE. Gain 1 FORCEFUL at 2 MOMENTUM.");
+        cardEffectDescriptions.Add(AllCards.War_OT_UnrelentingStrike, "Deal 8 DAMAGE. If at 1 MOMENTUM, gain 1 FORCEFUL.");
+        cardEffectDescriptions.Add(AllCards.War_OT_CleanHit, "Gain 1 MOMENTUM then deal 5 DAMAGE. Deal 15 DAMAGE instead if at 3 MOMENTUM");
 
         cardEffectDescriptions.Add(AllCards.War_OD_Cleave, "Deal 8 DAMAGE to all enemies.");
 

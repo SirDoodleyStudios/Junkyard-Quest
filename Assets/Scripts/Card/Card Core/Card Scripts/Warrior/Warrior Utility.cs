@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-
+//Gain 20 BLOCK
 public class War_UD_Reinforce : BaseCardEffect
 
 {
@@ -15,7 +15,7 @@ public class War_UD_Reinforce : BaseCardEffect
 
 
 }
-
+//Gain 1 FORCEFUL and 1 CONFUSED
 public class War_UD_WildSwings : BaseCardEffect
 
 {
@@ -36,7 +36,7 @@ public class War_UD_WildSwings : BaseCardEffect
 
 }
 
-//find a way to register hit count
+//Gain FORCEFUL next turn by how many attack hits dealt this turn.
 public class War_UD_SteadyImprovement : BaseCardEffect
 
 {
