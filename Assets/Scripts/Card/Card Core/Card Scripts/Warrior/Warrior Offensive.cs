@@ -42,11 +42,14 @@ public class War_OT_UnrelentingStrike : BaseCardEffect
     {
         damage = 8;
         hits = 1;
-        baseMomentum = 1;
+
         ActingUnitStatusLoad(actor);
         AffectSingleEnemy(target);
         DealDamage();
-        if (actor.GetComponent<UnitStatusHolder>().MomentumLevelChecker() >= baseMomentum)
+
+        baseStatus = CardMechanics.Momentum;
+        baseStack = 1;
+        if (actorUnitStatus.StatusStackChecker(baseStatus) >= baseStack)
         {
             status = CardMechanics.Forceful;
             stack = 1;
@@ -67,8 +70,9 @@ public class War_OT_CleanHit : BaseCardEffect
         AffectPlayer(target);
         ApplyStatus();
 
-        baseMomentum = 3;
-        if (actor.GetComponent<UnitStatusHolder>().MomentumLevelChecker() >= baseMomentum)
+        baseStatus = CardMechanics.Momentum;
+        baseStack = 3;
+        if (actorUnitStatus.StatusStackChecker(baseStatus) >= baseStack)
         {
             damage = 15;
             hits = 1;

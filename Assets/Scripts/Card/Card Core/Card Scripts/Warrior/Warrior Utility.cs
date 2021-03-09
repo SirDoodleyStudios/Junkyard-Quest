@@ -7,9 +7,10 @@ public class War_UD_Reinforce : BaseCardEffect
     public override AllCards enumKeyCard => AllCards.War_UD_Reinforce;
     public override void CardEffectActivate(GameObject target, GameObject actor)
     {
-        block = 20;
         ActingUnitStatusLoad(actor);
+
         AffectPlayer(target);
+        block = 20;
         GainBlock();
     }
 
@@ -50,6 +51,41 @@ public class War_UD_SteadyImprovement : BaseCardEffect
         stack = 1;
         actor.GetComponent<UnitStatusHolder>().isHitCounting = true;
         ApplyStatusByCounter();
+    }
+
+}
+//Gain 3 FORCEFUL
+public class War_UD_BreathOfBattle : BaseCardEffect
+
+{
+    public override AllCards enumKeyCard => AllCards.War_UD_BreathOfBattle;
+    public override void CardEffectActivate(GameObject target, GameObject actor)
+    {
+        ActingUnitStatusLoad(actor);
+
+        status = CardMechanics.Forceful;
+        stack = 3;
+
+        AffectPlayer(target);
+        ApplyStatus();
+    }
+
+}
+
+//Gain 3 BLOCK for each stack of FORCEFUL that player has.
+public class War_UD_Juggernaut : BaseCardEffect
+
+{
+    public override AllCards enumKeyCard => AllCards.War_UD_Juggernaut;
+    public override void CardEffectActivate(GameObject target, GameObject actor)
+    {
+        ActingUnitStatusLoad(actor);
+
+        baseStatus = CardMechanics.Forceful;
+
+        AffectPlayer(target);
+        block = actorUnitStatus.StatusStackChecker(baseStatus) * 3;
+        GainBlock();
     }
 
 }

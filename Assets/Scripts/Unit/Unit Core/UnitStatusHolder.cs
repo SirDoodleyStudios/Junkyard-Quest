@@ -390,17 +390,50 @@ public class UnitStatusHolder : MonoBehaviour
         }
     }
 
-    //called by cards that needs momentum checking, returns the current momentum level
-    public int MomentumLevelChecker()
+    //called by cards that needs status checking, returns the current status stack
+    public int StatusStackChecker(CardMechanics enumKey)
     {
         //returns current stack or 0 if none
-        if (consumeTurnStatusDict.ContainsKey(CardMechanics.Momentum))
+        if (consumeTurnStatusDict.ContainsKey(enumKey))
         {
-            return consumeTurnStatusDict[CardMechanics.Momentum];
+            return consumeTurnStatusDict[enumKey];
         }
+
+        //first checking is if existing so that only one check is needed if the status to be checked does not exist
+        if (existingStatusDict.ContainsKey(enumKey))
+        {
+            //usage status
+            if ((int)enumKey >= 40 && (int)enumKey <= 69)
+            {
+                return usageStatusDict[enumKey];
+            }
+            //turn status
+            else if ((int)enumKey >= 70 && (int)enumKey <= 99)
+            {
+                return turnStatusDict[enumKey];
+            }
+            //consume usage status
+            else if ((int)enumKey >= 100 && (int)enumKey <= 129)
+            {
+                return consumeUsageStatusDict[enumKey];
+            }
+            //consume turn status
+            else if ((int)enumKey >= 130)
+            {
+                return consumeTurnStatusDict[enumKey];
+            }
+            //should not happen
+            else
+            {
+                Debug.Log("Status Checker logic bug");
+                return 0;
+            }
+        }
+        //immediately returns 0 when status to be checked doesnt exist
         else
         {
             return 0;
         }
+
     }
 }

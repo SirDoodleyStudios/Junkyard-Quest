@@ -148,6 +148,8 @@ public class CardTagManager
         cardEffectDescriptions.Add(AllCards.War_UD_Juggernaut, "Gain 3 BLOCK for each stack of FORCEFUL that player has.");
         cardEffectDescriptions.Add(AllCards.War_UD_SteadyImprovement, "Gain FORCEFUL next turn by how many attack hits dealt this turn.");
 
+        cardEffectDescriptions.Add(AllCards.War_AD_BruteForce, "ABILITY. Gain 1 FORCEFUL in exchange for 7 BLOCK");
+
 
     }
 

@@ -19,7 +19,7 @@ public abstract class BaseCardEffect
     BaseUnitFunctions targetUnit;
 
     //cache for UnitStatusHolder, this will be the reference after assigning it
-    UnitStatusHolder actorUnitStatus;
+    protected UnitStatusHolder actorUnitStatus;
 
     //ticked if an offense card is dropped I think
     protected bool AOE;
@@ -41,10 +41,12 @@ public abstract class BaseCardEffect
     protected int creativity;
     protected int energy;
 
-    //baseMomentum is when checking momentum requirement
-    protected int baseMomentum;
+    //base variables are for checking. baseStatus is what status is going to be checked for card effect
+    //baseStack is for chedcking how much status stack is needed for effect, mostly used by MOMENTUM
+    protected CardMechanics baseStatus;
+    protected int baseStack;
 
-    //status and stack
+    //status and stack that will actually be applied to unit
     protected CardMechanics status;
     protected int stack;
 
@@ -87,7 +89,7 @@ public abstract class BaseCardEffect
             targetObject = enemyHolder.transform.parent.gameObject.transform.GetChild(1).gameObject;
             targetUnit = targetObject.GetComponent<PlayerFunctions>();
         }
-        //if enemyholder
+        //if drop field
         else
         {
             targetObject = target.transform.parent.GetChild(1).gameObject;
@@ -125,30 +127,21 @@ public abstract class BaseCardEffect
     //layer 13 are all objects under PlayingField
     public void AffectPlayingField(GameObject target)
     {
-        //if (target.tag == "Enemy")
-        //{
-        //    //gets parent enemy holder then gets parent playing field
-        //    GameObject enemyHolder = target.transform.parent.gameObject;
-        //    targetObject = enemyHolder.transform.parent.gameObject;
-        //    targetPlayingField = targetObject.GetComponent<PlayingField>();
-        //}
-        //else
-        //{
-        //    targetObject = target.transform.parent.gameObject;
-        //    targetPlayingField = targetObject.GetComponent<PlayingField>();
-        //}
 
         //checks if the target itself is the PlayingField
         if (target.GetComponent<PlayingField>() != null)
         {
             targetObject = target;
+            targetUnit = targetObject.GetComponent<BaseUnitFunctions>();
             targetPlayingField = target.GetComponent<PlayingField>();
+
         }
         //checks if the target's parent is the PlayingField
         //target must be either player or EnemyHolder
         else if (target.transform.parent.gameObject.GetComponent<PlayingField>() != null)
         {
             targetObject = target.transform.parent.gameObject;
+            targetUnit = targetObject.GetComponent<BaseUnitFunctions>();
             targetPlayingField = targetObject.GetComponent<PlayingField>();
         }
         //checks if the target is an enemy
@@ -158,6 +151,7 @@ public abstract class BaseCardEffect
             //gets parent enemy holder then gets parent playing field
             GameObject enemyHolder = target.transform.parent.gameObject;
             targetObject = enemyHolder.transform.parent.gameObject;
+            targetUnit = targetObject.GetComponent<BaseUnitFunctions>();
             targetPlayingField = targetObject.GetComponent<PlayingField>();
         }
 
@@ -282,8 +276,6 @@ public abstract class BaseCardEffect
         {
             targetObject.GetComponent<UnitStatusHolder>().AddStatusStackToCountingDict(status, stack);
         }
-
-
     }
 
     //check if the target is still enabled or not

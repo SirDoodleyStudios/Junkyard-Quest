@@ -115,7 +115,7 @@ public class DragNDrop : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
     public void OnPointerEnter(PointerEventData eventData)
     {
 
-        Debug.Log(playerHand.state);
+        //Debug.Log(playerHand.state);
         //OriginalPosition = gameObject.transform.localPosition;
         if (playerHand != null && playerHand.state == CombatState.PlayerTurn)
         {

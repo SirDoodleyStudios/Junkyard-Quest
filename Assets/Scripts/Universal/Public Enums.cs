@@ -12,9 +12,14 @@ public enum CardMethod { Targetted, Dropped}
 
 public enum JigsawLink { Circle, Triangle, Square, Material, Finisher}
 
+//
 public enum AllAbilities
 {
-    Neu_Abi_Brainstorm
+    //Neutral Abilities
+    Neu_Abi_Brainstorm = 30,
+
+    //Warrior Abilities
+    War_Abi_BruteForce = 60
 }
 
 public enum AllJigsaws

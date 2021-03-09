@@ -19,7 +19,7 @@ public class BaseUnitFunctions:MonoBehaviour
     public int currCreativity;
     public int defaultDraw;
     public int currDraw;
-    protected int block;
+    public int block;   //made public for certain abilities
 
     //Hit counter for cards that need the hit count per turn like steadyImprovement
     protected int hitsCounter;

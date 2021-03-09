@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 //Ability Effects have a requirement check function unique to it because effects and requirements can vary greatly per ability
+
 //Recover creativity at the expense of energy
 public class Neu_Abi_Brainstorm: BaseAbilityEffect
 {
@@ -16,13 +17,12 @@ public class Neu_Abi_Brainstorm: BaseAbilityEffect
         AlterCreativity();
     }
 
-    public override bool RequirementCheck(GameObject target)
+    public override bool RequirementCheck(PlayingField playingField)
     {
 
         energy = -2;
-        PlayingField playField = target.GetComponent<PlayingField>();
         //-energy because its cost
-        if(playField.combatManager.playerFunctions.currEnergy >= -energy)
+        if(playingField.combatManager.playerFunctions.currEnergy >= -energy)
         {
             return true;
         }
@@ -30,8 +30,6 @@ public class Neu_Abi_Brainstorm: BaseAbilityEffect
         {
             return false;
         }
-
-
         
     }
 }

@@ -9,9 +9,18 @@ public class AbilityManager : MonoBehaviour
     List<AbilityFormat> abilityList = new List<AbilityFormat>();
     public Button EndTurnButton;
 
+    //cache for PlayingFieldScript
+    GameObject playingFieldObject;
+    PlayingField playingField;
+    
+
     private void Start()
     {
+        //when end turn button is clicked, make it so that abilities are non-interactable
         EndTurnButton.onClick.AddListener(() => DisableAbilities());
+        //parent of player gameObject is the playing Field
+        playingFieldObject = gameObject.transform.parent.gameObject;
+        playingField = playingFieldObject.GetComponent<PlayingField>();
         
     }
     
@@ -53,19 +62,18 @@ public class AbilityManager : MonoBehaviour
         {
             //default target is the playing field because it has references to everyting under playing Field Objects
             //this gives us more flexibility since ability effects needs to look at everything
-            GameObject playingField = gameObject.transform.parent.gameObject;
 
             //if requirement check returns true
             if (AbilityFactory.GetAbilityEffect(abilityEffect.enumAbilityName).RequirementCheck(playingField))
             {
                 //activates effect then disables button because abilities are once per turn only
                 //second parameter gameObject is for sending the gameObject as the actor
-                AbilityFactory.GetAbilityEffect(abilityEffect.enumAbilityName).CardEffectActivate(playingField, gameObject);
+                AbilityFactory.GetAbilityEffect(abilityEffect.enumAbilityName).CardEffectActivate(playingFieldObject, gameObject);
                 abilityButton.interactable = false;
             }
             else
             {
-                Debug.Log("not enough Energy");
+                Debug.Log("Requirement not Met");
             }
 
         }
