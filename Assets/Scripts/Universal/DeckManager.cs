@@ -29,11 +29,14 @@ public class DeckManager : MonoBehaviour
     //can be called by combat manager for updating texts
     public int deckCount { get; private set; }
     public int discardCount { get; private set; }
+    public int consumeCount { get; private set; }
 
     //related to deck viewing
     //buttons that point to one method, just different lists to check
     public Button deckViewButton;
     public Button discardPileViewButton;
+    public Button consumePileViewButton;
+
     //the parent of all deckview objects, target for disabling and enabling
     public GameObject deckViewUI;
     //Content gameobject, parent of all prefabs to be shown after button click
@@ -89,6 +92,7 @@ public class DeckManager : MonoBehaviour
         //assigns the same methodfor deck viewing on each button
         deckViewButton.onClick.AddListener(() => DeckCollectionView(deckViewButton));
         discardPileViewButton.onClick.AddListener(() => DeckCollectionView(discardPileViewButton));
+        consumePileViewButton.onClick.AddListener(() => DeckCollectionView(consumePileViewButton));
         InitializeBattleDeck();
 
 
@@ -198,7 +202,18 @@ public class DeckManager : MonoBehaviour
         discardedCardObject.SetActive(false);
         handLayout.ActivateRearrange(playerHand.Count);
     }
+    //for consumed cards, similar to discard but cards in consume pile will not be drawn upon
+    public void ConsumeCards(GameObject consumedCardObject)
+    {
+        Card consumedCard = consumedCardObject.GetComponent<Display>().card;
+        consumePile.Add(consumedCard);
+        playerHand.Remove(consumedCard);
 
+        //for updating Consume UI
+        consumeCount = consumePile.Count;
+        consumedCardObject.SetActive(false);
+        handLayout.ActivateRearrange(playerHand.Count);
+    }
 
     //public void DiscardAll()
     //{
@@ -226,7 +241,7 @@ public class DeckManager : MonoBehaviour
         deckViewUI.SetActive(true);
         List<Card> deckCheck = new List<Card>();
 
-
+        //assigns which deck pile is to be inspected depending on which button is pressed
         if(button == deckViewButton)
         {
             //deckCheck.AddRange(battleDeck);
@@ -238,12 +253,19 @@ public class DeckManager : MonoBehaviour
             //deckCheck.AddRange(discardPile);
             deckCheck = discardPile;
         }
+        else if (button == consumePileViewButton)
+        {
+            deckCheck = consumePile;
+        }
+
+        //actual logic to show each card in UI one by one
 
         foreach (Card deckCard in deckCheck)
         {
             bool hasNoDisabledPrefabs = true;
             deckViewPrefab.GetComponent<Display>().card = deckCard;
 
+            //checks the scroll contents if there are already instantiated card prefabs that can be recycled
             foreach(Transform content in deckScrollContent)
             {
                 GameObject disabledPrefabs = content.gameObject;
@@ -254,17 +276,14 @@ public class DeckManager : MonoBehaviour
                     hasNoDisabledPrefabs = false;
                     break;
                 }
-
+            //if no card prefab can be recycled, instantiate a new one
             }
             if (hasNoDisabledPrefabs)
             {
-                Instantiate(deckViewPrefab, deckScrollContent);
+                GameObject instantiatedPrefab = Instantiate(deckViewPrefab, deckScrollContent);
+                instantiatedPrefab.GetComponent<Display>().card = deckCard;
             }
-
-
         }
-
-
     }
 
     public void BackFromDeckView()

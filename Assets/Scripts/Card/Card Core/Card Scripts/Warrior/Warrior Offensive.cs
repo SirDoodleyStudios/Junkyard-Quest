@@ -113,3 +113,46 @@ public class War_OT_FinishingBlow : BaseCardEffect
     }
 
 }
+
+//Deal 25 DAMAGE. Lose 8 health if player doesn't have FORCEFUL
+public class War_OT_HeavyWeapon : BaseCardEffect
+{
+    public override AllCards enumKeyCard => AllCards.War_OT_HeavyWeapon;
+    public override void CardEffectActivate(GameObject target, GameObject actor)
+    {
+        ActingUnitStatusLoad(actor);
+        AffectSingleEnemy(target);
+        damage = 25;
+        hits = 1;
+        DealDamage();
+        //checks if player has atleast 1 Forceful
+        if (actorUnitStatus.StatusStackChecker(CardMechanics.Forceful) <= 1)
+        {
+            damage = 8;
+            AffectPlayer(target);
+            DealDamage();
+        }
+    }
+}
+
+//Deal 9 DAMAGE. Gain 1 FORCEFUL if player has FORCEFUL.
+public class War_OT_EfficientAttack : BaseCardEffect
+{
+    public override AllCards enumKeyCard => AllCards.War_OT_EfficientAttack;
+    public override void CardEffectActivate(GameObject target, GameObject actor)
+    {
+        ActingUnitStatusLoad(actor);
+        AffectSingleEnemy(target);
+        damage = 9;
+        hits = 1;
+        DealDamage();
+        //checks if player has atleast 1 Forceful
+        if (actorUnitStatus.StatusStackChecker(CardMechanics.Forceful) >= 1)
+        {
+            AffectPlayer(target);
+            status = CardMechanics.Forceful;
+            stack = 1;
+            ApplyStatus();
+        }
+    }
+}

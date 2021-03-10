@@ -47,6 +47,7 @@ public class CombatManager : MonoBehaviour
     int Draw;
     public Text deckText;
     public Text discardText;
+    public Text consumeText;
 
     //card clicked during Player Turn phase
     GameObject activeCard;
@@ -290,7 +291,15 @@ public class CombatManager : MonoBehaviour
 
                     //reset oiginal must come first before discarding, beccause overridesorting can only be set if object is active
                     playerHand.ResetOriginal();
-                    deckManager.DiscardCards(activeCard);
+                    //consume a card if the Card has a Consume tag confirmed
+                    if (activeCardCard.cardTags.Contains(CardMechanics.Consume) || activeCardCard.cardTags.Contains(CardMechanics.Ability))
+                    {
+                        deckManager.ConsumeCards(activeCard);
+                    }
+                    else
+                    {
+                        deckManager.DiscardCards(activeCard);
+                    }
 
                     //retuns to player turn phase
                     state = CombatState.PlayerTurn;
@@ -329,7 +338,15 @@ public class CombatManager : MonoBehaviour
                     //reset oiginal must come first before discarding, beccause overridesorting can only be set if object is active
                     //every time a card is played, reset it's scale down from
                     playerHand.ResetOriginal();
-                    deckManager.DiscardCards(activeCard);
+                    //consume a card if the Card has a Consume tag confirmed
+                    if (activeCardCard.cardTags.Contains(CardMechanics.Consume) || activeCardCard.cardTags.Contains(CardMechanics.Ability))
+                    {
+                        deckManager.ConsumeCards(activeCard);
+                    }
+                    else
+                    {
+                        deckManager.DiscardCards(activeCard);
+                    }
 
                     //retuns to player turn phase
                     state = CombatState.PlayerTurn;
@@ -361,7 +378,15 @@ public class CombatManager : MonoBehaviour
                     //reset oiginal must come first before discarding, beccause overridesorting can only be set if object is active
                     //every time a card is played, reset it's scale down from
                     playerHand.ResetOriginal();
-                    deckManager.DiscardCards(activeCard);
+                    //consume a card if the Card has a Consume tag confirmed
+                    if (activeCardCard.cardTags.Contains(CardMechanics.Consume) || activeCardCard.cardTags.Contains(CardMechanics.Ability))
+                    {
+                        deckManager.ConsumeCards(activeCard);
+                    }
+                    else
+                    {
+                        deckManager.DiscardCards(activeCard);
+                    }
 
                     //retuns to player turn phase
                     state = CombatState.PlayerTurn;
@@ -520,14 +545,24 @@ public class CombatManager : MonoBehaviour
                         //Discards cards used in creative mode
                         foreach (GameObject linkedCard in creativeList)
                         {
+                            //cache for card object and the card SO
                             activeCard = linkedCard;
+                            Card activeCardCard = activeCard.GetComponent<Display>().card;
                             //calls discard method and puts active card in discard pile
                             activeCard.transform.SetAsLastSibling();
                             //reset oiginal must come first before discarding, beccause overridesorting can only be set if object is active
                             //every time a card is played, reset it's scale down from
                             playerHand.ResetOriginal();
 
-                            deckManager.DiscardCards(activeCard);
+                            //consume a card if the Card has a Consume tag confirmed
+                            if (activeCardCard.cardTags.Contains(CardMechanics.Consume) || activeCardCard.cardTags.Contains(CardMechanics.Ability))
+                            {
+                                deckManager.ConsumeCards(activeCard);
+                            }
+                            else
+                            {
+                                deckManager.DiscardCards(activeCard);
+                            }
                         }
                         //clearing CardObjects 
                         creativeList.Clear();
@@ -557,14 +592,24 @@ public class CombatManager : MonoBehaviour
                 //Discards cards used in creative mode
                 foreach (GameObject linkedCard in creativeList)
                 {
+                    //cache for card object and the card SO
                     activeCard = linkedCard;
+                    Card activeCardCard = activeCard.GetComponent<Display>().card;
                     //calls discard method and puts active card in discard pile
                     activeCard.transform.SetAsLastSibling();
                     //reset oiginal must come first before discarding, beccause overridesorting can only be set if object is active
                     //every time a card is played, reset it's scale down from
                     playerHand.ResetOriginal();
 
-                    deckManager.DiscardCards(activeCard);
+                    //consume a card if the Card has a Consume tag confirmed
+                    if (activeCardCard.cardTags.Contains(CardMechanics.Consume) || activeCardCard.cardTags.Contains(CardMechanics.Ability))
+                    {
+                        deckManager.ConsumeCards(activeCard);
+                    }
+                    else
+                    {
+                        deckManager.DiscardCards(activeCard);
+                    }
                 }
                 //clearing CardObjects 
                 creativeList.Clear();
@@ -727,8 +772,11 @@ public class CombatManager : MonoBehaviour
     {
         int deckCardsCount = deckManager.deckCount;
         int discardCardsCount = deckManager.discardCount;
+        int consumeCardsCount = deckManager.consumeCount;
+
         deckText.text = deckCardsCount.ToString();
         discardText.text = discardCardsCount.ToString();
+        consumeText.text = consumeCardsCount.ToString();
 
     }
 

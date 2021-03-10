@@ -82,7 +82,7 @@ public enum AllCards: int
     War_OT_Sting = 100,
     War_OT_UnrelentingStrike,
     War_OT_FinishingBlow,
-    War_OT_ContinentalSmash,
+    War_OT_HeavyWeapon,
     War_OT_EfficientAttack,
     War_OT_CleanHit,
     //Warrior Offensive Dropped
@@ -129,7 +129,7 @@ public enum CardMechanics
     Slay,
 
     //Card only Mechanics
-    Deplete = 10,
+    Consume = 10,
     Keep,
     Combo,
     Discover,
@@ -140,6 +140,7 @@ public enum CardMechanics
     Strong = 40,
     Forceful,
     Feeble,
+    AllOrNothing,
 
     //Turn Stack Status
     Confused = 70,

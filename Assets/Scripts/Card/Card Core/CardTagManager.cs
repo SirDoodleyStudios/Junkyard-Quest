@@ -29,13 +29,14 @@ public class CardTagManager
         popupDescriptions.Add(CardMechanics.Ability, "Ability: Grants the player an active action that can be used once per turn");
         popupDescriptions.Add(CardMechanics.Slay, "Slay: Activates effect when an enemy is defeated using selected card.");
         popupDescriptions.Add(CardMechanics.Block, "Block: Prevents damage on HP by amount. Expires by next turn ");
-        popupDescriptions.Add(CardMechanics.Deplete, "Deplete: Becomes unusable for the rest of the battle");
+        popupDescriptions.Add(CardMechanics.Consume, "Consume: After playing, card becomes unusable for the rest of the battle");
         popupDescriptions.Add(CardMechanics.Forceful, "Forceful: Increases the damage of next attacks by 30%");
         popupDescriptions.Add(CardMechanics.Feeble, "Feeble: Decreaseses next block gains by 30%");
         popupDescriptions.Add(CardMechanics.Confused, "Confused: Targets are chosen at random");
         popupDescriptions.Add(CardMechanics.Shocked, "Shocked: Receives additional damage equal to stack.");
         popupDescriptions.Add(CardMechanics.GenerateForceful, "Generate Forceful: Applies FORCEFUL stacks next turn");
         popupDescriptions.Add(CardMechanics.Momentum, "Momentum: Improve certain card effects when played if Momentum stack level is met.");
+        popupDescriptions.Add(CardMechanics.AllOrNothing, "All or Nothing: Apply all stacks of FORCEFUL to next attack. CONSUME");
     }
 
     //returns descriptions when called depending on CardTag enum passed
@@ -133,8 +134,8 @@ public class CardTagManager
 
         //WARRIOR CARDS
         cardEffectDescriptions.Add(AllCards.War_OT_Sting, "Apply SHOCKED 1. Deal 1 damage 2 times.");
-        cardEffectDescriptions.Add(AllCards.War_OT_ContinentalSmash, "Deal 5 DAMAGE.");
-        cardEffectDescriptions.Add(AllCards.War_OT_EfficientAttack, "Deal 9 DAMAGE. Does not deplete FORCEFUL.");
+        cardEffectDescriptions.Add(AllCards.War_OT_HeavyWeapon, "Deal 25 DAMAGE. Lose 8 health if player doesn't have FORCEFUL.");
+        cardEffectDescriptions.Add(AllCards.War_OT_EfficientAttack, "Deal 9 DAMAGE. Gain 1 FORCEFUL if player has FORCEFUL.");
         cardEffectDescriptions.Add(AllCards.War_OT_FinishingBlow, "Deal 6 DAMAGE. Gain 5 FORCEFUL at SLAY.");
         cardEffectDescriptions.Add(AllCards.War_OT_UnrelentingStrike, "Deal 8 DAMAGE. If at 1 MOMENTUM, gain 1 FORCEFUL.");
         cardEffectDescriptions.Add(AllCards.War_OT_CleanHit, "Gain 1 MOMENTUM then deal 5 DAMAGE. Deal 15 DAMAGE instead if at 3 MOMENTUM");

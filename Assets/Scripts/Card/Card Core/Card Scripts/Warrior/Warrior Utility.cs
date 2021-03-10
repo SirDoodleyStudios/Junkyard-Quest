@@ -89,3 +89,19 @@ public class War_UD_Juggernaut : BaseCardEffect
     }
 
 }
+
+//All or Nothing: Apply all stacks of FORCEFUL to next attack. CONSUME
+public class War_UD_AllOrNothing : BaseCardEffect
+
+{
+    public override AllCards enumKeyCard => AllCards.War_UD_AllOrNothing;
+    public override void CardEffectActivate(GameObject target, GameObject actor)
+    {
+        ActingUnitStatusLoad(actor);
+        AffectPlayer(target);
+        status = CardMechanics.AllOrNothing;
+        stack = 1;
+        ApplyStatus();
+    }
+
+}

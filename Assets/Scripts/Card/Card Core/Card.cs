@@ -47,7 +47,9 @@ public class Card : ScriptableObject
     public AbilityFormat abilityEffect;
 
     //Card Tags that act like statuses and must be considered even when not played
+    //might decomission
     public bool Keep;
+    public bool Consume;
     public bool Combo;
 
     //List of tags that the card have, only for displaying text during Hover

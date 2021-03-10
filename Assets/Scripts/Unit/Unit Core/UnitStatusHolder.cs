@@ -336,10 +336,18 @@ public class UnitStatusHolder : MonoBehaviour
     //These Calculators are going to vary depending if a mechanicis added or subrtacted
     public int DamageDealingModifierCalculator(int baseDamage)
     {
-        //if Forceful is in tags, increase damage by 30%
-        if (usageStatusDict.ContainsKey(CardMechanics.Forceful))
+        //if player has all or nothing, consume all forceful then subtract by -1 on allornothing stack
+        if (usageStatusDict.ContainsKey(CardMechanics.AllOrNothing) && usageStatusDict.ContainsKey(CardMechanics.Forceful))
         {
-            int total = Mathf.FloorToInt(baseDamage * 1.3f);
+            int total = (int)(baseDamage * Mathf.Pow((1 + 1.3f), usageStatusDict[CardMechanics.Forceful]));
+            AlterStatusStack(CardMechanics.Forceful, -usageStatusDict[CardMechanics.Forceful]);
+            AlterStatusStack(CardMechanics.AllOrNothing, -1);
+            return total;
+        }
+        //if Forceful is in tags, increase damage by 30%
+        else if (usageStatusDict.ContainsKey(CardMechanics.Forceful))
+        {
+            int total = Mathf.CeilToInt(baseDamage * 1.3f);
             AlterStatusStack(CardMechanics.Forceful, -1);
             return total;
         }
