@@ -23,6 +23,6 @@ MonoBehaviour:
   jigsawEffect: {fileID: 0}
   abilityEffect: {fileID: 0}
   Keep: 0
-  Consume: 1
+  Consume: 0
   Combo: 0
   cardTags: 290000000a000000

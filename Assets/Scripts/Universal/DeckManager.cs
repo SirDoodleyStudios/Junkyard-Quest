@@ -282,6 +282,7 @@ public class DeckManager : MonoBehaviour
             {
                 GameObject instantiatedPrefab = Instantiate(deckViewPrefab, deckScrollContent);
                 instantiatedPrefab.GetComponent<Display>().card = deckCard;
+                instantiatedPrefab.SetActive(true);
             }
         }
     }
