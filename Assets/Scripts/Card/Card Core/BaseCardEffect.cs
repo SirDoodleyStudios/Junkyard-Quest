@@ -219,7 +219,8 @@ public abstract class BaseCardEffect
 
     public void DrawCard()
     {
-        targetPlayingField.deckManager.DrawCards(draw);
+        //targetPlayingField.deckManager.DrawCards(draw);
+        targetPlayingField.deckManager.StartCoroutine(targetPlayingField.deckManager.DrawCards(draw));
     }
 
     public void DiscardCard()

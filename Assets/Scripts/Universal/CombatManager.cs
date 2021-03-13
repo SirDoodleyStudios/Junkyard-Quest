@@ -255,7 +255,7 @@ public class CombatManager : MonoBehaviour
                 state = CombatState.PlayerTurn;
                 //activeCard.GetComponent<DragNDrop>().StateChanger(state); ///////////////////////////
                 playerHand.StateChanger(state);
-                playerHand.ResetOriginal();
+                playerHand.ResetToDeckPosition();
 
                 if (activeCardCard.cardMethod == CardMethod.Targetted)
                 {
@@ -290,15 +290,17 @@ public class CombatManager : MonoBehaviour
 
 
                     //reset oiginal must come first before discarding, beccause overridesorting can only be set if object is active
-                    playerHand.ResetOriginal();
+                    playerHand.ResetToDeckPosition();
                     //consume a card if the Card has a Consume tag confirmed
                     if (activeCardCard.cardTags.Contains(CardMechanics.Consume) || activeCardCard.cardTags.Contains(CardMechanics.Ability))
                     {
-                        deckManager.ConsumeCards(activeCard);
+                        //deckManager.ConsumeCards(activeCard);
+                        StartCoroutine(deckManager.ConsumeCards(activeCard));
                     }
                     else
                     {
-                        deckManager.DiscardCards(activeCard);
+                        //deckManager.DiscardCards(activeCard);
+                        StartCoroutine(deckManager.DiscardCards(activeCard));
                     }
 
                     //retuns to player turn phase
@@ -337,15 +339,17 @@ public class CombatManager : MonoBehaviour
 
                     //reset oiginal must come first before discarding, beccause overridesorting can only be set if object is active
                     //every time a card is played, reset it's scale down from
-                    playerHand.ResetOriginal();
+                    playerHand.ResetToDeckPosition();
                     //consume a card if the Card has a Consume tag confirmed
                     if (activeCardCard.cardTags.Contains(CardMechanics.Consume) || activeCardCard.cardTags.Contains(CardMechanics.Ability))
                     {
-                        deckManager.ConsumeCards(activeCard);
+                        //deckManager.ConsumeCards(activeCard);
+                        StartCoroutine(deckManager.ConsumeCards(activeCard));
                     }
                     else
                     {
-                        deckManager.DiscardCards(activeCard);
+                        //deckManager.DiscardCards(activeCard);
+                        StartCoroutine(deckManager.DiscardCards(activeCard));
                     }
 
                     //retuns to player turn phase
@@ -377,15 +381,17 @@ public class CombatManager : MonoBehaviour
 
                     //reset oiginal must come first before discarding, beccause overridesorting can only be set if object is active
                     //every time a card is played, reset it's scale down from
-                    playerHand.ResetOriginal();
+                    playerHand.ResetToDeckPosition();
                     //consume a card if the Card has a Consume tag confirmed
                     if (activeCardCard.cardTags.Contains(CardMechanics.Consume) || activeCardCard.cardTags.Contains(CardMechanics.Ability))
                     {
-                        deckManager.ConsumeCards(activeCard);
+                        //deckManager.ConsumeCards(activeCard);
+                        StartCoroutine(deckManager.ConsumeCards(activeCard));
                     }
                     else
                     {
-                        deckManager.DiscardCards(activeCard);
+                        //deckManager.DiscardCards(activeCard);
+                        StartCoroutine(deckManager.DiscardCards(activeCard));
                     }
 
                     //retuns to player turn phase
@@ -485,7 +491,7 @@ public class CombatManager : MonoBehaviour
                     creativeList[tempIndex].SetActive(true);
                     creativeList.Remove(creativeList[tempIndex]);
                     //removes scale increase on all cards
-                    playerHand.ResetOriginal();
+                    playerHand.ResetToDeckPosition();
                 }
 
 
@@ -503,7 +509,7 @@ public class CombatManager : MonoBehaviour
                 }
                 creativeList.Clear();
                 //removes scale increase on all cards
-                playerHand.ResetOriginal();
+                playerHand.ResetToDeckPosition();
                 state = CombatState.PlayerTurn;
                 creativeUI.SetActive(false);
             }
@@ -541,7 +547,7 @@ public class CombatManager : MonoBehaviour
                         creativeManager.UnleashCreativity(targetObject, player);
 
                         //removes scale increase on all cards
-                        playerHand.ResetOriginal();
+                        playerHand.ResetToDeckPosition();
                         //Discards cards used in creative mode
                         foreach (GameObject linkedCard in creativeList)
                         {
@@ -552,16 +558,18 @@ public class CombatManager : MonoBehaviour
                             activeCard.transform.SetAsLastSibling();
                             //reset oiginal must come first before discarding, beccause overridesorting can only be set if object is active
                             //every time a card is played, reset it's scale down from
-                            playerHand.ResetOriginal();
+                            playerHand.ResetToDeckPosition();
 
                             //consume a card if the Card has a Consume tag confirmed
                             if (activeCardCard.cardTags.Contains(CardMechanics.Consume) || activeCardCard.cardTags.Contains(CardMechanics.Ability))
                             {
-                                deckManager.ConsumeCards(activeCard);
+                                //deckManager.ConsumeCards(activeCard);
+                                StartCoroutine(deckManager.ConsumeCards(activeCard));
                             }
                             else
                             {
-                                deckManager.DiscardCards(activeCard);
+                                //deckManager.DiscardCards(activeCard);
+                                StartCoroutine(deckManager.DiscardCards(activeCard));
                             }
                         }
                         //clearing CardObjects 
@@ -588,7 +596,7 @@ public class CombatManager : MonoBehaviour
                 //returns the cost for crativity
                 creativeManager.UnleashCreativity(enemyHolder, player);
 
-                playerHand.ResetOriginal();
+                playerHand.ResetToDeckPosition();
                 //Discards cards used in creative mode
                 foreach (GameObject linkedCard in creativeList)
                 {
@@ -599,16 +607,18 @@ public class CombatManager : MonoBehaviour
                     activeCard.transform.SetAsLastSibling();
                     //reset oiginal must come first before discarding, beccause overridesorting can only be set if object is active
                     //every time a card is played, reset it's scale down from
-                    playerHand.ResetOriginal();
+                    playerHand.ResetToDeckPosition();
 
                     //consume a card if the Card has a Consume tag confirmed
                     if (activeCardCard.cardTags.Contains(CardMechanics.Consume) || activeCardCard.cardTags.Contains(CardMechanics.Ability))
                     {
-                        deckManager.ConsumeCards(activeCard);
+                        //deckManager.ConsumeCards(activeCard);
+                        StartCoroutine(deckManager.ConsumeCards(activeCard));
                     }
                     else
                     {
-                        deckManager.DiscardCards(activeCard);
+                        //deckManager.DiscardCards(activeCard);
+                        StartCoroutine(deckManager.DiscardCards(activeCard));
                     }
                 }
                 //clearing CardObjects 
@@ -728,7 +738,8 @@ public class CombatManager : MonoBehaviour
     public void DiscardFromHand()
     {
         Card activeCardCard = activeCard.GetComponent<Display>().card;
-        deckManager.DiscardCards(activeCard);
+        //deckManager.DiscardCards(activeCard);
+        StartCoroutine(deckManager.DiscardCards(activeCard));
         activeCard.SetActive(false);
         
     }
@@ -736,22 +747,14 @@ public class CombatManager : MonoBehaviour
     //function for drawing during start of turn
     public void DrawHand()
     {
-        //state = CombatState.DrawPahase;
-        //deckManager.DrawCards(Draw);
-        //DeckUpdater();
-        //playerHand.StateChanger(state);
-        //state = CombatState.PlayerTurn;
-        //playerHand.StateChanger(state);
-
         //setting the state of all cards to drawsphase will supposedly prevent accidental onPointerExit logic while drawing cards
-        //state = CombatState.DrawPhase;
-        //playerHand.StateChanger(state);
         playerHand.StateChanger(CombatState.DrawPhase);
-        deckManager.DrawCards(playerFunctions.defaultDraw);
+
+        deckManager.StartCoroutine(deckManager.DrawCards(playerFunctions.defaultDraw));
+        //deckManager.DrawCards(playerFunctions.defaultDraw);
+
         DeckUpdater();
         //turn back to playerTurn phase after drawing
-        //state = CombatState.PlayerTurn;
-        //playerHand.StateChanger(state);
         playerHand.StateChanger(CombatState.PlayerTurn);
     }
 
@@ -792,7 +795,8 @@ public class CombatManager : MonoBehaviour
             if(cardInHand.gameObject.activeSelf == true)
             {
                 activeCard = cardInHand.gameObject;
-                deckManager.DiscardCards(activeCard);
+                //deckManager.DiscardCards(activeCard);
+                StartCoroutine(deckManager.DiscardCards(activeCard));
             }
            
         }

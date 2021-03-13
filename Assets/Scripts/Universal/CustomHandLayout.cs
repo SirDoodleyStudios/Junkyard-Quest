@@ -2,13 +2,18 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using DG.Tweening;
 
 
 //MAKE SURE THAT THE CARD PREFAB IS  ANCHOR PRESET IS AT MIDDLE LEFT
 public class CustomHandLayout : MonoBehaviour
 {
-    public delegate void D_FixOriginalPositions();
-    public event D_FixOriginalPositions d_FixOriginalPositions;
+    //public delegate void D_FixOriginalPositions();
+    //public event D_FixOriginalPositions d_FixOriginalPositions;
+    //saved from last rearrange call so that hoverRearrange can use it
+    int lastHandCount;
+    //list of card prefab neighbors to be rearranged back to original position once card is unhovered
+    List<GameObject> neighborHoverList = new List<GameObject>();
 
     RectTransform handRect;
     float oddIncrement;
@@ -27,6 +32,13 @@ public class CustomHandLayout : MonoBehaviour
     float centerYeven;
     float radiusodd;
     float radiuseven;
+
+    public void Awake()
+    {
+        //tweeing initialize, needs to be called before any DOTween
+        DOTween.Init(true, true, LogBehaviour.Default);
+        DOTween.SetTweensCapacity(2000, 50);
+    }
 
     public void Start()
     {
@@ -52,66 +64,198 @@ public class CustomHandLayout : MonoBehaviour
 
     }
 
-    public void ActivateRearrange(int handCount)
+    public void ActivateRearrange(int handCount, GameObject cardPrefab)
     {
+        //to be used by hoverRearrange
+        lastHandCount = handCount;
         //checks if even
         if(handCount%2 == 0)
         {
-            StartCoroutine(RearrangeEvenHand(handCount));
+            StartCoroutine(RearrangeEvenHand(handCount, cardPrefab));
         }
         //cheks if odd
         else if (handCount%2 == 1)
         {
-            StartCoroutine(RearrangeOddHand(handCount));
+            StartCoroutine(RearrangeOddHand(handCount, cardPrefab));
         }
     }
 
-    public void HoverRearrange()
+    //called by hovered dragNDrop
+    //direction is either 1 or -1, it will determine where the neighbors will move
+    //1 is from pointerEnter and -1 is from pointerExit
+    public void HoverRearrange(int hoveredIndex)
     {
 
+        if (lastHandCount % 2 == 0)
+        {
+            StartCoroutine(HoverEvenRearrange(lastHandCount, hoveredIndex, 1));
+        }
+        //cheks if odd
+        else if (lastHandCount % 2 == 1)
+        {
+            StartCoroutine(HoverOddRearrange(lastHandCount, hoveredIndex, 1));
+        }
+    }
+    //called by the hovered DragNDrop
+    public void UnHoverRearrange(int hoveredIndex)
+    {
+        if (lastHandCount % 2 == 0)
+        {
+            StartCoroutine(HoverEvenRearrange(lastHandCount, hoveredIndex, -1));
+        }
+        //cheks if odd
+        else if (lastHandCount % 2 == 1)
+        {
+            StartCoroutine(HoverOddRearrange(lastHandCount, hoveredIndex, -1));
+        }
     }
 
-    IEnumerator RearrangeOddHand(int handCount)
-    {   
+    IEnumerator RearrangeOddHand(int handCount, GameObject cardPrefab)
+    {
+        float lagTime = .1f;
         //temp index is the last index of the card hand
         int tempIndex = handCount - 1;
         Transform cardTransform = gameObject.transform;
         for (int i = 0; tempIndex >= i; i++ )
         {
+
+
             Transform childTransform = cardTransform.GetChild(i);
             RectTransform cardRect = childTransform.GetComponent<RectTransform>();
             float x = (oddIncrement * ((5 - tempIndex / 2) + i));
             float y = YPositionOddFormula((oddIncrement * ((5 - tempIndex / 2) + i)));
             //cardRect.anchoredPosition = new Vector2((oddIncrement * ((5 - tempIndex / 2) + i)), YPositionOddFormula((oddIncrement * ((5 - tempIndex / 2) + i))));
-            cardRect.anchoredPosition = new Vector2(x, y);
+            //Tween here
+            //activates the card prefab at the very beginning of the drawhand
+            //yield return new WaitForSeconds(lagTime);
+            cardPrefab.SetActive(true);
+            childTransform.DORotateQuaternion(Quaternion.Euler(0, 0, -RotationAngleCalculatorEven(x, y)), lagTime);
+            cardRect.DOAnchorPos(new Vector2(x, y), lagTime, false);
+
+
+            //cardRect.anchoredPosition = new Vector2(x, y);
+
             //sets perfect rotation angles depending on index
-            childTransform.rotation = Quaternion.Euler(0, 0, -RotationAngleCalculatorOdd(x, y));
+            //childTransform.rotation = Quaternion.Euler(0, 0, -RotationAngleCalculatorOdd(x, y));
         }
-        d_FixOriginalPositions();
+        //d_FixOriginalPositions();
         yield return null;
 
     }
 
-    IEnumerator RearrangeEvenHand(int handCount)
+    IEnumerator RearrangeEvenHand(int handCount, GameObject cardPrefab)
     {
+        float lagTime = .1f;
         int tempIndex = handCount - 1;
         Transform cardTransform = gameObject.transform;
         for (int i = 0; tempIndex >= i; i++)
         {
+
+
             Transform childTransform = cardTransform.GetChild(i);
             RectTransform cardRect = childTransform.GetComponent<RectTransform>();
             float x = (evenIncrement * ((5 - (tempIndex - 1) / 2) + i));
             float y = YPositionEvenFormula((evenIncrement * ((5 - (tempIndex - 1) / 2) + i)));
             //cardRect.anchoredPosition = new Vector2((evenIncrement * ((5 - (tempIndex -1) / 2) + i)), YPositionEvenFormula((evenIncrement * ((5 - (tempIndex - 1) / 2) + i))));
-            cardRect.anchoredPosition = new Vector2(x, y);
+
+            //activates the card prefab at the very beginning of the drawhand
+            //yield return new WaitForSeconds(lagTime);
+            cardPrefab.SetActive(true);
+            childTransform.DORotateQuaternion(Quaternion.Euler(0, 0, -RotationAngleCalculatorEven(x, y)), lagTime);
+            cardRect.DOAnchorPos(new Vector2(x, y), lagTime, false);
+
+
+            //cardRect.anchoredPosition = new Vector2(x, y);
+
             //sets perfect rotation angles depending on index
-            childTransform.rotation = Quaternion.Euler(0, 0, -RotationAngleCalculatorEven(x, y));
+            //childTransform.rotation = Quaternion.Euler(0, 0, -RotationAngleCalculatorEven(x, y));
 
         }
-        d_FixOriginalPositions();
+        //d_FixOriginalPositions();
         yield return null;
 
     }
+    //rearrange the hovered card's neighbors bly splayig them away from hovered card
+    //direction is either 1 or -1, it will determine where the neighbors will move
+    //1 is from pointerEnter and -1 is from pointerExit
+    IEnumerator HoverOddRearrange(int handCount, int hoverIndex, int direction)
+    {
+        float lagTime = .2f;
+        float splayRate = .20f;
+        //temp index is the last index of the card hand
+        int tempIndex = handCount - 1;
+        Transform cardTransform = gameObject.transform;
+        //gets the leftmost card but not past 0
+        int minNeighbor = Mathf.Max(0, hoverIndex - 2);
+        //gets the rightmost card but not past the current hand count
+        int maxNeighbor = Mathf.Min(tempIndex, hoverIndex + 2);
+        for (int i = minNeighbor; maxNeighbor >= i; i++)
+        {
+            //only calculates neighbor indexes and not the hovered card itself
+            if (hoverIndex - i!=0)
+            {
+                Transform childTransform = cardTransform.GetChild(i);
+                RectTransform cardRect = childTransform.GetComponent<RectTransform>();
+
+                //neighbor game objects are added to a list so that we can change their positions back to normal once hocvering is done
+                GameObject childTransformObject = cardTransform.GetChild(i).gameObject;
+                neighborHoverList.Add(childTransformObject);
+
+                float x = cardRect.anchoredPosition.x - (oddIncrement * splayRate / (hoverIndex - i) * direction);
+                float y = YPositionOddFormula(x);
+                //cardRect.anchoredPosition = new Vector2((oddIncrement * ((5 - tempIndex / 2) + i)), YPositionOddFormula((oddIncrement * ((5 - tempIndex / 2) + i))));
+                //Tween here
+                //activates the card prefab at the very beginning of the drawhand
+                //yield return new WaitForSeconds(lagTime);
+                childTransform.DORotateQuaternion(Quaternion.Euler(0, 0, -RotationAngleCalculatorEven(x, y)), lagTime);
+                cardRect.DOAnchorPos(new Vector2(x, y), lagTime, false);
+            }
+        }
+        //d_FixOriginalPositions();
+        yield return null;
+
+    }
+    //rearrange the hovered card's neighbors bly splayig them away from hovered card
+    //direction is either 1 or -1, it will determine where the neighbors will move
+    //1 is from pointerEnter and -1 is from pointerExit
+    IEnumerator HoverEvenRearrange(int handCount, int hoverIndex, int direction)
+    {
+        float lagTime = .2f;
+        float splayRate = .6f;
+        //temp index is the last index of the card hand
+        int tempIndex = handCount - 1;
+        Transform cardTransform = gameObject.transform;
+        //gets the leftmost card but not past 0
+        int minNeighbor = Mathf.Max(0, hoverIndex - 2);
+        //gets the rightmost card but not past the current hand count
+        int maxNeighbor = Mathf.Min(tempIndex, hoverIndex + 2);
+        for (int i = minNeighbor; maxNeighbor >= i; i++)
+        {
+            //only calculates neighbor indexes and not the hovered card itself
+            if (hoverIndex - i != 0)
+            {
+                Transform childTransform = cardTransform.GetChild(i);
+                RectTransform cardRect = childTransform.GetComponent<RectTransform>();
+
+                //neighbor game objects are added to a list so that we can change their positions back to normal once hocvering is done
+                GameObject childTransformObject = cardTransform.GetChild(i).gameObject;
+                neighborHoverList.Add(childTransformObject);
+
+                float x = cardRect.anchoredPosition.x - (evenIncrement * splayRate / (hoverIndex - i)* direction);
+                float y = YPositionEvenFormula(x);
+                //cardRect.anchoredPosition = new Vector2((oddIncrement * ((5 - tempIndex / 2) + i)), YPositionOddFormula((oddIncrement * ((5 - tempIndex / 2) + i))));
+                //Tween here
+                //activates the card prefab at the very beginning of the drawhand
+                //yield return new WaitForSeconds(lagTime);
+                childTransform.DORotateQuaternion(Quaternion.Euler(0, 0, -RotationAngleCalculatorEven(x, y)), lagTime);
+                cardRect.DOAnchorPos(new Vector2(x, y), lagTime, false);
+            }
+        }
+        //d_FixOriginalPositions();
+        yield return null;
+
+    }
+
 
     //actual equation for finding Y position based on determined X
     float YPositionOddFormula(float x)

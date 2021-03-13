@@ -8,7 +8,8 @@ public class DragNDrop : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
 {
     //cache for card's parent
     PlayerHand playerHand;
-
+    //cache for card's parent CustomHandLayout
+    CustomHandLayout customHandLayout;
     //Vector3 OriginalPosition;
     Vector3 OriginalScale;
     Canvas sortingCanvas;
@@ -19,7 +20,7 @@ public class DragNDrop : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
     RectTransform objectRect;
     RectTransform handRect;
     //cache for card object's anchored position
-    Vector2 cardAnchor { get; set; }
+    [SerializeField]Vector2 cardAnchor { get; set; }
     //original positions for reference when changing them during hover
     Quaternion OriginalOrientation { get; set; }
     Vector2 OriginalPosition { get; set; }
@@ -45,11 +46,15 @@ public class DragNDrop : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
         handRect = gameObject.transform.parent.gameObject.GetComponent<RectTransform>();
 
         playerHand = objectTransform.GetComponentInParent<PlayerHand>();
+        customHandLayout = objectTransform.GetComponentInParent<CustomHandLayout>();
 
         if (playerHand != null)
         {
+            //I dont know why there are two but we only need one
             //assign the original position assigner to delegate in custom hand layout so that it's position can be reset everytime a rearrange is called
-            objectTransform.parent.gameObject.GetComponent<CustomHandLayout>().d_FixOriginalPositions += AssignInitialPositions;
+            objectTransform.parent.gameObject.GetComponent<PlayerHand>().d_FixOriginalPositions += AssignInitialPositions;
+            //objectTransform.parent.gameObject.GetComponent<PlayerHand>().d_FixOriginalPositions += AssignInitialPositions;
+            //objectTransform.parent.gameObject.GetComponent<PlayerHand>().d_ResetToDeckPosition += 
         }
 
     }
@@ -89,9 +94,25 @@ public class DragNDrop : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
     //called by event in CustomHandLayout so that original poisitions are reset everytime a rearrange happens
     public void AssignInitialPositions()
     {
-        cardAnchor = objectRect.anchoredPosition;
-        OriginalPosition = cardAnchor;
-        OriginalOrientation = objectTransform.rotation;
+        if (gameObject.activeSelf)
+        {
+            cardAnchor = objectRect.anchoredPosition;
+            OriginalPosition = cardAnchor;
+            OriginalOrientation = objectTransform.rotation;
+        }
+        else
+        {
+            cardAnchor = new Vector2(0, 0);
+            objectRect.anchoredPosition = cardAnchor;
+            OriginalPosition = cardAnchor;
+            OriginalOrientation = objectTransform.rotation;
+        }
+
+    }
+
+    //called by deckmanager to make disabled cards go back to position 0
+    public void ResetToDeckPosition()
+    {
 
     }
 
@@ -112,6 +133,13 @@ public class DragNDrop : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
         //gameObject.transform.localPosition = OriginalPosition;
     }
 
+    //called when card effect is activated and return it to 0 position
+    //this is for drawing from deck to hand animation purposes
+    public void ReturnToDeckPosition()
+    {
+    
+    }
+
     public void OnPointerEnter(PointerEventData eventData)
     {
 
@@ -120,11 +148,6 @@ public class DragNDrop : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
         if (playerHand != null && playerHand.state == CombatState.PlayerTurn)
         {
             //records original position, scale, and rotation first for reverting later on
-
-            //card object anchored position, it's cached here so that the original position is always reset at hover
-            //cardAnchor = objectRect.anchoredPosition;
-            //OriginalPosition = cardAnchor;
-            //OriginalOrientation = objectTransform.rotation;
 
             //actual setting of scale, rotation and position
             objectTransform.localScale = new Vector3(1.3f, 1.3f, objectTransform.localScale.z);
@@ -137,6 +160,10 @@ public class DragNDrop : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
             sortingCanvas.overrideSorting = true;
             //gameObject.transform.localPosition = new Vector3(gameObject.transform.localPosition.x, gameObject.transform.localPosition.y, -11f);
             gameObject.GetComponent<BoxCollider2D>().enabled = true;
+
+            //callsCustomHandLayout to rearrange 2 neighbors to the right and 2 negihbors to the left
+            //the neighbors are to move away from the hovered card so that they are still visible
+            customHandLayout.HoverRearrange(objectTransform.GetSiblingIndex());
 
 
             //prevents from showing up during drag
@@ -154,22 +181,34 @@ public class DragNDrop : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
 
         if (playerHand != null && playerHand.state == CombatState.PlayerTurn)
         {
-            
+            //customHandLayout.UnHoverRearrange();
+            //ResetToAssignedPosition();
+
             objectRect.anchoredPosition = OriginalPosition;
             objectTransform.rotation = OriginalOrientation;
             objectTransform.localScale = OriginalScale;
+            customHandLayout.UnHoverRearrange(objectTransform.GetSiblingIndex());
+
             //sets zoomed card to showcase area
             //gameObject.GetComponent<Canvas>().sortingOrder = 0;
             sortingCanvas.overrideSorting = false;
             //gameObject.transform.localPosition = new Vector3(gameObject.transform.localPosition.x, gameObject.transform.localPosition.y, (gameObject.transform.GetSiblingIndex() * -1));
             gameObject.GetComponent<BoxCollider2D>().enabled = false;
 
-
         }
         //prevents popup from appearing when mouse is no longer hovered on card
         cardDescriptionLayout.DisablePopups();
+    }    
+
+    //originally in OnPointerExit but separated now to be able to acces this certain function from customHandLayout
+    //when this is called, the card prefab gameobject will revert to it's assigned fix position
+    // might not be needed
+    public void ResetToAssignedPosition()
+    {
+        objectRect.anchoredPosition = OriginalPosition;
+        objectTransform.rotation = OriginalOrientation;
+        objectTransform.localScale = OriginalScale;
     }
-    
 
     //on firs instance of click, assign event data so that we can pass it to OnDrag using ActivateSingleClickDrag
     public void OnPointerDown(PointerEventData eventData)

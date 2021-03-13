@@ -5,7 +5,6 @@ using UnityEngine.UI;
 
 public class DeckManager : MonoBehaviour
 {
-
     List<Card> initialDeck = new List<Card>();
 
     List<Card> battleDeck = new List<Card>();
@@ -17,6 +16,7 @@ public class DeckManager : MonoBehaviour
 
     //panel that shows the player had of cards
     public GameObject playerHandPanel;
+    PlayerHand playerHandScript;
     CustomHandLayout handLayout;
     public GameObject cardPrefab;
 
@@ -47,11 +47,15 @@ public class DeckManager : MonoBehaviour
     //for test only, randomly apply jigsaw effects to instantiated cards///////////////
     public List<JigsawFormat> testJigsawList = new List<JigsawFormat>();
 
-    
+
+
     void Start()
     {
         //assigning cache for playerHand's layouting logic
         handLayout = playerHandPanel.GetComponent<CustomHandLayout>();
+
+        //assigning cache for the playerHand script
+        playerHandScript = playerHandPanel.GetComponent<PlayerHand>();
 
         //must depend on chosen character and class
 
@@ -110,10 +114,15 @@ public class DeckManager : MonoBehaviour
 
     //drawcount is sent by combatmanager
     //return int is the remaining deck cards
-    public void DrawCards(int drawCount)
+    public IEnumerator DrawCards(int drawCount)
     {
         //serves as counter when receiving draw count value
-        int drawtemp = 0;        
+        int drawtemp = 0;
+        //time differential between each draw
+        float lagTime = .1f;
+
+        //sets playerHand state to DrawPhase so that DragNDrop logics wont work while drawing
+        playerHandScript.StateChanger(CombatState.DrawPhase);
 
         foreach (Card deckCard in battleDeck)
         {           
@@ -139,8 +148,17 @@ public class DeckManager : MonoBehaviour
                 //this is because Display function will start at OnEnable
                 ///////////////////////////////////////////////////////////////////////////////////////////////////////
                 ///create a logic that warps position of card gameObject from deck first then enable it then show animation going from deck to hand
-                enabledCard.SetActive(true);
-                handLayout.ActivateRearrange(playerHand.Count);
+                ///
+
+                //enabledCard.SetActive(true);
+                //yield return new WaitForSeconds(.01f);
+
+                handLayout.ActivateRearrange(playerHand.Count, enabledCard);
+                yield return new WaitForSeconds(lagTime);
+                //calls the event in playerHand to make the set positions of cards after tweening its fixed final positions
+                playerHandScript.FixCardPositions();
+
+
             }
 
             drawtemp++;
@@ -151,7 +169,8 @@ public class DeckManager : MonoBehaviour
             {
                 break;
             }
-
+            //at end of draw, DragNDrop should be albe to work now
+            playerHandScript.StateChanger(CombatState.PlayerTurn);
         }
 
         //ensures that when deck count is 0, only remaining cards are removed then calls the reset
@@ -171,6 +190,7 @@ public class DeckManager : MonoBehaviour
     }
 
 
+
     //called by draw function when deck count runs out
     //receives the remaining drawcount and passes it back when it calls the draw function again after moving discard to deck and shuffling
     public void DeckReset(int remainingDraw)
@@ -183,13 +203,17 @@ public class DeckManager : MonoBehaviour
         Shuffle(battleDeck);
         if (remainingDraw != 0)
         {
-            DrawCards(remainingDraw);
+            StartCoroutine(DrawCards(remainingDraw));
+            //DrawCards(remainingDraw);
         }
     }
 
     // can only be called when card is discarded via combat
-    public void DiscardCards(GameObject discardedCardObject)
+    public IEnumerator DiscardCards(GameObject discardedCardObject)
     {
+        //time differential between each rearrange
+        float lagTime = .2f;
+
         Card discardedCard = discardedCardObject.GetComponent<Display>().card;
         //for moving the card to discard and removing from player hand
         //Card discardedCard = discardedPrefab.GetComponent<Display>().card; not needed since combat manager will only be sending the Card
@@ -199,20 +223,36 @@ public class DeckManager : MonoBehaviour
         //discardedPrefab.SetActive(false);
         //discardedPrefab.transform.SetAsLastSibling();
         discardCount = discardPile.Count;
+
+        handLayout.ActivateRearrange(playerHand.Count, discardedCardObject);
+        //disable is here to make way for rearrange position because rearange function turns card to enabled
         discardedCardObject.SetActive(false);
-        handLayout.ActivateRearrange(playerHand.Count);
+        yield return new WaitForSeconds(lagTime);
+        //calls the event in playerHand to make the set positions of cards after tweening its fixed final positions
+        playerHandScript.FixCardPositions();
+
+        //playerHandScript.ResetToDeckPosition();
     }
     //for consumed cards, similar to discard but cards in consume pile will not be drawn upon
-    public void ConsumeCards(GameObject consumedCardObject)
+    public IEnumerator ConsumeCards(GameObject consumedCardObject)
     {
+        //time differential between each rearrange
+        float lagTime = .2f;
         Card consumedCard = consumedCardObject.GetComponent<Display>().card;
         consumePile.Add(consumedCard);
         playerHand.Remove(consumedCard);
 
         //for updating Consume UI
         consumeCount = consumePile.Count;
+
+        handLayout.ActivateRearrange(playerHand.Count, consumedCardObject);
+        //disable is here to make way for rearrange position because rearange function turns card to enabled
         consumedCardObject.SetActive(false);
-        handLayout.ActivateRearrange(playerHand.Count);
+        yield return new WaitForSeconds(lagTime);
+        //calls the event in playerHand to make the set positions of cards after tweening its fixed final positions
+        playerHandScript.FixCardPositions();
+
+        //playerHandScript.ResetToDeckPosition();
     }
 
     //public void DiscardAll()
