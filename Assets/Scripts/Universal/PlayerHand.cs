@@ -21,8 +21,12 @@ public class PlayerHand : MonoBehaviour
     public D_RemoveCardSorting d_AddCardSorting;
 
     //for putting disabled cards in player hand to anchored position 0 so that they can be animated again from draw to position
-    public delegate void D_ResetToDeckPosition();
-    public event D_ResetToDeckPosition d_ResetToDeckPosition;
+    //public delegate void D_ResetToDeckPosition();
+    //public event D_ResetToDeckPosition d_ResetToDeckPosition;
+
+    //called for all DragNDrops for resetting all of the cards to their fixed position when unhovering a target card
+    public delegate void D_ResetToFixedPosition();
+    public event D_ResetToFixedPosition d_ResetToFixedPosition;
 
     private void Start()
     {
@@ -41,6 +45,10 @@ public class PlayerHand : MonoBehaviour
     public void ResetToDeckPosition()
     {
         //d_ResetToDeckPosition();
+    }
+    public void ResetToFixedPosition()
+    {
+        d_ResetToFixedPosition();
     }
 
     public void RemoveCardSorting()

@@ -265,6 +265,8 @@ public class CombatManager : MonoBehaviour
                 {
                     activeCardDragNDrop.DeactivateDrag();
                 }
+                //resets sorting orders, box colliders, and positions
+                activeCardDragNDrop.ResetSortingCanvasAndCollider();
             }
 
             //pass targetted object
@@ -288,6 +290,8 @@ public class CombatManager : MonoBehaviour
                     //for disabling the targetting arrow
                     targetArrowHandler.DisableArrow();
 
+                    //resets sorting orders, box colliders, and positions
+                    activeCardDragNDrop.ResetSortingCanvasAndCollider();
 
                     //reset oiginal must come first before discarding, beccause overridesorting can only be set if object is active
                     playerHand.ResetToDeckPosition();
@@ -307,7 +311,6 @@ public class CombatManager : MonoBehaviour
                     state = CombatState.PlayerTurn;
                     //activeCard.GetComponent<DragNDrop>().StateChanger(state);////////////////////
                     playerHand.StateChanger(state);
-
                     DeckUpdater();
 
 
@@ -356,7 +359,8 @@ public class CombatManager : MonoBehaviour
                     state = CombatState.PlayerTurn;
                     //activeCard.GetComponent<DragNDrop>().StateChanger(state);////////////////////
                     playerHand.StateChanger(state);
-
+                    //resets sorting orders, box colliders, and positions
+                    //activeCardDragNDrop.ResetSortingCanvasAndCollider();
                     DeckUpdater();
 
 
@@ -398,7 +402,8 @@ public class CombatManager : MonoBehaviour
                     state = CombatState.PlayerTurn;
                     //activeCard.GetComponent<DragNDrop>().StateChanger(state);////////////////////
                     playerHand.StateChanger(state);
-
+                    //resets sorting orders, box colliders, and positions
+                    //activeCardDragNDrop.ResetSortingCanvasAndCollider();
                     DeckUpdater();
 
                 }
@@ -553,13 +558,15 @@ public class CombatManager : MonoBehaviour
                         {
                             //cache for card object and the card SO
                             activeCard = linkedCard;
+                            activeDragNDrop = activeCard.GetComponent<DragNDrop>();
                             Card activeCardCard = activeCard.GetComponent<Display>().card;
                             //calls discard method and puts active card in discard pile
                             activeCard.transform.SetAsLastSibling();
                             //reset oiginal must come first before discarding, beccause overridesorting can only be set if object is active
                             //every time a card is played, reset it's scale down from
                             playerHand.ResetToDeckPosition();
-
+                            //resets sorting orders, box colliders, and positions
+                            activeDragNDrop.ResetSortingCanvasAndCollider();
                             //consume a card if the Card has a Consume tag confirmed
                             if (activeCardCard.cardTags.Contains(CardMechanics.Consume) || activeCardCard.cardTags.Contains(CardMechanics.Ability))
                             {
@@ -577,6 +584,7 @@ public class CombatManager : MonoBehaviour
                         state = CombatState.PlayerTurn;
                         creativeUnleash.SetActive(false);
                         //playerHand.StateChanger(state); -- not yet sure
+
                         DeckUpdater();
 
                     }
@@ -608,7 +616,8 @@ public class CombatManager : MonoBehaviour
                     //reset oiginal must come first before discarding, beccause overridesorting can only be set if object is active
                     //every time a card is played, reset it's scale down from
                     playerHand.ResetToDeckPosition();
-
+                    //resets sorting orders, box colliders, and positions
+                    activeDragNDrop.ResetSortingCanvasAndCollider();
                     //consume a card if the Card has a Consume tag confirmed
                     if (activeCardCard.cardTags.Contains(CardMechanics.Consume) || activeCardCard.cardTags.Contains(CardMechanics.Ability))
                     {

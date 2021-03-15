@@ -6,6 +6,8 @@ using UnityEngine.UI;
 
 public class DragNDrop : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IPointerDownHandler, IBeginDragHandler, IDragHandler, IEndDragHandler, IPointerClickHandler
 {
+    //cache for the card prefab's box collider
+    BoxCollider2D cardCollider;
     //cache for card's parent
     PlayerHand playerHand;
     //cache for card's parent CustomHandLayout
@@ -20,7 +22,8 @@ public class DragNDrop : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
     RectTransform objectRect;
     RectTransform handRect;
     //cache for card object's anchored position
-    [SerializeField]Vector2 cardAnchor { get; set; }
+    //called by CustomHandLayout
+    public Vector2 cardAnchor { get; set; }
     //original positions for reference when changing them during hover
     Quaternion OriginalOrientation { get; set; }
     Vector2 OriginalPosition { get; set; }
@@ -38,6 +41,9 @@ public class DragNDrop : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
     {
         //tagDescriptionHolder = gameObject.transform.GetChild(gameObject.transform.childCount).gameObject;
 
+        //cache for boxCollider
+        cardCollider = gameObject.GetComponent<BoxCollider2D>();
+
         //gets its own canvas to activate sorting when hovered on
         sortingCanvas = gameObject.GetComponent<Canvas>();
         //transform caches
@@ -54,7 +60,7 @@ public class DragNDrop : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
             //assign the original position assigner to delegate in custom hand layout so that it's position can be reset everytime a rearrange is called
             objectTransform.parent.gameObject.GetComponent<PlayerHand>().d_FixOriginalPositions += AssignInitialPositions;
             //objectTransform.parent.gameObject.GetComponent<PlayerHand>().d_FixOriginalPositions += AssignInitialPositions;
-            //objectTransform.parent.gameObject.GetComponent<PlayerHand>().d_ResetToDeckPosition += 
+            objectTransform.parent.gameObject.GetComponent<PlayerHand>().d_ResetToFixedPosition += ResetToAssignedPosition;
         }
 
     }
@@ -123,9 +129,6 @@ public class DragNDrop : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
         objectRect.anchoredPosition = OriginalPosition;
         objectTransform.rotation = OriginalOrientation;
         objectTransform.localScale = OriginalScale;
-        //this is a hack, assigns a Z position based on index, so child 0 will have 0 z, child 1 has -1 z and 2 will have -2
-        // this allows each card will stack in from of each other in a proper manner from left to right
-        //gameObject.transform.localPosition = new Vector3(gameObject.transform.localPosition.x, gameObject.transform.localPosition.y, (gameObject.transform.GetSiblingIndex()*-1));
         //removes sorting canvas of all cards in hand so hat stacking relies on heirarchy
         sortingCanvas.overrideSorting = false;
         gameObject.GetComponent<BoxCollider2D>().enabled = false;
@@ -149,21 +152,25 @@ public class DragNDrop : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
         {
             //records original position, scale, and rotation first for reverting later on
 
+            //reset everything first
+            playerHand.ResetToFixedPosition();
+            //callsCustomHandLayout to rearrange 2 neighbors to the right and 2 negihbors to the left
+            //the neighbors are to move away from the hovered card so that they are still visible
+            customHandLayout.HoverRearrange(objectTransform.GetSiblingIndex());
+
+
             //actual setting of scale, rotation and position
-            objectTransform.localScale = new Vector3(1.3f, 1.3f, objectTransform.localScale.z);
-            objectRect.anchoredPosition = new Vector2(cardAnchor.x, 15);
-            objectTransform.rotation = Quaternion.Euler(0,0,0);
+            //Migrated to CustomHandLayout so that all zooming and moving animations are in sync
+            //objectTransform.localScale = new Vector3(1.3f, 1.3f, objectTransform.localScale.z);
+            //objectRect.anchoredPosition = new Vector2(cardAnchor.x, 15);
+            //objectTransform.rotation = Quaternion.Euler(0,0,0);
 
 
             //sets zoomed card to showcase area
             //gameObject.GetComponent<Canvas>().sortingOrder = 1;
             sortingCanvas.overrideSorting = true;
             //gameObject.transform.localPosition = new Vector3(gameObject.transform.localPosition.x, gameObject.transform.localPosition.y, -11f);
-            gameObject.GetComponent<BoxCollider2D>().enabled = true;
-
-            //callsCustomHandLayout to rearrange 2 neighbors to the right and 2 negihbors to the left
-            //the neighbors are to move away from the hovered card so that they are still visible
-            customHandLayout.HoverRearrange(objectTransform.GetSiblingIndex());
+            cardCollider.enabled = true;
 
 
             //prevents from showing up during drag
@@ -173,32 +180,42 @@ public class DragNDrop : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
                 cardDescriptionLayout.EnablePopups();
             }
         }
-
     }
 
+
+    //OnPointerExit and ActivateCardBehavior works in tandem
+    //ActivateCardBehavior is called by CombatManager when the card effect is actually used
+    //OnpointerExit calls ActivateCardBehavior when player stops hovering at card
     public void OnPointerExit(PointerEventData eventData)
     {
-
         if (playerHand != null && playerHand.state == CombatState.PlayerTurn)
         {
-            //customHandLayout.UnHoverRearrange();
-            //ResetToAssignedPosition();
-
-            objectRect.anchoredPosition = OriginalPosition;
-            objectTransform.rotation = OriginalOrientation;
-            objectTransform.localScale = OriginalScale;
             customHandLayout.UnHoverRearrange(objectTransform.GetSiblingIndex());
+            //playerHand.ResetToFixedPosition();
+
+
+            //objectRect.anchoredPosition = OriginalPosition;
+            //objectTransform.rotation = OriginalOrientation;
+            //objectTransform.localScale = OriginalScale;
+            ResetSortingCanvasAndCollider();
 
             //sets zoomed card to showcase area
             //gameObject.GetComponent<Canvas>().sortingOrder = 0;
-            sortingCanvas.overrideSorting = false;
-            //gameObject.transform.localPosition = new Vector3(gameObject.transform.localPosition.x, gameObject.transform.localPosition.y, (gameObject.transform.GetSiblingIndex() * -1));
-            gameObject.GetComponent<BoxCollider2D>().enabled = false;
+
 
         }
         //prevents popup from appearing when mouse is no longer hovered on card
         cardDescriptionLayout.DisablePopups();
     }    
+
+    public void ResetSortingCanvasAndCollider()
+    {
+        ResetToAssignedPosition();
+        sortingCanvas.overrideSorting = false;
+        //gameObject.transform.localPosition = new Vector3(gameObject.transform.localPosition.x, gameObject.transform.localPosition.y, (gameObject.transform.GetSiblingIndex() * -1));
+        cardCollider.enabled = false;
+    }
+
 
     //originally in OnPointerExit but separated now to be able to acces this certain function from customHandLayout
     //when this is called, the card prefab gameobject will revert to it's assigned fix position

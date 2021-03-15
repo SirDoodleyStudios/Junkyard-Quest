@@ -135,7 +135,10 @@ public class CardDescriptionLayout : MonoBehaviour/*, IPointerEnterHandler, IPoi
                 //Cache for a rectTransform's height
                 descriptionRect = descriptionLayoutHolder.GetComponent<RectTransform>();
                 //will allow popup tags to start at multiplier's height
-                float nextPosY = -descriptionRect.rect.height * .8f;
+                //can be added with decimal multiplier to adjust where the popup descriptions are
+                //float nextPosY = -descriptionRect.rect.height * .8f;
+                //0f means that the popups will start on level with the top of the cards because popup anchors are in top right corner of card
+                float nextPosY = 0f;
 
 
                 //for assigining positions of popups based on it's order
@@ -151,7 +154,9 @@ public class CardDescriptionLayout : MonoBehaviour/*, IPointerEnterHandler, IPoi
                     popupDescRect.anchoredPosition = new Vector2(10, nextPosY);
 
                     //will keep adding to nextPosY so that later popus are placed heigher
-                    nextPosY = nextPosY + popupDescRect.rect.height + padding;
+                    //nextPosY = nextPosY + popupDescRect.rect.height + padding;
+                    //alternatively, we can start with popups at heighr position then go down for additionals
+                    nextPosY = nextPosY - popupDescRect.rect.height - padding;
 
                 }
                 //descriptionLayoutHolder.SetActive(true);

@@ -14,6 +14,8 @@ public class CustomHandLayout : MonoBehaviour
     int lastHandCount;
     //list of card prefab neighbors to be rearranged back to original position once card is unhovered
     List<GameObject> neighborHoverList = new List<GameObject>();
+    //bool that identifies whether a card is being hovered on, used for overriding delay from postion tweens
+    bool isHovering;
 
     RectTransform handRect;
     float oddIncrement;
@@ -48,7 +50,7 @@ public class CustomHandLayout : MonoBehaviour
         oddIncrement = handRect.rect.width / 10;
         evenIncrement = handRect.rect.width / 11;
         //Assignment of Vector points
-        float yVariable = 3f;
+        float yVariable = 4f;
         pointAodd = new Vector2(oddIncrement, handRect.rect.height / (2 * yVariable));
         pointAeven = new Vector2(evenIncrement, handRect.rect.height / (2 * yVariable));
         pointBodd = new Vector2((9 * oddIncrement), handRect.rect.height / (2 * yVariable));
@@ -85,7 +87,7 @@ public class CustomHandLayout : MonoBehaviour
     //1 is from pointerEnter and -1 is from pointerExit
     public void HoverRearrange(int hoveredIndex)
     {
-
+        isHovering = true;
         if (lastHandCount % 2 == 0)
         {
             StartCoroutine(HoverEvenRearrange(lastHandCount, hoveredIndex, 1));
@@ -99,6 +101,7 @@ public class CustomHandLayout : MonoBehaviour
     //called by the hovered DragNDrop
     public void UnHoverRearrange(int hoveredIndex)
     {
+        isHovering = false;
         if (lastHandCount % 2 == 0)
         {
             StartCoroutine(HoverEvenRearrange(lastHandCount, hoveredIndex, -1));
@@ -180,8 +183,8 @@ public class CustomHandLayout : MonoBehaviour
     //1 is from pointerEnter and -1 is from pointerExit
     IEnumerator HoverOddRearrange(int handCount, int hoverIndex, int direction)
     {
-        float lagTime = .2f;
-        float splayRate = .20f;
+        float lagTime = .1f;
+        float splayRate = .7f;
         //temp index is the last index of the card hand
         int tempIndex = handCount - 1;
         Transform cardTransform = gameObject.transform;
@@ -191,16 +194,25 @@ public class CustomHandLayout : MonoBehaviour
         int maxNeighbor = Mathf.Min(tempIndex, hoverIndex + 2);
         for (int i = minNeighbor; maxNeighbor >= i; i++)
         {
-            //only calculates neighbor indexes and not the hovered card itself
-            if (hoverIndex - i!=0)
+            Transform childTransform = cardTransform.GetChild(i);
+            RectTransform cardRect = childTransform.GetComponent<RectTransform>();
+
+            //the zooming mechanic is called here
+            //originally in DragNDrop
+            if (hoverIndex - i == 0)
             {
-                Transform childTransform = cardTransform.GetChild(i);
-                RectTransform cardRect = childTransform.GetComponent<RectTransform>();
+                //DORewind makes sure that other tween effects are terminated when hovering quickly to other objects
+                childTransform.DORewind(false);
+                childTransform.localScale = new Vector3(1.4f, 1.4f, childTransform.localScale.z);
+                cardRect.anchoredPosition = new Vector2(cardRect.anchoredPosition.x, 90);
+                childTransform.rotation = Quaternion.Euler(0, 0, 0);
 
-                //neighbor game objects are added to a list so that we can change their positions back to normal once hocvering is done
-                GameObject childTransformObject = cardTransform.GetChild(i).gameObject;
-                neighborHoverList.Add(childTransformObject);
+            }
 
+            //only calculates neighbor indexes and not the hovered card itself
+            //if (hoverIndex - i!=0)
+            else
+            {
                 float x = cardRect.anchoredPosition.x - (oddIncrement * splayRate / (hoverIndex - i) * direction);
                 float y = YPositionOddFormula(x);
                 //cardRect.anchoredPosition = new Vector2((oddIncrement * ((5 - tempIndex / 2) + i)), YPositionOddFormula((oddIncrement * ((5 - tempIndex / 2) + i))));
@@ -210,6 +222,7 @@ public class CustomHandLayout : MonoBehaviour
                 childTransform.DORotateQuaternion(Quaternion.Euler(0, 0, -RotationAngleCalculatorEven(x, y)), lagTime);
                 cardRect.DOAnchorPos(new Vector2(x, y), lagTime, false);
             }
+
         }
         //d_FixOriginalPositions();
         yield return null;
@@ -220,8 +233,8 @@ public class CustomHandLayout : MonoBehaviour
     //1 is from pointerEnter and -1 is from pointerExit
     IEnumerator HoverEvenRearrange(int handCount, int hoverIndex, int direction)
     {
-        float lagTime = .2f;
-        float splayRate = .6f;
+        float lagTime = .1f;
+        float splayRate = .7f;
         //temp index is the last index of the card hand
         int tempIndex = handCount - 1;
         Transform cardTransform = gameObject.transform;
@@ -231,17 +244,30 @@ public class CustomHandLayout : MonoBehaviour
         int maxNeighbor = Mathf.Min(tempIndex, hoverIndex + 2);
         for (int i = minNeighbor; maxNeighbor >= i; i++)
         {
-            //only calculates neighbor indexes and not the hovered card itself
-            if (hoverIndex - i != 0)
+            Transform childTransform = cardTransform.GetChild(i);
+            RectTransform cardRect = childTransform.GetComponent<RectTransform>();
+
+            //the zooming mechanic is called here
+            //originally in DragNDrop
+            if (hoverIndex - i == 0)
             {
-                Transform childTransform = cardTransform.GetChild(i);
-                RectTransform cardRect = childTransform.GetComponent<RectTransform>();
+                //DORewind makes sure that other tween effects are terminated when hovering quickly to other objects
+                childTransform.DORewind(false);
+                childTransform.localScale = new Vector3(1.4f, 1.4f, childTransform.localScale.z);
+                cardRect.anchoredPosition = new Vector2(cardRect.anchoredPosition.x, 30);
+                childTransform.rotation = Quaternion.Euler(0, 0, 0);
+
+            }
+            //only calculates neighbor indexes and not the hovered card itself
+            else
+            {                
+
 
                 //neighbor game objects are added to a list so that we can change their positions back to normal once hocvering is done
                 GameObject childTransformObject = cardTransform.GetChild(i).gameObject;
                 neighborHoverList.Add(childTransformObject);
 
-                float x = cardRect.anchoredPosition.x - (evenIncrement * splayRate / (hoverIndex - i)* direction);
+                float x = cardRect.anchoredPosition.x - (evenIncrement * splayRate / (hoverIndex - i) * direction);
                 float y = YPositionEvenFormula(x);
                 //cardRect.anchoredPosition = new Vector2((oddIncrement * ((5 - tempIndex / 2) + i)), YPositionOddFormula((oddIncrement * ((5 - tempIndex / 2) + i))));
                 //Tween here
@@ -249,12 +275,17 @@ public class CustomHandLayout : MonoBehaviour
                 //yield return new WaitForSeconds(lagTime);
                 childTransform.DORotateQuaternion(Quaternion.Euler(0, 0, -RotationAngleCalculatorEven(x, y)), lagTime);
                 cardRect.DOAnchorPos(new Vector2(x, y), lagTime, false);
+
+
             }
         }
         //d_FixOriginalPositions();
         yield return null;
-
     }
+
+    
+
+
 
 
     //actual equation for finding Y position based on determined X
