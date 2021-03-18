@@ -154,7 +154,12 @@ public abstract class BaseCardEffect
             targetUnit = targetObject.GetComponent<BaseUnitFunctions>();
             targetPlayingField = targetObject.GetComponent<PlayingField>();
         }
+    }
 
+    //passing the animation sprite to be tweened
+    //passes to EffectAnimationManager
+    public void PlayEffectAnimation()
+    {
 
     }
 

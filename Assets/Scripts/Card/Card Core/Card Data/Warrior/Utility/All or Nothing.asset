@@ -16,6 +16,7 @@ MonoBehaviour:
   effectText: 
   energyCost: 2
   artwork: {fileID: 21300000, guid: afcd7621914f1f440b7219c4abef3934, type: 3}
+  animationSprite: {fileID: 21300000, guid: 6189fc89c6fc70348982b562a14409e0, type: 3}
   cardClass: 1
   cardType: 1
   cardMethod: 1

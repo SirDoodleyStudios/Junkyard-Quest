@@ -16,6 +16,7 @@ MonoBehaviour:
   effectText: 
   energyCost: 2
   artwork: {fileID: 21300000, guid: 0679e7ea123329e46a08ab71aa8633a3, type: 3}
+  animationSprite: {fileID: 21300000, guid: 6189fc89c6fc70348982b562a14409e0, type: 3}
   cardClass: 1
   cardType: 1
   cardMethod: 1
@@ -23,5 +24,6 @@ MonoBehaviour:
   jigsawEffect: {fileID: 0}
   abilityEffect: {fileID: 0}
   Keep: 0
+  Consume: 0
   Combo: 0
   cardTags: 29000000

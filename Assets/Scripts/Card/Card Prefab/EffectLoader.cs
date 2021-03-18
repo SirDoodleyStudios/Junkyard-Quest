@@ -6,7 +6,12 @@ public class EffectLoader : MonoBehaviour
 {
     //deckManager will assign this when card is enabled in hand
     public Card card;
-    
+    //Cache for the effect animation manager
+    EffectAnimationManager eAnimationManager;
+    private void Awake()
+    {
+        eAnimationManager = gameObject.GetComponent<EffectAnimationManager>();
+    }
 
     private void OnEnable()
     {
@@ -43,7 +48,7 @@ public class EffectLoader : MonoBehaviour
         }
     }
 
-
+    //target does not necessarily mean that the correct target is chosen, its just the game object clicked during play
     public void ActivateCardEffect(GameObject target, GameObject actor)
     {
         EffectFactory.GetCardEffect(card.enumCardName).CardEffectActivate(target, actor);

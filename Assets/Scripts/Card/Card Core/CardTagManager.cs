@@ -133,23 +133,39 @@ public class CardTagManager
         cardEffectDescriptions.Add(AllCards.Neu_AD_Brainstorm, "ABILITY. Gain 2 Creativity in exchange for 2 Energy");
 
         //WARRIOR CARDS
+        //OT
         cardEffectDescriptions.Add(AllCards.War_OT_Sting, "Apply SHOCKED 1. Deal 1 damage 2 times.");
         cardEffectDescriptions.Add(AllCards.War_OT_HeavyWeapon, "Deal 25 DAMAGE. Lose 8 health if player doesn't have FORCEFUL.");
         cardEffectDescriptions.Add(AllCards.War_OT_EfficientAttack, "Deal 9 DAMAGE. Gain 1 FORCEFUL if player has FORCEFUL.");
         cardEffectDescriptions.Add(AllCards.War_OT_FinishingBlow, "Deal 6 DAMAGE. Gain 5 FORCEFUL at SLAY.");
         cardEffectDescriptions.Add(AllCards.War_OT_UnrelentingStrike, "Deal 8 DAMAGE. If at 1 MOMENTUM, gain 1 FORCEFUL.");
         cardEffectDescriptions.Add(AllCards.War_OT_CleanHit, "Gain 1 MOMENTUM then deal 5 DAMAGE. Deal 15 DAMAGE instead if at 3 MOMENTUM");
-
+        cardEffectDescriptions.Add(AllCards.War_OT_FortifyingBlow, "Deal 12 damage, gain BLOCK equal to unblocked damage.");
+        //OD
         cardEffectDescriptions.Add(AllCards.War_OD_Cleave, "Deal 8 DAMAGE to all enemies.");
-
+        cardEffectDescriptions.Add(AllCards.War_OD_ShrapnelBlast, "Lose half of your BLOCK, deal damage equal to BLOCK lost to all enemies.");
+        //UT
+        cardEffectDescriptions.Add(AllCards.War_UT_LookForOpenings, "If target is going to attack, gain 1 COUNTER.");
+        //UD
         cardEffectDescriptions.Add(AllCards.War_UD_Reinforce, "Gain 20 BLOCK");
         cardEffectDescriptions.Add(AllCards.War_UD_WildSwings, "Gain 1 FORCEFUL and 1 CONFUSED.");
         cardEffectDescriptions.Add(AllCards.War_UD_AllOrNothing, "Apply all FORCEFUL stacks on next DAMAGE dealt.");
         cardEffectDescriptions.Add(AllCards.War_UD_BreathOfBattle, "Gain 3 FORCEFUL");
         cardEffectDescriptions.Add(AllCards.War_UD_Juggernaut, "Gain 3 BLOCK for each stack of FORCEFUL that player has.");
         cardEffectDescriptions.Add(AllCards.War_UD_SteadyImprovement, "Gain FORCEFUL next turn by how many attack hits dealt this turn.");
+        cardEffectDescriptions.Add(AllCards.War_UD_Fortress, "Increase BLOCK by half of amount.");
+        cardEffectDescriptions.Add(AllCards.War_UD_EyeForAnEye, "Gain 2 COUNTER. Gain 2 VULNERABLE");
+        cardEffectDescriptions.Add(AllCards.War_UD_AdrenalineRush, "Become immune to damage this turn. CONSUME.");
+        cardEffectDescriptions.Add(AllCards.War_UD_MasterOfDefense, "Gain 35 BLOCK if there are no offense cards in hand.");
+        cardEffectDescriptions.Add(AllCards.War_UD_Payback, "Gain 1 COUNTER when a hit is fully blocked.");
+        cardEffectDescriptions.Add(AllCards.War_UD_BraceForImpact, "Gain 6 BLOCK. If at MOMENTUM 3, gain 2 COUNTER.");
+        cardEffectDescriptions.Add(AllCards.War_UD_Confidefense, "Gain 1 MOMENTUM for each BLOCK card played this turn.");
 
+
+
+        //AD
         cardEffectDescriptions.Add(AllCards.War_AD_BruteForce, "ABILITY. Gain 1 FORCEFUL in exchange for 7 BLOCK");
+        cardEffectDescriptions.Add(AllCards.War_AD_PrioritizeDefense, "ABILITY. Gain 9 BLOCK for each COUNTER. Remove all COUNTER.");
 
 
     }

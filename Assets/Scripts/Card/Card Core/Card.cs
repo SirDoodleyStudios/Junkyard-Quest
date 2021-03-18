@@ -17,7 +17,10 @@ public class Card : ScriptableObject
     public int energyCost;
     //public int creativityCost;
 
+    //Card's artwork
     public Sprite artwork;
+    //Card's effect image for animation
+    public Sprite animationSprite;
 
 
     //Which Cardpool is it
