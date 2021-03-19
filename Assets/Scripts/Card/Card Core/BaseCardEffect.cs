@@ -17,9 +17,11 @@ public abstract class BaseCardEffect
     PlayingField targetPlayingField;
     //cache for BaseUnitFunctions applicable to all units, will get initialized
     BaseUnitFunctions targetUnit;
+    BaseUnitFunctions actorUnit;
 
     //cache for UnitStatusHolder, this will be the reference after assigning it
     protected UnitStatusHolder actorUnitStatus;
+    protected UnitStatusHolder targetUnitStatus;
 
     //ticked if an offense card is dropped I think
     protected bool AOE;
@@ -63,6 +65,7 @@ public abstract class BaseCardEffect
     public virtual void ActingUnitStatusLoad(GameObject actingUnit)
     {
         actorUnitStatus = actingUnit.GetComponent<UnitStatusHolder>();
+        actorUnit = actingUnit.GetComponent<BaseUnitFunctions>();
 
     }
 
@@ -71,6 +74,7 @@ public abstract class BaseCardEffect
     {
         targetObject = target;
         targetUnit = targetObject.GetComponent<BaseUnitFunctions>();
+        targetUnitStatus = targetObject.GetComponent<UnitStatusHolder>();
     }
 
     //set target to player when card is dropped
@@ -81,6 +85,7 @@ public abstract class BaseCardEffect
         {
             targetObject = target;
             targetUnit = targetObject.GetComponent<PlayerFunctions>();
+            targetUnitStatus = targetObject.GetComponent<UnitStatusHolder>();
         }
         else if (target.tag == "Enemy")
         {
@@ -88,12 +93,14 @@ public abstract class BaseCardEffect
             GameObject enemyHolder = target.transform.parent.gameObject;
             targetObject = enemyHolder.transform.parent.gameObject.transform.GetChild(1).gameObject;
             targetUnit = targetObject.GetComponent<PlayerFunctions>();
+            targetUnitStatus = targetObject.GetComponent<UnitStatusHolder>();
         }
         //if drop field
         else
         {
             targetObject = target.transform.parent.GetChild(1).gameObject;
             targetUnit = targetObject.GetComponent<PlayerFunctions>();
+            targetUnitStatus = targetObject.GetComponent<UnitStatusHolder>();
         }
 
     }
@@ -110,12 +117,14 @@ public abstract class BaseCardEffect
             //gets parent enemy holder then gets parent playing field
             targetObject = target.transform.parent.gameObject;
             targetUnit = targetObject.GetComponent<BaseUnitFunctions>();
+            //targetUnitStatus = targetObject.GetComponent<UnitStatusHolder>();
         }
         else
         {
             //child index 2 is the enemy holder
             targetObject = target.transform.parent.GetChild(2).gameObject;
             targetUnit = targetObject.GetComponent<BaseUnitFunctions>();
+            //targetUnitStatus = targetObject.GetComponent<UnitStatusHolder>();
         }
         //for dropfield approach
         //child index 2 is the enemy holder
@@ -183,14 +192,23 @@ public abstract class BaseCardEffect
                     actorUnitStatus.AlterStatusStackByHitCounter();
                 }
 
-
+                //checks if the the target has any return Damage statuses like counter and spikes
+                //if so, deal damage to actor depending on amount calculated with ReturnDamangeCalculator
+                int returnDamage = targetUnitStatus.ReturnDamageCalculator(modifiedDamage);
+                if (returnDamage > 0)
+                {
+                    actorUnit.TakeDamage(returnDamage);
+                }
             }
+
         }
         //AOE true affects all enemies
         else
         {
             foreach (Transform enemy in targetObject.transform)
             {
+                //this cache is for accessing unitStatusholder of all enemies in enemy holder
+                targetUnitStatus = enemy.gameObject.GetComponent<UnitStatusHolder>();
                 //cache override from AffectAll enemies
                 targetUnit = enemy.gameObject.GetComponent<BaseUnitFunctions>();
                 for (int i = 1; hits >= i; i++)
@@ -203,16 +221,17 @@ public abstract class BaseCardEffect
                         actorUnitStatus.AlterStatusStackByHitCounter();
                     }
 
+                    //checks if the the target has any return Damage statuses like counter and spikes
+                    //if so, deal damage to actor depending on amount calculated with ReturnDamangeCalculator
+                    int returnDamage = targetUnitStatus.ReturnDamageCalculator(modifiedDamage);
+                    if (returnDamage > 0)
+                    {
+                        actorUnit.TakeDamage(returnDamage);
+                    }
                 }
-
-                
             }
             AOE = false;
         }
-
-
-        
-
     }
     
 

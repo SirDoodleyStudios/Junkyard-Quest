@@ -105,3 +105,19 @@ public class War_UD_AllOrNothing : BaseCardEffect
     }
 
 }
+
+//Increase BLOCK by half of current amount.
+public class War_UD_Fortress: BaseCardEffect
+
+{
+    public override AllCards enumKeyCard => AllCards.War_UD_Fortress;
+    public override void CardEffectActivate(GameObject target, GameObject actor)
+    {
+        ActingUnitStatusLoad(actor);
+        AffectPlayer(target);
+        int currBlock = actor.GetComponent<BaseUnitFunctions>().block;
+        block = currBlock / 2;
+        GainBlock();
+    }
+
+}

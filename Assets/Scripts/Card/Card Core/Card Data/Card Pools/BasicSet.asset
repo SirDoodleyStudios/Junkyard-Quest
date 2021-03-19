@@ -13,9 +13,9 @@ MonoBehaviour:
   m_Name: BasicSet
   m_EditorClassIdentifier: 
   listOfCards:
-  - {fileID: 11400000, guid: 9b42a4d26e12d6c41a5d8e8fdde4fd09, type: 2}
-  - {fileID: 11400000, guid: e9e8a85a67b19f647a59f6a352bf875e, type: 2}
-  - {fileID: 11400000, guid: 14e2432a6416d85448d6947205e1b26b, type: 2}
-  - {fileID: 11400000, guid: b35394087fa36fc4186e2419c58efcef, type: 2}
-  - {fileID: 11400000, guid: 0b2140addd939f14c97e388f8cf0d8a5, type: 2}
-  - {fileID: 11400000, guid: 83f4c866b12f99147938e1cc3fc70364, type: 2}
+  - {fileID: 11400000, guid: 57d52c0d80bae5748a4f04c17d49a924, type: 2}
+  - {fileID: 11400000, guid: 5c559cad7f190484c8891b47856a356f, type: 2}
+  - {fileID: 11400000, guid: 3e7738c275094a549bbdd1efa57c0920, type: 2}
+  - {fileID: 11400000, guid: 57d52c0d80bae5748a4f04c17d49a924, type: 2}
+  - {fileID: 11400000, guid: 5c559cad7f190484c8891b47856a356f, type: 2}
+  - {fileID: 11400000, guid: 57d52c0d80bae5748a4f04c17d49a924, type: 2}

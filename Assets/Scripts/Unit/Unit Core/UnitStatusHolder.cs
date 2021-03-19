@@ -360,16 +360,22 @@ public class UnitStatusHolder : MonoBehaviour
 
     public int DamageTakingModifierCalculator(int baseDamage)
     {
+        //initialize total as equal to base damage
+        int total = baseDamage;
+        //shocked deals damage to unit based on the stack it has
         if (turnStatusDict.ContainsKey(CardMechanics.Shocked))
         {
-            int total = baseDamage + turnStatusDict[CardMechanics.Shocked];
-            return total;
+            total += turnStatusDict[CardMechanics.Shocked];
+        }
+        //vulnerable increases damage taken by 30%
+        if (turnStatusDict.ContainsKey(CardMechanics.Vulnerable))
+        {
+            total += Mathf.CeilToInt(baseDamage * 1.3f);
         }
         //if there are no cardd tags to affect calculations, just return base damage
-        else
-        {
-            return baseDamage;
-        }
+        return total;
+
+
 
     }
 
@@ -385,6 +391,18 @@ public class UnitStatusHolder : MonoBehaviour
         {
             return baseBlock;
         }
+    }
+    //for statuses that damages the attacking unit
+    public int ReturnDamageCalculator(int baseDamage)
+    {
+        int total = 0;
+        //counter returns the damage taken
+        if (usageStatusDict.ContainsKey(CardMechanics.Counter))
+        {
+            total += baseDamage;
+        }
+
+        return total;
     }
 
     //Unique Status LOGICS//////////////////////

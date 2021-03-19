@@ -18,21 +18,7 @@ public class War_OT_Sting : BaseCardEffect
     }
 }
 
-//Deal 8 DAMAGE to all enemies.
-public class War_OD_Cleave : BaseCardEffect
-{
-    public override AllCards enumKeyCard => AllCards.War_OD_Cleave;
-    public override void CardEffectActivate(GameObject target, GameObject actor)
-    {
-        damage = 8;
-        hits = 1;
 
-        ActingUnitStatusLoad(actor);
-        AffectAllEnemies(target);
-        DealDamage();
-    }
-
-}
 
 //Deal 8 DAMAGE. If at 1 MOMENTUM, gain 1 FORCEFUL
 public class War_OT_UnrelentingStrike : BaseCardEffect
@@ -155,4 +141,48 @@ public class War_OT_EfficientAttack : BaseCardEffect
             ApplyStatus();
         }
     }
+}
+
+
+
+
+
+
+
+//Offensive Dropped
+
+//Deal 8 DAMAGE to all enemies.
+public class War_OD_Cleave : BaseCardEffect
+{
+    public override AllCards enumKeyCard => AllCards.War_OD_Cleave;
+    public override void CardEffectActivate(GameObject target, GameObject actor)
+    {
+        damage = 8;
+        hits = 1;
+
+        ActingUnitStatusLoad(actor);
+        AffectAllEnemies(target);
+        DealDamage();
+    }
+
+}
+//Lose half of your BLOCK, deal damage equal to BLOCK lost to all enemies.
+public class War_OD_ShrapnelBlast : BaseCardEffect
+{
+    public override AllCards enumKeyCard => AllCards.War_OD_ShrapnelBlast;
+    public override void CardEffectActivate(GameObject target, GameObject actor)
+    {
+        ActingUnitStatusLoad(actor);
+        int currBlock = actor.GetComponent<BaseUnitFunctions>().block;
+        AffectPlayer(target);
+        //negative because we're losing block
+        block = -currBlock / 2;
+        GainBlock();
+
+        AffectAllEnemies(target);
+        damage = currBlock / 2;
+        hits = 1;
+        DealDamage();
+    }
+
 }

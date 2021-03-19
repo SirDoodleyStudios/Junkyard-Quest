@@ -19,7 +19,8 @@ public enum AllAbilities
     Neu_Abi_Brainstorm = 30,
 
     //Warrior Abilities
-    War_Abi_BruteForce = 60
+    War_Abi_BruteForce = 60,
+    War_Abi_PrioritizeDefense
 }
 
 public enum AllJigsaws
@@ -97,10 +98,12 @@ public enum CardMechanics
     Forceful,
     Feeble,
     AllOrNothing,
+    Counter,
 
     //Turn Stack Status
     Confused = 70,
     Shocked,
+    Vulnerable,
     
     //Consume Usage Stack Statuses
 

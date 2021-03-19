@@ -30,13 +30,15 @@ public class CardTagManager
         popupDescriptions.Add(CardMechanics.Slay, "Slay: Activates effect when an enemy is defeated using selected card.");
         popupDescriptions.Add(CardMechanics.Block, "Block: Prevents damage on HP by amount. Expires by next turn ");
         popupDescriptions.Add(CardMechanics.Consume, "Consume: After playing, card becomes unusable for the rest of the battle");
-        popupDescriptions.Add(CardMechanics.Forceful, "Forceful: Increases the damage of next attacks by 30%");
+        popupDescriptions.Add(CardMechanics.Forceful, "Forceful: Increases the damage dealt by 30%");
         popupDescriptions.Add(CardMechanics.Feeble, "Feeble: Decreaseses next block gains by 30%");
         popupDescriptions.Add(CardMechanics.Confused, "Confused: Targets are chosen at random");
-        popupDescriptions.Add(CardMechanics.Shocked, "Shocked: Receives additional damage equal to stack.");
+        popupDescriptions.Add(CardMechanics.Shocked, "Shocked: Receive additional damage equal to stack.");
         popupDescriptions.Add(CardMechanics.GenerateForceful, "Generate Forceful: Applies FORCEFUL stacks next turn");
         popupDescriptions.Add(CardMechanics.Momentum, "Momentum: Improve certain card effects when played if Momentum stack level is met.");
-        popupDescriptions.Add(CardMechanics.AllOrNothing, "All or Nothing: Apply all stacks of FORCEFUL to next attack. CONSUME");
+        popupDescriptions.Add(CardMechanics.AllOrNothing, "All or Nothing: Apply all stacks of FORCEFUL to next attack.");
+        popupDescriptions.Add(CardMechanics.Counter, "Counter: Returns next damage taken back to attacker.");
+        popupDescriptions.Add(CardMechanics.Vulnerable, "Vulnerable: Increases the damage from attacks by 30%");
     }
 
     //returns descriptions when called depending on CardTag enum passed
@@ -153,13 +155,14 @@ public class CardTagManager
         cardEffectDescriptions.Add(AllCards.War_UD_BreathOfBattle, "Gain 3 FORCEFUL");
         cardEffectDescriptions.Add(AllCards.War_UD_Juggernaut, "Gain 3 BLOCK for each stack of FORCEFUL that player has.");
         cardEffectDescriptions.Add(AllCards.War_UD_SteadyImprovement, "Gain FORCEFUL next turn by how many attack hits dealt this turn.");
-        cardEffectDescriptions.Add(AllCards.War_UD_Fortress, "Increase BLOCK by half of amount.");
+        cardEffectDescriptions.Add(AllCards.War_UD_Fortress, "Increase BLOCK by half of current amount.");
         cardEffectDescriptions.Add(AllCards.War_UD_EyeForAnEye, "Gain 2 COUNTER. Gain 2 VULNERABLE");
         cardEffectDescriptions.Add(AllCards.War_UD_AdrenalineRush, "Become immune to damage this turn. CONSUME.");
         cardEffectDescriptions.Add(AllCards.War_UD_MasterOfDefense, "Gain 35 BLOCK if there are no offense cards in hand.");
-        cardEffectDescriptions.Add(AllCards.War_UD_Payback, "Gain 1 COUNTER when a hit is fully blocked.");
+        cardEffectDescriptions.Add(AllCards.War_UD_Payback, "Gain 1 COUNTER next turn for each fully blocked hit on enemy's turn.");
         cardEffectDescriptions.Add(AllCards.War_UD_BraceForImpact, "Gain 6 BLOCK. If at MOMENTUM 3, gain 2 COUNTER.");
-        cardEffectDescriptions.Add(AllCards.War_UD_Confidefense, "Gain 1 MOMENTUM for each BLOCK card played this turn.");
+        cardEffectDescriptions.Add(AllCards.War_UD_Confidefense, "Gain 1 MOMENTUM after playing a BLOCK card.");
+
 
 
 
