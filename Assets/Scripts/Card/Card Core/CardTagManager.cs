@@ -36,9 +36,12 @@ public class CardTagManager
         popupDescriptions.Add(CardMechanics.Shocked, "Shocked: Receive additional damage equal to stack.");
         popupDescriptions.Add(CardMechanics.GenerateForceful, "Generate Forceful: Applies FORCEFUL stacks next turn");
         popupDescriptions.Add(CardMechanics.Momentum, "Momentum: Improve certain card effects when played if Momentum stack level is met.");
-        popupDescriptions.Add(CardMechanics.AllOrNothing, "All or Nothing: Apply all stacks of FORCEFUL to next attack.");
         popupDescriptions.Add(CardMechanics.Counter, "Counter: Returns next damage taken back to attacker.");
         popupDescriptions.Add(CardMechanics.Vulnerable, "Vulnerable: Increases the damage from attacks by 30%");
+
+        //card specifics
+        popupDescriptions.Add(CardMechanics.AllOrNothing, "All or Nothing: Apply all stacks of FORCEFUL to next attack.");
+        popupDescriptions.Add(CardMechanics.AdrenalineRush, "Adrenaline Rush: Recover health equal to incoming damage this turn.");
     }
 
     //returns descriptions when called depending on CardTag enum passed
@@ -147,7 +150,7 @@ public class CardTagManager
         cardEffectDescriptions.Add(AllCards.War_OD_Cleave, "Deal 8 DAMAGE to all enemies.");
         cardEffectDescriptions.Add(AllCards.War_OD_ShrapnelBlast, "Lose half of your BLOCK, deal damage equal to BLOCK lost to all enemies.");
         //UT
-        cardEffectDescriptions.Add(AllCards.War_UT_LookForOpenings, "If target is going to attack, gain 1 COUNTER.");
+        cardEffectDescriptions.Add(AllCards.War_UT_LookForOpenings, "If target's first action is to attack, gain 1 COUNTER.");
         //UD
         cardEffectDescriptions.Add(AllCards.War_UD_Reinforce, "Gain 20 BLOCK");
         cardEffectDescriptions.Add(AllCards.War_UD_WildSwings, "Gain 1 FORCEFUL and 1 CONFUSED.");
@@ -157,13 +160,11 @@ public class CardTagManager
         cardEffectDescriptions.Add(AllCards.War_UD_SteadyImprovement, "Gain FORCEFUL next turn by how many attack hits dealt this turn.");
         cardEffectDescriptions.Add(AllCards.War_UD_Fortress, "Increase BLOCK by half of current amount.");
         cardEffectDescriptions.Add(AllCards.War_UD_EyeForAnEye, "Gain 2 COUNTER. Gain 2 VULNERABLE");
-        cardEffectDescriptions.Add(AllCards.War_UD_AdrenalineRush, "Become immune to damage this turn. CONSUME.");
+        cardEffectDescriptions.Add(AllCards.War_UD_AdrenalineRush, "Recover health equal to incoming damage this turn. CONSUME.");
         cardEffectDescriptions.Add(AllCards.War_UD_MasterOfDefense, "Gain 35 BLOCK if there are no offense cards in hand.");
         cardEffectDescriptions.Add(AllCards.War_UD_Payback, "Gain 1 COUNTER next turn for each fully blocked hit on enemy's turn.");
         cardEffectDescriptions.Add(AllCards.War_UD_BraceForImpact, "Gain 6 BLOCK. If at MOMENTUM 3, gain 2 COUNTER.");
         cardEffectDescriptions.Add(AllCards.War_UD_Confidefense, "Gain 1 MOMENTUM after playing a BLOCK card.");
-
-
 
 
         //AD

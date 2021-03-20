@@ -142,14 +142,20 @@ public class EnemyFunctions : BaseUnitFunctions
         //iterates through the intent panel and activate their effects
         foreach (Transform intentTransforms in intentPanel.transform)
         {
+            //FOR LINKING like Creativity
             //activates the first EnemyActionIcon first then carries over to the next before activating the second effect just like in creative mode
-            for (int i = 0; intentTransforms.GetSiblingIndex() >= i; i++)
-            {
-                EnemyActionFormat actionFormat = intentPanel.transform.GetChild(i).GetComponent<EnemyActionIcon>().enemyAction;
-                EnemyActionFactory.GetEnemyActionEffect(actionFormat.enumEnemyAction).InitializeEnemyAction(enemyUnit, gameObject);
+            //for (int i = 0; intentTransforms.GetSiblingIndex() >= i; i++)
+            //{
+            //    EnemyActionFormat actionFormat = intentPanel.transform.GetChild(i).GetComponent<EnemyActionIcon>().enemyAction;
+            //    EnemyActionFactory.GetEnemyActionEffect(actionFormat.enumEnemyAction).InitializeEnemyAction(enemyUnit, gameObject);
 
-            }
-            intentTransforms.gameObject.SetActive(false);
+            //}
+            //intentTransforms.gameObject.SetActive(false);
+            //for linking without any repetition
+            GameObject intentObject = intentTransforms.gameObject;
+            EnemyActionFormat actionFormat = intentObject.GetComponent<EnemyActionIcon>().enemyAction;
+            EnemyActionFactory.GetEnemyActionEffect(actionFormat.enumEnemyAction).InitializeEnemyAction(enemyUnit, gameObject);
+
         }
         //for transferring enemy actions back to the actionPanel 
         //only checks index 0 because we're returning the prefabs to actionHand one by one
@@ -162,14 +168,13 @@ public class EnemyFunctions : BaseUnitFunctions
             returningAction.SetParent(actionPanel.transform);
             returningAction.SetAsLastSibling();
         }
+    }
 
-
-
-
-
-
-
-
+    //returning the enemyactionformat attached to the enemy intent
+    public EnemyActionFormat AccessEnemyIntents(int intentIndex)
+    {
+        EnemyActionFormat enemyIntent = intentPanel.transform.GetChild(intentIndex).GetComponent<EnemyActionIcon>().enemyAction;
+        return enemyIntent;
     }
 
     public void EnemyDrawHand()

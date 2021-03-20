@@ -97,13 +97,14 @@ public enum CardMechanics
     Strong = 40,
     Forceful,
     Feeble,
-    AllOrNothing,
+    AllOrNothing, //unique
     Counter,
 
     //Turn Stack Status
     Confused = 70,
     Shocked,
     Vulnerable,
+    AdrenalineRush,
     
     //Consume Usage Stack Statuses
 

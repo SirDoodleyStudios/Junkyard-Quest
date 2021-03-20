@@ -362,6 +362,7 @@ public class UnitStatusHolder : MonoBehaviour
     {
         //initialize total as equal to base damage
         int total = baseDamage;
+
         //shocked deals damage to unit based on the stack it has
         if (turnStatusDict.ContainsKey(CardMechanics.Shocked))
         {
@@ -372,10 +373,13 @@ public class UnitStatusHolder : MonoBehaviour
         {
             total += Mathf.CeilToInt(baseDamage * 1.3f);
         }
+        //for Adrenaline Rush, heals first before damage value is returned
+        if (turnStatusDict.ContainsKey(CardMechanics.AdrenalineRush))
+        {
+            gameObject.GetComponent<BaseUnitFunctions>().HealHealth(total);
+        }
         //if there are no cardd tags to affect calculations, just return base damage
         return total;
-
-
 
     }
 
@@ -400,6 +404,7 @@ public class UnitStatusHolder : MonoBehaviour
         if (usageStatusDict.ContainsKey(CardMechanics.Counter))
         {
             total += baseDamage;
+            AlterStatusStack(CardMechanics.Counter, -1);
         }
 
         return total;

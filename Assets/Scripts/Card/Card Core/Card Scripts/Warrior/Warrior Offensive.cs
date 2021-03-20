@@ -143,6 +143,27 @@ public class War_OT_EfficientAttack : BaseCardEffect
     }
 }
 
+//Deal 12 damage, gain BLOCK equal to unblocked damage.
+public class War_OT_FortifyingBlow : BaseCardEffect
+{
+    public override AllCards enumKeyCard => AllCards.War_OT_FortifyingBlow;
+    public override void CardEffectActivate(GameObject target, GameObject actor)
+    {
+        ActingUnitStatusLoad(actor);
+        //checks current HP of target before reducing it with card damage
+        int currHP = target.GetComponent<BaseUnitFunctions>().currHP;
+        AffectSingleEnemy(target);
+        damage = 12;
+        hits = 1;
+        DealDamage();
+
+        AffectPlayer(actor);
+        //this takes the difference of the first current HP before damage is done on unit and the actual current HP after dealing damage
+        block = currHP - target.GetComponent<BaseUnitFunctions>().currHP;
+        GainBlock();
+    }
+}
+
 
 
 
@@ -184,5 +205,5 @@ public class War_OD_ShrapnelBlast : BaseCardEffect
         hits = 1;
         DealDamage();
     }
-
 }
+

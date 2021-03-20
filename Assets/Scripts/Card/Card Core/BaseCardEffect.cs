@@ -37,6 +37,7 @@ public abstract class BaseCardEffect
     protected int damage;
     protected int block;
     protected int hits;
+    protected int heal;
     protected int multiplier;
     protected int draw;
     protected int discard;
@@ -239,6 +240,11 @@ public abstract class BaseCardEffect
     {
         int modifiedBlock = actorUnitStatus.BlockModifierCalculator(block);
         targetUnit.GainBlock(modifiedBlock);
+    }
+
+    public void HealHealth()
+    {
+        targetUnit.HealHealth(heal);
     }
 
     public void DrawCard()

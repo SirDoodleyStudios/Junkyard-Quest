@@ -13,8 +13,8 @@ public class BaseUnitFunctions:MonoBehaviour
     //Contains  Unit scriptableobject
     //public Unit unit;
 
-    protected int maxHP;
-    protected int currHP;
+    public int maxHP;
+    public int currHP;
     public int maxCreativity;
     public int currCreativity;
     public int defaultDraw;
@@ -106,6 +106,11 @@ public class BaseUnitFunctions:MonoBehaviour
             //d_death();
         }
 
+    }
+    //for healing a unit
+    public virtual void HealHealth(int healValue)
+    {
+        currHP = Mathf.Min(currHP + healValue, maxHP);
     }
 
 

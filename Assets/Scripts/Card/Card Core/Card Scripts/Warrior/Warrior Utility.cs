@@ -121,3 +121,61 @@ public class War_UD_Fortress: BaseCardEffect
     }
 
 }
+//Gain 2 COUNTER. Gain 2 VULNERABLE
+public class War_UD_EyeForAnEye : BaseCardEffect
+
+{
+    public override AllCards enumKeyCard => AllCards.War_UD_EyeForAnEye;
+    public override void CardEffectActivate(GameObject target, GameObject actor)
+    {
+        ActingUnitStatusLoad(actor);
+        AffectPlayer(target);
+        status = CardMechanics.Counter;
+        stack = 2;
+        ApplyStatus();
+
+        status = CardMechanics.Vulnerable;
+        stack = 2;
+        ApplyStatus();
+    }
+}
+//Become immune to damage this turn. CONSUME.
+public class War_UD_AdrenalineRush : BaseCardEffect
+
+{
+    public override AllCards enumKeyCard => AllCards.War_UD_AdrenalineRush;
+    public override void CardEffectActivate(GameObject target, GameObject actor)
+    {
+        ActingUnitStatusLoad(actor);
+        AffectPlayer(target);
+        status = CardMechanics.AdrenalineRush;
+        stack = 1;
+        ApplyStatus();
+    }
+}
+
+
+
+//TARGETTED UTILITY CARDS
+
+//If target's first action is to attack, gain 1 COUNTER.
+public class War_UT_LookForOpenings : BaseCardEffect
+
+{
+    public override AllCards enumKeyCard => AllCards.War_UT_LookForOpenings;
+    public override void CardEffectActivate(GameObject target, GameObject actor)
+    {
+        //access enemy intents and call for the index 0 of enemy's intents
+        //if the action is offense type, do the effect
+        EnemyActionFormat enemyIntent = target.GetComponent<EnemyFunctions>().AccessEnemyIntents(0);
+        if (enemyIntent.actionType == EnemyActionType.Offense)
+        {
+            ActingUnitStatusLoad(actor);
+            AffectPlayer(actor);
+            status = CardMechanics.Counter;
+            stack = 1;
+            ApplyStatus();
+        }
+
+    }
+}
