@@ -104,13 +104,15 @@ public enum CardMechanics
     Confused = 70,
     Shocked,
     Vulnerable,
-    AdrenalineRush,
+    AdrenalineRush, // unique
+    Payback, //unique
+    Confidefense, //unique
     
     //Consume Usage Stack Statuses
 
 
     //Consume Turn Stack Statuses
-    GenerateForceful = 130,
+    GenerateForceful = 130, //unique
     Momentum
 
     //Permanent Stack Statuses

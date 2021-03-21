@@ -571,7 +571,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8ebe25a9d85e9ce429d941536471380f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  clip: {fileID: 7400000, guid: 0b330d266f2b90b4bb0f76ba7ba7cb98, type: 2}
 --- !u!212 &72219633
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -3246,6 +3245,8 @@ MonoBehaviour:
   deckManager: {fileID: 791457652}
   playerPrefab: {fileID: 1712888391}
   enemyHolder: {fileID: 676333090}
+  playerHand: {fileID: 1393909052}
+  playerHandScript: {fileID: 1393909057}
 --- !u!222 &936478309
 CanvasRenderer:
   m_ObjectHideFlags: 0

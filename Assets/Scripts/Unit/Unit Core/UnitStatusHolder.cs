@@ -10,14 +10,15 @@ public class UnitStatusHolder : MonoBehaviour
 {
 
     //dictionary of applied statuses on unit
-    Dictionary<CardMechanics, int> usageStatusDict = new Dictionary<CardMechanics, int>();
-    Dictionary<CardMechanics, int> turnStatusDict = new Dictionary<CardMechanics, int>();
-    Dictionary<CardMechanics, int> consumeUsageStatusDict = new Dictionary<CardMechanics, int>();
-    Dictionary<CardMechanics, int> consumeTurnStatusDict = new Dictionary<CardMechanics, int>();
-    Dictionary<CardMechanics, int> stackAlterByCountDict = new Dictionary<CardMechanics, int>();
+    public Dictionary<CardMechanics, int> usageStatusDict { get; private set; } = new Dictionary<CardMechanics, int>();
+    public Dictionary<CardMechanics, int> turnStatusDict { get; private set; } = new Dictionary<CardMechanics, int>();
+    public Dictionary<CardMechanics, int> consumeUsageStatusDict { get; private set; } = new Dictionary<CardMechanics, int>();
+    public Dictionary<CardMechanics, int> consumeTurnStatusDict { get; private set; } = new Dictionary<CardMechanics, int>();
+    public Dictionary<CardMechanics, int> stackAlterByCountDict { get; private set; } = new Dictionary<CardMechanics, int>();
 
     //identifiers for the counting events in BaseCardEffect
     public bool isHitCounting { get; set; }
+    public bool isPlayCounting { get; set; }
 
     //maybe only a list of int references are needed?
     List<CardMechanics> existingStatus = new List<CardMechanics>();
@@ -39,8 +40,8 @@ public class UnitStatusHolder : MonoBehaviour
 
     public void Start()
     {
-
         isHitCounting = false;
+        isPlayCounting = false;
         //usageStatusDict.Add(CardMechanics.Confused, Confused);
         //usageStatusDict.Add(CardMechanics.Forceful, Forceful);
 
@@ -56,6 +57,7 @@ public class UnitStatusHolder : MonoBehaviour
         //clears counting logic from last turn
         stackAlterByCountDict.Clear();
         isHitCounting = false;
+        isPlayCounting = false;
     }
 
     //STACK AMOUNT ALTERERS/////////////////////
@@ -182,6 +184,14 @@ public class UnitStatusHolder : MonoBehaviour
         }
     }
 
+    public void AlterStatusStackByPlayCounter(Card card)
+    {
+        //for confidefense, check if card has Block in its card tags
+        if (turnStatusDict.ContainsKey(CardMechanics.Confidefense) && card.cardTags.Contains(CardMechanics.Block))
+        {
+            AlterStatusStack(CardMechanics.Momentum, 1);
+        }
+    }
 
 
 
@@ -373,15 +383,28 @@ public class UnitStatusHolder : MonoBehaviour
         {
             total += Mathf.CeilToInt(baseDamage * 1.3f);
         }
+        //for payback, once total is calculated, check if there are changes to currHP 
+        if (turnStatusDict.ContainsKey(CardMechanics.Payback))
+        {
+            BaseUnitFunctions unitFunctions = gameObject.GetComponent<BaseUnitFunctions>();
+            //if block is larger than incoming attack, gain counter
+            if (unitFunctions.block >= total)
+            {
+                AlterStatusStack(CardMechanics.Counter, 1);
+            }
+        }
         //for Adrenaline Rush, heals first before damage value is returned
         if (turnStatusDict.ContainsKey(CardMechanics.AdrenalineRush))
         {
-            gameObject.GetComponent<BaseUnitFunctions>().HealHealth(total);
+            BaseUnitFunctions unitFunctions = gameObject.GetComponent<BaseUnitFunctions>();
+            int actualHealthLoss = unitFunctions.currHP - (total - unitFunctions.block);
+            unitFunctions.HealHealth(actualHealthLoss);
         }
         //if there are no cardd tags to affect calculations, just return base damage
         return total;
-
     }
+
+
 
     public int BlockModifierCalculator(int baseBlock)
     {
@@ -396,6 +419,7 @@ public class UnitStatusHolder : MonoBehaviour
             return baseBlock;
         }
     }
+
     //for statuses that damages the attacking unit
     public int ReturnDamageCalculator(int baseDamage)
     {
@@ -465,6 +489,12 @@ public class UnitStatusHolder : MonoBehaviour
         {
             return 0;
         }
+
+    }
+
+    //for statuses that requires specific cards to be played in order to activate
+    public void CardPlayAfterEffect()
+    {
 
     }
 }

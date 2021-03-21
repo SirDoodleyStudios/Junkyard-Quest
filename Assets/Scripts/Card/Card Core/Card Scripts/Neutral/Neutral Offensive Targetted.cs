@@ -7,11 +7,12 @@ public class Neu_OT_Attack : BaseCardEffect
 {
     public override AllCards enumKeyCard => AllCards.Neu_OT_Attack;
 
-    public override void CardEffectActivate(GameObject target, GameObject actor)
+    public override void CardEffectActivate(GameObject target, GameObject actor, Card card)
     {
         Debug.Log("attack");
         damage = 5;
         hits = 1;
+        ActingCardLoad(card);
         ActingUnitStatusLoad(actor);
         AffectSingleEnemy(target);
         DealDamage();
@@ -26,11 +27,12 @@ public class Neu_OT_Strike : BaseCardEffect
 {
     public override AllCards enumKeyCard => AllCards.Neu_OT_Strike;
 
-    public override void CardEffectActivate(GameObject target, GameObject actor)
+    public override void CardEffectActivate(GameObject target, GameObject actor, Card card)
     {
         Debug.Log("strike");
         damage = 12;
         hits = 1;
+        ActingCardLoad(card);
         ActingUnitStatusLoad(actor);
         AffectSingleEnemy(target);
         DealDamage();

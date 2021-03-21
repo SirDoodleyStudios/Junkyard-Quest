@@ -10,7 +10,7 @@ public class Neu_OT_Strike2 : BaseCardEffect
 
     //}
 
-    public override void CardEffectActivate(GameObject target, GameObject actor)
+    public override void CardEffectActivate(GameObject target, GameObject actor, Card card)
     {
         Debug.Log("strike2");
         damage = 12;

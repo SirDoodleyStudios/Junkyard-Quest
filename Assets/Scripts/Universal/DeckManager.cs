@@ -10,7 +10,7 @@ public class DeckManager : MonoBehaviour
     List<Card> battleDeck = new List<Card>();
     List<Card> discardPile = new List<Card>();
     List<Card> consumePile = new List<Card>();
-    List<Card> playerHand = new List<Card>();
+    public List<Card> playerHandList { get; private set; } = new List<Card>();
 
     JigsawFormat jigsaw;
 
@@ -128,10 +128,10 @@ public class DeckManager : MonoBehaviour
         {           
 
             //for keeping count of current hand and cache
-            int currentHand = playerHand.Count;           
+            int currentHand = playerHandList.Count;           
             //ensures that player hand max is only 10
             //discards drawn cards when count goes over 10
-            if(playerHand.Count >= 10)
+            if(playerHandList.Count >= 10)
             {
                 discardPile.Add(deckCard);
                 discardCount = discardPile.Count;
@@ -139,7 +139,7 @@ public class DeckManager : MonoBehaviour
             else
             {
                 GameObject enabledCard = playerHandPanel.transform.GetChild(currentHand).gameObject;
-                playerHand.Add(deckCard);                
+                playerHandList.Add(deckCard);                
                 //assigns card to Display Function
                 enabledCard.GetComponent<Display>().card = deckCard;                
                 //assigns card to Effect Loader Funtion
@@ -153,7 +153,7 @@ public class DeckManager : MonoBehaviour
                 //enabledCard.SetActive(true);
                 //yield return new WaitForSeconds(.01f);
 
-                handLayout.ActivateRearrange(playerHand.Count, enabledCard);
+                handLayout.ActivateRearrange(playerHandList.Count, enabledCard);
                 yield return new WaitForSeconds(lagTime);
                 //calls the event in playerHand to make the set positions of cards after tweening its fixed final positions
                 playerHandScript.FixCardPositions();
@@ -218,13 +218,13 @@ public class DeckManager : MonoBehaviour
         //for moving the card to discard and removing from player hand
         //Card discardedCard = discardedPrefab.GetComponent<Display>().card; not needed since combat manager will only be sending the Card
         discardPile.Add(discardedCard);
-        playerHand.Remove(discardedCard);
+        playerHandList.Remove(discardedCard);
         //for disabling the prefab and moving them to back row, functionality moved to combatmanager
         //discardedPrefab.SetActive(false);
         //discardedPrefab.transform.SetAsLastSibling();
         discardCount = discardPile.Count;
 
-        handLayout.ActivateRearrange(playerHand.Count, discardedCardObject);
+        handLayout.ActivateRearrange(playerHandList.Count, discardedCardObject);
         //disable is here to make way for rearrange position because rearange function turns card to enabled
         discardedCardObject.SetActive(false);
         yield return new WaitForSeconds(lagTime);
@@ -240,12 +240,12 @@ public class DeckManager : MonoBehaviour
         float lagTime = .2f;
         Card consumedCard = consumedCardObject.GetComponent<Display>().card;
         consumePile.Add(consumedCard);
-        playerHand.Remove(consumedCard);
+        playerHandList.Remove(consumedCard);
 
         //for updating Consume UI
         consumeCount = consumePile.Count;
 
-        handLayout.ActivateRearrange(playerHand.Count, consumedCardObject);
+        handLayout.ActivateRearrange(playerHandList.Count, consumedCardObject);
         //disable is here to make way for rearrange position because rearange function turns card to enabled
         consumedCardObject.SetActive(false);
         yield return new WaitForSeconds(lagTime);
@@ -357,7 +357,8 @@ public class DeckManager : MonoBehaviour
 
     }
 
-    //work on card logic bug
+
+
 
 
 }

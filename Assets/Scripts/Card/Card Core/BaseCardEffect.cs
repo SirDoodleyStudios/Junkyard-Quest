@@ -23,6 +23,9 @@ public abstract class BaseCardEffect
     protected UnitStatusHolder actorUnitStatus;
     protected UnitStatusHolder targetUnitStatus;
 
+    //cache for Cards that need the information in card itself
+    protected Card card;
+
     //ticked if an offense card is dropped I think
     protected bool AOE;
     //will be used as indicator whether gameBOject is to be discarderd at end turn
@@ -57,8 +60,22 @@ public abstract class BaseCardEffect
 
 
 
-    //Activator Function
-    public abstract void CardEffectActivate(GameObject target, GameObject actor);
+    //Activator Function for cards with actual card overload
+    public virtual void CardEffectActivate(GameObject target, GameObject actor, Card card)
+    {
+
+    }
+
+    //for Jigsaw and enemy effects
+    public virtual void CardEffectActivate(GameObject target, GameObject actor)
+    {
+
+    }
+
+    public virtual void ActingCardLoad(Card actingCard)
+    {
+        card = actingCard;
+    }
 
     //NEEDS TO BE CALLED BY EFFECT LOADER
     //the game object sent is determined in combat manager, if the effectloader is called during player phase, Acting unit will be player
@@ -68,6 +85,11 @@ public abstract class BaseCardEffect
         actorUnitStatus = actingUnit.GetComponent<UnitStatusHolder>();
         actorUnit = actingUnit.GetComponent<BaseUnitFunctions>();
 
+        //the identifier for card play is here because this funcion is always being called for all cards
+        if (actorUnitStatus.isPlayCounting)
+        {
+            actorUnitStatus.AlterStatusStackByPlayCounter(card);
+        }
     }
 
     //set target to actual choice target
@@ -246,11 +268,12 @@ public abstract class BaseCardEffect
     {
         targetUnit.HealHealth(heal);
     }
-
+    //this a hack
     public void DrawCard()
     {
         //targetPlayingField.deckManager.DrawCards(draw);
         targetPlayingField.deckManager.StartCoroutine(targetPlayingField.deckManager.DrawCards(draw));
+        targetPlayingField.playerHandScript.StateChanger(CombatState.PlayerTurn);
     }
 
     public void DiscardCard()

@@ -51,7 +51,7 @@ public class EffectLoader : MonoBehaviour
     //target does not necessarily mean that the correct target is chosen, its just the game object clicked during play
     public void ActivateCardEffect(GameObject target, GameObject actor)
     {
-        EffectFactory.GetCardEffect(card.enumCardName).CardEffectActivate(target, actor);
+        EffectFactory.GetCardEffect(card.enumCardName).CardEffectActivate(target, actor, card);
     }
 
     public void ActivateJigsawEffect(GameObject target, GameObject actor)

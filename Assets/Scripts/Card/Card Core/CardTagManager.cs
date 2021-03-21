@@ -41,7 +41,9 @@ public class CardTagManager
 
         //card specifics
         popupDescriptions.Add(CardMechanics.AllOrNothing, "All or Nothing: Apply all stacks of FORCEFUL to next attack.");
-        popupDescriptions.Add(CardMechanics.AdrenalineRush, "Adrenaline Rush: Recover health equal to incoming damage this turn.");
+        popupDescriptions.Add(CardMechanics.AdrenalineRush, "Adrenaline Rush: Recover health equal to incoming health damage this turn.");
+        popupDescriptions.Add(CardMechanics.Payback, "Payback: Gain 1 COUNTER everytime an attack is about to be fully blocked this turn.");
+        popupDescriptions.Add(CardMechanics.Confidefense, "Confidefense: This turn, gain 1 MOMENTUM after playing a BLOCK card.");
     }
 
     //returns descriptions when called depending on CardTag enum passed
@@ -162,9 +164,9 @@ public class CardTagManager
         cardEffectDescriptions.Add(AllCards.War_UD_EyeForAnEye, "Gain 2 COUNTER. Gain 2 VULNERABLE");
         cardEffectDescriptions.Add(AllCards.War_UD_AdrenalineRush, "Recover health equal to incoming damage this turn. CONSUME.");
         cardEffectDescriptions.Add(AllCards.War_UD_MasterOfDefense, "Gain 35 BLOCK if there are no offense cards in hand.");
-        cardEffectDescriptions.Add(AllCards.War_UD_Payback, "Gain 1 COUNTER next turn for each fully blocked hit on enemy's turn.");
+        cardEffectDescriptions.Add(AllCards.War_UD_Payback, "Gain 1 COUNTER everytime an attack is about to be fully blocked this turn.");
         cardEffectDescriptions.Add(AllCards.War_UD_BraceForImpact, "Gain 6 BLOCK. If at MOMENTUM 3, gain 2 COUNTER.");
-        cardEffectDescriptions.Add(AllCards.War_UD_Confidefense, "Gain 1 MOMENTUM after playing a BLOCK card.");
+        cardEffectDescriptions.Add(AllCards.War_UD_Confidefense, "This turn, gain 1 MOMENTUM after playing a BLOCK card.");
 
 
         //AD
@@ -174,9 +176,20 @@ public class CardTagManager
 
     }
 
+
+
     public static string GetCardEffectDescriptions(AllCards cardKey)
     {
-        return cardEffectDescriptions[cardKey];
+        //TEEEEEEEEEST ONLY
+        if(cardKey == AllCards.Ability)
+        {
+            return "ability";
+        }
+        else
+        {
+            return cardEffectDescriptions[cardKey];
+        }
+
     }
 
 

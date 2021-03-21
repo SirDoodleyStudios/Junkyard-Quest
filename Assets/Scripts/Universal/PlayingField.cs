@@ -9,4 +9,6 @@ public class PlayingField : MonoBehaviour
 
     public GameObject playerPrefab;
     public GameObject enemyHolder;
+    public GameObject playerHand;
+    public PlayerHand playerHandScript;
 }

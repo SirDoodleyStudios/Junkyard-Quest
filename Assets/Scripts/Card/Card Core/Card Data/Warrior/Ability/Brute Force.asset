@@ -20,7 +20,7 @@ MonoBehaviour:
   cardClass: 1
   cardType: 2
   cardMethod: 1
-  enumCardName: 3700
+  enumCardName: 1
   jigsawEffect: {fileID: 0}
   abilityEffect: {fileID: 11400000, guid: 3f9891bcb5d9e2e48af2da24d2eb7f3e, type: 2}
   Keep: 0

@@ -610,6 +610,7 @@ public class CombatManager : MonoBehaviour
                 {
                     //cache for card object and the card SO
                     activeCard = linkedCard;
+                    activeDragNDrop = activeCard.GetComponent<DragNDrop>();
                     Card activeCardCard = activeCard.GetComponent<Display>().card;
                     //calls discard method and puts active card in discard pile
                     activeCard.transform.SetAsLastSibling();

@@ -5,7 +5,7 @@ using UnityEngine;
 public class War_OT_Sting : BaseCardEffect
 {
     public override AllCards enumKeyCard => AllCards.War_OT_Sting;
-    public override void CardEffectActivate(GameObject target, GameObject actor)
+    public override void CardEffectActivate(GameObject target, GameObject actor, Card card)
     {
         status = CardMechanics.Shocked;
         stack = 1;
@@ -24,13 +24,14 @@ public class War_OT_Sting : BaseCardEffect
 public class War_OT_UnrelentingStrike : BaseCardEffect
 {
     public override AllCards enumKeyCard => AllCards.War_OT_UnrelentingStrike;
-    public override void CardEffectActivate(GameObject target, GameObject actor)
+    public override void CardEffectActivate(GameObject target, GameObject actor, Card card)
     {
-        damage = 8;
-        hits = 1;
 
+        ActingCardLoad(card);
         ActingUnitStatusLoad(actor);
         AffectSingleEnemy(target);
+        damage = 8;
+        hits = 1;
         DealDamage();
 
         baseStatus = CardMechanics.Momentum;
@@ -48,10 +49,11 @@ public class War_OT_UnrelentingStrike : BaseCardEffect
 //Gain 1 MOMENTUM then deal 5 DAMAGE. Deal 15 DAMAGE instead if at 3 MOMENTUM
 public class War_OT_CleanHit : BaseCardEffect
 {    public override AllCards enumKeyCard => AllCards.War_OT_CleanHit;
-    public override void CardEffectActivate(GameObject target, GameObject actor)
+    public override void CardEffectActivate(GameObject target, GameObject actor, Card card)
     {
         status = CardMechanics.Momentum;
         stack = 1;
+        ActingCardLoad(card);
         ActingUnitStatusLoad(actor);
         AffectPlayer(target);
         ApplyStatus();
@@ -79,10 +81,11 @@ public class War_OT_CleanHit : BaseCardEffect
 public class War_OT_FinishingBlow : BaseCardEffect
 {
     public override AllCards enumKeyCard => AllCards.War_OT_FinishingBlow;
-    public override void CardEffectActivate(GameObject target, GameObject actor)
+    public override void CardEffectActivate(GameObject target, GameObject actor, Card card)
     {
         damage = 6;
         hits = 1;
+        ActingCardLoad(card);
         ActingUnitStatusLoad(actor);
         AffectSingleEnemy(target);
         DealDamage();
@@ -104,8 +107,9 @@ public class War_OT_FinishingBlow : BaseCardEffect
 public class War_OT_HeavyWeapon : BaseCardEffect
 {
     public override AllCards enumKeyCard => AllCards.War_OT_HeavyWeapon;
-    public override void CardEffectActivate(GameObject target, GameObject actor)
+    public override void CardEffectActivate(GameObject target, GameObject actor, Card card)
     {
+        ActingCardLoad(card);
         ActingUnitStatusLoad(actor);
         AffectSingleEnemy(target);
         damage = 25;
@@ -125,8 +129,9 @@ public class War_OT_HeavyWeapon : BaseCardEffect
 public class War_OT_EfficientAttack : BaseCardEffect
 {
     public override AllCards enumKeyCard => AllCards.War_OT_EfficientAttack;
-    public override void CardEffectActivate(GameObject target, GameObject actor)
+    public override void CardEffectActivate(GameObject target, GameObject actor, Card card)
     {
+        ActingCardLoad(card);
         ActingUnitStatusLoad(actor);
         AffectSingleEnemy(target);
         damage = 9;
@@ -147,8 +152,9 @@ public class War_OT_EfficientAttack : BaseCardEffect
 public class War_OT_FortifyingBlow : BaseCardEffect
 {
     public override AllCards enumKeyCard => AllCards.War_OT_FortifyingBlow;
-    public override void CardEffectActivate(GameObject target, GameObject actor)
+    public override void CardEffectActivate(GameObject target, GameObject actor, Card card)
     {
+        ActingCardLoad(card);
         ActingUnitStatusLoad(actor);
         //checks current HP of target before reducing it with card damage
         int currHP = target.GetComponent<BaseUnitFunctions>().currHP;
@@ -176,11 +182,11 @@ public class War_OT_FortifyingBlow : BaseCardEffect
 public class War_OD_Cleave : BaseCardEffect
 {
     public override AllCards enumKeyCard => AllCards.War_OD_Cleave;
-    public override void CardEffectActivate(GameObject target, GameObject actor)
+    public override void CardEffectActivate(GameObject target, GameObject actor, Card card)
     {
         damage = 8;
         hits = 1;
-
+        ActingCardLoad(card);
         ActingUnitStatusLoad(actor);
         AffectAllEnemies(target);
         DealDamage();
@@ -191,8 +197,9 @@ public class War_OD_Cleave : BaseCardEffect
 public class War_OD_ShrapnelBlast : BaseCardEffect
 {
     public override AllCards enumKeyCard => AllCards.War_OD_ShrapnelBlast;
-    public override void CardEffectActivate(GameObject target, GameObject actor)
+    public override void CardEffectActivate(GameObject target, GameObject actor, Card card)
     {
+        ActingCardLoad(card);
         ActingUnitStatusLoad(actor);
         int currBlock = actor.GetComponent<BaseUnitFunctions>().block;
         AffectPlayer(target);
