@@ -310,7 +310,7 @@ public class CombatManager : MonoBehaviour
                     //retuns to player turn phase
                     state = CombatState.PlayerTurn;
                     //activeCard.GetComponent<DragNDrop>().StateChanger(state);////////////////////
-                    playerHand.StateChanger(state);
+                    //playerHand.StateChanger(state);
                     DeckUpdater();
 
 
@@ -358,7 +358,7 @@ public class CombatManager : MonoBehaviour
                     //retuns to player turn phase
                     state = CombatState.PlayerTurn;
                     //activeCard.GetComponent<DragNDrop>().StateChanger(state);////////////////////
-                    playerHand.StateChanger(state);
+                    //playerHand.StateChanger(state);
                     //resets sorting orders, box colliders, and positions
                     //activeCardDragNDrop.ResetSortingCanvasAndCollider();
                     DeckUpdater();
@@ -401,7 +401,7 @@ public class CombatManager : MonoBehaviour
                     //retuns to player turn phase
                     state = CombatState.PlayerTurn;
                     //activeCard.GetComponent<DragNDrop>().StateChanger(state);////////////////////
-                    playerHand.StateChanger(state);
+                    //playerHand.StateChanger(state);
                     //resets sorting orders, box colliders, and positions
                     //activeCardDragNDrop.ResetSortingCanvasAndCollider();
                     DeckUpdater();
@@ -758,14 +758,14 @@ public class CombatManager : MonoBehaviour
     public void DrawHand()
     {
         //setting the state of all cards to drawsphase will supposedly prevent accidental onPointerExit logic while drawing cards
-        playerHand.StateChanger(CombatState.DrawPhase);
+        //playerHand.StateChanger(CombatState.DrawPhase);
 
         deckManager.StartCoroutine(deckManager.DrawCards(playerFunctions.defaultDraw));
         //deckManager.DrawCards(playerFunctions.defaultDraw);
 
         DeckUpdater();
         //turn back to playerTurn phase after drawing
-        playerHand.StateChanger(CombatState.PlayerTurn);
+        //playerHand.StateChanger(CombatState.PlayerTurn);
     }
 
     //updates energy number

@@ -136,10 +136,10 @@ public class CardDescriptionLayout : MonoBehaviour/*, IPointerEnterHandler, IPoi
                 descriptionRect = descriptionLayoutHolder.GetComponent<RectTransform>();
                 //will allow popup tags to start at multiplier's height
                 //can be added with decimal multiplier to adjust where the popup descriptions are
-                //float nextPosY = -descriptionRect.rect.height * .8f;
+                float nextPosY = -descriptionRect.rect.height * .8f;
                 //0f means that the popups will start on level with the top of the cards because popup anchors are in top right corner of card
-                float nextPosY = 0f;
-
+                //float nextPosY = 0f;
+                
 
                 //for assigining positions of popups based on it's order
                 for (int i = 0; tagsList.Count > i; i++)
@@ -151,12 +151,27 @@ public class CardDescriptionLayout : MonoBehaviour/*, IPointerEnterHandler, IPoi
                     //this frame yield is needed so that UI positions and sizes are set first before getting them
                     yield return new WaitForEndOfFrame();
 
-                    popupDescRect.anchoredPosition = new Vector2(10, nextPosY);
+                    //determines whether popups spawn on left or right
+                    float nextPosX;
+                    //if card is at the 8 or 9 index spot, spawn the popups in the left
+                    if (gameObject.transform.GetSiblingIndex() >= 8)
+                    {
+                        //card width and popup width
+                        nextPosX = -530;
+                    }
+                    //if not, spawn on right
+                    else
+                    {
+                        nextPosX = 10;   
+                    }
+
+                    popupDescRect.anchoredPosition = new Vector2(nextPosX, nextPosY);
 
                     //will keep adding to nextPosY so that later popus are placed heigher
-                    //nextPosY = nextPosY + popupDescRect.rect.height + padding;
+                    nextPosY = nextPosY + popupDescRect.rect.height + padding;
                     //alternatively, we can start with popups at heighr position then go down for additionals
-                    nextPosY = nextPosY - popupDescRect.rect.height - padding;
+                    //nextPosY = nextPosY - popupDescRect.rect.height - padding;
+
 
                 }
                 //descriptionLayoutHolder.SetActive(true);

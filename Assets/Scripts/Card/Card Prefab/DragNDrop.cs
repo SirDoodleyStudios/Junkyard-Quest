@@ -154,9 +154,17 @@ public class DragNDrop : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
 
             //reset everything first
             playerHand.ResetToFixedPosition();
+
+            /////////////////
             //callsCustomHandLayout to rearrange 2 neighbors to the right and 2 negihbors to the left
             //the neighbors are to move away from the hovered card so that they are still visible
+            //if (playerHand.state != CombatState.Tweening)
+            //{
+            //    customHandLayout.HoverRearrange(objectTransform.GetSiblingIndex());
+            //}
+
             customHandLayout.HoverRearrange(objectTransform.GetSiblingIndex());
+
 
 
             //actual setting of scale, rotation and position
@@ -190,8 +198,15 @@ public class DragNDrop : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
     {
         if (playerHand != null && playerHand.state == CombatState.PlayerTurn)
         {
+
+            ////////////
+            //if (playerHand.state != CombatState.Tweening)
+            //{
+            //    customHandLayout.UnHoverRearrange(objectTransform.GetSiblingIndex());
+            //    //playerHand.ResetToFixedPosition();
+            //}
             customHandLayout.UnHoverRearrange(objectTransform.GetSiblingIndex());
-            //playerHand.ResetToFixedPosition();
+
 
 
             //objectRect.anchoredPosition = OriginalPosition;

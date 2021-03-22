@@ -8,6 +8,9 @@ using DG.Tweening;
 //MAKE SURE THAT THE CARD PREFAB IS  ANCHOR PRESET IS AT MIDDLE LEFT
 public class CustomHandLayout : MonoBehaviour
 {
+    //reference for playerHand in same object
+    public PlayerHand playerHand;
+
     //public delegate void D_FixOriginalPositions();
     //public event D_FixOriginalPositions d_FixOriginalPositions;
     //saved from last rearrange call so that hoverRearrange can use it
@@ -16,6 +19,9 @@ public class CustomHandLayout : MonoBehaviour
     List<GameObject> neighborHoverList = new List<GameObject>();
     //bool that identifies whether a card is being hovered on, used for overriding delay from postion tweens
     bool isHovering;
+
+    //bool that identifies wheter the cards in hand are tweening
+    bool isTweening;
 
     RectTransform handRect;
     float oddIncrement;
@@ -37,6 +43,7 @@ public class CustomHandLayout : MonoBehaviour
 
     public void Awake()
     {
+
         //tweeing initialize, needs to be called before any DOTween
         DOTween.Init(true, true, LogBehaviour.Default);
         DOTween.SetTweensCapacity(2000, 50);
@@ -68,6 +75,7 @@ public class CustomHandLayout : MonoBehaviour
 
     public void ActivateRearrange(int handCount, GameObject cardPrefab)
     {
+        //playerHand.StateChanger(CombatState.DrawPhase);
         //to be used by hoverRearrange
         lastHandCount = handCount;
         //checks if even
@@ -80,6 +88,7 @@ public class CustomHandLayout : MonoBehaviour
         {
             StartCoroutine(RearrangeOddHand(handCount, cardPrefab));
         }
+
     }
 
     //called by hovered dragNDrop
@@ -115,6 +124,7 @@ public class CustomHandLayout : MonoBehaviour
 
     IEnumerator RearrangeOddHand(int handCount, GameObject cardPrefab)
     {
+        //playerHand.StateChanger(CombatState.Tweening);
         float lagTime = .1f;
         //temp index is the last index of the card hand
         int tempIndex = handCount - 1;
@@ -144,10 +154,13 @@ public class CustomHandLayout : MonoBehaviour
         //d_FixOriginalPositions();
         yield return null;
 
+        //playerHand.StateChanger(CombatState.PlayerTurn);
+
     }
 
     IEnumerator RearrangeEvenHand(int handCount, GameObject cardPrefab)
     {
+        //playerHand.StateChanger(CombatState.Tweening);
         float lagTime = .1f;
         int tempIndex = handCount - 1;
         Transform cardTransform = gameObject.transform;
@@ -176,6 +189,7 @@ public class CustomHandLayout : MonoBehaviour
         }
         //d_FixOriginalPositions();
         yield return null;
+        //playerHand.StateChanger(CombatState.PlayerTurn);
 
     }
     //rearrange the hovered card's neighbors bly splayig them away from hovered card
@@ -226,6 +240,8 @@ public class CustomHandLayout : MonoBehaviour
         }
         //d_FixOriginalPositions();
         yield return null;
+
+
 
     }
     //rearrange the hovered card's neighbors bly splayig them away from hovered card

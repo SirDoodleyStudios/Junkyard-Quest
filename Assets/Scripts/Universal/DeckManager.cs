@@ -169,9 +169,10 @@ public class DeckManager : MonoBehaviour
             {
                 break;
             }
-            //at end of draw, DragNDrop should be albe to work now
-            playerHandScript.StateChanger(CombatState.PlayerTurn);
+
         }
+        //at end of draw, DragNDrop should be albe to work now
+        playerHandScript.StateChanger(CombatState.PlayerTurn);
 
         //ensures that when deck count is 0, only remaining cards are removed then calls the reset
         if (battleDeck.Count - drawtemp == 0)
@@ -211,6 +212,7 @@ public class DeckManager : MonoBehaviour
     // can only be called when card is discarded via combat
     public IEnumerator DiscardCards(GameObject discardedCardObject)
     {
+        playerHandScript.StateChanger(CombatState.DrawPhase);
         //time differential between each rearrange
         float lagTime = .2f;
 
@@ -231,11 +233,14 @@ public class DeckManager : MonoBehaviour
         //calls the event in playerHand to make the set positions of cards after tweening its fixed final positions
         playerHandScript.FixCardPositions();
 
+        playerHandScript.StateChanger(CombatState.PlayerTurn);
+
         //playerHandScript.ResetToDeckPosition();
     }
     //for consumed cards, similar to discard but cards in consume pile will not be drawn upon
     public IEnumerator ConsumeCards(GameObject consumedCardObject)
     {
+        playerHandScript.StateChanger(CombatState.DrawPhase);
         //time differential between each rearrange
         float lagTime = .2f;
         Card consumedCard = consumedCardObject.GetComponent<Display>().card;
@@ -251,6 +256,8 @@ public class DeckManager : MonoBehaviour
         yield return new WaitForSeconds(lagTime);
         //calls the event in playerHand to make the set positions of cards after tweening its fixed final positions
         playerHandScript.FixCardPositions();
+
+        playerHandScript.StateChanger(CombatState.PlayerTurn);
 
         //playerHandScript.ResetToDeckPosition();
     }
