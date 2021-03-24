@@ -28,6 +28,7 @@ public class Display : MonoBehaviour
 
     public Image displayArtwork;
     public Image displayJigsawImage;
+    public Image displayCardType;
 
     private void Start()
     {
@@ -40,6 +41,7 @@ public class Display : MonoBehaviour
         displayEffect.text = card.effectText;
         displayEnergyCost.text = card.energyCost.ToString();
         displayArtwork.sprite = card.artwork;
+        displayCardType.sprite = Resources.Load<Sprite>($"CardType/{card.cardType}");
 
         //Original Jigsaw Define
         //displayJigsawText.text = card.attachmentText;        

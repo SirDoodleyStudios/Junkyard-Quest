@@ -417,15 +417,19 @@ public class CombatManager : MonoBehaviour
 
 
         else if (state == CombatState.CreativeMode)
-        {           
+        {
+
+
             //for choosing cards to go in creative mode
             if (Input.GetMouseButtonDown(0))
             {
+                activeCard = pointedObject.collider.gameObject;
+                Card activeCardCard = activeCard.GetComponent<Display>().card;
+                DragNDrop activeCardDragNDrop = activeCard.GetComponent<DragNDrop>();
+
+
                 if (pointedObject.collider != null && pointedObject.collider.gameObject.tag == "Card")
                 {
-                    activeCard = pointedObject.collider.gameObject;
-                    Card activeCardCard = activeCard.GetComponent<Display>().card;
-
                     //checks the scriptable attached in Display if cost can be accomodated by Energy
                     //checks if current chosen card's input link matches the output of the previous card
                     if (activeCardCard.energyCost <= playerFunctions.currEnergy // activeCardCard.energyCost <= playerFunctions.currEnergy 
@@ -494,9 +498,14 @@ public class CombatManager : MonoBehaviour
                     EnergyUpdater(creativeList[tempIndex].GetComponent<Display>().card.energyCost);
 
                     creativeList[tempIndex].SetActive(true);
+                    //cache for the chosen prefab for creative
+                    DragNDrop creativeListDragNDrop = creativeList[tempIndex].GetComponent<DragNDrop>();
                     creativeList.Remove(creativeList[tempIndex]);
                     //removes scale increase on all cards
                     playerHand.ResetToDeckPosition();
+
+                    //resets sorting orders, box colliders, and positions
+                    creativeListDragNDrop.ResetSortingCanvasAndCollider();
                 }
 
 
@@ -507,10 +516,18 @@ public class CombatManager : MonoBehaviour
             {
                 foreach (GameObject card in creativeList)
                 {
+                    //cache for returning scales and positions to default
+                    DragNDrop activeDragDrop = card.GetComponent<DragNDrop>();
+
                     int tempIndex = creativeManager.ReturnFromCreative();
                     //Energy += creativeList[tempIndex].GetComponent<Display>().card.energyCost;
                     EnergyUpdater(creativeList[tempIndex].GetComponent<Display>().card.energyCost);
                     creativeList[tempIndex].SetActive(true);
+
+                    //for calling the plain rearrange function
+                    StartCoroutine(deckManager.PlainRearrange(creativeList[tempIndex]));
+                    //for returning scales and positions to default
+                    activeDragDrop.ResetSortingCanvasAndCollider();
                 }
                 creativeList.Clear();
                 //removes scale increase on all cards
@@ -578,6 +595,8 @@ public class CombatManager : MonoBehaviour
                                 //deckManager.DiscardCards(activeCard);
                                 StartCoroutine(deckManager.DiscardCards(activeCard));
                             }
+                            //resets sorting orders, box colliders, and positions
+                            activeDragNDrop.ResetSortingCanvasAndCollider();
                         }
                         //clearing CardObjects 
                         creativeList.Clear();
@@ -590,7 +609,6 @@ public class CombatManager : MonoBehaviour
                     }
                     //disables arrow after use
                     creativeUnleashArrow.DisableArrow();
-
 
 
                 }
@@ -630,6 +648,8 @@ public class CombatManager : MonoBehaviour
                         //deckManager.DiscardCards(activeCard);
                         StartCoroutine(deckManager.DiscardCards(activeCard));
                     }
+                    //resets sorting orders, box colliders, and positions
+                    activeDragNDrop.ResetSortingCanvasAndCollider();
                 }
                 //clearing CardObjects 
                 creativeList.Clear();
@@ -638,62 +658,6 @@ public class CombatManager : MonoBehaviour
                 //playerHand.StateChanger(state); -- not yet sure
                 DeckUpdater();
             }
-
-            //OLD LOGIC
-            //lift click in targetting during unleash
-            //if (Input.GetMouseButtonDown(0))
-            //{
-
-            //    //if targetted, click will work one specific enemy units only
-            //    if (pointedObject.collider != null && linkMethod == CardMethod.Targetted && targetObject.tag == "Enemy")
-            //    {
-            //        GameObject targetObject = pointedObject.collider.gameObject;
-            //        //this method takes the cardMethod of linked cards and jigsaws
-            //        //if there is a targetted card, the linked are all targetted, it is dropped if there are no targetted cards
-            //        CardMethod linkMethod = creativeManager.FinalizeLinks();
-            //        //access player stats and reduces their creativity meter
-            //        player.GetComponent<PlayerFunctions>().AlterPlayerCreativity(-creativeManager.creativityCost);
-            //        //initiates link effects in CreativeManager
-            //        //returns the cost for crativity
-            //        creativeManager.UnleashCreativity(targetObject, player);
-
-            //    }
-            //    //might remove this entirely
-            //    //if dropped, click will wor on anything
-            //    else if (pointedObject.collider != null && linkMethod == CardMethod.Dropped && targetObject.layer == 13)
-            //    {
-            //        //access player stats and reduces their creativity meter
-            //        player.GetComponent<PlayerFunctions>().AlterPlayerCreativity(-creativeManager.creativityCost);
-            //        //initiates link effects in CreativeManager
-            //        //returns the cost for crativity
-            //        creativeManager.UnleashCreativity(targetObject, player);
-
-            //    }
-
-            //    //removes scale increase on all cards
-            //    playerHand.ResetOriginal();
-            //    //Discards cards used in creative mode
-            //    foreach (GameObject linkedCard in creativeList)
-            //    {
-            //        activeCard = linkedCard;
-            //        //calls discard method and puts active card in discard pile
-            //        activeCard.transform.SetAsLastSibling();
-            //        //reset oiginal must come first before discarding, beccause overridesorting can only be set if object is active
-            //        //every time a card is played, reset it's scale down from
-            //        playerHand.ResetOriginal();
-
-            //        deckManager.DiscardCards(activeCard);
-            //    }
-            //    //clearing CardObjects 
-            //    creativeList.Clear();
-            //    state = CombatState.PlayerTurn;
-            //    creativeUnleash.SetActive(false);
-            //    //playerHand.StateChanger(state); -- not yet sure
-            //    DeckUpdater();
-
-            //}
-
-
             //back button, goes back to last state of creativity panel and re-enables it
             else if (Input.GetMouseButtonDown(1))
             {

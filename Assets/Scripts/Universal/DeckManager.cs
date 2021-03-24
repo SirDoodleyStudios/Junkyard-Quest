@@ -262,6 +262,17 @@ public class DeckManager : MonoBehaviour
         //playerHandScript.ResetToDeckPosition();
     }
 
+    //Just for Plain rearrangement without any discard or consume
+    public IEnumerator PlainRearrange(GameObject rearrangedCard)
+    {
+        playerHandScript.StateChanger(CombatState.DrawPhase);
+        float lagTime = .2f;
+        handLayout.ActivateRearrange(playerHandList.Count, rearrangedCard);
+        yield return new WaitForSeconds(lagTime);
+        playerHandScript.FixCardPositions();
+        playerHandScript.StateChanger(CombatState.PlayerTurn);
+    }
+
     //public void DiscardAll()
     //{
 
