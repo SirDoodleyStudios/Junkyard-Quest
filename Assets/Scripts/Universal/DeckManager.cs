@@ -265,12 +265,30 @@ public class DeckManager : MonoBehaviour
     //Just for Plain rearrangement without any discard or consume
     public IEnumerator PlainRearrange(GameObject rearrangedCard)
     {
+        DragNDrop dragNDrop = rearrangedCard.GetComponent<DragNDrop>();
+
         playerHandScript.StateChanger(CombatState.DrawPhase);
         float lagTime = .2f;
         handLayout.ActivateRearrange(playerHandList.Count, rearrangedCard);
         yield return new WaitForSeconds(lagTime);
         playerHandScript.FixCardPositions();
         playerHandScript.StateChanger(CombatState.PlayerTurn);
+
+        dragNDrop.ResetSortingCanvasAndCollider();
+    }
+
+    public void AlterHandCreative(Card creativeCard, bool isRemoving)
+    {
+        //Combatmanager sends the card to be removed and a bool whether it's a return to deck or a remove from deck from cancelling creative
+
+        if (isRemoving)
+        {
+            playerHandList.Remove(creativeCard);
+        }
+        else
+        {
+            playerHandList.Add(creativeCard);
+        }
     }
 
     //public void DiscardAll()

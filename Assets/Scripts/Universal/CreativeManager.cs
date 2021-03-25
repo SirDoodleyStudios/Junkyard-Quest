@@ -45,21 +45,24 @@ public class CreativeManager : MonoBehaviour
     {
         //logic will always run if creatielist is empty
         //original condition is ==0, changed it to >1 to preven single card links
-        if (cardPrefabList.Count == 0)
+        if (chosenCard.jigsawEffect != null)
         {
-            totalEnergyCost += chosenCard.energyCost;
-            return true;
+            if (cardPrefabList.Count == 0)
+            {
+                totalEnergyCost += chosenCard.energyCost;
+                return true;
+            }
+            else if (chosenCard.jigsawEffect.inputLink == cardPrefabList[cardPrefabList.Count - 1].GetComponent<Display>().card.jigsawEffect.outputLink) // jigsawEffect
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
-
-
-        else if (chosenCard.jigsawEffect.inputLink == cardPrefabList[cardPrefabList.Count - 1].GetComponent<Display>().card.jigsawEffect.outputLink) // jigsawEffect
-        {
-            return true;
-        }
-        else
-        {
-            return false;
-        }
+        //if reached here, there is no jigsaw
+        return false;
         
     }
 

@@ -433,9 +433,10 @@ public class CombatManager : MonoBehaviour
                     //checks the scriptable attached in Display if cost can be accomodated by Energy
                     //checks if current chosen card's input link matches the output of the previous card
                     if (activeCardCard.energyCost <= playerFunctions.currEnergy // activeCardCard.energyCost <= playerFunctions.currEnergy 
-                        && creativeManager.CheckLinkEligibility(activeCardCard) 
+                        && creativeManager.CheckLinkEligibility(activeCardCard)
                         && activeCardCard.jigsawEffect != null  //jigsawEffect
-                        && creativeManager.creativityCost < player.GetComponent<PlayerFunctions>().currCreativity)
+                        && creativeManager.creativityCost < player.GetComponent<PlayerFunctions>().currCreativity
+                        && activeCardCard.cardType != CardType.Ability)
                     {
                         //transfers the card in creative mode then disables the prefab                        
                         //Energy -= activeCardCard.energyCost;
@@ -445,6 +446,10 @@ public class CombatManager : MonoBehaviour
                         creativeList.Add(activeCard);
                         //cardDictionary.Add(activeCard.transform.GetSiblingIndex(), activeCard);
                         activeCard.SetActive(false);
+                    }
+                    else if (activeCardCard.cardType == CardType.Ability)
+                    {
+                        creativeManager.MessagePrompt("Abilities cannot be linked");
                     }
                     //else if (activeCardCard.energyCost > playerFunctions.currEnergy)
                     else if (activeCardCard.energyCost > playerFunctions.currEnergy)
@@ -463,6 +468,8 @@ public class CombatManager : MonoBehaviour
                     {
                         creativeManager.MessagePrompt("Insufficient Creativity");
                     }
+
+
 
                 }
 
@@ -506,6 +513,9 @@ public class CombatManager : MonoBehaviour
 
                     //resets sorting orders, box colliders, and positions
                     creativeListDragNDrop.ResetSortingCanvasAndCollider();
+
+                    //for calling the plain rearrange function
+                    StartCoroutine(deckManager.PlainRearrange(creativeListDragNDrop.gameObject));
                 }
 
 
@@ -527,7 +537,8 @@ public class CombatManager : MonoBehaviour
                     //for calling the plain rearrange function
                     StartCoroutine(deckManager.PlainRearrange(creativeList[tempIndex]));
                     //for returning scales and positions to default
-                    activeDragDrop.ResetSortingCanvasAndCollider();
+                    //activeDragDrop.ResetSortingCanvasAndCollider();
+
                 }
                 creativeList.Clear();
                 //removes scale increase on all cards
