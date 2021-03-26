@@ -13,12 +13,15 @@ public class CardTagManager
     //for Card Effect Descriptions to be copied to Card itself for display
     public static Dictionary<AllCards, string> cardEffectDescriptions = new Dictionary<AllCards, string>();
 
+    //for Card Abilities Specificalliy because the Enum keys must be ability for ability cards
+    public static Dictionary<AllAbilities, string> abilityEffectDescriptions = new Dictionary<AllAbilities, string>();
     //This is called by combatmanager awake then activates all initializers
     public static void InitializeTextDescriptionDictionaries()
     {
         CardTagDictionaryInitialize();
         JigsawDictionaryInitialize();
         CardEffectDictionaryInitialize();
+        AbilityCardDescriptionInitialize();
 
     }
 
@@ -172,19 +175,32 @@ public class CardTagManager
         //AD
         cardEffectDescriptions.Add(AllCards.War_AD_BruteForce, "ABILITY. Gain 1 FORCEFUL in exchange for 7 BLOCK");
         cardEffectDescriptions.Add(AllCards.War_AD_PrioritizeDefense, "ABILITY. Gain 9 BLOCK for each COUNTER. Remove all COUNTER.");
+    }
 
+    static void AbilityCardDescriptionInitialize()
+    {
+        //Neutral Abilities
+        abilityEffectDescriptions.Add(AllAbilities.Neu_Abi_Brainstorm, "ABILITY. Gain 2 CREATIVITY in exchange for 2 energy");
+        //Warrior Abilities
+        abilityEffectDescriptions.Add(AllAbilities.War_Abi_BruteForce, "ABILITY. Gain 1 FORCEFUL in exchange for 7 BLOCK");
+        abilityEffectDescriptions.Add(AllAbilities.War_Abi_PrioritizeDefense, "ABILITY. Gain 9 BLOCK for each COUNTER. Remove all COUNTER.");
 
     }
 
 
-
-    public static string GetCardEffectDescriptions(AllCards cardKey)
+    public static string GetCardEffectDescriptions(Card card)
     {
+        AllCards cardKey = card.enumCardName;
         //TEEEEEEEEEST ONLY
         if(cardKey == AllCards.Ability)
         {
-            return "ability";
+            AbilityFormat abilityFormat = card.abilityEffect;
+            return abilityEffectDescriptions[abilityFormat.enumAbilityName];
         }
+        //else if (cardKey == AllCards.Jigsaw)
+        //{
+
+        //}
         else
         {
             return cardEffectDescriptions[cardKey];

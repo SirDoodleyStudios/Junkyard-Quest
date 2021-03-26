@@ -423,55 +423,60 @@ public class CombatManager : MonoBehaviour
             //for choosing cards to go in creative mode
             if (Input.GetMouseButtonDown(0))
             {
-                activeCard = pointedObject.collider.gameObject;
-                Card activeCardCard = activeCard.GetComponent<Display>().card;
-                DragNDrop activeCardDragNDrop = activeCard.GetComponent<DragNDrop>();
-
-
-                if (pointedObject.collider != null && pointedObject.collider.gameObject.tag == "Card")
+                //check if object has a collider first to prevent an error on misclick
+                if (pointedObject.collider != null)
                 {
-                    //checks the scriptable attached in Display if cost can be accomodated by Energy
-                    //checks if current chosen card's input link matches the output of the previous card
-                    if (activeCardCard.energyCost <= playerFunctions.currEnergy // activeCardCard.energyCost <= playerFunctions.currEnergy 
-                        && creativeManager.CheckLinkEligibility(activeCardCard)
-                        && activeCardCard.jigsawEffect != null  //jigsawEffect
-                        && creativeManager.creativityCost < player.GetComponent<PlayerFunctions>().currCreativity
-                        && activeCardCard.cardType != CardType.Ability)
+                    activeCard = pointedObject.collider.gameObject;
+                    if (activeCard.GetComponent<DragNDrop>() != null)
                     {
-                        //transfers the card in creative mode then disables the prefab                        
-                        //Energy -= activeCardCard.energyCost;
-                        EnergyUpdater(-activeCardCard.energyCost);
-
-                        creativeManager.ChooseForCreative(activeCardCard);
-                        creativeList.Add(activeCard);
-                        //cardDictionary.Add(activeCard.transform.GetSiblingIndex(), activeCard);
-                        activeCard.SetActive(false);
-                    }
-                    else if (activeCardCard.cardType == CardType.Ability)
-                    {
-                        creativeManager.MessagePrompt("Abilities cannot be linked");
-                    }
-                    //else if (activeCardCard.energyCost > playerFunctions.currEnergy)
-                    else if (activeCardCard.energyCost > playerFunctions.currEnergy)
-                    {
-                        creativeManager.MessagePrompt("Insufficient Energy");
-                    }
-                    else if (!creativeManager.CheckLinkEligibility(activeCardCard))
-                    {
-                        creativeManager.MessagePrompt("Jigsaw Links Doesn't Match");
-                    }
-                    else if (activeCardCard.jigsawEffect == null) //jigsawEffect
-                    {
-                        creativeManager.MessagePrompt("Card Has No Jigsaw");
-                    }
-                    else if (creativeManager.creativityCost >= player.GetComponent<PlayerFunctions>().currCreativity)
-                    {
-                        creativeManager.MessagePrompt("Insufficient Creativity");
-                    }
+                        Card activeCardCard = activeCard.GetComponent<Display>().card;
+                        DragNDrop activeCardDragNDrop = activeCard.GetComponent<DragNDrop>();
 
 
+                        if (pointedObject.collider != null && pointedObject.collider.gameObject.tag == "Card")
+                        {
+                            //checks the scriptable attached in Display if cost can be accomodated by Energy
+                            //checks if current chosen card's input link matches the output of the previous card
+                            if (activeCardCard.energyCost <= playerFunctions.currEnergy // activeCardCard.energyCost <= playerFunctions.currEnergy 
+                                && creativeManager.CheckLinkEligibility(activeCardCard)
+                                && activeCardCard.jigsawEffect != null  //jigsawEffect
+                                && creativeManager.creativityCost < player.GetComponent<PlayerFunctions>().currCreativity
+                                && activeCardCard.cardType != CardType.Ability)
+                            {
+                                //transfers the card in creative mode then disables the prefab                        
+                                //Energy -= activeCardCard.energyCost;
+                                EnergyUpdater(-activeCardCard.energyCost);
 
+                                creativeManager.ChooseForCreative(activeCardCard);
+                                creativeList.Add(activeCard);
+                                //cardDictionary.Add(activeCard.transform.GetSiblingIndex(), activeCard);
+                                activeCard.SetActive(false);
+                            }
+                            else if (activeCardCard.cardType == CardType.Ability)
+                            {
+                                creativeManager.MessagePrompt("Abilities cannot be linked");
+                            }
+                            //else if (activeCardCard.energyCost > playerFunctions.currEnergy)
+                            else if (activeCardCard.energyCost > playerFunctions.currEnergy)
+                            {
+                                creativeManager.MessagePrompt("Insufficient Energy");
+                            }
+                            else if (!creativeManager.CheckLinkEligibility(activeCardCard))
+                            {
+                                creativeManager.MessagePrompt("Jigsaw Links Doesn't Match");
+                            }
+                            else if (activeCardCard.jigsawEffect == null) //jigsawEffect
+                            {
+                                creativeManager.MessagePrompt("Card Has No Jigsaw");
+                            }
+                            else if (creativeManager.creativityCost >= player.GetComponent<PlayerFunctions>().currCreativity)
+                            {
+                                creativeManager.MessagePrompt("Insufficient Creativity");
+                            }
+                        }                                         
+                    }
                 }
+
 
             }
             //for executing the link

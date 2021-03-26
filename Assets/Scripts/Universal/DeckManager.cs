@@ -68,7 +68,7 @@ public class DeckManager : MonoBehaviour
                 for (int i = 0; 2 >= i; i++)
                 {
                     instantiatedCard = Instantiate(card);
-                    instantiatedCard.effectText = CardTagManager.GetCardEffectDescriptions(instantiatedCard.enumCardName);
+                    instantiatedCard.effectText = CardTagManager.GetCardEffectDescriptions(instantiatedCard);
 
                     //test script for randomly assigning jigsawFormat to Cards
                     //test script for randomly assigning jigsaws to cards FOR TEST USE ONLY /////////////////////////////////////////////////////
@@ -273,7 +273,7 @@ public class DeckManager : MonoBehaviour
         yield return new WaitForSeconds(lagTime);
         playerHandScript.FixCardPositions();
         playerHandScript.StateChanger(CombatState.PlayerTurn);
-
+        //resetes the card's positions collider and sorting order back to default once creative mode is cancelled
         dragNDrop.ResetSortingCanvasAndCollider();
     }
 
