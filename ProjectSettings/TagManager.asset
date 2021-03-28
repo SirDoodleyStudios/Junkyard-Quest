@@ -24,7 +24,7 @@ TagManager:
   - PlayingField
   - Creative Field
   - Card
-  - 
+  - OW NodeLinks
   - 
   - 
   - 
@@ -55,4 +55,7 @@ TagManager:
     locked: 0
   - name: Deck View
     uniqueID: 2083030553
+    locked: 0
+  - name: OW NodeLinks
+    uniqueID: 2007196885
     locked: 0

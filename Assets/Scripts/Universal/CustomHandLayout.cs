@@ -355,9 +355,6 @@ public class CustomHandLayout : MonoBehaviour
         //float angleDeg = Mathf.Atan(perpGrad);
         return angleDeg;
 
-
-
-
     }
     float RotationAngleCalculatorEven(float x, float y)
     {
