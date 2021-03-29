@@ -31,14 +31,13 @@ public class CircleGenerator : MonoBehaviour
         //    float diameterPercent = 1 - ((11 - i) * .2f);
         //    PlotNodes(i, diameterPercent);
         //}
-        PlotNodes(10, .90f);
-        PlotNodes(8, .70f);
-        PlotNodes(6, .50f);
-        PlotNodes(4, .40f);
-        PlotNodes(2, .20f);
+        PlotNodes(7, .95f);
+        PlotNodes(6, .65f);
+        PlotNodes(5, .35f);
+        PlotNodes(4, .15f);
 
         //reverse is a test for creating links from the inner circle to the outer ones
-        //parentCircleList.Reverse();
+        parentCircleList.Reverse();
         PlotLinks();
     }
 
@@ -53,14 +52,16 @@ public class CircleGenerator : MonoBehaviour
         float nodeY;
         float radius = (nodeCircleManagerRect.rect.height * diameterPercent) / 2;
         float diameter = nodeCircleManagerRect.rect.height * diameterPercent;
+        //extra nodes to be added to nodecount for increment and max nodes
+        int nodeMargin = 2;
 
         // the circle will be divided by the nodeCount
-        float degreeIncrement = 360 / (nodeCount * 2);
+        float degreeIncrement = 360 / (nodeCount + nodeMargin);
         float radianIncrement = degreeIncrement*Mathf.Deg2Rad;
 
         //the i will be multiplied to the increment angle from 0 to 360
         List<Vector2> noRepeatVector = new List<Vector2>();
-        for (int i = 0; nodeCount*2 > i; i++)
+        for (int i = 0; nodeCount + nodeMargin > i; i++)
         {
             //unity is defaulted to radians, so we convert to degrees
             //formula for getting the X input
@@ -130,12 +131,21 @@ public class CircleGenerator : MonoBehaviour
         Vector2 startingPoint = startingNodeRect.anchoredPosition;
         Vector2 endingPoint;
         //will contain nodes that are within reach
-        List<GameObject> nodeLinks = new List<GameObject>();
+        //List<GameObject> nodeLinks = new List<GameObject>();
+        Dictionary<GameObject, float> nodeLinks = new Dictionary<GameObject, float>();
         //this node is for checking which node is the nearest for the starting node, will be added to list of endings if none is found in the for loop
         GameObject nearestEndingNode = null;
+        GameObject nearestEndingNode2 = null;
+        //percentage of the diameter that determines how far a node can reach with a link
+        float linkReach = .30f;
 
         //distance holder for the nearest, will start as positive infinity
         float nearestDist = Mathf.Infinity;
+        float nearestDist2 = Mathf.Infinity;
+
+        //counter for how many outside nodes an inner node can link to
+        //randomly determines how many links an inner node will link to
+        int linkCounter = Random.Range(1, 3);
 
         foreach (Transform endNodeTrans in targetCircle.transform)
         {
@@ -147,43 +157,64 @@ public class CircleGenerator : MonoBehaviour
             //will also serve as the height of the linkprefab that will be instantiated later
             float nodeDistance = Vector2.Distance(startingPoint, endingPoint);
 
-            //if distance between startingto ending is less that 15% of the canvas diameter, it is eligible for link
-            if (nodeDistance <= diameter * .15f)
-            {
-                nodeLinks.Add(endingNode);
-                //create the links and set it as child of the linkholderparent
-                GameObject linkObject = Instantiate(linkprefab, linkholder.transform);
-                RectTransform linkRect = linkObject.GetComponent<RectTransform>();
-                //for assigning the height of the link image
-                linkRect.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, nodeDistance);
-
-                //set the midpoint of start and end node as the anchoredposition of the link
-                Vector2 midpoint = new Vector2((startingPoint.x + endingPoint.x) / 2, (startingPoint.y + endingPoint.y) / 2);
-                linkRect.anchoredPosition = midpoint;
-                //set the orientation based on the x axis of the starting node
-
-                float valueRotate = ((endingPoint.y - startingPoint.y) / (endingPoint.x - startingPoint.x)) ;
-                float angleRotate = Mathf.Atan(valueRotate) * Mathf.Rad2Deg;
-
-
-                linkObject.transform.rotation = Quaternion.Euler(0, 0, angleRotate);
-            }
-
-            //if node is not within reach, it will record it if the distance between nodes are less than the recorded distance
-            else
+            //if link counter is 1, just assign the ending node to nearestEndingNode
+            if (linkCounter == 1)
             {
                 if (nearestDist > nodeDistance)
                 {
                     nearestDist = nodeDistance;
                     nearestEndingNode = endingNode;
-
                 }
+
             }
+
+            else if (linkCounter == 2)
+            {
+                //if a new nearest node is calculated, pass nearest to 2nd nearest, and the calculated node to nearestnode variable
+                if (nearestDist > nodeDistance)
+                {
+                    nearestDist2 = nearestDist;
+                    nearestDist = nodeDistance;
+                    nearestEndingNode2 = nearestEndingNode;
+                    nearestEndingNode = endingNode;
+                }
+                //if the nodeDistance is larger than nearest1 but smaller than nearest2
+                else if (nearestDist < nodeDistance && nodeDistance < nearestDist2)
+                {
+                    nearestDist2 = nodeDistance;
+                    nearestEndingNode2 = endingNode;
+                }
+
+            }
+
+            //if distance between startingto ending is less that 15% of the canvas diameter, it is eligible for link
+            //if (nodeDistance <= diameter * linkReach)
+            //{
+            //    nodeLinks.Add(endingNode);
+            //    //create the links and set it as child of the linkholderparent
+            //    GameObject linkObject = Instantiate(linkprefab, linkholder.transform);
+            //    RectTransform linkRect = linkObject.GetComponent<RectTransform>();
+            //    //for assigning the height of the link image
+            //    linkRect.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, nodeDistance);
+
+            //    //set the midpoint of start and end node as the anchoredposition of the link
+            //    Vector2 midpoint = new Vector2((startingPoint.x + endingPoint.x) / 2, (startingPoint.y + endingPoint.y) / 2);
+            //    linkRect.anchoredPosition = midpoint;
+            //    //set the orientation based on the x axis of the starting node
+
+            //    float valueRotate = ((endingPoint.y - startingPoint.y) / (endingPoint.x - startingPoint.x)) ;
+            //    float angleRotate = Mathf.Atan(valueRotate) * Mathf.Rad2Deg;
+
+
+            //    linkObject.transform.rotation = Quaternion.Euler(0, 0, angleRotate);
+            //}
+
         }
-        //if there were no elligible endnodes found, link to the nearest possible node
-        if(nodeLinks.Count <= 0)
+
+        //if there's 1 link only
+        if(linkCounter == 1)
         {
-            nodeLinks.Add(nearestEndingNode);
+            //nodeLinks.Add(nearestEndingNode);
             Vector2 nearestEndingPoint = nearestEndingNode.GetComponent<RectTransform>().anchoredPosition;
             //create the links and set it as child of the linkholderparent
             GameObject linkObject = Instantiate(linkprefab, linkholder.transform);
@@ -202,6 +233,61 @@ public class CircleGenerator : MonoBehaviour
 
             linkObject.transform.rotation = Quaternion.Euler(0, 0, angleRotate);
         }
+        //if there are 2 links determined
+        else if(linkCounter == 2)
+        {
+           
+            //nodeLinks.Add(nearestEndingNode);
+            //nodeLinks.Add(nearestEndingNode2);
+            nodeLinks.Add(nearestEndingNode, nearestDist);
+            nodeLinks.Add(nearestEndingNode2, nearestDist2);
+
+            //foreach (GameObject link in nodeLinks)
+            foreach(KeyValuePair<GameObject, float> nodeLink in nodeLinks)
+            {
+                Vector2 nearestEndingPoint = nodeLink.Key.GetComponent<RectTransform>().anchoredPosition;
+                //Vector2 nearestEndingPoint2 = link.GetComponent<RectTransform>().anchoredPosition;
+                //center of the link, this is where the instantiated link object will be placed
+                Vector2 midpoint;
+
+                //create the links and set it as child of the linkholderparent
+                GameObject linkObject = Instantiate(linkprefab, linkholder.transform);
+                //GameObject linkObject2 = Instantiate(linkprefab, linkholder.transform);
+                RectTransform linkRect = linkObject.GetComponent<RectTransform>();
+                //RectTransform linkRect2 = linkObject2.GetComponent<RectTransform>();
+
+                //for assigning the height of the link image
+                //first index points to nearest while second index
+                //if (nodeLinks.IndexOf(link) == 0)
+                //{
+                //    linkRect.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, nodeLink.Value);
+                //    midpoint = new Vector2((startingPoint.x + nearestEndingPoint.x) / 2, (startingPoint.y + nearestEndingPoint.y) / 2);
+                //}
+                //else
+                //{
+                //    linkRect.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, nearestDist2);
+                //    midpoint = new Vector2((startingPoint.x + nearestEndingPoint.x) / 2, (startingPoint.y + nearestEndingPoint.y) / 2);
+                //}
+                linkRect.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, nodeLink.Value);
+                midpoint = new Vector2((startingPoint.x + nearestEndingPoint.x) / 2, (startingPoint.y + nearestEndingPoint.y) / 2);
+                linkRect.anchoredPosition = midpoint;
+
+
+                //set the midpoint of start and end node as the anchoredposition of the link
+
+
+                //set the orientation based on the x axis of the starting node
+
+                float valueRotate = ((nearestEndingPoint.y - startingPoint.y) / (nearestEndingPoint.x - startingPoint.x));
+                float angleRotate = Mathf.Atan(valueRotate) * Mathf.Rad2Deg;
+
+
+                linkObject.transform.rotation = Quaternion.Euler(0, 0, angleRotate);
+            }
+
+            
+        }
+        nodeLinks.Clear();
 
 
     }
