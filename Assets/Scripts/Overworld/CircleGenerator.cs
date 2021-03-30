@@ -5,6 +5,7 @@ using UnityEngine;
 public class CircleGenerator : MonoBehaviour
 {
     List<Vector2> Circle1 = new List<Vector2>();
+
     GameObject nodeCircleManager;
     Transform nodeCircleTransform;
     RectTransform nodeCircleManagerRect;
@@ -44,8 +45,6 @@ public class CircleGenerator : MonoBehaviour
     //make sure that nodecount is always even
     void PlotNodes(int nodeCount, float diameterPercent)
     {
-
-
         //float centerX = nodeCircleManagerRect.anchoredPosition.x;
         //float centerY = nodeCircleManagerRect.anchoredPosition.y;
         float nodeX;
@@ -99,13 +98,16 @@ public class CircleGenerator : MonoBehaviour
         }
     }
 
-
+    //we access the actor circle here
     void PlotLinks()
     {
+        //dictionary of nodes that didnt have inner links and their parent circles
+        Dictionary<GameObject, GameObject> missedNodeLinks = new Dictionary<GameObject, GameObject>();
         foreach (GameObject circle in parentCircleList)
         {
             Transform circleTrans = circle.transform;
             GameObject targetCircle;
+
             //thetargetCircle variable will indicate the circle that will link the nodes to
             //only works for circles that are not the last
 
@@ -115,19 +117,37 @@ public class CircleGenerator : MonoBehaviour
                 foreach (Transform nodeTrans in circleTrans)
                 {
                     GameObject node = nodeTrans.gameObject;
-                    RectTransform nodeRect = node.GetComponent<RectTransform>();
+                    //RectTransform nodeRect = node.GetComponent<RectTransform>();
+                    NodeLinkIdentifier nodeLinks = node.GetComponent<NodeLinkIdentifier>();
 
-                    DeployLinks(targetCircle, nodeRect, nodeCircleManagerRect.rect.height);
+                    //counter for how many outside nodes an inner node can link to
+                    //randomly determines how many links an inner node will link to
+                    int linkCounter = Random.Range(1, 3);
+
+                    DeployLinks(targetCircle, node, linkCounter);
+                    //if the circle scanned is not the innermost circle and the node did not receive a link from an inner circle
+                    if (parentCircleList.IndexOf(circle) != 0 && nodeLinks.linksToInner.Count == 0)
+                    {
+                        //adds the node and parent circle for processing later
+                        missedNodeLinks.Add(circle, node);
+                    }
                 }
-            }
-
-
-            
+            }       
+        }
+        //this segment sifts through the missed links and attempts to connect back to the nearesr inner circle node, always connect with 1 node only
+        foreach (KeyValuePair<GameObject, GameObject> missedLinks in missedNodeLinks)
+        {
+            DeployLinks(parentCircleList[parentCircleList.IndexOf(missedLinks.Key) - 1], missedLinks.Value, 1);
         }
     }
 
-    void DeployLinks(GameObject targetCircle, RectTransform startingNodeRect, float diameter)
+
+
+    //we access the target circle here
+    void DeployLinks(GameObject targetCircle, GameObject startingNode, int linkCounter)
     {
+        RectTransform startingNodeRect = startingNode.GetComponent<RectTransform>();
+        NodeLinkIdentifier startNodeIdentifier = startingNode.GetComponent<NodeLinkIdentifier>();
         Vector2 startingPoint = startingNodeRect.anchoredPosition;
         Vector2 endingPoint;
         //will contain nodes that are within reach
@@ -136,16 +156,14 @@ public class CircleGenerator : MonoBehaviour
         //this node is for checking which node is the nearest for the starting node, will be added to list of endings if none is found in the for loop
         GameObject nearestEndingNode = null;
         GameObject nearestEndingNode2 = null;
-        //percentage of the diameter that determines how far a node can reach with a link
-        float linkReach = .30f;
 
         //distance holder for the nearest, will start as positive infinity
         float nearestDist = Mathf.Infinity;
         float nearestDist2 = Mathf.Infinity;
 
-        //counter for how many outside nodes an inner node can link to
-        //randomly determines how many links an inner node will link to
-        int linkCounter = Random.Range(1, 3);
+        ////counter for how many outside nodes an inner node can link to
+        ////randomly determines how many links an inner node will link to
+        //int linkCounter = Random.Range(1, 3);
 
         foreach (Transform endNodeTrans in targetCircle.transform)
         {
@@ -167,9 +185,9 @@ public class CircleGenerator : MonoBehaviour
                 }
 
             }
-
             else if (linkCounter == 2)
             {
+
                 //if a new nearest node is calculated, pass nearest to 2nd nearest, and the calculated node to nearestnode variable
                 if (nearestDist > nodeDistance)
                 {
@@ -177,39 +195,20 @@ public class CircleGenerator : MonoBehaviour
                     nearestDist = nodeDistance;
                     nearestEndingNode2 = nearestEndingNode;
                     nearestEndingNode = endingNode;
+
                 }
                 //if the nodeDistance is larger than nearest1 but smaller than nearest2
                 else if (nearestDist < nodeDistance && nodeDistance < nearestDist2)
                 {
                     nearestDist2 = nodeDistance;
                     nearestEndingNode2 = endingNode;
+
                 }
 
             }
 
-            //if distance between startingto ending is less that 15% of the canvas diameter, it is eligible for link
-            //if (nodeDistance <= diameter * linkReach)
-            //{
-            //    nodeLinks.Add(endingNode);
-            //    //create the links and set it as child of the linkholderparent
-            //    GameObject linkObject = Instantiate(linkprefab, linkholder.transform);
-            //    RectTransform linkRect = linkObject.GetComponent<RectTransform>();
-            //    //for assigning the height of the link image
-            //    linkRect.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, nodeDistance);
-
-            //    //set the midpoint of start and end node as the anchoredposition of the link
-            //    Vector2 midpoint = new Vector2((startingPoint.x + endingPoint.x) / 2, (startingPoint.y + endingPoint.y) / 2);
-            //    linkRect.anchoredPosition = midpoint;
-            //    //set the orientation based on the x axis of the starting node
-
-            //    float valueRotate = ((endingPoint.y - startingPoint.y) / (endingPoint.x - startingPoint.x)) ;
-            //    float angleRotate = Mathf.Atan(valueRotate) * Mathf.Rad2Deg;
-
-
-            //    linkObject.transform.rotation = Quaternion.Euler(0, 0, angleRotate);
-            //}
-
         }
+        //actual establishment of links
 
         //if there's 1 link only
         if(linkCounter == 1)
@@ -230,13 +229,17 @@ public class CircleGenerator : MonoBehaviour
             float valueRotate = ((nearestEndingPoint.y - startingPoint.y) / (nearestEndingPoint.x - startingPoint.x));
             float angleRotate = Mathf.Atan(valueRotate) * Mathf.Rad2Deg;
 
-
             linkObject.transform.rotation = Quaternion.Euler(0, 0, angleRotate);
+
+            //assigns the linked inner and outer nodes
+            NodeLinkIdentifier endingNodeIdentifier = nearestEndingNode.GetComponent<NodeLinkIdentifier>();
+            startNodeIdentifier.linksToOuter.Add(nearestEndingNode);
+            endingNodeIdentifier.linksToInner.Add(startingNode);           
+
         }
         //if there are 2 links determined
         else if(linkCounter == 2)
-        {
-           
+        {           
             //nodeLinks.Add(nearestEndingNode);
             //nodeLinks.Add(nearestEndingNode2);
             nodeLinks.Add(nearestEndingNode, nearestDist);
@@ -281,8 +284,16 @@ public class CircleGenerator : MonoBehaviour
                 float valueRotate = ((nearestEndingPoint.y - startingPoint.y) / (nearestEndingPoint.x - startingPoint.x));
                 float angleRotate = Mathf.Atan(valueRotate) * Mathf.Rad2Deg;
 
-
                 linkObject.transform.rotation = Quaternion.Euler(0, 0, angleRotate);
+
+                //assigns the linked inner and outer nodes
+                NodeLinkIdentifier endingNodeIdentifier = nearestEndingNode.GetComponent<NodeLinkIdentifier>();
+                NodeLinkIdentifier endingNodeIdentifier2 = nearestEndingNode2.GetComponent<NodeLinkIdentifier>();
+
+                startNodeIdentifier.linksToOuter.Add(nearestEndingNode);
+                startNodeIdentifier.linksToOuter.Add(nearestEndingNode2);
+                endingNodeIdentifier.linksToInner.Add(startingNode);
+                endingNodeIdentifier2.linksToInner.Add(startingNode);
             }
 
             
