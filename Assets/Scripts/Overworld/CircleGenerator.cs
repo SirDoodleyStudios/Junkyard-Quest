@@ -4,7 +4,9 @@ using UnityEngine;
 
 public class CircleGenerator : MonoBehaviour
 {
-    List<Vector2> Circle1 = new List<Vector2>();
+    //event attached to LinkCollisionIdentifier script of links
+    public delegate void D_DestroyLinks();
+    public event D_DestroyLinks d_DestroyLinks;
 
     GameObject nodeCircleManager;
     Transform nodeCircleTransform;
@@ -15,8 +17,9 @@ public class CircleGenerator : MonoBehaviour
     //the node actual, uses a prefab from inspector
     public GameObject nodePrefab;
     //the link prefab, will have a logic for a randomizer image
-    public GameObject linkprefab;
-    public GameObject linkholder;
+    public GameObject linkPrefab;
+    public GameObject linkHolder;
+    Transform linkHolderTrans;
 
 
     void Start()
@@ -24,6 +27,7 @@ public class CircleGenerator : MonoBehaviour
         nodeCircleManager = gameObject;
         nodeCircleManagerRect = nodeCircleManager.GetComponent<RectTransform>();
         nodeCircleTransform = nodeCircleManager.transform;
+        linkHolderTrans = linkHolder.transform;
 
         //call generation of circle nodes
         //initial i is the first outside circle with the largest number of nodes
@@ -33,13 +37,19 @@ public class CircleGenerator : MonoBehaviour
         //    PlotNodes(i, diameterPercent);
         //}
         PlotNodes(7, .95f);
-        PlotNodes(6, .65f);
-        PlotNodes(5, .35f);
-        PlotNodes(4, .15f);
+        PlotNodes(6, .75f);
+        PlotNodes(5, .55f);
+        PlotNodes(4, .35f);
+        PlotNodes(3, .15f);
 
         //reverse is a test for creating links from the inner circle to the outer ones
         parentCircleList.Reverse();
+
+        //create links between nearest nodes from adjacent circles
         PlotLinks();
+
+        //
+        StartCoroutine(RemoveCollidingLinks());
     }
 
     //make sure that nodecount is always even
@@ -84,7 +94,7 @@ public class CircleGenerator : MonoBehaviour
         parentCircleList.Add(circle);
 
         //for this loop, the actual nodeCount is needed because we'll be instantiating the actual number of nodes based on this int
-        for (int i = 1; nodeCount >= i; i++)
+        for (int i = 1; nodeCount /*+ nodeMargin*/ >= i; i++)
         //for (int i = 0; 23 >= i; i++)
         {
             int randomIndex = Random.Range(0, noRepeatVector.Count - 1);
@@ -106,41 +116,48 @@ public class CircleGenerator : MonoBehaviour
         foreach (GameObject circle in parentCircleList)
         {
             Transform circleTrans = circle.transform;
-            GameObject targetCircle;
 
-            //thetargetCircle variable will indicate the circle that will link the nodes to
-            //only works for circles that are not the last
-
-            if (parentCircleList.IndexOf(circle) < parentCircleList.Count - 1)
+            foreach (Transform nodeTrans in circleTrans)
             {
-                targetCircle = parentCircleList[parentCircleList.IndexOf(circle) + 1];
-                foreach (Transform nodeTrans in circleTrans)
-                {
-                    GameObject node = nodeTrans.gameObject;
-                    //RectTransform nodeRect = node.GetComponent<RectTransform>();
-                    NodeLinkIdentifier nodeLinks = node.GetComponent<NodeLinkIdentifier>();
+                GameObject node = nodeTrans.gameObject;
+                //RectTransform nodeRect = node.GetComponent<RectTransform>();
+                NodeLinkIdentifier nodeLinks = node.GetComponent<NodeLinkIdentifier>();
 
+                //will only try to deploy to outer if not the outermost circle
+                if (parentCircleList.IndexOf(circle) < parentCircleList.Count - 1)
+                {
+                    //thetargetCircle variable will indicate the circle that will link the nodes to
+                    GameObject targetCircle = parentCircleList[parentCircleList.IndexOf(circle) + 1];
                     //counter for how many outside nodes an inner node can link to
                     //randomly determines how many links an inner node will link to
                     int linkCounter = Random.Range(1, 3);
+                    //int linkCounter = 1;
 
+                    //StartCoroutine(DeployLinks(targetCircle, node, linkCounter));
                     DeployLinks(targetCircle, node, linkCounter);
-                    //if the circle scanned is not the innermost circle and the node did not receive a link from an inner circle
-                    if (parentCircleList.IndexOf(circle) != 0 && nodeLinks.linksToInner.Count == 0)
-                    {
-                        //adds the node and parent circle for processing later
-                        missedNodeLinks.Add(circle, node);
-                    }
                 }
-            }       
+
+
+                //if the circle scanned is not the innermost circle and the node did not receive a link from an inner circle
+                if (parentCircleList.IndexOf(circle) != 0 && nodeLinks.linksToInner.Count == 0)
+                {
+                    //adds the node and parent circle for processing later
+                    missedNodeLinks.Add(node, circle);
+                    Debug.Log($"{nodeTrans.GetSiblingIndex()} in {parentCircleList.IndexOf(circle)}");
+                }
+            }
+                  
         }
+
         //this segment sifts through the missed links and attempts to connect back to the nearesr inner circle node, always connect with 1 node only
         foreach (KeyValuePair<GameObject, GameObject> missedLinks in missedNodeLinks)
         {
-            DeployLinks(parentCircleList[parentCircleList.IndexOf(missedLinks.Key) - 1], missedLinks.Value, 1);
+            //StartCoroutine(DeployLinks(parentCircleList[parentCircleList.IndexOf(missedLinks.Value) - 1], missedLinks.Key, 1));
+            DeployLinks(parentCircleList[parentCircleList.IndexOf(missedLinks.Value) - 1], missedLinks.Key, 1);
         }
-    }
 
+       
+    }
 
 
     //we access the target circle here
@@ -156,6 +173,8 @@ public class CircleGenerator : MonoBehaviour
         //this node is for checking which node is the nearest for the starting node, will be added to list of endings if none is found in the for loop
         GameObject nearestEndingNode = null;
         GameObject nearestEndingNode2 = null;
+        //this list will contain all Links that needs to be destroyed due to overlapping links
+        List<GameObject> destroyListLinks = new List<GameObject>();
 
         //distance holder for the nearest, will start as positive infinity
         float nearestDist = Mathf.Infinity;
@@ -216,11 +235,13 @@ public class CircleGenerator : MonoBehaviour
             //nodeLinks.Add(nearestEndingNode);
             Vector2 nearestEndingPoint = nearestEndingNode.GetComponent<RectTransform>().anchoredPosition;
             //create the links and set it as child of the linkholderparent
-            GameObject linkObject = Instantiate(linkprefab, linkholder.transform);
+            GameObject linkObject = Instantiate(linkPrefab, linkHolder.transform);
             RectTransform linkRect = linkObject.GetComponent<RectTransform>();
+            BoxCollider2D linkCollider = linkObject.GetComponent<BoxCollider2D>();
+
             //for assigning the height of the link image
             linkRect.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, nearestDist);
-
+            linkCollider.size = new Vector2(nearestDist * .95f, 1);
             //set the midpoint of start and end node as the anchoredposition of the link
             Vector2 midpoint = new Vector2((startingPoint.x + nearestEndingPoint.x) / 2, (startingPoint.y + nearestEndingPoint.y) / 2);
             linkRect.anchoredPosition = midpoint;
@@ -234,7 +255,9 @@ public class CircleGenerator : MonoBehaviour
             //assigns the linked inner and outer nodes
             NodeLinkIdentifier endingNodeIdentifier = nearestEndingNode.GetComponent<NodeLinkIdentifier>();
             startNodeIdentifier.linksToOuter.Add(nearestEndingNode);
-            endingNodeIdentifier.linksToInner.Add(startingNode);           
+            endingNodeIdentifier.linksToInner.Add(startingNode);
+
+         
 
         }
         //if there are 2 links determined
@@ -254,31 +277,17 @@ public class CircleGenerator : MonoBehaviour
                 Vector2 midpoint;
 
                 //create the links and set it as child of the linkholderparent
-                GameObject linkObject = Instantiate(linkprefab, linkholder.transform);
+                GameObject linkObject = Instantiate(linkPrefab, linkHolder.transform);
                 //GameObject linkObject2 = Instantiate(linkprefab, linkholder.transform);
                 RectTransform linkRect = linkObject.GetComponent<RectTransform>();
-                //RectTransform linkRect2 = linkObject2.GetComponent<RectTransform>();
+                BoxCollider2D linkCollider = linkObject.GetComponent<BoxCollider2D>();
 
-                //for assigning the height of the link image
-                //first index points to nearest while second index
-                //if (nodeLinks.IndexOf(link) == 0)
-                //{
-                //    linkRect.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, nodeLink.Value);
-                //    midpoint = new Vector2((startingPoint.x + nearestEndingPoint.x) / 2, (startingPoint.y + nearestEndingPoint.y) / 2);
-                //}
-                //else
-                //{
-                //    linkRect.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, nearestDist2);
-                //    midpoint = new Vector2((startingPoint.x + nearestEndingPoint.x) / 2, (startingPoint.y + nearestEndingPoint.y) / 2);
-                //}
                 linkRect.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, nodeLink.Value);
+                linkCollider.size = new Vector2(nodeLink.Value*.95f, 1);
                 midpoint = new Vector2((startingPoint.x + nearestEndingPoint.x) / 2, (startingPoint.y + nearestEndingPoint.y) / 2);
                 linkRect.anchoredPosition = midpoint;
 
-
                 //set the midpoint of start and end node as the anchoredposition of the link
-
-
                 //set the orientation based on the x axis of the starting node
 
                 float valueRotate = ((nearestEndingPoint.y - startingPoint.y) / (nearestEndingPoint.x - startingPoint.x));
@@ -294,13 +303,54 @@ public class CircleGenerator : MonoBehaviour
                 startNodeIdentifier.linksToOuter.Add(nearestEndingNode2);
                 endingNodeIdentifier.linksToInner.Add(startingNode);
                 endingNodeIdentifier2.linksToInner.Add(startingNode);
-            }
-
-            
+               
+            }            
         }
         nodeLinks.Clear();
 
+    }
 
+    IEnumerator RemoveCollidingLinks()
+    {
+        yield return null;
+        Debug.Log("link destroy in circleGenerator");
+
+        //will contain links to be destroyed
+        List<GameObject> destroyList = new List<GameObject>();
+        //will contain links to be not destroyed
+        List<GameObject> protectionList = new List<GameObject>();
+
+        foreach (Transform linkTrans in linkHolderTrans)
+        {
+            GameObject link = linkTrans.gameObject;
+            LinkCollisionIdentifier linkIdent = link.GetComponent<LinkCollisionIdentifier>();
+
+            if (linkIdent.actualLink != null && linkIdent.collidingLink != null)
+            {
+                if (!destroyList.Contains(linkIdent.actualLink) && !protectionList.Contains(linkIdent.actualLink))
+                {
+                    protectionList.Add(linkIdent.actualLink);
+                    destroyList.Add(linkIdent.collidingLink);
+                }
+            }
+
+        }
+
+        if (destroyList.Count > 0)
+        {
+            foreach (GameObject destroyLink in destroyList)
+            {
+                LinkCollisionIdentifier destroyIdent = destroyLink.GetComponent<LinkCollisionIdentifier>();
+                destroyIdent.isToBeDestroyed = true;
+            }
+        }
+
+
+        //event to destroy all links that have the bool identifier as true
+        if (d_DestroyLinks != null)
+        {
+            d_DestroyLinks();
+        }        
     }
 
 }

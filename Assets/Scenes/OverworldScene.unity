@@ -213,9 +213,9 @@ MonoBehaviour:
     type: 3}
   nodePrefab: {fileID: 6291560059504951314, guid: beb328d4cd89a9c4a8fd6dfcefebbce5,
     type: 3}
-  linkprefab: {fileID: 6770971544386788252, guid: edd34f183c3e32f46a9388980ddab533,
+  linkPrefab: {fileID: 6770971544386788252, guid: edd34f183c3e32f46a9388980ddab533,
     type: 3}
-  linkholder: {fileID: 297088398}
+  linkHolder: {fileID: 297088398}
 --- !u!1 &297088398
 GameObject:
   m_ObjectHideFlags: 0
