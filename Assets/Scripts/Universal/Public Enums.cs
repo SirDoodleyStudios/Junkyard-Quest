@@ -4,6 +4,8 @@ using UnityEngine;
 
 public enum CombatState { PlayerTurn, CreativeMode, UnleashCreativity, ActiveCard, DrawPhase, Tweening, EnemyTurn }
 
+public enum OverworldState { StartingNode, MoveNode}
+
 public enum CardClass { Neutral, Warrior, Rogue, Mage, Arlen, Cedric, Francine, Tilly, Princess }
 
 public enum CardType { Offense, Utility, Ability, Material, Prosthetic }

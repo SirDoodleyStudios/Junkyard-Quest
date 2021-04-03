@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class CircleGenerator : MonoBehaviour
 {
+    public OverworldManager overworldManager;
+
     //event attached to LinkCollisionIdentifier script of links
     public delegate void D_DestroyLinks();
     public event D_DestroyLinks d_DestroyOverworldObjects;
@@ -13,7 +15,7 @@ public class CircleGenerator : MonoBehaviour
     RectTransform nodeCircleManagerRect;
     //Holder for the nodes
     public GameObject parentCircle;
-    List<GameObject> parentCircleList = new List<GameObject>();
+    public List<GameObject> parentCircleList = new List<GameObject>();
     //the node actual, uses a prefab from inspector
     public GameObject nodePrefab;
     //the link prefab, will have a logic for a randomizer image
@@ -22,7 +24,7 @@ public class CircleGenerator : MonoBehaviour
     Transform linkHolderTrans;
 
 
-    void Start()
+    void Awake()
     {
         nodeCircleManager = gameObject;
         nodeCircleManagerRect = nodeCircleManager.GetComponent<RectTransform>();
@@ -50,9 +52,20 @@ public class CircleGenerator : MonoBehaviour
         //create links between nearest nodes from adjacent circles
         PlotLinks();
 
-
         StartCoroutine(RemoveCollidingLinks());
         StartCoroutine(RemoveStragglerNodes());
+
+        StartCoroutine(OverWorldCaller());
+
+    }
+
+    IEnumerator OverWorldCaller()
+    {
+        yield return null;
+
+        //call the overworldmanager to relay info
+        //all overworldcalls are called in a coRoutine for alignemnt with the predecessor coroutines, not sure if it actually works
+        overworldManager.AssignStartingPositions(parentCircleList[parentCircleList.Count - 1]);
     }
 
     //make sure that nodecount is always even
@@ -267,7 +280,7 @@ public class CircleGenerator : MonoBehaviour
 
             //for assigning the height of the link image
             linkRect.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, nearestDist);
-            linkCollider.size = new Vector2(nearestDist * .90f, .01f);
+            linkCollider.size = new Vector2(nearestDist * .90f, .5f);
             //set the midpoint of start and end node as the anchoredposition of the link
             Vector2 midpoint = new Vector2((startingPoint.x + nearestEndingPoint.x) / 2, (startingPoint.y + nearestEndingPoint.y) / 2);
             linkRect.anchoredPosition = midpoint;
@@ -333,7 +346,7 @@ public class CircleGenerator : MonoBehaviour
                 LinkCollisionIdentifier linkIdentifier = linkObject.GetComponent<LinkCollisionIdentifier>();
 
                 linkRect.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, nodeLink.Value);
-                linkCollider.size = new Vector2(nodeLink.Value*.90f, .01f);
+                linkCollider.size = new Vector2(nodeLink.Value*.90f, .5f);
                 midpoint = new Vector2((startingPoint.x + nearestEndingPoint.x) / 2, (startingPoint.y + nearestEndingPoint.y) / 2);
                 linkRect.anchoredPosition = midpoint;
 
@@ -413,7 +426,7 @@ public class CircleGenerator : MonoBehaviour
 
             //for assigning the height of the link image
             linkRect.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, nodeDistance);
-            linkCollider.size = new Vector2(nodeDistance * .90f, .01f);
+            linkCollider.size = new Vector2(nodeDistance * .90f, .5f);
             //set the midpoint of start and end node as the anchoredposition of the link
             Vector2 midpoint = new Vector2((startingPoint.x + endingPoint.x) / 2, (startingPoint.y + endingPoint.y) / 2);
             linkRect.anchoredPosition = midpoint;
@@ -468,16 +481,26 @@ public class CircleGenerator : MonoBehaviour
                     protectionList.Add(linkIdent.actualLink);
                     destroyList.Add(linkIdent.collidingLink);
 
+                    //we need to access the colliding link because they have the references that we actually want to delete
+                    LinkCollisionIdentifier collisionIdent = linkIdent.collidingLink.GetComponent<LinkCollisionIdentifier>();
+
                     //removes the inner and outer nodes from their respective lists and dictionaries
-                    NodeLinkIdentifier innerIdent = linkIdent.innerNode.GetComponent<NodeLinkIdentifier>();
-                    NodeLinkIdentifier outerIdent = linkIdent.outerNode.GetComponent<NodeLinkIdentifier>();
+                    //NodeLinkIdentifier innerIdent = linkIdent.innerNode.GetComponent<NodeLinkIdentifier>();
+                    //NodeLinkIdentifier outerIdent = linkIdent.outerNode.GetComponent<NodeLinkIdentifier>();
+                    //innerIdent.linkedOuterNodes.Remove(linkIdent.outerNode);
+                    //innerIdent.pairOuterNodeLink.Remove(linkIdent.outerNode);
+                    //outerIdent.linkedInnerNodes.Remove(linkIdent.innerNode);
+                    //outerIdent.pairInnerNodeLink.Remove(linkIdent.innerNode);
+
+                    NodeLinkIdentifier innerIdent = collisionIdent.innerNode.GetComponent<NodeLinkIdentifier>();
+                    NodeLinkIdentifier outerIdent = collisionIdent.outerNode.GetComponent<NodeLinkIdentifier>();
                     innerIdent.linkedOuterNodes.Remove(linkIdent.outerNode);
                     innerIdent.pairOuterNodeLink.Remove(linkIdent.outerNode);
                     outerIdent.linkedInnerNodes.Remove(linkIdent.innerNode);
                     outerIdent.pairInnerNodeLink.Remove(linkIdent.innerNode);
 
-                    Debug.Log($"{linkIdent.innerNode.transform.GetSiblingIndex()} in {linkIdent.innerNode.transform.parent.GetSiblingIndex()}" +
-                        $"and {linkIdent.outerNode.transform.GetSiblingIndex()} in {linkIdent.outerNode.transform.parent.GetSiblingIndex()} ");
+                    //Debug.Log($"{linkIdent.innerNode.transform.GetSiblingIndex()} in {linkIdent.innerNode.transform.parent.GetSiblingIndex()}" +
+                    //    $"and {linkIdent.outerNode.transform.GetSiblingIndex()} in {linkIdent.outerNode.transform.parent.GetSiblingIndex()} ");
                 }
             }
         }

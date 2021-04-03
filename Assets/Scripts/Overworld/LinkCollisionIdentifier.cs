@@ -12,6 +12,9 @@ public class LinkCollisionIdentifier : MonoBehaviour
     public GameObject innerNode { get; set; }
     public GameObject outerNode { get; set; }
 
+    //identifier if a node is clickable
+
+
     private void Awake()
     {
         actualLink = gameObject;
@@ -35,6 +38,8 @@ public class LinkCollisionIdentifier : MonoBehaviour
 
         if (isToBeDestroyed == true)
         {
+            Debug.Log($"Destroyed Link linking {innerNode.transform.GetSiblingIndex()} in {innerNode.transform.parent.gameObject.transform.GetSiblingIndex()}" +
+                $" and {outerNode.transform.GetSiblingIndex()} in {outerNode.transform.parent.transform.GetSiblingIndex()}");
             Destroy(gameObject);
         }
     }
