@@ -23,6 +23,8 @@ public class CircleGenerator : MonoBehaviour
     public GameObject linkHolder;
     Transform linkHolderTrans;
 
+    //controls the setting of link collider widths
+    float colliderWidth = 5f;
 
     void Awake()
     {
@@ -53,14 +55,17 @@ public class CircleGenerator : MonoBehaviour
         PlotLinks();
 
         StartCoroutine(RemoveCollidingLinks());
-        StartCoroutine(RemoveStragglerNodes());
+        //StartCoroutine(RemoveStragglerNodes());
 
-        StartCoroutine(OverWorldCaller());
+        //for testing, I moved it to the end of RemoveCollidingLiks
+        //StartCoroutine(OverWorldCaller());
 
     }
 
     IEnumerator OverWorldCaller()
     {
+        yield return null;
+        yield return null;
         yield return null;
 
         //call the overworldmanager to relay info
@@ -191,6 +196,7 @@ public class CircleGenerator : MonoBehaviour
         {
             //StartCoroutine(DeployLinks(parentCircleList[parentCircleList.IndexOf(missedLinks.Value) - 1], missedLinks.Key, 1));
             DeployCalculatedLinks(parentCircleList[parentCircleList.IndexOf(missedLinks.Value) - 1], missedLinks.Key, 1, false);
+            Debug.Log("relinking");
         }
 
        
@@ -267,6 +273,7 @@ public class CircleGenerator : MonoBehaviour
         }
         //actual establishment of links
 
+
         //if there's 1 link only
         if(linkCounter == 1)
         {
@@ -280,14 +287,35 @@ public class CircleGenerator : MonoBehaviour
 
             //for assigning the height of the link image
             linkRect.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, nearestDist);
-            linkCollider.size = new Vector2(nearestDist * .90f, .5f);
+
             //set the midpoint of start and end node as the anchoredposition of the link
             Vector2 midpoint = new Vector2((startingPoint.x + nearestEndingPoint.x) / 2, (startingPoint.y + nearestEndingPoint.y) / 2);
             linkRect.anchoredPosition = midpoint;
-            //set the orientation based on the x axis of the starting node
 
+            //set the orientation based on the x axis of the starting node
             float valueRotate = ((nearestEndingPoint.y - startingPoint.y) / (nearestEndingPoint.x - startingPoint.x));
+            float actualAngleRad = Mathf.Atan(valueRotate);
             float angleRotate = Mathf.Atan(valueRotate) * Mathf.Rad2Deg;
+            //This will be used for calculations that will detemine the perfect size of the link collider that barely touches the node collider
+            float nodeSizeMargin;
+            if (angleRotate == 0)
+            {
+                nodeSizeMargin = nearestDist - nodePrefab.GetComponent<RectTransform>().rect.height;
+                linkCollider.size = new Vector2(nodeSizeMargin, colliderWidth);
+            }
+            else if (Mathf.Abs(angleRotate) >= 45)
+            {
+                nodeSizeMargin = nearestDist - Mathf.Abs(nodePrefab.GetComponent<RectTransform>().rect.height / Mathf.Sin(actualAngleRad));
+                linkCollider.size = new Vector2(nodeSizeMargin, colliderWidth);
+            }
+            else if (Mathf.Abs(angleRotate) < 45)
+            {
+                nodeSizeMargin = nearestDist - Mathf.Abs(nodePrefab.GetComponent<RectTransform>().rect.height / Mathf.Cos(actualAngleRad));
+                linkCollider.size = new Vector2(nodeSizeMargin, colliderWidth);
+            }
+            //nodeSizeMargin = nearestDist * .95f;
+            //linkCollider.size = new Vector2(nodeSizeMargin, colliderWidth);
+
 
             linkObject.transform.rotation = Quaternion.Euler(0, 0, angleRotate);
 
@@ -346,7 +374,6 @@ public class CircleGenerator : MonoBehaviour
                 LinkCollisionIdentifier linkIdentifier = linkObject.GetComponent<LinkCollisionIdentifier>();
 
                 linkRect.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, nodeLink.Value);
-                linkCollider.size = new Vector2(nodeLink.Value*.90f, .5f);
                 midpoint = new Vector2((startingPoint.x + nearestEndingPoint.x) / 2, (startingPoint.y + nearestEndingPoint.y) / 2);
                 linkRect.anchoredPosition = midpoint;
 
@@ -354,7 +381,27 @@ public class CircleGenerator : MonoBehaviour
                 //set the orientation based on the x axis of the starting node
 
                 float valueRotate = ((nearestEndingPoint.y - startingPoint.y) / (nearestEndingPoint.x - startingPoint.x));
+                float actualAngleRad = Mathf.Atan(valueRotate);
                 float angleRotate = Mathf.Atan(valueRotate) * Mathf.Rad2Deg;
+                //This will be used for calculations that will detemine the perfect size of the link collider that barely touches the node collider
+                float nodeSizeMargin;
+                if (angleRotate == 0)
+                {
+                    nodeSizeMargin = nodeLink.Value - nodePrefab.GetComponent<RectTransform>().rect.height;
+                    linkCollider.size = new Vector2(nodeSizeMargin, colliderWidth);
+                }
+                else if (Mathf.Abs(angleRotate) >= 45)
+                {
+                    nodeSizeMargin = nodeLink.Value - Mathf.Abs(nodePrefab.GetComponent<RectTransform>().rect.height / Mathf.Sin(actualAngleRad));
+                    linkCollider.size = new Vector2(nodeSizeMargin, colliderWidth);
+                }
+                else if (Mathf.Abs(angleRotate) < 45)
+                {
+                    nodeSizeMargin = nodeLink.Value - Mathf.Abs(nodePrefab.GetComponent<RectTransform>().rect.height / Mathf.Cos(actualAngleRad));
+                    linkCollider.size = new Vector2(nodeSizeMargin, colliderWidth);
+                }
+                //nodeSizeMargin = nodeLink.Value * .95f;
+                //linkCollider.size = new Vector2(nodeSizeMargin, colliderWidth);
 
                 linkObject.transform.rotation = Quaternion.Euler(0, 0, angleRotate);
 
@@ -426,14 +473,35 @@ public class CircleGenerator : MonoBehaviour
 
             //for assigning the height of the link image
             linkRect.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, nodeDistance);
-            linkCollider.size = new Vector2(nodeDistance * .90f, .5f);
+
             //set the midpoint of start and end node as the anchoredposition of the link
             Vector2 midpoint = new Vector2((startingPoint.x + endingPoint.x) / 2, (startingPoint.y + endingPoint.y) / 2);
             linkRect.anchoredPosition = midpoint;
             LinkCollisionIdentifier linkIdentifier = linkObject.GetComponent<LinkCollisionIdentifier>();
             //set the orientation based on the x axis of the starting node
             float valueRotate = ((endingPoint.y - startingPoint.y) / (endingPoint.x - startingPoint.x));
+            float actualAngleRad = Mathf.Atan(valueRotate);
             float angleRotate = Mathf.Atan(valueRotate) * Mathf.Rad2Deg;
+
+            //This will be used for calculations that will detemine the perfect size of the link collider that barely touches the node collider
+            float nodeSizeMargin;
+            if (angleRotate == 0)
+            {
+                nodeSizeMargin = nodeDistance - nodePrefab.GetComponent<RectTransform>().rect.height;
+                linkCollider.size = new Vector2(nodeSizeMargin, colliderWidth);
+            }
+            else if(Mathf.Abs(angleRotate) >= 45)
+            {
+                nodeSizeMargin = nodeDistance - Mathf.Abs(nodePrefab.GetComponent<RectTransform>().rect.height / Mathf.Sin(actualAngleRad));
+                linkCollider.size = new Vector2(nodeSizeMargin, colliderWidth);
+            }
+            else if(Mathf.Abs(angleRotate) < 45)
+            {
+                nodeSizeMargin = nodeDistance - Mathf.Abs(nodePrefab.GetComponent<RectTransform>().rect.height / Mathf.Cos(actualAngleRad));
+                linkCollider.size = new Vector2(nodeSizeMargin, colliderWidth);
+            }
+            //nodeSizeMargin = nodeDistance * .95f;
+            //linkCollider.size = new Vector2(nodeSizeMargin, colliderWidth);          
 
             linkObject.transform.rotation = Quaternion.Euler(0, 0, angleRotate);
 
@@ -462,11 +530,18 @@ public class CircleGenerator : MonoBehaviour
         List<GameObject> destroyList = new List<GameObject>();
         //will contain links to be not destroyed
         List<GameObject> protectionList = new List<GameObject>();
+        //will hold the link list from the linkholder then reverse it so that we can get to the later links first as they should be the ones to be deleted first
+        List<GameObject> tempLinkHolder = new List<GameObject>();
+        tempLinkHolder.Reverse();
 
-        //this loop will check each node in the nodeholder
+
         foreach (Transform linkTrans in linkHolderTrans)
         {
             GameObject link = linkTrans.gameObject;
+            tempLinkHolder.Add(link);
+        }
+        foreach(GameObject link in tempLinkHolder)
+        {
             LinkCollisionIdentifier linkIdent = link.GetComponent<LinkCollisionIdentifier>();
             //so that we only look through links that actually have collisions
             if (linkIdent.actualLink != null && linkIdent.collidingLink != null)
@@ -477,33 +552,22 @@ public class CircleGenerator : MonoBehaviour
                 //this will prevent overlaps as well as destroying both overlapping objects
 
                 if (!destroyList.Contains(linkIdent.actualLink) && !protectionList.Contains(linkIdent.actualLink))
-                {                     
-                    protectionList.Add(linkIdent.actualLink);
-                    destroyList.Add(linkIdent.collidingLink);
+                {
+                    //protectionList.Add(linkIdent.actualLink);
+                    //destroyList.Add(linkIdent.collidingLink);
+                    destroyList.Add(linkIdent.actualLink);
+                    protectionList.Add(linkIdent.collidingLink);
 
-                    //we need to access the colliding link because they have the references that we actually want to delete
-                    LinkCollisionIdentifier collisionIdent = linkIdent.collidingLink.GetComponent<LinkCollisionIdentifier>();
+                    //LinkCollisionIdentifier collisionIdent = linkIdent.collidingLink.GetComponent<LinkCollisionIdentifier>();
+                    //new functionality that distributed the removal of references within the nodes and link scripts themselves
+                    //collisionIdent.RemoveNodeReferences();
 
-                    //removes the inner and outer nodes from their respective lists and dictionaries
-                    //NodeLinkIdentifier innerIdent = linkIdent.innerNode.GetComponent<NodeLinkIdentifier>();
-                    //NodeLinkIdentifier outerIdent = linkIdent.outerNode.GetComponent<NodeLinkIdentifier>();
-                    //innerIdent.linkedOuterNodes.Remove(linkIdent.outerNode);
-                    //innerIdent.pairOuterNodeLink.Remove(linkIdent.outerNode);
-                    //outerIdent.linkedInnerNodes.Remove(linkIdent.innerNode);
-                    //outerIdent.pairInnerNodeLink.Remove(linkIdent.innerNode);
-
-                    NodeLinkIdentifier innerIdent = collisionIdent.innerNode.GetComponent<NodeLinkIdentifier>();
-                    NodeLinkIdentifier outerIdent = collisionIdent.outerNode.GetComponent<NodeLinkIdentifier>();
-                    innerIdent.linkedOuterNodes.Remove(linkIdent.outerNode);
-                    innerIdent.pairOuterNodeLink.Remove(linkIdent.outerNode);
-                    outerIdent.linkedInnerNodes.Remove(linkIdent.innerNode);
-                    outerIdent.pairInnerNodeLink.Remove(linkIdent.innerNode);
-
-                    //Debug.Log($"{linkIdent.innerNode.transform.GetSiblingIndex()} in {linkIdent.innerNode.transform.parent.GetSiblingIndex()}" +
-                    //    $"and {linkIdent.outerNode.transform.GetSiblingIndex()} in {linkIdent.outerNode.transform.parent.GetSiblingIndex()} ");
+                    linkIdent.RemoveNodeReferences();
                 }
             }
         }
+
+        yield return null;
 
         //sets the bool identifier in the link script to true, if it is, it is primed to be destroyed
         if (destroyList.Count > 0)
@@ -513,18 +577,23 @@ public class CircleGenerator : MonoBehaviour
                 LinkCollisionIdentifier destroyIdent = destroyLink.GetComponent<LinkCollisionIdentifier>();
                 destroyIdent.isToBeDestroyed = true;
             }
+            //event to destroy all links that have the bool identifier as true
+            if (d_DestroyOverworldObjects != null)
+            {
+                d_DestroyOverworldObjects();
+            }
         }
-        //event to destroy all links that have the bool identifier as true
-        if (d_DestroyOverworldObjects != null)
-        {
-            d_DestroyOverworldObjects();
-        }        
+
+        yield return null;
+        StartCoroutine(OverWorldCaller());
+
     }
 
     IEnumerator RemoveStragglerNodes()
     {
         //this frame lag will make sure that the script attached in links will run first
         //this is so that the actual and collider gameObjects are properly assigned from the LinkCollisionIdentifier
+        yield return null;
         yield return null;
         List<GameObject> destroyLinks = new List<GameObject>();
         List<GameObject> destroyNodes = new List<GameObject>();

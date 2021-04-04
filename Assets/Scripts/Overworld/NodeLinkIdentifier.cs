@@ -67,6 +67,19 @@ public class NodeLinkIdentifier : MonoBehaviour, IPointerEnterHandler, IPointerE
 
     }
 
+    //called by LinkCollisionIdentifier when destroying a link, receives a gameObject to be removed from inner and outer Node references
+    //function in LinkCollisionIdentifier that calls these functions are called from CircleGenerator
+    public void RemoveInnerNodeLinkReference(GameObject node)
+    {
+        linkedInnerNodes.Remove(node);
+        pairInnerNodeLink.Remove(node);
+    }
+    public void RemoveOuterNodeLinkReference(GameObject node)
+    {
+        linkedOuterNodes.Remove(node);
+        pairOuterNodeLink.Remove(node);
+    }
+
     //effects on node when hovered
     public void OnPointerEnter(PointerEventData eventData)
     {

@@ -88,39 +88,43 @@ public class OverworldManager : MonoBehaviour
             PointRay = Input.mousePosition;
             ray = Camera.main.ScreenPointToRay(PointRay);
             pointedObject = Physics2D.GetRayIntersection(ray);
-
+            //makes sure that the click has a collider
             if (Input.GetMouseButtonDown(0) && pointedObject.collider !=null)
             {
                 GameObject clickedObject = pointedObject.collider.gameObject;
-                NodeLinkIdentifier clickedIden = clickedObject.GetComponent<NodeLinkIdentifier>();
-                //checks all nodes with clickable identifier
-                if (clickedIden.isClickable)
+                //for when a node is clicked
+                if (clickedObject.tag == "Node")
                 {
-                    //makes all nodes go back to default state
-                    foreach (GameObject otherNodes in startingReachableNodes)
+                    NodeLinkIdentifier clickedIden = clickedObject.GetComponent<NodeLinkIdentifier>();
+                    //checks all nodes with clickable identifier
+                    if (clickedIden.isClickable)
                     {
-                        NodeLinkIdentifier nodeIden = otherNodes.GetComponent<NodeLinkIdentifier>();
-                        nodeIden.MakeNodeUnselected();
+                        //makes all nodes go back to default state
+                        foreach (GameObject otherNodes in startingReachableNodes)
+                        {
+                            NodeLinkIdentifier nodeIden = otherNodes.GetComponent<NodeLinkIdentifier>();
+                            nodeIden.MakeNodeUnselected();
+                        }
+                        startingReachableNodes.Clear();
+                        //identifies current selected node
+                        currentNode = clickedObject;
+                        NodeLinkIdentifier currentNodeIden = currentNode.GetComponent<NodeLinkIdentifier>();
+                        currentNodeIden.MakeNodeSelected();
+                        //triggers adjacent nodes
+                        //adjacentNodes = new List<GameObject>();
+                        adjacentNodes.AddRange(currentNodeIden.linkedOuterNodes);
+                        adjacentNodes.AddRange(currentNodeIden.linkedInnerNodes);
+
+                        foreach (GameObject adjacentNode in adjacentNodes)
+                        {
+                            NodeLinkIdentifier adjacentIden = adjacentNode.GetComponent<NodeLinkIdentifier>();
+                            adjacentIden.MakeNodeClickable();
+                        }
+
+                        worldState = OverworldState.MoveNode;
+
                     }
-                    startingReachableNodes.Clear();
-                    //identifies current selected node
-                    currentNode = clickedObject;
-                    NodeLinkIdentifier currentNodeIden = currentNode.GetComponent<NodeLinkIdentifier>();
-                    currentNodeIden.MakeNodeSelected();
-                    //triggers adjacent nodes
-                    adjacentNodes = new List<GameObject>();
-                    adjacentNodes.AddRange(currentNodeIden.linkedOuterNodes);
-                    adjacentNodes.AddRange(currentNodeIden.linkedInnerNodes);
-
-                    foreach (GameObject adjacentNode in adjacentNodes)
-                    {
-                        NodeLinkIdentifier adjacentIden = adjacentNode.GetComponent<NodeLinkIdentifier>();
-                        adjacentIden.MakeNodeClickable();
-                    }
-
-                    worldState = OverworldState.MoveNode;
-
-                }
+                }               
 
             }
         }
@@ -130,34 +134,46 @@ public class OverworldManager : MonoBehaviour
             PointRay = Input.mousePosition;
             ray = Camera.main.ScreenPointToRay(PointRay);
             pointedObject = Physics2D.GetRayIntersection(ray);
+
+            //makes sure that clicked object has a collider
             if (Input.GetMouseButtonDown(0) && pointedObject.collider != null)
             {
                 GameObject clickedObject = pointedObject.collider.gameObject;
-                NodeLinkIdentifier clickedIden = clickedObject.GetComponent<NodeLinkIdentifier>();
 
-                if (clickedIden.isClickable)
+                //for when a node is clicked
+                if (clickedObject.tag == "Node")
                 {
-                    foreach (GameObject adjacentNode in adjacentNodes)
-                    {
-                        NodeLinkIdentifier adjacentIden = adjacentNode.GetComponent<NodeLinkIdentifier>();
-                        adjacentIden.MakeNodeUnselected();
-                    }
-                    adjacentNodes.Clear();
-                    //identifies current selected node
-                    currentNode = clickedObject;
-                    NodeLinkIdentifier currentNodeIden = currentNode.GetComponent<NodeLinkIdentifier>();
-                    currentNodeIden.MakeNodeSelected();
-                    //triggers adjacent nodes
-                    adjacentNodes = new List<GameObject>();
-                    adjacentNodes.AddRange(currentNodeIden.linkedOuterNodes);
-                    adjacentNodes.AddRange(currentNodeIden.linkedInnerNodes);
+                    NodeLinkIdentifier clickedIden = clickedObject.GetComponent<NodeLinkIdentifier>();
 
-                    foreach (GameObject adjacentNode in adjacentNodes)
+                    if (clickedIden.isClickable)
                     {
-                        NodeLinkIdentifier adjacentIden = adjacentNode.GetComponent<NodeLinkIdentifier>();
-                        adjacentIden.MakeNodeClickable();
+                        foreach (GameObject adjacentNode in adjacentNodes)
+                        {
+                            NodeLinkIdentifier adjacentIden = adjacentNode.GetComponent<NodeLinkIdentifier>();
+                            adjacentIden.MakeNodeUnselected();
+                        }
+                        adjacentNodes.Clear();
+                        //identifies current selected node
+                        currentNode = clickedObject;
+                        NodeLinkIdentifier currentNodeIden = currentNode.GetComponent<NodeLinkIdentifier>();
+                        currentNodeIden.MakeNodeSelected();
+                        //triggers adjacent nodes
+                        //adjacentNodes = new List<GameObject>();
+                        adjacentNodes.AddRange(currentNodeIden.linkedOuterNodes);
+                        adjacentNodes.AddRange(currentNodeIden.linkedInnerNodes);
+
+                        foreach (GameObject adjacentNode in adjacentNodes)
+                        {
+                            NodeLinkIdentifier adjacentIden = adjacentNode.GetComponent<NodeLinkIdentifier>();
+                            adjacentIden.MakeNodeClickable();
+                        }
+                    }
+                    else
+                    {
+                        Debug.Log("not clickable");
                     }
                 }
+                
 
                 
             }

@@ -112,7 +112,7 @@ GameObject:
   - component: {fileID: 4572368302757904407}
   m_Layer: 18
   m_Name: Link
-  m_TagString: Untagged
+  m_TagString: Link
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -207,6 +207,8 @@ MonoBehaviour:
   actualLink: {fileID: 0}
   collidingLink: {fileID: 0}
   circleGenerator: {fileID: 0}
+  innerNode: {fileID: 0}
+  outerNode: {fileID: 0}
 --- !u!50 &4572368302757904407
 Rigidbody2D:
   serializedVersion: 4
