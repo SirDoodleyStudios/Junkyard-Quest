@@ -9,6 +9,9 @@ public class CircleGenerator : MonoBehaviour
     //event attached to LinkCollisionIdentifier script of links
     public delegate void D_DestroyLinks();
     public event D_DestroyLinks d_DestroyOverworldObjects;
+    //event attaached to LinkCollisionIdentifier that removes a linkfrom another link's collidingLinks list before being checked if there is collision
+    public delegate void D_RemoveLinkAsCollider(GameObject i);
+    public event D_RemoveLinkAsCollider d_RemoveLinkAsCollider;
 
     GameObject nodeCircleManager;
     Transform nodeCircleTransform;
@@ -544,24 +547,23 @@ public class CircleGenerator : MonoBehaviour
         {
             LinkCollisionIdentifier linkIdent = link.GetComponent<LinkCollisionIdentifier>();
             //so that we only look through links that actually have collisions
-            if (linkIdent.actualLink != null && linkIdent.collidingLink != null)
+            if (/*(linkIdent.collidingLinks != null || linkIdent.collidingNodes != null)*/ /*||*/ (linkIdent.collidingLinks.Count > 0 || linkIdent.collidingNodes.Count > 0))
             {
                 //the link being inspected here will add its actual gameobject to the protect list and assign the colliderlink to the destroy list
                 //it checks first if the inspected object exists in the destroy and protection lists, if it doesnt proceed to adding
                 //if it does, it means that the pair link that collided with the inspected link was already inspected therefore the current link is about to be destroyed
                 //this will prevent overlaps as well as destroying both overlapping objects
 
-                if (!destroyList.Contains(linkIdent.actualLink) && !protectionList.Contains(linkIdent.actualLink))
+                if (!destroyList.Contains(linkIdent.actualLink) /*&& !protectionList.Contains(linkIdent.actualLink)*/)
                 {
-                    //protectionList.Add(linkIdent.actualLink);
-                    //destroyList.Add(linkIdent.collidingLink);
                     destroyList.Add(linkIdent.actualLink);
-                    protectionList.Add(linkIdent.collidingLink);
+                    //protectionList.Add(linkIdent.collidingLinks); //muted for a test
+                    if (d_RemoveLinkAsCollider != null)
+                    {
+                        d_RemoveLinkAsCollider(link);
+                    }
 
-                    //LinkCollisionIdentifier collisionIdent = linkIdent.collidingLink.GetComponent<LinkCollisionIdentifier>();
                     //new functionality that distributed the removal of references within the nodes and link scripts themselves
-                    //collisionIdent.RemoveNodeReferences();
-
                     linkIdent.RemoveNodeReferences();
                 }
             }
@@ -585,6 +587,8 @@ public class CircleGenerator : MonoBehaviour
         }
 
         yield return null;
+
+        //RemoveStragglerNodes();
         StartCoroutine(OverWorldCaller());
 
     }
@@ -593,7 +597,6 @@ public class CircleGenerator : MonoBehaviour
     {
         //this frame lag will make sure that the script attached in links will run first
         //this is so that the actual and collider gameObjects are properly assigned from the LinkCollisionIdentifier
-        yield return null;
         yield return null;
         List<GameObject> destroyLinks = new List<GameObject>();
         List<GameObject> destroyNodes = new List<GameObject>();
@@ -626,6 +629,7 @@ public class CircleGenerator : MonoBehaviour
                         //}
 
                         destroyNodes.Add(node);
+
                     }
 
                 }

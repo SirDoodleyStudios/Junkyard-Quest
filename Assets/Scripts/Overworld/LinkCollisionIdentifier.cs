@@ -5,8 +5,8 @@ using UnityEngine;
 public class LinkCollisionIdentifier : MonoBehaviour
 {
     public GameObject actualLink;
-    public GameObject collidingLink;
-    public GameObject collidingNode;
+    public List<GameObject> collidingLinks;
+    public List<GameObject> collidingNodes;
     public CircleGenerator circleGenerator;
     public bool isToBeDestroyed { get; set; }
     //this contains the nodes that the link is linking
@@ -21,6 +21,7 @@ public class LinkCollisionIdentifier : MonoBehaviour
         actualLink = gameObject;
         circleGenerator = gameObject.transform.parent.gameObject.transform.parent.gameObject.GetComponent<CircleGenerator>();
         circleGenerator.d_DestroyOverworldObjects += DestroyLink;
+        circleGenerator.d_RemoveLinkAsCollider += RemoveLinkAsCollider;
         isToBeDestroyed = false;
     }
     //upon instantiate access from circleGenerator to add the nodes in the link
@@ -31,11 +32,13 @@ public class LinkCollisionIdentifier : MonoBehaviour
         Debug.Log("collided");
         if (collision.gameObject.tag == "Link")
         {
-            collidingLink = collision.gameObject;
+            //collidingLink = collision.gameObject;
+            collidingLinks.Add(collision.gameObject);
         }
         else if (collision.gameObject.tag == "Node")
         {
-            collidingNode = collision.gameObject;
+            //collidingNode = collision.gameObject;
+            collidingNodes.Add(collision.gameObject);
         }
 
     }
@@ -50,7 +53,15 @@ public class LinkCollisionIdentifier : MonoBehaviour
 
         innerIdent.RemoveOuterNodeLinkReference(outerNode);
         outerIdent.RemoveInnerNodeLinkReference(innerNode);
+    }
 
+    //event called from circle generator that removes the passed parameter from this link's list of linkColliders
+    public void RemoveLinkAsCollider(GameObject collidingLink)
+    {
+        if (collidingLinks.Contains(collidingLink))
+        {
+            collidingLinks.Remove(collidingLink);
+        }
     }
 
     //destroy links that are determined for destroying
