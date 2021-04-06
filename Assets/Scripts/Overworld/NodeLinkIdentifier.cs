@@ -32,7 +32,7 @@ public class NodeLinkIdentifier : MonoBehaviour, IPointerEnterHandler, IPointerE
         nodeImage = gameObject.transform.GetChild(1).GetComponent<Image>();
         originalColor = Color.white;
         circleGenerator = gameObject.transform.parent.gameObject.transform.parent.gameObject.GetComponent<CircleGenerator>();
-        circleGenerator.d_DestroyOverworldObjects += DestroyNode;
+        circleGenerator.d_DestroyNodes += DestroyNode;
         isToBeDestroyed = false;
         isClickable = false;
         isSelected = false;

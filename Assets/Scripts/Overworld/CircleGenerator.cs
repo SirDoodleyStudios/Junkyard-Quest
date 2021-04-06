@@ -8,7 +8,10 @@ public class CircleGenerator : MonoBehaviour
 
     //event attached to LinkCollisionIdentifier script of links
     public delegate void D_DestroyLinks();
-    public event D_DestroyLinks d_DestroyOverworldObjects;
+    public event D_DestroyLinks d_DestroyLinks;
+    //event attached to NodeLinkIdentifier script for nodes
+    public delegate void D_DestroyNodes();
+    public event D_DestroyNodes d_DestroyNodes;
     //event attaached to LinkCollisionIdentifier that removes a linkfrom another link's collidingLinks list before being checked if there is collision
     public delegate void D_RemoveLinkAsCollider(GameObject i);
     public event D_RemoveLinkAsCollider d_RemoveLinkAsCollider;
@@ -57,18 +60,15 @@ public class CircleGenerator : MonoBehaviour
         //create links between nearest nodes from adjacent circles
         PlotLinks();
 
+        //the other coroutines are triggered after each other so that there are no mismatch in frame counts
         StartCoroutine(RemoveCollidingLinks());
         //StartCoroutine(RemoveStragglerNodes());
-
-        //for testing, I moved it to the end of RemoveCollidingLiks
         //StartCoroutine(OverWorldCaller());
 
     }
 
     IEnumerator OverWorldCaller()
     {
-        yield return null;
-        yield return null;
         yield return null;
 
         //call the overworldmanager to relay info
@@ -561,6 +561,7 @@ public class CircleGenerator : MonoBehaviour
                     if (d_RemoveLinkAsCollider != null)
                     {
                         d_RemoveLinkAsCollider(link);
+                        yield return null;
                     }
 
                     //new functionality that distributed the removal of references within the nodes and link scripts themselves
@@ -580,20 +581,59 @@ public class CircleGenerator : MonoBehaviour
                 destroyIdent.isToBeDestroyed = true;
             }
             //event to destroy all links that have the bool identifier as true
-            if (d_DestroyOverworldObjects != null)
+            if (d_DestroyLinks != null)
             {
-                d_DestroyOverworldObjects();
+                d_DestroyLinks();
             }
         }
 
         yield return null;
+        //activated as a link so that the yield null timings does not interfere with execution
+        StartCoroutine(RemoveStragglerNodes());
 
-        //RemoveStragglerNodes();
-        StartCoroutine(OverWorldCaller());
+
 
     }
-
+    //removes isolated nodes with no links only
     IEnumerator RemoveStragglerNodes()
+    {
+        yield return null;
+        List<GameObject> destroyNodes = new List<GameObject>();
+        foreach (GameObject circle in parentCircleList)
+        {
+            foreach (Transform nodeTrans in circle.transform)
+            {
+                GameObject node = nodeTrans.gameObject;
+                NodeLinkIdentifier nodeIdentifier = node.GetComponent<NodeLinkIdentifier>();
+
+                //if the node does not have any partner nodes, it gets added to the destroy list
+                if (nodeIdentifier.linkedInnerNodes.Count <= 0 && nodeIdentifier.linkedOuterNodes.Count <= 0)
+                {
+                    destroyNodes.Add(node);
+                }
+            }
+        }
+        //triggers the nodeLinkIdentifier to have the isToBeDestroyedBool to true
+        if (destroyNodes.Count > 0)
+        {
+            foreach (GameObject destroyNode in destroyNodes)
+            {
+                NodeLinkIdentifier destroyNodeIden = destroyNode.GetComponent<NodeLinkIdentifier>();
+                destroyNodeIden.isToBeDestroyed = true;
+            }
+        }
+
+        if (d_DestroyNodes != null)
+        {
+            d_DestroyNodes();
+        }
+        //activated as a link so that the yield null timings does not interfere with execution
+        StartCoroutine(OverWorldCaller());
+    }
+
+    //removes nodes and links that doesnt have a path
+    //not used because I dont wanna deal with destroying links with straggler nodes, let players have stragler nodes as long as they can get to them
+    IEnumerator RemoveStraggglerNodesLinks()
     {
         //this frame lag will make sure that the script attached in links will run first
         //this is so that the actual and collider gameObjects are properly assigned from the LinkCollisionIdentifier
@@ -671,9 +711,9 @@ public class CircleGenerator : MonoBehaviour
             }
         }
 
-        if (d_DestroyOverworldObjects != null)
+        if (d_DestroyLinks != null)
         {
-            d_DestroyOverworldObjects();
+            d_DestroyLinks();
         }
 
     }

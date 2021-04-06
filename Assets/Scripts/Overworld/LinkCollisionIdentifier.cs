@@ -20,7 +20,7 @@ public class LinkCollisionIdentifier : MonoBehaviour
     {
         actualLink = gameObject;
         circleGenerator = gameObject.transform.parent.gameObject.transform.parent.gameObject.GetComponent<CircleGenerator>();
-        circleGenerator.d_DestroyOverworldObjects += DestroyLink;
+        circleGenerator.d_DestroyLinks += DestroyLink;
         circleGenerator.d_RemoveLinkAsCollider += RemoveLinkAsCollider;
         isToBeDestroyed = false;
     }
