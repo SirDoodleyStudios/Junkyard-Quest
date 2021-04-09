@@ -6,6 +6,10 @@ public enum CombatState { PlayerTurn, CreativeMode, UnleashCreativity, ActiveCar
 
 public enum OverworldState { StartingNode, MoveNode}
 
+public enum NodeActivityEnum { Combat, Event, Merchant, Forge, Rest, Boon }
+
+public enum LinkActivityEnum {Skirmish, Chest, Booth, SmallEvent}
+
 public enum CardClass { Neutral, Warrior, Rogue, Mage, Arlen, Cedric, Francine, Tilly, Princess }
 
 public enum CardType { Offense, Utility, Ability, Material, Prosthetic }

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-
+using UnityEngine.SceneManagement;
 
 
 public class CombatManager : MonoBehaviour
@@ -70,6 +70,8 @@ public class CombatManager : MonoBehaviour
         //one time run to add dictionary entries of cardMechanic enums and text descriptions
         CardTagManager.InitializeTextDescriptionDictionaries();
         EffectFactory.InitializeCardFactory();
+        //test
+        UniversalSaveState.CheckState();
 
     }
 
@@ -147,6 +149,11 @@ public class CombatManager : MonoBehaviour
         if (Input.GetMouseButtonDown(2))
         {
             Debug.Log($"GameObject is {pointedObject.collider.gameObject.name}");
+        }
+
+        if (Input.GetKey(KeyCode.Backspace))
+        {
+            SceneManager.LoadScene("OverWorldScene");
         }
 
 

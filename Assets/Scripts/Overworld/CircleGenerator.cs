@@ -24,19 +24,40 @@ public class CircleGenerator : MonoBehaviour
     public List<GameObject> parentCircleList = new List<GameObject>();
     //the node actual, uses a prefab from inspector
     public GameObject nodePrefab;
-    //the link prefab, will have a logic for a randomizer image
+
+    //the link prefab, will have a logic for a randomizer image for different path shapes
     public GameObject linkPrefab;
-    public GameObject linkHolder;
+    public GameObject linkHolderPrefab;
+    //Link hlder will be instantiated from script
+    GameObject linkHolder;
     Transform linkHolderTrans;
 
     //controls the setting of link collider widths
     float colliderWidth = 5f;
 
-    void Awake()
+    public void GenerateMap()
+    {
+        //if static bool parameter sent from UniversalSaveState is not true, generate the circles
+        if (!UniversalSaveState.isMapInitialized)
+        {
+            InitialMapGenerate();
+            //static bool in UniversakSaveState
+            UniversalSaveState.isMapInitialized = true;
+        }
+        //if not, it means that the circles were already generated
+        else
+        {
+            LoadOverWorldState();
+        }
+    }
+
+    void InitialMapGenerate()
     {
         nodeCircleManager = gameObject;
         nodeCircleManagerRect = nodeCircleManager.GetComponent<RectTransform>();
         nodeCircleTransform = nodeCircleManager.transform;
+        //instantiate the linkHolder first
+        linkHolder = Instantiate(linkHolderPrefab, gameObject.transform);
         linkHolderTrans = linkHolder.transform;
 
         //call generation of circle nodes
@@ -283,7 +304,7 @@ public class CircleGenerator : MonoBehaviour
             //nodeLinks.Add(nearestEndingNode);
             Vector2 nearestEndingPoint = nearestEndingNode.GetComponent<RectTransform>().anchoredPosition;
             //create the links and set it as child of the linkholderparent
-            GameObject linkObject = Instantiate(linkPrefab, linkHolder.transform);
+            GameObject linkObject = Instantiate(linkPrefab, linkHolderTrans);
             RectTransform linkRect = linkObject.GetComponent<RectTransform>();
             BoxCollider2D linkCollider = linkObject.GetComponent<BoxCollider2D>();
             LinkCollisionIdentifier linkIdentifier = linkObject.GetComponent<LinkCollisionIdentifier>();
@@ -370,7 +391,7 @@ public class CircleGenerator : MonoBehaviour
                 Vector2 midpoint;
 
                 //create the links and set it as child of the linkholderparent
-                GameObject linkObject = Instantiate(linkPrefab, linkHolder.transform);
+                GameObject linkObject = Instantiate(linkPrefab, linkHolderTrans);
                 //GameObject linkObject2 = Instantiate(linkprefab, linkholder.transform);
                 RectTransform linkRect = linkObject.GetComponent<RectTransform>();
                 BoxCollider2D linkCollider = linkObject.GetComponent<BoxCollider2D>();
@@ -468,7 +489,7 @@ public class CircleGenerator : MonoBehaviour
             //nodeLinks.Add(nearestEndingNode);
             Vector2 endingPoint = endingNode.GetComponent<RectTransform>().anchoredPosition;
             //create the links and set it as child of the linkholderparent
-            GameObject linkObject = Instantiate(linkPrefab, linkHolder.transform);
+            GameObject linkObject = Instantiate(linkPrefab, linkHolderTrans);
             RectTransform linkRect = linkObject.GetComponent<RectTransform>();
             BoxCollider2D linkCollider = linkObject.GetComponent<BoxCollider2D>();
 
@@ -631,6 +652,7 @@ public class CircleGenerator : MonoBehaviour
         StartCoroutine(OverWorldCaller());
     }
 
+
     //removes nodes and links that doesnt have a path
     //not used because I dont wanna deal with destroying links with straggler nodes, let players have stragler nodes as long as they can get to them
     IEnumerator RemoveStraggglerNodesLinks()
@@ -716,6 +738,19 @@ public class CircleGenerator : MonoBehaviour
             d_DestroyLinks();
         }
 
+    }
+
+
+    //This is called if we only need to load the overworld from the last save state
+    public void LoadOverWorldState()
+    {
+        //List<GameObject> savedHolders = UniversalSaveState.LoadOverWorldMap();
+        List<GameObject> savedHolders = new List<GameObject>();
+        savedHolders.AddRange(UniversalSaveState.LoadOverWorldMap());
+        foreach (GameObject holder in savedHolders)
+        {
+            holder.transform.SetParent(gameObject.transform);
+        }
     }
 
 }

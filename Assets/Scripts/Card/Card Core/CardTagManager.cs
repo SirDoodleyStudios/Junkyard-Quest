@@ -16,12 +16,22 @@ public class CardTagManager
     //for Card Abilities Specificalliy because the Enum keys must be ability for ability cards
     public static Dictionary<AllAbilities, string> abilityEffectDescriptions = new Dictionary<AllAbilities, string>();
     //This is called by combatmanager awake then activates all initializers
+
+    //identifier so that the static dictionaries dont retrigger addition of entries
+    public static bool isInitialized;
+
+
     public static void InitializeTextDescriptionDictionaries()
     {
-        CardTagDictionaryInitialize();
-        JigsawDictionaryInitialize();
-        CardEffectDictionaryInitialize();
-        AbilityCardDescriptionInitialize();
+        //prevents initializations to run multiple times
+        if (isInitialized != true)
+        {
+            CardTagDictionaryInitialize();
+            JigsawDictionaryInitialize();
+            CardEffectDictionaryInitialize();
+            AbilityCardDescriptionInitialize();
+        }
+        isInitialized = true;
 
     }
 

@@ -2,15 +2,18 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.SceneManagement;
 
 
 public class OverworldManager : MonoBehaviour
 {
+    public ActivitiesManager activitiesManager;
+
     OverworldState worldState;
     //references to the main circles
-    public GameObject nodeCircleGenerator;
+    public GameObject nodeCircleManager;
     public CircleGenerator circleGenerator;
-    public GameObject linkHolder;
+    //public GameObject linkHolder;
     //references for camera movement
     public Camera camera;
     bool isPanning;
@@ -34,6 +37,9 @@ public class OverworldManager : MonoBehaviour
 
     void Start()
     {
+        //calls circleManager
+        circleGenerator.GenerateMap();
+
         //orthographic size is equal to your desired screenheight/2. I want the ortho height to be half of screen size, so i divided the canvas height by 4
         camera.orthographicSize = mainCanvas.GetComponent<RectTransform>().rect.height / 4;
         //boundaries for he map
@@ -53,6 +59,8 @@ public class OverworldManager : MonoBehaviour
             nodeIdentifier.MakeNodeClickable();
             startingReachableNodes.Add(outerNode);
         }
+        //saves the overworld firs before switchingscenes
+        SaveState();
         worldState = OverworldState.StartingNode;
     }
 
@@ -122,11 +130,12 @@ public class OverworldManager : MonoBehaviour
                         }
 
                         worldState = OverworldState.MoveNode;
-
+                        //SceneManager.LoadScene("CombatScene");
+                        activitiesManager.LoadStartNodeActivity(NodeActivityEnum.Combat);
                     }
-                }               
-
+                }
             }
+
         }
 
         if (worldState == OverworldState.MoveNode)
@@ -167,19 +176,41 @@ public class OverworldManager : MonoBehaviour
                             NodeLinkIdentifier adjacentIden = adjacentNode.GetComponent<NodeLinkIdentifier>();
                             adjacentIden.MakeNodeClickable();
                         }
+                        //SceneManager.LoadScene("CombatScene");
                     }
                     else
                     {
                         Debug.Log("not clickable");
                     }
-                }
-                
+                }               
 
                 
             }
 
         }
 
+
+    }
+
+    void SaveState()
+    {
+        List<GameObject> holderList = new List<GameObject>(); 
+        foreach (Transform holders in nodeCircleManager.transform)
+        {
+            GameObject holderObject = holders.gameObject;
+            holderList.Add(holderObject);
+        }
+        UniversalSaveState.SaveOverworldMap(holderList);
+    }
+
+    void LoadLinkActivities()
+    {
+
+
+    }
+
+    void LoadNodeActivities()
+    {
 
     }
 
