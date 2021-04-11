@@ -7,6 +7,8 @@ using UnityEngine.SceneManagement;
 
 public class OverworldManager : MonoBehaviour
 {
+
+
     public ActivitiesManager activitiesManager;
 
     OverworldState worldState;
@@ -60,7 +62,7 @@ public class OverworldManager : MonoBehaviour
             startingReachableNodes.Add(outerNode);
         }
         //saves the overworld firs before switchingscenes
-        SaveState();
+        //SaveState(); //save must come after the assignStartingPositions
         worldState = OverworldState.StartingNode;
     }
 
@@ -176,7 +178,13 @@ public class OverworldManager : MonoBehaviour
                             NodeLinkIdentifier adjacentIden = adjacentNode.GetComponent<NodeLinkIdentifier>();
                             adjacentIden.MakeNodeClickable();
                         }
-                        //SceneManager.LoadScene("CombatScene");
+
+                        //save the worldstate before switching scenes
+                        SaveState();
+
+                        //FOR TEST ONLY, ACTIVATES A TEST SCENE WHICH JUST HAPPENS TO BE THE COMBAT SCENE
+                        SceneManager.LoadScene("CombatScene");
+                        ////
                     }
                     else
                     {
@@ -192,27 +200,59 @@ public class OverworldManager : MonoBehaviour
 
     }
 
-    void SaveState()
+    //These three works together, this is for saving the overworld  object state when changing scenes
+    public void SaveState()
     {
-        List<GameObject> holderList = new List<GameObject>(); 
-        foreach (Transform holders in nodeCircleManager.transform)
+        List<LinkStatusSave> linkStatusList = LoadLinkActivities();
+        List<List<NodeStatusSave>> nodeHolderStatusList = LoadNodeActivities();
+
+        UniversalSaveState.SaveOverworldMap(linkStatusList, nodeHolderStatusList);
+    }
+
+    List<LinkStatusSave> LoadLinkActivities()
+    {
+        List<LinkStatusSave> linkList = new List<LinkStatusSave>();
+        //index 0 of circle manager should always be the linkHolder
+        Transform linkHolderTrans = nodeCircleManager.transform.GetChild(0).transform;
+        foreach(Transform link in linkHolderTrans)
         {
-            GameObject holderObject = holders.gameObject;
-            holderList.Add(holderObject);
+            LinkStatusSave linkData = link.gameObject.GetComponent<LinkStatusSave>();
+            linkList.Add(linkData);
         }
-        UniversalSaveState.SaveOverworldMap(holderList);
-    }
 
-    void LoadLinkActivities()
-    {
-
+        return linkList;
 
     }
 
-    void LoadNodeActivities()
+    List<List<NodeStatusSave>> LoadNodeActivities()
     {
+        List<List<NodeStatusSave>> nodeHolderList = new List<List<NodeStatusSave>>();
 
+        Transform holderParentTrans = circleGenerator.transform;
+        foreach (Transform holderTrans in holderParentTrans)
+        {
+            //will hold the actual nodes
+            List<NodeStatusSave> nodeList = new List<NodeStatusSave>();
+            //does not check the first child since the first child holds links
+            if (holderTrans.GetSiblingIndex() != 0)
+            {
+                //loops through holder transform to add 
+                foreach (Transform nodeTrans in holderTrans)
+                {
+                    GameObject nodeObject = nodeTrans.gameObject;
+
+                    NodeStatusSave nodeData = nodeObject.GetComponent<NodeStatusSave>();
+                    nodeList.Add(nodeData);
+                }
+                //adds the looped node in the list list
+                nodeHolderList.Add(nodeList);
+            }
+        }
+
+        return nodeHolderList;
     }
 
 
 }
+
+

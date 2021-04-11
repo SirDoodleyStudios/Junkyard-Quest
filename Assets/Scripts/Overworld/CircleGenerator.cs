@@ -16,6 +16,11 @@ public class CircleGenerator : MonoBehaviour
     public delegate void D_RemoveLinkAsCollider(GameObject i);
     public event D_RemoveLinkAsCollider d_RemoveLinkAsCollider;
 
+    //delegate for event that calls all nodes and links and takes their states to be saved like transforms, indexes, parent index etc
+    public delegate void D_StoreObjectState();
+    public event D_StoreObjectState d_StoreObjectState;
+
+
     GameObject nodeCircleManager;
     Transform nodeCircleTransform;
     RectTransform nodeCircleManagerRect;
@@ -35,6 +40,7 @@ public class CircleGenerator : MonoBehaviour
     //controls the setting of link collider widths
     float colliderWidth = 5f;
 
+    //WILL CHANGE DEPENDING ON SAVE STATE LOGIC
     public void GenerateMap()
     {
         //if static bool parameter sent from UniversalSaveState is not true, generate the circles
@@ -95,6 +101,11 @@ public class CircleGenerator : MonoBehaviour
         //call the overworldmanager to relay info
         //all overworldcalls are called in a coRoutine for alignemnt with the predecessor coroutines, not sure if it actually works
         overworldManager.AssignStartingPositions(parentCircleList[parentCircleList.Count - 1]);
+
+        //calls an event attached to all node and links then stores their overworld settings for saving and loading later on
+        d_StoreObjectState();
+        //save the generated map once everything is initially loaded
+        overworldManager.SaveState();
     }
 
     //make sure that nodecount is always even
@@ -648,109 +659,99 @@ public class CircleGenerator : MonoBehaviour
         {
             d_DestroyNodes();
         }
+
+        //calls all nodes and links to record their positions and node and link index references
+
         //activated as a link so that the yield null timings does not interfere with execution
         StartCoroutine(OverWorldCaller());
-    }
-
-
-    //removes nodes and links that doesnt have a path
-    //not used because I dont wanna deal with destroying links with straggler nodes, let players have stragler nodes as long as they can get to them
-    IEnumerator RemoveStraggglerNodesLinks()
-    {
-        //this frame lag will make sure that the script attached in links will run first
-        //this is so that the actual and collider gameObjects are properly assigned from the LinkCollisionIdentifier
-        yield return null;
-        List<GameObject> destroyLinks = new List<GameObject>();
-        List<GameObject> destroyNodes = new List<GameObject>();
-
-        foreach(GameObject circle in parentCircleList)
-        {
-            foreach (Transform nodeTrans in circle.transform)
-            {
-                GameObject node = nodeTrans.gameObject;
-                NodeLinkIdentifier nodeIdentifier = node.GetComponent<NodeLinkIdentifier>();
-
-                if (parentCircleList.IndexOf(circle) == 0 )
-                {
-
-                }
-                //if an outermost node has no links to the inner circles
-                else if (parentCircleList.IndexOf(circle) == parentCircleList.Count -1)
-                {
-
-
-                    if (nodeIdentifier.linkedInnerNodes.Count == 0)
-                    {
-                        //key is the partner node, value is the linking object
-                        //accesses each inner node in the current node then accesses the inner node's Lists and dictionaries to remove the initial node from them
-                        //foreach (KeyValuePair<GameObject, GameObject> pairNodeLink in nodeIdentifier.pairInnerNodeLink)
-                        //{
-                        //    NodeLinkIdentifier pairIdentifier = pairNodeLink.Key.GetComponent<NodeLinkIdentifier>();
-                        //    pairIdentifier.linkedOuterNodes.Remove(node);
-                        //    pairIdentifier.pairOuterNodeLink.Remove(node);
-                        //}
-
-                        destroyNodes.Add(node);
-
-                    }
-
-                }
-                //if any middle circles has missing links to outer or inner circles, we prime their remaining links for destructtion then, we destroy the nodes
-                else if (parentCircleList.IndexOf(circle) < parentCircleList.Count - 1 && parentCircleList.IndexOf(circle) > 0)
-                {
-                    if (nodeIdentifier.linkedInnerNodes.Count == 0 || nodeIdentifier.linkedOuterNodes.Count == 0)
-                    {
-                        //reference for the node and link dictionaries inside the NodeLinkIdentifier
-                        Dictionary<GameObject, GameObject> OuterNLink = nodeIdentifier.pairOuterNodeLink;
-                        Dictionary<GameObject, GameObject> InnerNLink = nodeIdentifier.pairInnerNodeLink;
-                        //key is the node and value is the link
-                        foreach(KeyValuePair<GameObject, GameObject> outerLink in OuterNLink)
-                        {
-                            destroyLinks.Add(outerLink.Value);
-                        }
-                        foreach (KeyValuePair<GameObject, GameObject> innerLink in InnerNLink)
-                        {
-                            destroyLinks.Add(innerLink.Value);
-                        }
-
-                        destroyNodes.Add(node);
-                    }
-                }
-            }
-        }
-
-        if (destroyLinks.Count > 0 && destroyNodes.Count > 0)
-        {
-            foreach (GameObject destroyNode in destroyNodes)
-            {
-                NodeLinkIdentifier destroyNodeIden = destroyNode.GetComponent<NodeLinkIdentifier>();
-                destroyNodeIden.isToBeDestroyed = true;
-            }
-            foreach (GameObject destroyLink in destroyLinks)
-            {
-                LinkCollisionIdentifier destroyLinkIden = destroyLink.GetComponent<LinkCollisionIdentifier>();
-                destroyLinkIden.isToBeDestroyed = true;
-            }
-        }
-
-        if (d_DestroyLinks != null)
-        {
-            d_DestroyLinks();
-        }
-
     }
 
 
     //This is called if we only need to load the overworld from the last save state
     public void LoadOverWorldState()
     {
-        //List<GameObject> savedHolders = UniversalSaveState.LoadOverWorldMap();
-        List<GameObject> savedHolders = new List<GameObject>();
-        savedHolders.AddRange(UniversalSaveState.LoadOverWorldMap());
-        foreach (GameObject holder in savedHolders)
+        SaveMapState loadedOverWorld = UniversalSaveState.LoadOverWorldMap();
+
+        List<LinkData> linkList = loadedOverWorld.linkList;
+        List<NodeDataListWrapper> nodeHolderList = loadedOverWorld.nodeList;
+        
+        //we use the nodeList as baseline for how many holders to create because the needed hodlers are 1 link holder plus how many nodeData is in the list
+        for (int holdersIndex = 0; nodeHolderList.Count >= holdersIndex; holdersIndex++)
         {
-            holder.transform.SetParent(gameObject.transform);
+            //the holder prefab used is link for the first one then nodeCircles for the consecutive holders
+            GameObject holderPrefab;
+            if (holdersIndex == 0)
+            {
+                //holders and objects are related to links
+                holderPrefab = Instantiate(linkHolderPrefab, gameObject.transform);
+                for (int linkCount = 0; linkList.Count-1 >= linkCount; linkCount++)
+                {
+                    Instantiate(linkPrefab, holderPrefab.transform);
+                }
+            }
+            else
+            {
+                //holder and object prefavs related to nodes
+                holderPrefab = Instantiate(parentCircle, gameObject.transform);
+                //this in represents the count of NodeData in the nodeWrapper
+                //the -1 in the index search of nodeDataCount is needed so that we can start looping at nodeList[0] since the first instance of a nodeList is at index 1 of holdersIndex
+                int nodeDataCount = nodeHolderList[holdersIndex - 1].nodeDataList.Count;
+                for (int nodeCount = 0; nodeDataCount-1 >= 0; nodeCount++ )
+                {
+                    Instantiate(nodePrefab, holderPrefab.transform);
+                }
+            }
         }
+
+        foreach (NodeDataListWrapper nodeList in nodeHolderList)
+        {
+            foreach (NodeData nodeData in nodeList.nodeDataList)
+            {
+                Transform parentTrans = gameObject.transform.GetChild(nodeData.parentIndex);
+                Transform nodeTrans = parentTrans.GetChild(nodeData.nodeIndex);
+
+                GameObject nodeObject = nodeTrans.gameObject;
+                RectTransform nodeRect = nodeObject.GetComponent<RectTransform>();
+                NodeLinkIdentifier nodeIden = nodeObject.GetComponent<NodeLinkIdentifier>();
+
+                nodeRect.anchoredPosition = new Vector2(nodeData.nodePosition[0], nodeData.nodePosition[1]);
+
+                //local node and link reference holders to be added to target NodeLinkIdentifier
+                for (int i = 0; nodeData.linkedInnerNodes.Count-1 >= 0; i++)
+                {
+                    GameObject partnerNode = gameObject.transform.GetChild(nodeData.linkedInnerParents[i]).GetChild(nodeData.linkedInnerNodes[i]).gameObject;
+                    nodeIden.linkedInnerNodes.Add(partnerNode);
+                    nodeIden.pairInnerNodeLink.Add(partnerNode, gameObject.transform.GetChild(0).GetChild(nodeData.innerLinkValueIndex[i]).gameObject);
+                }
+                for (int i = 0; nodeData.linkedOuterNodes.Count - 1 >= 0; i++)
+                {
+                    GameObject partnerNode = gameObject.transform.GetChild(nodeData.linkedOuterParents[i]).GetChild(nodeData.linkedOuterNodes[i]).gameObject;
+                    nodeIden.linkedOuterNodes.Add(partnerNode);
+                    nodeIden.pairOuterNodeLink.Add(partnerNode, gameObject.transform.GetChild(0).GetChild(nodeData.outerLinkValueIndex[i]).gameObject);
+                }
+
+                nodeIden.isClickable = nodeData.isClickable;
+                nodeIden.isSelected = nodeData.isSelected;
+
+            }
+        }
+
+        //iterate through all holders then assign the values parsed from the json
+        foreach (LinkData linkData in linkList)
+        {
+            Transform parentTrans = gameObject.transform.GetChild(linkData.parentIndex);
+            Transform linkTrans = parentTrans.GetChild(linkData.linkIndex);
+
+            GameObject linkObject = linkTrans.gameObject;
+            RectTransform linkRect = linkObject.GetComponent<RectTransform>();
+            LinkCollisionIdentifier linkIden = linkObject.GetComponent<LinkCollisionIdentifier>();
+
+            linkRect.anchoredPosition = new Vector2(linkData.linkPosition[0], linkData.linkPosition[1]);
+            linkTrans.rotation = Quaternion.Euler(0, 0, linkData.linkRotation[2]);
+            linkIden.innerNode = gameObject.transform.GetChild(linkData.linkedInnerParent).GetChild(linkData.linkedInnerNode).gameObject;
+            linkIden.outerNode = gameObject.transform.GetChild(linkData.linkedOuterParent).GetChild(linkData.linkedOuterNode).gameObject;
+        }
+
     }
 
 }

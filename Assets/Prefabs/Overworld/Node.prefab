@@ -224,7 +224,7 @@ GameObject:
   - component: {fileID: 3435356773313841126}
   - component: {fileID: 1109341295559014253}
   - component: {fileID: -525935937296096603}
-  - component: {fileID: -8180646842454637280}
+  - component: {fileID: -1329649416948439979}
   m_Layer: 17
   m_Name: Node
   m_TagString: Node
@@ -342,19 +342,26 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 35, y: 35}
   m_EdgeRadius: 0
---- !u!58 &-8180646842454637280
-CircleCollider2D:
+--- !u!114 &-1329649416948439979
+MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6291560059504951314}
-  m_Enabled: 0
-  m_Density: 1
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_UsedByEffector: 0
-  m_UsedByComposite: 0
-  m_Offset: {x: 0.48106384, y: -0.0001296997}
-  serializedVersion: 2
-  m_Radius: 26.273476
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d7398f6899ee93b419327d6819dcf13b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  nodePosition: []
+  parentIndex: 0
+  nodeIndex: 0
+  linkedInnerNodes: 
+  linkedOuterNodes: 
+  linkedInnerParents: 
+  linkedOuterParents: 
+  innerLinkValueIndex: 
+  outerLinkValueIndex: 
+  isClickable: 0
+  isSelected: 0

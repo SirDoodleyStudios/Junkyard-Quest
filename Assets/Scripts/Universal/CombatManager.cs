@@ -70,8 +70,6 @@ public class CombatManager : MonoBehaviour
         //one time run to add dictionary entries of cardMechanic enums and text descriptions
         CardTagManager.InitializeTextDescriptionDictionaries();
         EffectFactory.InitializeCardFactory();
-        //test
-        UniversalSaveState.CheckState();
 
     }
 
