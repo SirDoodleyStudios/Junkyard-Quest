@@ -15,6 +15,8 @@ public class LinkStatusSave : MonoBehaviour
     public float[] linkPosition;
     //will hold the vector3 rotation of the link
     public float[] linkRotation;
+    //the length of the link
+    public float linkWidth;
     //will hold node parent index and index of node itself
     public int parentIndex;
     public int linkIndex;
@@ -37,6 +39,7 @@ public class LinkStatusSave : MonoBehaviour
     public void LinkObjectSettings()
     {
         linkPosition = new float[2] { objectRect.anchoredPosition.x, objectRect.anchoredPosition.y };
+        linkWidth = objectRect.rect.width;
         //in euler angles, a full 360 degrees is conidered for rotation
         //if an angle is below 180 or a positive angle, we keep the angle
         //if an angle is above 180 ir a negative angle, we subtract it by 360 to get the original negative angle

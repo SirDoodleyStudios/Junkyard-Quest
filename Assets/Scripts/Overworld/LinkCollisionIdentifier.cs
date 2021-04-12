@@ -29,7 +29,6 @@ public class LinkCollisionIdentifier : MonoBehaviour
     //if upon instantiation, a collision is detected, set the identifier bool as true
     public void OnCollisionEnter2D(Collision2D collision)
     {
-        Debug.Log("collided");
         if (collision.gameObject.tag == "Link")
         {
             //collidingLink = collision.gameObject;

@@ -76,6 +76,8 @@ public class LinkData
     public float[] linkPosition;
     //will hold the vector3 rotation of the link
     public float[] linkRotation;
+    //the length of the link
+    public float linkWidth;
     //will hold node parent index and index of node itself
     public int parentIndex;
     public int linkIndex;
@@ -89,6 +91,7 @@ public class LinkData
     {
         linkPosition = linkSave.linkPosition;
         linkRotation = linkSave.linkRotation;
+        linkWidth = linkSave.linkWidth;
         parentIndex = linkSave.parentIndex;
         linkIndex = linkSave.linkIndex;
         linkedInnerNode = linkSave.linkedInnerNode;

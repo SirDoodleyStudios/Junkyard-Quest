@@ -696,15 +696,17 @@ public class CircleGenerator : MonoBehaviour
                 //this in represents the count of NodeData in the nodeWrapper
                 //the -1 in the index search of nodeDataCount is needed so that we can start looping at nodeList[0] since the first instance of a nodeList is at index 1 of holdersIndex
                 int nodeDataCount = nodeHolderList[holdersIndex - 1].nodeDataList.Count;
-                for (int nodeCount = 0; nodeDataCount-1 >= 0; nodeCount++ )
+                for (int nodeCount = 0; nodeDataCount-1 >= nodeCount; nodeCount++ )
                 {
                     Instantiate(nodePrefab, holderPrefab.transform);
                 }
             }
         }
 
+        //iterates through the nodeHolderList and extracts the lists of nodeData inside it
         foreach (NodeDataListWrapper nodeList in nodeHolderList)
         {
+            //for each nodeWrapper, it has a list of nodeData inside it, and each nodeData is a representation of node's NodeLinkIdentifier
             foreach (NodeData nodeData in nodeList.nodeDataList)
             {
                 Transform parentTrans = gameObject.transform.GetChild(nodeData.parentIndex);
@@ -717,13 +719,13 @@ public class CircleGenerator : MonoBehaviour
                 nodeRect.anchoredPosition = new Vector2(nodeData.nodePosition[0], nodeData.nodePosition[1]);
 
                 //local node and link reference holders to be added to target NodeLinkIdentifier
-                for (int i = 0; nodeData.linkedInnerNodes.Count-1 >= 0; i++)
+                for (int i = 0; nodeData.linkedInnerNodes.Count-1 >= i; i++)
                 {
                     GameObject partnerNode = gameObject.transform.GetChild(nodeData.linkedInnerParents[i]).GetChild(nodeData.linkedInnerNodes[i]).gameObject;
                     nodeIden.linkedInnerNodes.Add(partnerNode);
                     nodeIden.pairInnerNodeLink.Add(partnerNode, gameObject.transform.GetChild(0).GetChild(nodeData.innerLinkValueIndex[i]).gameObject);
                 }
-                for (int i = 0; nodeData.linkedOuterNodes.Count - 1 >= 0; i++)
+                for (int i = 0; nodeData.linkedOuterNodes.Count - 1 >= i; i++)
                 {
                     GameObject partnerNode = gameObject.transform.GetChild(nodeData.linkedOuterParents[i]).GetChild(nodeData.linkedOuterNodes[i]).gameObject;
                     nodeIden.linkedOuterNodes.Add(partnerNode);
@@ -750,6 +752,7 @@ public class CircleGenerator : MonoBehaviour
             linkTrans.rotation = Quaternion.Euler(0, 0, linkData.linkRotation[2]);
             linkIden.innerNode = gameObject.transform.GetChild(linkData.linkedInnerParent).GetChild(linkData.linkedInnerNode).gameObject;
             linkIden.outerNode = gameObject.transform.GetChild(linkData.linkedOuterParent).GetChild(linkData.linkedOuterNode).gameObject;
+            linkRect.sizeDelta = new Vector2(linkData.linkWidth, linkRect.rect.height);
         }
 
     }
