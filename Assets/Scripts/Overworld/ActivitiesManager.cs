@@ -9,6 +9,8 @@ public class ActivitiesManager : MonoBehaviour
     NodeActivityEnum loadedNodeActivity;
     NodeActivityEnum nextNodeActivity;
 
+    //called by overworld manager to load the target scene
+    //the scene name is the NodeActivityEnum string + "Scene"
     public void LoadStartNodeActivity(NodeActivityEnum first)
     {
         SceneManager.LoadScene(first.ToString() + "Scene");

@@ -70,8 +70,8 @@ public class LinkCollisionIdentifier : MonoBehaviour
 
         if (isToBeDestroyed == true)
         {
-            Debug.Log($"Destroyed Link linking {innerNode.transform.GetSiblingIndex()} in {innerNode.transform.parent.gameObject.transform.GetSiblingIndex()}" +
-                $" and {outerNode.transform.GetSiblingIndex()} in {outerNode.transform.parent.transform.GetSiblingIndex()}");
+            //Debug.Log($"Destroyed Link linking {innerNode.transform.GetSiblingIndex()} in {innerNode.transform.parent.gameObject.transform.GetSiblingIndex()}" +
+            //    $" and {outerNode.transform.GetSiblingIndex()} in {outerNode.transform.parent.transform.GetSiblingIndex()}");
             Destroy(gameObject);
         }
     }

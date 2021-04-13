@@ -45,7 +45,6 @@ public class PlayerFunctions : BaseUnitFunctions
     //activates all functions related to the start of turn
     public void PlayerTurn()
     {
-        Debug.Log("stuff");
         base.RemoveBlock();
         gameObject.GetComponent<AbilityManager>().EnableAbilities();
     }

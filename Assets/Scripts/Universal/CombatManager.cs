@@ -76,8 +76,6 @@ public class CombatManager : MonoBehaviour
     //Tried making this Awake(), destroyed some logic in EnemyFunctions
     public void Start()
     {
-        Debug.Log("Starting");
-
 
         //initial caching of player stats
         playerFunctions = player.GetComponent<PlayerFunctions>();

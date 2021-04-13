@@ -58,6 +58,7 @@ public class NodeLinkIdentifier : MonoBehaviour, IPointerEnterHandler, IPointerE
     {
         nodeImage.color = Color.green;
         isSelected = true;
+        Debug.Log("selected Node");
     }
     public void MakeNodeUnselected()
     {

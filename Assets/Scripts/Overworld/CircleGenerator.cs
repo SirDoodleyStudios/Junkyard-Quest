@@ -102,10 +102,9 @@ public class CircleGenerator : MonoBehaviour
         //all overworldcalls are called in a coRoutine for alignemnt with the predecessor coroutines, not sure if it actually works
         overworldManager.AssignStartingPositions(parentCircleList[parentCircleList.Count - 1]);
 
-        //calls an event attached to all node and links then stores their overworld settings for saving and loading later on
-        d_StoreObjectState();
+
         //save the generated map once everything is initially loaded
-        overworldManager.SaveState();
+        SaveOverworldState();
     }
 
     //make sure that nodecount is always even
@@ -231,7 +230,6 @@ public class CircleGenerator : MonoBehaviour
         {
             //StartCoroutine(DeployLinks(parentCircleList[parentCircleList.IndexOf(missedLinks.Value) - 1], missedLinks.Key, 1));
             DeployCalculatedLinks(parentCircleList[parentCircleList.IndexOf(missedLinks.Value) - 1], missedLinks.Key, 1, false);
-            Debug.Log("relinking");
         }
 
        
@@ -559,7 +557,6 @@ public class CircleGenerator : MonoBehaviour
         //this frame lag will make sure that the script attached in links will run first
         //this is so that the actual and collider gameObjects are properly assigned from the LinkCollisionIdentifier
         yield return null;
-        Debug.Log("link destroy in circleGenerator");
 
         //will contain links to be destroyed
         List<GameObject> destroyList = new List<GameObject>();
@@ -667,6 +664,68 @@ public class CircleGenerator : MonoBehaviour
     }
 
 
+
+    //These three works together, this is for saving the overworld  object state when changing scenes
+    public void SaveOverworldState()
+    {
+
+        //calls an event attached to all node and links then stores their overworld settings for saving and loading later on
+        d_StoreObjectState();
+
+        //after updating each node and link data, save them in these lists to save to json later
+        List<LinkStatusSave> linkStatusList = DetermineLinkData();
+        List<List<NodeStatusSave>> nodeHolderStatusList = DetermineNodeData();
+        Debug.Log($"link list is {linkStatusList.Count}");
+        //function for saving the lists gathered to json
+        UniversalSaveState.SaveOverworldMap(linkStatusList, nodeHolderStatusList);
+    }
+
+    List<LinkStatusSave> DetermineLinkData()
+    {
+        List<LinkStatusSave> linkList = new List<LinkStatusSave>();
+        //index 0 of circle manager should always be the linkHolder
+        Transform linkHolderTrans = gameObject.transform.GetChild(0).transform;
+        foreach (Transform link in linkHolderTrans)
+        {
+            LinkStatusSave linkData = link.gameObject.GetComponent<LinkStatusSave>();
+            linkList.Add(linkData);
+        }
+
+        return linkList;
+
+    }
+    List<List<NodeStatusSave>> DetermineNodeData()
+    {
+        List<List<NodeStatusSave>> nodeHolderList = new List<List<NodeStatusSave>>();
+
+        Transform holderParentTrans = gameObject.transform;
+        foreach (Transform holderTrans in holderParentTrans)
+        {
+            //will hold the actual nodes
+            List<NodeStatusSave> nodeList = new List<NodeStatusSave>();
+            //does not check the first child since the first child holds links
+            if (holderTrans.GetSiblingIndex() != 0)
+            {
+                //loops through holder transform to add 
+                foreach (Transform nodeTrans in holderTrans)
+                {
+                    GameObject nodeObject = nodeTrans.gameObject;
+
+                    NodeStatusSave nodeData = nodeObject.GetComponent<NodeStatusSave>();
+                    nodeList.Add(nodeData);
+                }
+                //adds the looped node in the list list
+                nodeHolderList.Add(nodeList);
+            }
+        }
+
+        return nodeHolderList;
+    }
+
+
+
+
+
     //This is called if we only need to load the overworld from the last save state
     public void LoadOverWorldState()
     {
@@ -732,8 +791,16 @@ public class CircleGenerator : MonoBehaviour
                     nodeIden.pairOuterNodeLink.Add(partnerNode, gameObject.transform.GetChild(0).GetChild(nodeData.outerLinkValueIndex[i]).gameObject);
                 }
 
-                nodeIden.isClickable = nodeData.isClickable;
-                nodeIden.isSelected = nodeData.isSelected;
+                if (nodeData.isClickable == true)
+                {
+                    nodeIden.MakeNodeClickable();
+                }
+                if (nodeData.isSelected == true)
+                {
+                    nodeIden.MakeNodeSelected();
+                }
+                //nodeIden.isClickable = nodeData.isClickable;
+                //nodeIden.isSelected = nodeData.isSelected;
 
             }
         }

@@ -49,6 +49,11 @@ public class OverworldManager : MonoBehaviour
         xBoundary = camera.aspect * camera.orthographicSize;
         yBoundary = camera.orthographicSize;
 
+        if (UniversalSaveState.isMapInitialized)
+        {
+            worldState = OverworldState.MoveNode;
+        }
+
     }
     //called by CircleGenerator once the parent circles are generated
     public void AssignStartingPositions(GameObject outerCircle)
@@ -64,6 +69,7 @@ public class OverworldManager : MonoBehaviour
         //saves the overworld firs before switchingscenes
         //SaveState(); //save must come after the assignStartingPositions
         worldState = OverworldState.StartingNode;
+
     }
 
     void Update()
@@ -132,8 +138,11 @@ public class OverworldManager : MonoBehaviour
                         }
 
                         worldState = OverworldState.MoveNode;
-                        //SceneManager.LoadScene("CombatScene");
+                        //calls circle generator's save function to save current overworld
+                        circleGenerator.SaveOverworldState();
+                        //scene transition depending on the NodeActivityEnum of the target Node
                         activitiesManager.LoadStartNodeActivity(NodeActivityEnum.Combat);
+
                     }
                 }
             }
@@ -179,78 +188,77 @@ public class OverworldManager : MonoBehaviour
                             adjacentIden.MakeNodeClickable();
                         }
 
-                        //save the worldstate before switching scenes
-                        SaveState();
-
+                        //calls circle generator's save function to save current overworld
+                        circleGenerator.SaveOverworldState();
                         //FOR TEST ONLY, ACTIVATES A TEST SCENE WHICH JUST HAPPENS TO BE THE COMBAT SCENE
-                        SceneManager.LoadScene("CombatScene");
+                        activitiesManager.LoadStartNodeActivity(NodeActivityEnum.Combat);
+
                         ////
                     }
                     else
                     {
                         Debug.Log("not clickable");
                     }
-                }               
+                }             
 
-                
+               
             }
 
         }
 
-
     }
 
-    //These three works together, this is for saving the overworld  object state when changing scenes
-    public void SaveState()
-    {
-        List<LinkStatusSave> linkStatusList = LoadLinkActivities();
-        List<List<NodeStatusSave>> nodeHolderStatusList = LoadNodeActivities();
+    ////These three works together, this is for saving the overworld  object state when changing scenes
+    //public void SaveState()
+    //{
 
-        UniversalSaveState.SaveOverworldMap(linkStatusList, nodeHolderStatusList);
-    }
+    //    List<LinkStatusSave> linkStatusList = LoadLinkActivities();
+    //    List<List<NodeStatusSave>> nodeHolderStatusList = LoadNodeActivities();
 
-    List<LinkStatusSave> LoadLinkActivities()
-    {
-        List<LinkStatusSave> linkList = new List<LinkStatusSave>();
-        //index 0 of circle manager should always be the linkHolder
-        Transform linkHolderTrans = nodeCircleManager.transform.GetChild(0).transform;
-        foreach(Transform link in linkHolderTrans)
-        {
-            LinkStatusSave linkData = link.gameObject.GetComponent<LinkStatusSave>();
-            linkList.Add(linkData);
-        }
+    //    UniversalSaveState.SaveOverworldMap(linkStatusList, nodeHolderStatusList);
+    //}
 
-        return linkList;
+    //List<LinkStatusSave> LoadLinkActivities()
+    //{
+    //    List<LinkStatusSave> linkList = new List<LinkStatusSave>();
+    //    //index 0 of circle manager should always be the linkHolder
+    //    Transform linkHolderTrans = nodeCircleManager.transform.GetChild(0).transform;
+    //    foreach(Transform link in linkHolderTrans)
+    //    {
+    //        LinkStatusSave linkData = link.gameObject.GetComponent<LinkStatusSave>();
+    //        linkList.Add(linkData);
+    //    }
 
-    }
+    //    return linkList;
 
-    List<List<NodeStatusSave>> LoadNodeActivities()
-    {
-        List<List<NodeStatusSave>> nodeHolderList = new List<List<NodeStatusSave>>();
+    //}
+    //List<List<NodeStatusSave>> LoadNodeActivities()
+    //{
+    //    List<List<NodeStatusSave>> nodeHolderList = new List<List<NodeStatusSave>>();
 
-        Transform holderParentTrans = circleGenerator.transform;
-        foreach (Transform holderTrans in holderParentTrans)
-        {
-            //will hold the actual nodes
-            List<NodeStatusSave> nodeList = new List<NodeStatusSave>();
-            //does not check the first child since the first child holds links
-            if (holderTrans.GetSiblingIndex() != 0)
-            {
-                //loops through holder transform to add 
-                foreach (Transform nodeTrans in holderTrans)
-                {
-                    GameObject nodeObject = nodeTrans.gameObject;
+    //    Transform holderParentTrans = circleGenerator.transform;
+    //    foreach (Transform holderTrans in holderParentTrans)
+    //    {
+    //        //will hold the actual nodes
+    //        List<NodeStatusSave> nodeList = new List<NodeStatusSave>();
+    //        //does not check the first child since the first child holds links
+    //        if (holderTrans.GetSiblingIndex() != 0)
+    //        {
+    //            //loops through holder transform to add 
+    //            foreach (Transform nodeTrans in holderTrans)
+    //            {
+    //                GameObject nodeObject = nodeTrans.gameObject;
 
-                    NodeStatusSave nodeData = nodeObject.GetComponent<NodeStatusSave>();
-                    nodeList.Add(nodeData);
-                }
-                //adds the looped node in the list list
-                nodeHolderList.Add(nodeList);
-            }
-        }
+    //                NodeStatusSave nodeData = nodeObject.GetComponent<NodeStatusSave>();
+    //                nodeList.Add(nodeData);
+    //            }
+    //            //adds the looped node in the list list
+    //            nodeHolderList.Add(nodeList);
+    //        }
+    //    }
 
-        return nodeHolderList;
-    }
+    //    return nodeHolderList;
+    //}
 
 
 }

@@ -29,6 +29,10 @@ public class NodeStatusSave : MonoBehaviour
     //bool identifiers of the node
     public bool isClickable;
     public bool isSelected;
+
+    //this is an identifier that makes sure that a node's List of preferences are not updated again if the save function is called
+    //without this, the list of references will double or triple depending on how many consecutive save calls it gets
+    private bool isInitialized;
     private void Start()
     {
         //this will only workk for firs execution saves
@@ -36,6 +40,7 @@ public class NodeStatusSave : MonoBehaviour
         objectRect = gameObject.GetComponent<RectTransform>();
         nodeIdentifier = gameObject.GetComponent<NodeLinkIdentifier>();
         circleGenerator.d_StoreObjectState += NodeObjectSettings;
+        isInitialized = false;
     }
 
     public  void NodeObjectSettings()
@@ -43,33 +48,43 @@ public class NodeStatusSave : MonoBehaviour
         nodePosition = new float[2] { objectRect.anchoredPosition.x, objectRect.anchoredPosition.y };
         parentIndex = gameObject.transform.parent.gameObject.transform.GetSiblingIndex();
         nodeIndex = gameObject.transform.GetSiblingIndex();
-        //populates the inner node list and parent with their index reference later for loading
-        foreach (GameObject innerNode in nodeIdentifier.linkedInnerNodes)
+        //makes sure that the adding of references are only called once
+        if (!isInitialized)
         {
-            Transform nodeTrans = innerNode.transform;
-            linkedInnerNodes.Add(nodeTrans.GetSiblingIndex());
-            linkedInnerParents.Add(nodeTrans.parent.gameObject.transform.GetSiblingIndex());
+            //populates the inner node list and parent with their index reference later for loading
+            foreach (GameObject innerNode in nodeIdentifier.linkedInnerNodes)
+            {
+                Transform nodeTrans = innerNode.transform;
+                linkedInnerNodes.Add(nodeTrans.GetSiblingIndex());
+                linkedInnerParents.Add(nodeTrans.parent.gameObject.transform.GetSiblingIndex());
+            }
+            //populates the outer node list and parent with their index reference later for loading
+            foreach (GameObject outerNode in nodeIdentifier.linkedOuterNodes)
+            {
+                Transform nodeTrans = outerNode.transform;
+                linkedOuterNodes.Add(nodeTrans.GetSiblingIndex());
+                linkedOuterParents.Add(nodeTrans.parent.gameObject.transform.GetSiblingIndex());
+            }
+            //contains the link in the nodelink parir dictionary
+            foreach (KeyValuePair<GameObject, GameObject> innerPair in nodeIdentifier.pairInnerNodeLink)
+            {
+                Transform linkTrans = innerPair.Value.transform;
+                innerLinkValueIndex.Add(linkTrans.GetSiblingIndex());
+            }
+            foreach (KeyValuePair<GameObject, GameObject> outerPair in nodeIdentifier.pairOuterNodeLink)
+            {
+                Transform linkTrans = outerPair.Value.transform;
+                outerLinkValueIndex.Add(linkTrans.GetSiblingIndex());
+            }
+            isInitialized = true;
         }
-        //populates the outer node list and parent with their index reference later for loading
-        foreach (GameObject outerNode in nodeIdentifier.linkedOuterNodes)
-        {
-            Transform nodeTrans = outerNode.transform;
-            linkedOuterNodes.Add(nodeTrans.GetSiblingIndex());
-            linkedOuterParents.Add(nodeTrans.parent.gameObject.transform.GetSiblingIndex());
-        }
-        //contains the link in the nodelink parir dictionary
-        foreach (KeyValuePair<GameObject, GameObject> innerPair in nodeIdentifier.pairInnerNodeLink)
-        {
-            Transform linkTrans = innerPair.Value.transform;
-            innerLinkValueIndex.Add(linkTrans.GetSiblingIndex());
-        }
-        foreach (KeyValuePair<GameObject, GameObject> outerPair in nodeIdentifier.pairOuterNodeLink)
-        {
-            Transform linkTrans = outerPair.Value.transform;
-            outerLinkValueIndex.Add(linkTrans.GetSiblingIndex());
-        }
+
         isClickable = nodeIdentifier.isClickable;
         isSelected = nodeIdentifier.isSelected;
+        if (isSelected)
+        {
+            Debug.Log("is selected");
+        }
     }
 
     private void OnDestroy()
