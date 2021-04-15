@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
 using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
 
@@ -11,7 +12,7 @@ public class OverworldManager : MonoBehaviour
 
     public ActivitiesManager activitiesManager;
 
-    OverworldState worldState;
+    public OverworldState worldState;
     //references to the main circles
     public GameObject nodeCircleManager;
     public CircleGenerator circleGenerator;
@@ -26,7 +27,7 @@ public class OverworldManager : MonoBehaviour
     float yBoundary;
 
     //stores the current selected node
-    GameObject currentNode;
+    public GameObject currentNode;
 
     //list that holds all starting positions
     List<GameObject> startingReachableNodes = new List<GameObject>();
@@ -69,6 +70,17 @@ public class OverworldManager : MonoBehaviour
         //saves the overworld firs before switchingscenes
         //SaveState(); //save must come after the assignStartingPositions
         worldState = OverworldState.StartingNode;
+
+    }
+
+    public void LoadOverWorldData()
+    {
+        SaveKeyOverworld keyData = UniversalSaveState.LoadOverWorldData();
+        GameObject parentObject = circleGenerator.transform.GetChild(keyData.nodeParent).gameObject;
+
+        worldState = keyData.moveState;
+        currentNode = parentObject.transform.GetChild(keyData.nodeIndex).gameObject;
+        UniversalSaveState.isMapInitialized = keyData.isMapInitialized;
 
     }
 
@@ -139,7 +151,8 @@ public class OverworldManager : MonoBehaviour
 
                         worldState = OverworldState.MoveNode;
                         //calls circle generator's save function to save current overworld
-                        circleGenerator.SaveOverworldState();
+                        //circleGenerator.SaveOverworldState();
+                        SaveFunction();
                         //scene transition depending on the NodeActivityEnum of the target Node
                         activitiesManager.LoadStartNodeActivity(NodeActivityEnum.Combat);
 
@@ -189,7 +202,8 @@ public class OverworldManager : MonoBehaviour
                         }
 
                         //calls circle generator's save function to save current overworld
-                        circleGenerator.SaveOverworldState();
+                        //circleGenerator.SaveOverworldState();
+                        SaveFunction();
                         //FOR TEST ONLY, ACTIVATES A TEST SCENE WHICH JUST HAPPENS TO BE THE COMBAT SCENE
                         activitiesManager.LoadStartNodeActivity(NodeActivityEnum.Combat);
 
@@ -206,6 +220,12 @@ public class OverworldManager : MonoBehaviour
 
         }
 
+    }
+    //calls all save actions
+    void SaveFunction()
+    {
+        circleGenerator.SaveOverworldState();
+        UniversalSaveState.SaveOverWorldData(new SaveKeyOverworld(worldState, currentNode.transform));
     }
 
     ////These three works together, this is for saving the overworld  object state when changing scenes
@@ -260,7 +280,28 @@ public class OverworldManager : MonoBehaviour
     //    return nodeHolderList;
     //}
 
-
 }
+//inserts all other 
+[Serializable]
+public class SaveKeyOverworld
+{
+    public OverworldState moveState;
+    public int nodeIndex;
+    public int nodeParent;
+    public bool isMapInitialized;
+
+    public SaveKeyOverworld(OverworldState worldState, Transform nodeTrans)
+    {
+        moveState = worldState;
+        nodeIndex = nodeTrans.GetSiblingIndex();
+        nodeParent = nodeTrans.parent.GetSiblingIndex();
+        isMapInitialized = UniversalSaveState.isMapInitialized;
+    }
+}
+
+
+
+
+
 
 

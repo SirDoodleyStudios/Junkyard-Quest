@@ -10,7 +10,7 @@ public static class UniversalSaveState
 
 
     //called by overworld manager to save the current state
-    public static void SaveOverworldMap(List<LinkStatusSave> linkStatusSave, List<List<NodeStatusSave>> nodeStatusHolderSave)
+    public static void SaveOverworldMap(List<LinkStatusSave> linkStatusSave, List<List<NodeStatusSave>> nodeStatusHolderSave/*, UniversalParameters universalParameters*/)
     {
         //calls a private class that transfers the linkStatusSave data to a fully serializable class linkData
         List<LinkData> linkDataList = new List<LinkData>();
@@ -35,19 +35,34 @@ public static class UniversalSaveState
             nodeHolderDataList.Add(dataWrapper);
         }
         //once we get the serializable link and data lists, we wrap it in a master class
-        SaveMapState saveMapState = new SaveMapState(linkDataList, nodeHolderDataList);
+        SaveMapState saveMapState = new SaveMapState(linkDataList, nodeHolderDataList/*, universalParameters*/);
         //we assign the masterclass wrapper to the json string
         string overWorld = JsonUtility.ToJson(saveMapState);
         File.WriteAllText(Application.persistentDataPath + "/OverWorld.json", overWorld);   
     }
 
-
     //Function for Loading
     public static SaveMapState LoadOverWorldMap()
     {
+        //for overworld node and link positions and references
         string overWorld = File.ReadAllText(Application.persistentDataPath + "/OverWorld.json");
         SaveMapState loadedState = JsonUtility.FromJson<SaveMapState>(overWorld);
         return loadedState;
+    }
+
+    public static SaveKeyOverworld LoadOverWorldData()
+    {
+        //for loading universal data like current node selected and where it's at
+        string overWorldData = File.ReadAllText(Application.persistentDataPath + "/OverWorldData.json");
+        SaveKeyOverworld loadedState = JsonUtility.FromJson<SaveKeyOverworld>(overWorldData);
+        return loadedState;
+    }
+
+    //Saves the important key info of overworld state, gets saved to a different file
+    public static void SaveOverWorldData(SaveKeyOverworld saveKey)
+    {
+        string overWorld = JsonUtility.ToJson(saveKey);
+        File.WriteAllText(Application.persistentDataPath + "/OverWorldData.json", overWorld);
     }
 
 }
@@ -60,11 +75,13 @@ public class SaveMapState
 {
     public List<LinkData> linkList = new List<LinkData>();
     public List<NodeDataListWrapper> nodeList = new List<NodeDataListWrapper>();
+    //public UniversalParameters universalParameters
 
     public SaveMapState(List<LinkData> links, List<NodeDataListWrapper> nodes)
     {
         linkList = links;
         nodeList = nodes;
+
     }
 }
 //serializing class for links
@@ -150,6 +167,26 @@ public class NodeDataListWrapper
     public NodeDataListWrapper(List<NodeData> nodeDataWrap)
     {
         nodeDataList = nodeDataWrap;
+    }
+}
+
+//di ko alaam ang gagawin dito
+public class UniversalParameters
+{
+    //will contain the enum as string
+    public string currentState;
+    //node selected
+    public int NodeIndex;
+    public int NodeParent;
+    //bool found in UniversaolSaveState script
+    public bool isInitialized;
+
+    UniversalParameters(OverworldState worldState, int nodeIndex, int parentIndex)
+    {
+        currentState = worldState.ToString();
+        NodeIndex = nodeIndex;
+        NodeParent = parentIndex;
+        isInitialized = UniversalSaveState.isMapInitialized;
     }
 }
 

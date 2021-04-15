@@ -53,7 +53,10 @@ public class CircleGenerator : MonoBehaviour
         //if not, it means that the circles were already generated
         else
         {
+            //load circles. nodes and links of map
             LoadOverWorldState();
+            //load important data
+            overworldManager.LoadOverWorldData();
         }
     }
 
@@ -675,6 +678,9 @@ public class CircleGenerator : MonoBehaviour
         //after updating each node and link data, save them in these lists to save to json later
         List<LinkStatusSave> linkStatusList = DetermineLinkData();
         List<List<NodeStatusSave>> nodeHolderStatusList = DetermineNodeData();
+        //createss the instance of wraoper class for universal parameters
+        //Transform currentNode = overworldManager.currentNode.transform;
+        //UniversalParameters uniWrapper = new UniversalParameters(overworldManager.worldState, currentNode.GetSiblingIndex(), currentNode.parent.GetSiblingIndex());
         Debug.Log($"link list is {linkStatusList.Count}");
         //function for saving the lists gathered to json
         UniversalSaveState.SaveOverworldMap(linkStatusList, nodeHolderStatusList);
@@ -721,10 +727,6 @@ public class CircleGenerator : MonoBehaviour
 
         return nodeHolderList;
     }
-
-
-
-
 
     //This is called if we only need to load the overworld from the last save state
     public void LoadOverWorldState()
@@ -825,3 +827,5 @@ public class CircleGenerator : MonoBehaviour
     }
 
 }
+
+
