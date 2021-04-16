@@ -72,7 +72,7 @@ public class OverworldManager : MonoBehaviour
         worldState = OverworldState.StartingNode;
 
     }
-
+    //parsing and loading function of overWorld data
     public void LoadOverWorldData()
     {
         SaveKeyOverworld keyData = UniversalSaveState.LoadOverWorldData();
@@ -81,6 +81,15 @@ public class OverworldManager : MonoBehaviour
         worldState = keyData.moveState;
         currentNode = parentObject.transform.GetChild(keyData.nodeIndex).gameObject;
         UniversalSaveState.isMapInitialized = keyData.isMapInitialized;
+        //repopulates adjacent nodes
+        for (int i = 0; keyData.adjacentNodeCount > i; i++)
+        {
+            //parent circle of the adjacent node
+            Transform adjParent = circleGenerator.transform.GetChild(keyData.adjacentParents[i]);
+            //actual node under paent
+            GameObject adjNode = adjParent.GetChild(keyData.adjacentNodeIndex[i]).gameObject;
+            adjacentNodes.Add(adjNode);
+        }
 
     }
 
@@ -138,8 +147,9 @@ public class OverworldManager : MonoBehaviour
                         currentNode = clickedObject;
                         NodeLinkIdentifier currentNodeIden = currentNode.GetComponent<NodeLinkIdentifier>();
                         currentNodeIden.MakeNodeSelected();
+
                         //triggers adjacent nodes
-                        //adjacentNodes = new List<GameObject>();
+                        //List<GameObject> adjacentNodes = new List<GameObject>();
                         adjacentNodes.AddRange(currentNodeIden.linkedOuterNodes);
                         adjacentNodes.AddRange(currentNodeIden.linkedInnerNodes);
 
@@ -224,8 +234,10 @@ public class OverworldManager : MonoBehaviour
     //calls all save actions
     void SaveFunction()
     {
+        //for nodes and links architecture
         circleGenerator.SaveOverworldState();
-        UniversalSaveState.SaveOverWorldData(new SaveKeyOverworld(worldState, currentNode.transform));
+        //for overworld releveant data like current node selected
+        UniversalSaveState.SaveOverWorldData(new SaveKeyOverworld(worldState, currentNode.transform, adjacentNodes));
     }
 
     ////These three works together, this is for saving the overworld  object state when changing scenes
@@ -289,13 +301,29 @@ public class SaveKeyOverworld
     public int nodeIndex;
     public int nodeParent;
     public bool isMapInitialized;
+    public int adjacentNodeCount;
+    public List<int> adjacentParents = new List<int>();
+    public List<int> adjacentNodeIndex = new List<int>();
 
-    public SaveKeyOverworld(OverworldState worldState, Transform nodeTrans)
+    //param 1 = overworldManager state
+    //param 2 = currentNode
+    //param 3 = current node's adjacent nodes
+    public SaveKeyOverworld(OverworldState worldState, Transform nodeTrans, List<GameObject> adjacentNodes)
     {
         moveState = worldState;
         nodeIndex = nodeTrans.GetSiblingIndex();
         nodeParent = nodeTrans.parent.GetSiblingIndex();
         isMapInitialized = UniversalSaveState.isMapInitialized;
+        adjacentNodeCount = adjacentNodes.Count;
+        if (adjacentNodes.Count != 0)
+        {
+            foreach (GameObject node in adjacentNodes)
+            {
+                adjacentParents.Add(node.transform.parent.GetSiblingIndex());
+                adjacentNodeIndex.Add(node.transform.GetSiblingIndex());
+            }
+        }
+
     }
 }
 

@@ -49,6 +49,7 @@ public class NodeLinkIdentifier : MonoBehaviour, IPointerEnterHandler, IPointerE
     //called by update in OverworldManager, indicates if the node is avalable for click
     public void MakeNodeClickable()
     {
+        isSelected = false;
         isClickable = true;
         //color clickable nodes to red
         nodeImage.color = Color.red;
@@ -58,7 +59,7 @@ public class NodeLinkIdentifier : MonoBehaviour, IPointerEnterHandler, IPointerE
     {
         nodeImage.color = Color.green;
         isSelected = true;
-        Debug.Log("selected Node");
+        isClickable = false;
     }
     public void MakeNodeUnselected()
     {
