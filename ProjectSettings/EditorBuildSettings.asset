@@ -26,4 +26,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/RestScene.unity
     guid: 6241d0edf1e5ef04ea42276571c37e8e
+  - enabled: 1
+    path: Assets/Scenes/LinkActivitiesScene.unity
+    guid: d97db6bad66f28040aa7214db2409524
   m_configObjects: {}

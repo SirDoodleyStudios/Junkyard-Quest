@@ -50,6 +50,13 @@ public static class UniversalSaveState
         return loadedState;
     }
 
+    //Saves the important key info of overworld state, gets saved to a different file
+    public static void SaveOverWorldData(SaveKeyOverworld saveKey)
+    {
+        string overWorld = JsonUtility.ToJson(saveKey);
+        File.WriteAllText(Application.persistentDataPath + "/OverWorldData.json", overWorld);
+    }
+
     public static SaveKeyOverworld LoadOverWorldData()
     {
         //for loading universal data like current node selected and where it's at
@@ -58,11 +65,19 @@ public static class UniversalSaveState
         return loadedState;
     }
 
-    //Saves the important key info of overworld state, gets saved to a different file
-    public static void SaveOverWorldData(SaveKeyOverworld saveKey)
+
+    //saves info that are to be used in multiple scenes
+    public static void SaveUniversalInformation(UniversalInformation universalInfo)
     {
-        string overWorld = JsonUtility.ToJson(saveKey);
-        File.WriteAllText(Application.persistentDataPath + "/OverWorldData.json", overWorld);
+        string universal = JsonUtility.ToJson(universalInfo);
+        File.WriteAllText(Application.persistentDataPath + "/UniversalInfo.json", universal);
+    }
+    public static UniversalInformation LoadUniversalInformation()
+    {
+        //for loading universal data like current node selected and where it's at
+        string universalInfo = File.ReadAllText(Application.persistentDataPath + "/UniversalInfo.json");
+        UniversalInformation loadedState = JsonUtility.FromJson<UniversalInformation>(universalInfo);
+        return loadedState;
     }
 
 }

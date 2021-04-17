@@ -174,13 +174,15 @@ public class OverworldManager : MonoBehaviour
                         //marks node as traversed
                         currentNodeIden.MakeNodeTraversed();
 
+                        UniversalInformation universal = new UniversalInformation();
+                        universal.UniversalOverWorldStart();
 
                         worldState = OverworldState.MoveNode;
                         //calls circle generator's save function to save current overworld
-                        //circleGenerator.SaveOverworldState();
-                        SaveFunction();
+                        SaveFunction(universal);
                         //scene transition depending on the NodeActivityEnum of the target Node
                         activitiesManager.LoadStartNodeActivity(currentNodeIden.nodeActivityEnum);
+                        //activitiesManager.LoadActivities();
 
                     }
                 }
@@ -197,7 +199,7 @@ public class OverworldManager : MonoBehaviour
             //will contain the initial node before selecting the target current node
             //currentnode will be overwritten at the click, we'll use the initial for finding the correct link partner to be made traversed
             GameObject initialNode = currentNode;
-            NodeLinkIdentifier initialNodeIden = currentNode.GetComponent<NodeLinkIdentifier>();
+            NodeLinkIdentifier initialNodeIden = initialNode.GetComponent<NodeLinkIdentifier>();
 
             //makes sure that clicked object has a collider
             if (Input.GetMouseButtonDown(0) && pointedObject.collider != null)
@@ -235,26 +237,34 @@ public class OverworldManager : MonoBehaviour
                         currentNodeIden.MakeNodeTraversed();
                         //checks first where the target node is in the inner and outer node dictionaries
                         //mark the partner link as traversed
+                        LinkCollisionIdentifier partnerLink;
                         if (initialNodeIden.pairInnerNodeLink.ContainsKey(currentNode))
                         {
-                            LinkCollisionIdentifier partnerLink = initialNodeIden.pairInnerNodeLink[currentNode].GetComponent<LinkCollisionIdentifier>();
+                            partnerLink = initialNodeIden.pairInnerNodeLink[currentNode].GetComponent<LinkCollisionIdentifier>();
                             partnerLink.MakeLinkTraversed();
                         }
-                        else if (initialNodeIden.pairOuterNodeLink.ContainsKey(currentNode))
-                        {
-                            LinkCollisionIdentifier partnerLink = initialNodeIden.pairOuterNodeLink[currentNode].GetComponent<LinkCollisionIdentifier>();
-                            partnerLink.MakeLinkTraversed();
-                        }
+                        // the else if for pairOuterNodeLink, has risks
+                        //else if (initialNodeIden.pairOuterNodeLink.ContainsKey(currentNode))
                         else
                         {
-                            Debug.Log("node being accessed has no link pair");
+                            partnerLink = initialNodeIden.pairOuterNodeLink[currentNode].GetComponent<LinkCollisionIdentifier>();
+                            partnerLink.MakeLinkTraversed();
                         }
+                        //else
+                        //{
+                        //    Debug.Log("node being accessed has no link pair");
+                        //}
+
+                        //primes the universalinfo to be saved
+                        UniversalInformation universal = new UniversalInformation();
+                        universal.UniversalOverworldMove(currentNodeIden.nodeActivityEnum, currentNodeIden.isTraversed, partnerLink.isTraversed);
 
                         //calls circle generator's save function to save current overworld
-                        //circleGenerator.SaveOverworldState();
-                        SaveFunction();
+                        //sends the univesal information to be saved as well
+                        SaveFunction(universal);
                         //FOR TEST ONLY, ACTIVATES A TEST SCENE WHICH JUST HAPPENS TO BE THE COMBAT SCENE
-                        activitiesManager.LoadStartNodeActivity(currentNodeIden.nodeActivityEnum);
+                        //activitiesManager.LoadStartNodeActivity(currentNodeIden.nodeActivityEnum);
+                        activitiesManager.LoadActivities();
 
                         ////
                     }
@@ -271,8 +281,10 @@ public class OverworldManager : MonoBehaviour
 
     }
     //calls all save actions
-    void SaveFunction()
+    void SaveFunction(UniversalInformation universalInfo)
     {
+        //for universal information
+        UniversalSaveState.SaveUniversalInformation(universalInfo);
         //for nodes and links architecture
         circleGenerator.SaveOverworldState();
         //for overworld releveant data like current node selected
