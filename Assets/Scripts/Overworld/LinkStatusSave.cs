@@ -26,6 +26,8 @@ public class LinkStatusSave : MonoBehaviour
     //index of nodes' parents so we know which circle to call when loading
     public int linkedInnerParent;
     public int linkedOuterParent;
+    //identifies if the link has activities
+    public bool isTraversed;
     
     private void Start()
     {
@@ -59,6 +61,7 @@ public class LinkStatusSave : MonoBehaviour
         linkedOuterNode = linkIdentifier.outerNode.transform.GetSiblingIndex();
         linkedInnerParent = linkIdentifier.innerNode.transform.parent.gameObject.transform.GetSiblingIndex();
         linkedOuterParent = linkIdentifier.outerNode.transform.parent.gameObject.transform.GetSiblingIndex();
+        isTraversed = linkIdentifier.isTraversed;
     }
 
     private void OnDestroy()

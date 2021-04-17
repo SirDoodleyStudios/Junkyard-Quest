@@ -31,6 +31,7 @@ public class OverworldManager : MonoBehaviour
 
     //stores the current selected node
     public GameObject currentNode;
+    public GameObject targetNode;
 
     //list that holds all starting positions
     List<GameObject> startingReachableNodes = new List<GameObject>();
@@ -170,6 +171,9 @@ public class OverworldManager : MonoBehaviour
                             NodeLinkIdentifier adjacentIden = adjacentNode.GetComponent<NodeLinkIdentifier>();
                             adjacentIden.MakeNodeClickable();
                         }
+                        //marks node as traversed
+                        currentNodeIden.MakeNodeTraversed();
+
 
                         worldState = OverworldState.MoveNode;
                         //calls circle generator's save function to save current overworld
@@ -189,6 +193,11 @@ public class OverworldManager : MonoBehaviour
             PointRay = Input.mousePosition;
             ray = Camera.main.ScreenPointToRay(PointRay);
             pointedObject = Physics2D.GetRayIntersection(ray);
+
+            //will contain the initial node before selecting the target current node
+            //currentnode will be overwritten at the click, we'll use the initial for finding the correct link partner to be made traversed
+            GameObject initialNode = currentNode;
+            NodeLinkIdentifier initialNodeIden = currentNode.GetComponent<NodeLinkIdentifier>();
 
             //makes sure that clicked object has a collider
             if (Input.GetMouseButtonDown(0) && pointedObject.collider != null)
@@ -221,6 +230,24 @@ public class OverworldManager : MonoBehaviour
                         {
                             NodeLinkIdentifier adjacentIden = adjacentNode.GetComponent<NodeLinkIdentifier>();
                             adjacentIden.MakeNodeClickable();
+                        }
+                        //marks node as traversed
+                        currentNodeIden.MakeNodeTraversed();
+                        //checks first where the target node is in the inner and outer node dictionaries
+                        //mark the partner link as traversed
+                        if (initialNodeIden.pairInnerNodeLink.ContainsKey(currentNode))
+                        {
+                            LinkCollisionIdentifier partnerLink = initialNodeIden.pairInnerNodeLink[currentNode].GetComponent<LinkCollisionIdentifier>();
+                            partnerLink.MakeLinkTraversed();
+                        }
+                        else if (initialNodeIden.pairOuterNodeLink.ContainsKey(currentNode))
+                        {
+                            LinkCollisionIdentifier partnerLink = initialNodeIden.pairOuterNodeLink[currentNode].GetComponent<LinkCollisionIdentifier>();
+                            partnerLink.MakeLinkTraversed();
+                        }
+                        else
+                        {
+                            Debug.Log("node being accessed has no link pair");
                         }
 
                         //calls circle generator's save function to save current overworld

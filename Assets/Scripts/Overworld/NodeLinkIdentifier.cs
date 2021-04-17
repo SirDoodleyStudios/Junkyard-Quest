@@ -20,6 +20,8 @@ public class NodeLinkIdentifier : MonoBehaviour, IPointerEnterHandler, IPointerE
     public bool isClickable;
     //bool identifier if node is currently selected
     public bool isSelected;
+    //bool idewntifier to indicate if there are still activities in it
+    public bool isTraversed;
     //the node activity attached to this
     public NodeActivityEnum nodeActivityEnum;
 
@@ -31,7 +33,7 @@ public class NodeLinkIdentifier : MonoBehaviour, IPointerEnterHandler, IPointerE
     Color stateColor;
     //the activity icon of the node itself
     Image nodeActivityIcon;
-    bool isActivityDone;
+
 
     private void Awake()
     {
@@ -62,6 +64,9 @@ public class NodeLinkIdentifier : MonoBehaviour, IPointerEnterHandler, IPointerE
 
 
     }
+
+
+
     //called by an event during circle nodes generation
     public void DestroyNode()
     {
@@ -76,6 +81,14 @@ public class NodeLinkIdentifier : MonoBehaviour, IPointerEnterHandler, IPointerE
     public void AssignNodeIconImage()
     {
         nodeActivityIcon.sprite = Resources.Load<Sprite>($"NodeIcon/{nodeActivityEnum}");
+    }
+
+    //mark Link as traversed, traversed links has no activities in it
+    public void MakeNodeTraversed()
+    {
+        isTraversed = true;
+        nodeActivityIcon.gameObject.SetActive(false);
+
     }
 
     //called by update in OverworldManager, indicates if the node is avalable for click
@@ -98,8 +111,9 @@ public class NodeLinkIdentifier : MonoBehaviour, IPointerEnterHandler, IPointerE
         nodeArea.color = originalColor;
         isSelected = false;
         isClickable = false;
-
     }
+
+
 
     //called by LinkCollisionIdentifier when destroying a link, receives a gameObject to be removed from inner and outer Node references
     //function in LinkCollisionIdentifier that calls these functions are called from CircleGenerator

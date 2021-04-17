@@ -104,6 +104,8 @@ public class LinkData
     //index of nodes' parents so we know which circle to call when loading
     public int linkedInnerParent;
     public int linkedOuterParent;
+    //identifier if link was already treaded upon
+    public bool isTraversed;
     public LinkData(LinkStatusSave linkSave)
     {
         linkPosition = linkSave.linkPosition;
@@ -115,6 +117,7 @@ public class LinkData
         linkedOuterNode = linkSave.linkedOuterNode;
         linkedInnerParent = linkSave.linkedInnerParent;
         linkedOuterParent = linkSave.linkedOuterParent;
+        isTraversed = linkSave.isTraversed;
     }
 
 }
@@ -142,6 +145,7 @@ public class NodeData
     //bool identifiers of the node
     public bool isClickable;
     public bool isSelected;
+    public bool isTraversed;
     //nodeActivity num of the node
     public NodeActivityEnum nodeActivity;
 
@@ -158,6 +162,7 @@ public class NodeData
         outerLinkValueIndex = nodeData.outerLinkValueIndex;
         isClickable = nodeData.isClickable;
         isSelected = nodeData.isSelected;
+        isTraversed = nodeData.isTraversed;
         nodeActivity = nodeData.nodeActivityEnum;
     }
 }

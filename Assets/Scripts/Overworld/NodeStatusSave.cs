@@ -29,6 +29,7 @@ public class NodeStatusSave : MonoBehaviour
     //bool identifiers of the node
     public bool isClickable;
     public bool isSelected;
+    public bool isTraversed;
     //nodeActivity
     public NodeActivityEnum nodeActivityEnum;
 
@@ -84,6 +85,7 @@ public class NodeStatusSave : MonoBehaviour
 
         isClickable = nodeIdentifier.isClickable;
         isSelected = nodeIdentifier.isSelected;
+        isTraversed = nodeIdentifier.isTraversed;
         if (isSelected)
         {
             Debug.Log("is selected");

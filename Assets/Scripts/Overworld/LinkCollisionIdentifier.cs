@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class LinkCollisionIdentifier : MonoBehaviour
 {
@@ -12,8 +13,11 @@ public class LinkCollisionIdentifier : MonoBehaviour
     //this contains the nodes that the link is linking
     public GameObject innerNode;
     public GameObject outerNode;
-
-    //identifier if a node is clickable
+    //identifier if traversed already, traversed links will not have any activities
+    public bool isTraversed;
+    //image of the link that will be darkened if traversed already
+    Image linkImage;
+    
 
 
     private void Awake()
@@ -23,6 +27,8 @@ public class LinkCollisionIdentifier : MonoBehaviour
         circleGenerator.d_DestroyLinks += DestroyLink;
         circleGenerator.d_RemoveLinkAsCollider += RemoveLinkAsCollider;
         isToBeDestroyed = false;
+        // the image to be modified is in the child of the link prefab
+        linkImage = gameObject.transform.GetChild(0).gameObject.GetComponent<Image>();
     }
     //upon instantiate access from circleGenerator to add the nodes in the link
 
@@ -40,6 +46,13 @@ public class LinkCollisionIdentifier : MonoBehaviour
             collidingNodes.Add(collision.gameObject);
         }
 
+    }
+    //function called by overworld manager when clicking a clickable node
+    //makes the link path traversed, meanin, it will not have activities anymore
+    public void MakeLinkTraversed()
+    {
+        isTraversed = true;
+        linkImage.color = new Color(.5f, .5f, .5f);
     }
 
     //function called to access the inner and outer nodes of a link and then remove respective references to each other

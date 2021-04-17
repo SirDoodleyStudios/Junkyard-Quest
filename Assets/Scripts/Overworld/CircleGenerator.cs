@@ -801,9 +801,13 @@ public class CircleGenerator : MonoBehaviour
                 {
                     nodeIden.MakeNodeSelected();
                 }
-
+                if(nodeData.isTraversed == true)
+                {
+                    nodeIden.MakeNodeTraversed();
+                }
                 nodeIden.nodeActivityEnum = nodeData.nodeActivity;
                 nodeIden.AssignNodeIconImage();
+
                 //nodeIden.isClickable = nodeData.isClickable;
                 //nodeIden.isSelected = nodeData.isSelected;
 
@@ -825,6 +829,11 @@ public class CircleGenerator : MonoBehaviour
             linkIden.innerNode = gameObject.transform.GetChild(linkData.linkedInnerParent).GetChild(linkData.linkedInnerNode).gameObject;
             linkIden.outerNode = gameObject.transform.GetChild(linkData.linkedOuterParent).GetChild(linkData.linkedOuterNode).gameObject;
             linkRect.sizeDelta = new Vector2(linkData.linkWidth, linkRect.rect.height);
+
+            if (linkData.isTraversed)
+            {
+                linkIden.MakeLinkTraversed();
+            }
         }
 
     }
