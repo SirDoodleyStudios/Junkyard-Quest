@@ -20,22 +20,47 @@ public class NodeLinkIdentifier : MonoBehaviour, IPointerEnterHandler, IPointerE
     public bool isClickable;
     //bool identifier if node is currently selected
     public bool isSelected;
+    //the node activity attached to this
+    public NodeActivityEnum nodeActivityEnum;
 
     //child 1 is the node area of the node prefab which contains the actual node sprite
-    Image nodeImage;
+    Transform nodeAreaTrans;
+    Image nodeArea;
     //node's color
     Color originalColor;
     Color stateColor;
+    //the activity icon of the node itself
+    Image nodeActivityIcon;
+    bool isActivityDone;
 
     private void Awake()
     {
-        nodeImage = gameObject.transform.GetChild(1).GetComponent<Image>();
+        //Child 1 of the node prefab is the nodeArea, dont mess with the prefab
+        nodeAreaTrans = gameObject.transform.GetChild(1);
+        //for the node Area only
+        nodeArea = nodeAreaTrans.GetComponent<Image>();
         originalColor = Color.white;
+        //for the node icon, child 0 is the node Icon image, it's the only chlid
+        nodeActivityIcon = nodeAreaTrans.GetChild(0).gameObject.GetComponent<Image>();
+
+        //assigns the NodeAvtivity immediately
+        //random only for now, will incorporate logic later
+        //6 max index is because NodeActivityEnum has 6 elements, make sure to change this if there re changes to enums
+
+        if (!UniversalSaveState.isMapInitialized)
+        {
+            nodeActivityEnum = (NodeActivityEnum)Random.Range(0, 6);
+            AssignNodeIconImage();
+        }
+
+
         circleGenerator = gameObject.transform.parent.gameObject.transform.parent.gameObject.GetComponent<CircleGenerator>();
         circleGenerator.d_DestroyNodes += DestroyNode;
         isToBeDestroyed = false;
         isClickable = false;
         isSelected = false;
+
+
     }
     //called by an event during circle nodes generation
     public void DestroyNode()
@@ -46,24 +71,31 @@ public class NodeLinkIdentifier : MonoBehaviour, IPointerEnterHandler, IPointerE
             Destroy(gameObject);
         }
     }
+    //called by this script during first initialize
+    //called by loading function during next exectuions
+    public void AssignNodeIconImage()
+    {
+        nodeActivityIcon.sprite = Resources.Load<Sprite>($"NodeIcon/{nodeActivityEnum}");
+    }
+
     //called by update in OverworldManager, indicates if the node is avalable for click
     public void MakeNodeClickable()
     {
         isSelected = false;
         isClickable = true;
         //color clickable nodes to red
-        nodeImage.color = Color.red;
+        nodeArea.color = Color.red;
 
     }
     public void MakeNodeSelected()
     {
-        nodeImage.color = Color.green;
+        nodeArea.color = Color.green;
         isSelected = true;
         isClickable = false;
     }
     public void MakeNodeUnselected()
     {
-        nodeImage.color = originalColor;
+        nodeArea.color = originalColor;
         isSelected = false;
         isClickable = false;
 
@@ -87,8 +119,8 @@ public class NodeLinkIdentifier : MonoBehaviour, IPointerEnterHandler, IPointerE
     {
         if (isClickable)
         {
-            stateColor = nodeImage.color;
-            nodeImage.color = Color.blue;
+            stateColor = nodeArea.color;
+            nodeArea.color = Color.blue;
         }
     }
     public void OnPointerExit(PointerEventData eventData)
@@ -96,7 +128,7 @@ public class NodeLinkIdentifier : MonoBehaviour, IPointerEnterHandler, IPointerE
 
         if (isClickable)
         {
-            nodeImage.color = stateColor;
+            nodeArea.color = stateColor;
         }
     }
 

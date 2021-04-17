@@ -1,13 +1,15 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+//NEVER EDIT THE TEXT HERE WITHOUT KNOWING WHAT YOU'RE DOING!!!
+//A LOT OF THINGS ARE BASED ON THE ENUM NAMES
 public enum CombatState { PlayerTurn, CreativeMode, UnleashCreativity, ActiveCard, DrawPhase, Tweening, EnemyTurn }
 
 public enum OverworldState { StartingNode, MoveNode}
-
+//SCENES DEPENDED
 public enum NodeActivityEnum { Combat, Event, Merchant, Forge, Rest, Boon }
-
+//Link activites are not seen from overworld and random like darkest dungeon
+//SCENES DEPENDENT
 public enum LinkActivityEnum {Skirmish, Chest, Booth, SmallEvent}
 
 public enum CardClass { Neutral, Warrior, Rogue, Mage, Arlen, Cedric, Francine, Tilly, Princess }
@@ -18,7 +20,7 @@ public enum CardMethod { Targetted, Dropped}
 
 public enum JigsawLink { Circle, Triangle, Square, Material, Finisher}
 
-//
+//ABILITIES DEPENDENT
 public enum AllAbilities
 {
     //Neutral Abilities

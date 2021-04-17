@@ -142,6 +142,8 @@ public class NodeData
     //bool identifiers of the node
     public bool isClickable;
     public bool isSelected;
+    //nodeActivity num of the node
+    public NodeActivityEnum nodeActivity;
 
     public NodeData(NodeStatusSave nodeData)
     {
@@ -156,6 +158,7 @@ public class NodeData
         outerLinkValueIndex = nodeData.outerLinkValueIndex;
         isClickable = nodeData.isClickable;
         isSelected = nodeData.isSelected;
+        nodeActivity = nodeData.nodeActivityEnum;
     }
 }
 

@@ -23,8 +23,11 @@ public class OverworldManager : MonoBehaviour
     Vector2 mouseOriginPos;
     Vector2 panningMousePos;
     public Canvas mainCanvas;
+    //boundary vectors for panning
     float xBoundary;
     float yBoundary;
+    //last mouse position to be saved and loaded as the carera's current positon
+    Vector2 cameraPos = new Vector2();
 
     //stores the current selected node
     public GameObject currentNode;
@@ -40,23 +43,28 @@ public class OverworldManager : MonoBehaviour
 
     void Start()
     {
-        //calls circleManager
-        circleGenerator.GenerateMap();
-
-        //orthographic size is equal to your desired screenheight/2. I want the ortho height to be half of screen size, so i divided the canvas height by 4
-        camera.orthographicSize = mainCanvas.GetComponent<RectTransform>().rect.height / 4;
-        //boundaries for he map
-        //canvas position is at the 0,0 and camera pivot is at center, ortho camera is effectively half of screen size
-        xBoundary = camera.aspect * camera.orthographicSize;
-        yBoundary = camera.orthographicSize;
-
+        //checks first if map is alreadey created
         if (UniversalSaveState.isMapInitialized)
         {
             worldState = OverworldState.MoveNode;
         }
 
+        //calls circleManager
+        circleGenerator.GenerateMap();
+
+        //orthographic size is equal to your desired screenheight/2. I want the ortho height to be half of screen size, so i divided the canvas height by 4
+        camera.orthographicSize = mainCanvas.GetComponent<RectTransform>().rect.height / 4f;
+        //boundaries for he map
+        //canvas position is at the 0,0 and camera pivot is at center, ortho camera is effectively half of screen size
+        xBoundary = camera.aspect * camera.orthographicSize;
+        yBoundary = camera.orthographicSize;
+
+
+        Debug.Log(worldState);
+
     }
     //called by CircleGenerator once the parent circles are generated
+    //only gets called during the first creation of the overworld map
     public void AssignStartingPositions(GameObject outerCircle)
     {
         Transform outerCircleTrans = outerCircle.transform;
@@ -90,6 +98,10 @@ public class OverworldManager : MonoBehaviour
             GameObject adjNode = adjParent.GetChild(keyData.adjacentNodeIndex[i]).gameObject;
             adjacentNodes.Add(adjNode);
         }
+
+        //reassigns the camera position from last transition
+        //z is always -10 for overworld settings
+        camera.transform.position = new Vector3(keyData.cameraX, keyData.cameraY, -10);
 
     }
 
@@ -164,7 +176,7 @@ public class OverworldManager : MonoBehaviour
                         //circleGenerator.SaveOverworldState();
                         SaveFunction();
                         //scene transition depending on the NodeActivityEnum of the target Node
-                        activitiesManager.LoadStartNodeActivity(NodeActivityEnum.Combat);
+                        activitiesManager.LoadStartNodeActivity(currentNodeIden.nodeActivityEnum);
 
                     }
                 }
@@ -215,7 +227,7 @@ public class OverworldManager : MonoBehaviour
                         //circleGenerator.SaveOverworldState();
                         SaveFunction();
                         //FOR TEST ONLY, ACTIVATES A TEST SCENE WHICH JUST HAPPENS TO BE THE COMBAT SCENE
-                        activitiesManager.LoadStartNodeActivity(NodeActivityEnum.Combat);
+                        activitiesManager.LoadStartNodeActivity(currentNodeIden.nodeActivityEnum);
 
                         ////
                     }
@@ -237,7 +249,7 @@ public class OverworldManager : MonoBehaviour
         //for nodes and links architecture
         circleGenerator.SaveOverworldState();
         //for overworld releveant data like current node selected
-        UniversalSaveState.SaveOverWorldData(new SaveKeyOverworld(worldState, currentNode.transform, adjacentNodes));
+        UniversalSaveState.SaveOverWorldData(new SaveKeyOverworld(worldState, currentNode.transform, adjacentNodes, camera.transform.position));
     }
 
     ////These three works together, this is for saving the overworld  object state when changing scenes
@@ -304,17 +316,23 @@ public class SaveKeyOverworld
     public int adjacentNodeCount;
     public List<int> adjacentParents = new List<int>();
     public List<int> adjacentNodeIndex = new List<int>();
+    //for the camera position
+    public float cameraX;
+    public float cameraY;
 
     //param 1 = overworldManager state
     //param 2 = currentNode
     //param 3 = current node's adjacent nodes
-    public SaveKeyOverworld(OverworldState worldState, Transform nodeTrans, List<GameObject> adjacentNodes)
+    //param 4 = position of mouse
+    public SaveKeyOverworld(OverworldState worldState, Transform nodeTrans, List<GameObject> adjacentNodes, Vector2 cameraPos)
     {
         moveState = worldState;
         nodeIndex = nodeTrans.GetSiblingIndex();
         nodeParent = nodeTrans.parent.GetSiblingIndex();
         isMapInitialized = UniversalSaveState.isMapInitialized;
         adjacentNodeCount = adjacentNodes.Count;
+        cameraX = cameraPos.x;
+        cameraY = cameraPos.y;
         if (adjacentNodes.Count != 0)
         {
             foreach (GameObject node in adjacentNodes)

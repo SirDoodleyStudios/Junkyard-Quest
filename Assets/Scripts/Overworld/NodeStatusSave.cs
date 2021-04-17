@@ -29,6 +29,8 @@ public class NodeStatusSave : MonoBehaviour
     //bool identifiers of the node
     public bool isClickable;
     public bool isSelected;
+    //nodeActivity
+    public NodeActivityEnum nodeActivityEnum;
 
     //this is an identifier that makes sure that a node's List of preferences are not updated again if the save function is called
     //without this, the list of references will double or triple depending on how many consecutive save calls it gets
@@ -48,6 +50,7 @@ public class NodeStatusSave : MonoBehaviour
         nodePosition = new float[2] { objectRect.anchoredPosition.x, objectRect.anchoredPosition.y };
         parentIndex = gameObject.transform.parent.gameObject.transform.GetSiblingIndex();
         nodeIndex = gameObject.transform.GetSiblingIndex();
+        nodeActivityEnum = nodeIdentifier.nodeActivityEnum;
         //makes sure that the adding of references are only called once
         if (!isInitialized)
         {

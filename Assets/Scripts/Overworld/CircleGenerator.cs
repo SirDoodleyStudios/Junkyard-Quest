@@ -801,6 +801,9 @@ public class CircleGenerator : MonoBehaviour
                 {
                     nodeIden.MakeNodeSelected();
                 }
+
+                nodeIden.nodeActivityEnum = nodeData.nodeActivity;
+                nodeIden.AssignNodeIconImage();
                 //nodeIden.isClickable = nodeData.isClickable;
                 //nodeIden.isSelected = nodeData.isSelected;
 
