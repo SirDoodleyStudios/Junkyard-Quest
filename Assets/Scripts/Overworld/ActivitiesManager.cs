@@ -2,12 +2,15 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using System.IO;
 
 public class ActivitiesManager : MonoBehaviour
 {
     NodeActivityEnum nextNode;
     bool isNodeTraversed;
     bool isLinkTraversed;
+
+
 
     //called by overworld manager to load the target scene
     //the scene name is the NodeActivityEnum string + "Scene"
@@ -37,7 +40,15 @@ public class ActivitiesManager : MonoBehaviour
             }
         }
     }
-
+    //will be called by overworld when resetting
+    //the identifier isResetting will be cheched during overworld initial run and will only be true during resetting and will not be saved to json
+    public void ResetMap()
+    {
+        File.Delete(Application.persistentDataPath + "/OverWorldData.json");
+        UniversalSaveState.isMapInitialized = false;
+        UniversalSaveState.isResetting = true;
+        SceneManager.LoadScene("OverworldScene");
+    }
 
     //old functionality
     public void LoadStartNodeActivity(NodeActivityEnum first)

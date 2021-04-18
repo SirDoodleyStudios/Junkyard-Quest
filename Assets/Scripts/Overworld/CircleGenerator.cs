@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.IO;
 
 public class CircleGenerator : MonoBehaviour
 {
@@ -43,22 +44,40 @@ public class CircleGenerator : MonoBehaviour
     //WILL CHANGE DEPENDING ON SAVE STATE LOGIC
     public void GenerateMap()
     {
-        //if static bool parameter sent from UniversalSaveState is not true, generate the circles
-        if (!UniversalSaveState.isMapInitialized)
+        if (!UniversalSaveState.isResetting)
+        {
+            //checks first if th save files are in directory
+            if (File.Exists(Application.persistentDataPath + "/OverWorld.json"))
+            {
+                //load circles. nodes and links of map
+                LoadOverWorldState();
+                //load important data
+                //depends if the loading is for initial or for already moving state
+                if (File.Exists(Application.persistentDataPath + "/OverWorldData.json"))
+                {
+                    overworldManager.LoadOverWorldData();
+                }
+
+            }
+            else
+            {
+                InitialMapGenerate();
+                //static bool in UniversakSaveState
+                UniversalSaveState.isMapInitialized = true;
+            }
+        }
+        //if came from reset, do the InitialMapGenerate
+        else
         {
             InitialMapGenerate();
             //static bool in UniversakSaveState
             UniversalSaveState.isMapInitialized = true;
+            UniversalSaveState.isResetting = false;
         }
-        //if not, it means that the circles were already generated
-        else
-        {
-            //load circles. nodes and links of map
-            LoadOverWorldState();
-            //load important data
-            overworldManager.LoadOverWorldData();
-        }
+
     }
+
+
 
     void InitialMapGenerate()
     {
@@ -107,7 +126,12 @@ public class CircleGenerator : MonoBehaviour
 
 
         //save the generated map once everything is initially loaded
+        //Saves the overworld nodes and links then the Universal Status
+        //no overworldData save at initial generate
         SaveOverworldState();
+        UniversalInformation universal = new UniversalInformation();
+        universal.UniversalOverWorldStart();
+        UniversalSaveState.SaveUniversalInformation(universal);
     }
 
     //make sure that nodecount is always even
@@ -735,7 +759,9 @@ public class CircleGenerator : MonoBehaviour
 
         List<LinkData> linkList = loadedOverWorld.linkList;
         List<NodeDataListWrapper> nodeHolderList = loadedOverWorld.nodeList;
-        
+
+        //UniversalSaveState.isNotAtInitialPhase = loadedOverWorld.isNotAtInitialPhase;
+
         //we use the nodeList as baseline for how many holders to create because the needed hodlers are 1 link holder plus how many nodeData is in the list
         for (int holdersIndex = 0; nodeHolderList.Count >= holdersIndex; holdersIndex++)
         {

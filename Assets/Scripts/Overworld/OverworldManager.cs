@@ -27,7 +27,7 @@ public class OverworldManager : MonoBehaviour
     float xBoundary;
     float yBoundary;
     //last mouse position to be saved and loaded as the carera's current positon
-    Vector2 cameraPos = new Vector2();
+    //Vector2 cameraPos = new Vector2();
 
     //stores the current selected node
     public GameObject currentNode;
@@ -44,14 +44,16 @@ public class OverworldManager : MonoBehaviour
 
     void Start()
     {
+
+        //calls circleManager
+        circleGenerator.GenerateMap();
+
+        //once inserted before GenerateMap()
         //checks first if map is alreadey created
         if (UniversalSaveState.isMapInitialized)
         {
             worldState = OverworldState.MoveNode;
         }
-
-        //calls circleManager
-        circleGenerator.GenerateMap();
 
         //orthographic size is equal to your desired screenheight/2. I want the ortho height to be half of screen size, so i divided the canvas height by 4
         camera.orthographicSize = mainCanvas.GetComponent<RectTransform>().rect.height / 4f;
@@ -131,7 +133,13 @@ public class OverworldManager : MonoBehaviour
             //position of camera will not go beyond the set positive and negative boundaries
             camera.transform.position = new Vector3(Mathf.Clamp(xPanning, -xBoundary, xBoundary), Mathf.Clamp(yPanning, -yBoundary, yBoundary), -10f);
         }
-        
+
+        //Reset Function that immediately resets the map
+        if (Input.GetKey(KeyCode.R))
+        {
+            activitiesManager.ResetMap();
+        }
+
         //during start of overworld manager, player will get to choose starting position node
         if (worldState == OverworldState.StartingNode)
         {
@@ -196,15 +204,15 @@ public class OverworldManager : MonoBehaviour
             ray = Camera.main.ScreenPointToRay(PointRay);
             pointedObject = Physics2D.GetRayIntersection(ray);
 
-            //will contain the initial node before selecting the target current node
-            //currentnode will be overwritten at the click, we'll use the initial for finding the correct link partner to be made traversed
-            GameObject initialNode = currentNode;
-            NodeLinkIdentifier initialNodeIden = initialNode.GetComponent<NodeLinkIdentifier>();
-
             //makes sure that clicked object has a collider
             if (Input.GetMouseButtonDown(0) && pointedObject.collider != null)
             {
+                //will contain the initial node before selecting the target current node
+                //currentnode will be overwritten at the click, we'll use the initial for finding the correct link partner to be made traversed
+                GameObject initialNode = currentNode;
+                NodeLinkIdentifier initialNodeIden = initialNode.GetComponent<NodeLinkIdentifier>();
                 GameObject clickedObject = pointedObject.collider.gameObject;
+
 
                 //for when a node is clicked
                 if (clickedObject.tag == "Node")
@@ -264,7 +272,8 @@ public class OverworldManager : MonoBehaviour
                         //    Debug.Log("node being accessed has no link pair");
                         //}
 
-
+                        //separates loading 
+                        //UniversalSaveState.isNotAtInitialPhase = true;
 
                         //calls circle generator's save function to save current overworld
                         //sends the univesal information to be saved as well

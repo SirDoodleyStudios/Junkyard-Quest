@@ -7,7 +7,12 @@ using System.IO;
 public static class UniversalSaveState
 {    //indicates if the Overworld Map is already generated, if this is false, when going back to Overworld scene, it will load the saved Overworld state
     public static bool isMapInitialized { get; set; }
+    //only accessed during gameplay, will set this then load the Overworld again during resetting
+    public static bool isResetting { get; set; }
 
+    //indicates whether a the map is at its initial phase
+    //if false, this will ignore loading of overworldData during loading from file
+    //public static bool isNotAtInitialPhase { get; set; }
 
     //called by overworld manager to save the current state
     public static void SaveOverworldMap(List<LinkStatusSave> linkStatusSave, List<List<NodeStatusSave>> nodeStatusHolderSave/*, UniversalParameters universalParameters*/)
@@ -90,12 +95,15 @@ public class SaveMapState
 {
     public List<LinkData> linkList = new List<LinkData>();
     public List<NodeDataListWrapper> nodeList = new List<NodeDataListWrapper>();
+    //public bool isNotAtInitialPhase;
+
     //public UniversalParameters universalParameters
 
     public SaveMapState(List<LinkData> links, List<NodeDataListWrapper> nodes)
     {
         linkList = links;
         nodeList = nodes;
+        //isNotAtInitialPhase = UniversalSaveState.isNotAtInitialPhase;
 
     }
 }
