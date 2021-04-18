@@ -9,6 +9,9 @@ using System;
 public class UniversalInformation
 {
     public NodeActivityEnum nextNode;
+    //the traversed identifiers are not the same here compared to the one in the overworld state save 
+    //these are saved before actually marking the link and nodes as traversed since these will be used by other scenes to determine what scene to load next
+    //not used by the overWorld state loader
     public bool isTargetNodeTraversed;
     public bool isPartnerLinkTraversed;
 

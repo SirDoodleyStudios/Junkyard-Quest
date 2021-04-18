@@ -11,7 +11,7 @@ public class TestLinkActivitiesInitialize : MonoBehaviour
 
 
     //this is just a test
-    GameObject ActivityHolder;
+    public GameObject ActivityHolder;
 
     void Start()
     {

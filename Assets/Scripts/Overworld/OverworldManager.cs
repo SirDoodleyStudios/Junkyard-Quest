@@ -233,31 +233,38 @@ public class OverworldManager : MonoBehaviour
                             NodeLinkIdentifier adjacentIden = adjacentNode.GetComponent<NodeLinkIdentifier>();
                             adjacentIden.MakeNodeClickable();
                         }
-                        //marks node as traversed
-                        currentNodeIden.MakeNodeTraversed();
+
+                        //primes the universalinfo to be saved
+                        UniversalInformation universal = new UniversalInformation();
                         //checks first where the target node is in the inner and outer node dictionaries
                         //mark the partner link as traversed
                         LinkCollisionIdentifier partnerLink;
+
+                        //The UniversalInformation primed for saving must always come before the makeTraverse Functions
+                        //This is because the loaded file for other scenes must contain formation before they are marked as traversed
                         if (initialNodeIden.pairInnerNodeLink.ContainsKey(currentNode))
                         {
+
                             partnerLink = initialNodeIden.pairInnerNodeLink[currentNode].GetComponent<LinkCollisionIdentifier>();
+                            universal.UniversalOverworldMove(currentNodeIden.nodeActivityEnum, currentNodeIden.isTraversed, partnerLink.isTraversed);
                             partnerLink.MakeLinkTraversed();
+                            currentNodeIden.MakeNodeTraversed();
                         }
                         // the else if for pairOuterNodeLink, has risks
                         //else if (initialNodeIden.pairOuterNodeLink.ContainsKey(currentNode))
                         else
                         {
                             partnerLink = initialNodeIden.pairOuterNodeLink[currentNode].GetComponent<LinkCollisionIdentifier>();
+                            universal.UniversalOverworldMove(currentNodeIden.nodeActivityEnum, currentNodeIden.isTraversed, partnerLink.isTraversed);
                             partnerLink.MakeLinkTraversed();
+                            currentNodeIden.MakeNodeTraversed();
                         }
                         //else
                         //{
                         //    Debug.Log("node being accessed has no link pair");
                         //}
 
-                        //primes the universalinfo to be saved
-                        UniversalInformation universal = new UniversalInformation();
-                        universal.UniversalOverworldMove(currentNodeIden.nodeActivityEnum, currentNodeIden.isTraversed, partnerLink.isTraversed);
+
 
                         //calls circle generator's save function to save current overworld
                         //sends the univesal information to be saved as well
