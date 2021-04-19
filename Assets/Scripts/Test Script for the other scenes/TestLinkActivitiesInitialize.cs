@@ -15,10 +15,13 @@ public class TestLinkActivitiesInitialize : MonoBehaviour
 
     void Start()
     {
-        UniversalInformation UniversalInfo = UniversalSaveState.LoadUniversalInformation();
-        nextNode = UniversalInfo.nextNode;
+        //UniversalInformation UniversalInfo = UniversalSaveState.LoadUniversalInformation();
+        OverworldManager.NextNodeWrapper nodeWrapper = UniversalSaveState.LoadOverWorldData().nodeWrapper;
+        //nextNode = UniversalInfo.nextNode;
+        nextNode = nodeWrapper.nextNode;
         //isLinkTaversed = UniversalInfo.isPartnerLinkTraversed;
-        isNodeTraversed = UniversalInfo.isTargetNodeTraversed;
+        //isNodeTraversed = UniversalInfo.isTargetNodeTraversed;
+        isNodeTraversed = nodeWrapper.isTargetNodeTraversed;
 
         //test iteration for activity and test
         for (int i = 0; 3>i; i++)

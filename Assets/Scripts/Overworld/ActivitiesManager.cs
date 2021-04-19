@@ -18,10 +18,17 @@ public class ActivitiesManager : MonoBehaviour
 
     public void LoadActivities()
     {
-        UniversalInformation UniversalInfo = UniversalSaveState.LoadUniversalInformation();
-        nextNode = UniversalInfo.nextNode;
-        isLinkTraversed = UniversalInfo.isPartnerLinkTraversed;
-        isNodeTraversed = UniversalInfo.isTargetNodeTraversed;
+        //UniversalInformation UniversalInfo = UniversalSaveState.LoadUniversalInformation();
+
+        OverworldManager.NextNodeWrapper nexNodeWrapper = UniversalSaveState.LoadOverWorldData().nodeWrapper;
+
+        //nextNode = UniversalInfo.nextNode;
+        //isLinkTraversed = UniversalInfo.isPartnerLinkTraversed;
+        //isNodeTraversed = UniversalInfo.isTargetNodeTraversed;
+
+        nextNode = nexNodeWrapper.nextNode;
+        isLinkTraversed = nexNodeWrapper.isPartnerLinkTraversed;
+        isNodeTraversed = nexNodeWrapper.isTargetNodeTraversed;
 
         if (!isLinkTraversed)
         {
@@ -31,7 +38,8 @@ public class ActivitiesManager : MonoBehaviour
         {
             if (!isNodeTraversed)
             {
-                nextNode = UniversalInfo.nextNode;
+                //nextNode = UniversalInfo.nextNode;
+                nextNode = nexNodeWrapper.nextNode;
                 SceneManager.LoadScene(nextNode.ToString() + "Scene");
             }
             else

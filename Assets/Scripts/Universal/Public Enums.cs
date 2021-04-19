@@ -5,7 +5,12 @@ using UnityEngine;
 //A LOT OF THINGS ARE BASED ON THE ENUM NAMES
 public enum CombatState { PlayerTurn, CreativeMode, UnleashCreativity, ActiveCard, DrawPhase, Tweening, EnemyTurn }
 
+//STATE OF OVERWORLD WHEN MOVING
 public enum OverworldState { StartingNode, MoveNode}
+
+public enum ChosenPlayer { Arlen, Cedric, Francine, Tilly, Princess};
+public enum ChosenClass { Warrior, Rogue, Mage};
+
 //SCENES DEPENDED
 public enum NodeActivityEnum { Combat, Event, Merchant, Forge, Rest, Boon }
 //Link activites are not seen from overworld and random like darkest dungeon

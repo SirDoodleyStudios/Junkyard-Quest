@@ -37,6 +37,9 @@ public class OverworldManager : MonoBehaviour
     List<GameObject> startingReachableNodes = new List<GameObject>();
     List<GameObject> adjacentNodes = new List<GameObject>();
 
+    //wrapper internal class that holds the ionformation for the next node to be loaded by the activity scenes
+    NextNodeWrapper nodeWrapper;
+
     //for object clicking
     Vector2 PointRay;
     Ray ray;
@@ -182,12 +185,12 @@ public class OverworldManager : MonoBehaviour
                         //marks node as traversed
                         currentNodeIden.MakeNodeTraversed();
 
-                        UniversalInformation universal = new UniversalInformation();
-                        universal.UniversalOverWorldStart();
+                        //UniversalInformation universal = new UniversalInformation();
+                        //universal.UniversalOverWorldStart();
 
                         worldState = OverworldState.MoveNode;
                         //calls circle generator's save function to save current overworld
-                        SaveFunction(universal);
+                        SaveFunction();
                         //scene transition depending on the NodeActivityEnum of the target Node
                         activitiesManager.LoadStartNodeActivity(currentNodeIden.nodeActivityEnum);
                         //activitiesManager.LoadActivities();
@@ -244,6 +247,7 @@ public class OverworldManager : MonoBehaviour
 
                         //primes the universalinfo to be saved
                         UniversalInformation universal = new UniversalInformation();
+
                         //checks first where the target node is in the inner and outer node dictionaries
                         //mark the partner link as traversed
                         LinkCollisionIdentifier partnerLink;
@@ -254,7 +258,8 @@ public class OverworldManager : MonoBehaviour
                         {
 
                             partnerLink = initialNodeIden.pairInnerNodeLink[currentNode].GetComponent<LinkCollisionIdentifier>();
-                            universal.UniversalOverworldMove(currentNodeIden.nodeActivityEnum, currentNodeIden.isTraversed, partnerLink.isTraversed);
+                            //universal.UniversalOverworldMove(currentNodeIden.nodeActivityEnum, currentNodeIden.isTraversed, partnerLink.isTraversed);
+                            nodeWrapper = new  NextNodeWrapper(currentNodeIden.nodeActivityEnum, currentNodeIden.isTraversed, partnerLink.isTraversed);
                             partnerLink.MakeLinkTraversed();
                             currentNodeIden.MakeNodeTraversed();
                         }
@@ -263,7 +268,8 @@ public class OverworldManager : MonoBehaviour
                         else
                         {
                             partnerLink = initialNodeIden.pairOuterNodeLink[currentNode].GetComponent<LinkCollisionIdentifier>();
-                            universal.UniversalOverworldMove(currentNodeIden.nodeActivityEnum, currentNodeIden.isTraversed, partnerLink.isTraversed);
+                            //universal.UniversalOverworldMove(currentNodeIden.nodeActivityEnum, currentNodeIden.isTraversed, partnerLink.isTraversed);
+                            nodeWrapper = new NextNodeWrapper(currentNodeIden.nodeActivityEnum, currentNodeIden.isTraversed, partnerLink.isTraversed);
                             partnerLink.MakeLinkTraversed();
                             currentNodeIden.MakeNodeTraversed();
                         }
@@ -277,7 +283,7 @@ public class OverworldManager : MonoBehaviour
 
                         //calls circle generator's save function to save current overworld
                         //sends the univesal information to be saved as well
-                        SaveFunction(universal);
+                        SaveFunction();
                         //FOR TEST ONLY, ACTIVATES A TEST SCENE WHICH JUST HAPPENS TO BE THE COMBAT SCENE
                         //activitiesManager.LoadStartNodeActivity(currentNodeIden.nodeActivityEnum);
                         activitiesManager.LoadActivities();
@@ -297,67 +303,34 @@ public class OverworldManager : MonoBehaviour
 
     }
     //calls all save actions
-    void SaveFunction(UniversalInformation universalInfo)
+    void SaveFunction()
     {
         //for universal information
-        UniversalSaveState.SaveUniversalInformation(universalInfo);
+        //UniversalSaveState.SaveUniversalInformation(universalInfo);
         //for nodes and links architecture
         circleGenerator.SaveOverworldState();
         //for overworld releveant data like current node selected
-        UniversalSaveState.SaveOverWorldData(new SaveKeyOverworld(worldState, currentNode.transform, adjacentNodes, camera.transform.position));
+        UniversalSaveState.SaveOverWorldData(new SaveKeyOverworld(worldState, currentNode.transform, adjacentNodes, camera.transform.position, nodeWrapper));
     }
 
-    ////These three works together, this is for saving the overworld  object state when changing scenes
-    //public void SaveState()
-    //{
-
-    //    List<LinkStatusSave> linkStatusList = LoadLinkActivities();
-    //    List<List<NodeStatusSave>> nodeHolderStatusList = LoadNodeActivities();
-
-    //    UniversalSaveState.SaveOverworldMap(linkStatusList, nodeHolderStatusList);
-    //}
-
-    //List<LinkStatusSave> LoadLinkActivities()
-    //{
-    //    List<LinkStatusSave> linkList = new List<LinkStatusSave>();
-    //    //index 0 of circle manager should always be the linkHolder
-    //    Transform linkHolderTrans = nodeCircleManager.transform.GetChild(0).transform;
-    //    foreach(Transform link in linkHolderTrans)
-    //    {
-    //        LinkStatusSave linkData = link.gameObject.GetComponent<LinkStatusSave>();
-    //        linkList.Add(linkData);
-    //    }
-
-    //    return linkList;
-
-    //}
-    //List<List<NodeStatusSave>> LoadNodeActivities()
-    //{
-    //    List<List<NodeStatusSave>> nodeHolderList = new List<List<NodeStatusSave>>();
-
-    //    Transform holderParentTrans = circleGenerator.transform;
-    //    foreach (Transform holderTrans in holderParentTrans)
-    //    {
-    //        //will hold the actual nodes
-    //        List<NodeStatusSave> nodeList = new List<NodeStatusSave>();
-    //        //does not check the first child since the first child holds links
-    //        if (holderTrans.GetSiblingIndex() != 0)
-    //        {
-    //            //loops through holder transform to add 
-    //            foreach (Transform nodeTrans in holderTrans)
-    //            {
-    //                GameObject nodeObject = nodeTrans.gameObject;
-
-    //                NodeStatusSave nodeData = nodeObject.GetComponent<NodeStatusSave>();
-    //                nodeList.Add(nodeData);
-    //            }
-    //            //adds the looped node in the list list
-    //            nodeHolderList.Add(nodeList);
-    //        }
-    //    }
-
-    //    return nodeHolderList;
-    //}
+    //this is a wrapper class for the nodeEnum and the isTraversed identifiers
+    //originally the UniersalInformation class
+    [Serializable]
+    public class NextNodeWrapper
+    {
+        public NodeActivityEnum nextNode;
+        //the traversed identifiers are not the same here compared to the one in the overworld state save 
+        //these are saved before actually marking the link and nodes as traversed since these will be used by other scenes to determine what scene to load next
+        //not used by the overWorld state loader
+        public bool isTargetNodeTraversed;
+        public bool isPartnerLinkTraversed;
+        public NextNodeWrapper(NodeActivityEnum next, bool isNodeTraversed, bool isLinkTraversed)
+        {
+            nextNode = next;
+            isTargetNodeTraversed = isNodeTraversed;
+            isPartnerLinkTraversed = isLinkTraversed;
+        }
+    }
 
 }
 //inserts all other 
@@ -375,11 +348,16 @@ public class SaveKeyOverworld
     public float cameraX;
     public float cameraY;
 
+    //migrated from UniversalInformation
+    public OverworldManager.NextNodeWrapper nodeWrapper;
+
     //param 1 = overworldManager state
     //param 2 = currentNode
     //param 3 = current node's adjacent nodes
     //param 4 = position of mouse
-    public SaveKeyOverworld(OverworldState worldState, Transform nodeTrans, List<GameObject> adjacentNodes, Vector2 cameraPos)
+    //param 5 = wrapper for enum for the next node Activity, identifier if next node is already traversed, identifier if next link is already traversed
+
+    public SaveKeyOverworld(OverworldState worldState, Transform nodeTrans, List<GameObject> adjacentNodes, Vector2 cameraPos, OverworldManager.NextNodeWrapper nodeInfo)
     {
         moveState = worldState;
         nodeIndex = nodeTrans.GetSiblingIndex();
@@ -388,6 +366,8 @@ public class SaveKeyOverworld
         adjacentNodeCount = adjacentNodes.Count;
         cameraX = cameraPos.x;
         cameraY = cameraPos.y;
+        nodeWrapper = nodeInfo;
+
         if (adjacentNodes.Count != 0)
         {
             foreach (GameObject node in adjacentNodes)

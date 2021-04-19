@@ -129,9 +129,9 @@ public class CircleGenerator : MonoBehaviour
         //Saves the overworld nodes and links then the Universal Status
         //no overworldData save at initial generate
         SaveOverworldState();
-        UniversalInformation universal = new UniversalInformation();
-        universal.UniversalOverWorldStart();
-        UniversalSaveState.SaveUniversalInformation(universal);
+        //UniversalInformation universal = new UniversalInformation();
+        //universal.UniversalOverWorldStart();
+        //UniversalSaveState.SaveUniversalInformation(universal);
     }
 
     //make sure that nodecount is always even
