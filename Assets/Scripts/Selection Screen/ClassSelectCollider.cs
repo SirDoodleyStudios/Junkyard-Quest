@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class PlayerSelectCollider : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IPointerClickHandler
+public class ClassSelectCollider : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IPointerClickHandler
 {
     Transform playerObjectTrans;
     SelectionManager selectionManager;
@@ -14,8 +14,6 @@ public class PlayerSelectCollider : MonoBehaviour, IPointerEnterHandler, IPointe
     bool isChosen;
     //int indicator that is crosschecked with what was clicked in the collider in SelectionManager
     int index;
-    //string indicator that identifies a player or class choice
-    string objectTag;
 
     //child of gameObject that holds the selection aura
     Image selectionAuraImage;
@@ -25,7 +23,7 @@ public class PlayerSelectCollider : MonoBehaviour, IPointerEnterHandler, IPointe
         playerObjectTrans = gameObject.transform;
         //takes the selection manager script of the holder's parent
         selectionManager = playerObjectTrans.parent.parent.gameObject.GetComponent<SelectionManager>();
-        selectionManager.d_PlayerChosenEvent += UnChoosePlayer;
+        selectionManager.d_ClassChosenEvent += UnChooseClass;
         //for calling the slection aura image child of the gameObject
         selectionAuraImage = playerObjectTrans.GetChild(0).gameObject.GetComponent<Image>();
         originalColor = selectionAuraImage.color;
@@ -33,19 +31,12 @@ public class PlayerSelectCollider : MonoBehaviour, IPointerEnterHandler, IPointe
         isChosen = false;
         index = playerObjectTrans.GetSiblingIndex();
 
-        objectTag = gameObject.tag;
-
         //sets the collder equal to object's size
         objectCollider = gameObject.GetComponent<BoxCollider2D>();
         objectRect = gameObject.GetComponent<RectTransform>();
         objectCollider.size = objectRect.rect.size;
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
 
     public void OnPointerEnter(PointerEventData eventData)
     {
@@ -76,10 +67,10 @@ public class PlayerSelectCollider : MonoBehaviour, IPointerEnterHandler, IPointe
         selectionManager.isPlayerChosen = true;
         isChosen = true;
         //calls the unchoose event to unchoose the other objects
-        selectionManager.UnchoosePlayer();
+        selectionManager.UnchooseClass();
     }
 
-    public void UnChoosePlayer(int tempInt)
+    public void UnChooseClass(int tempInt)
     {
         //only removes highlight and isChosen indicator if the object clicked is not the chosen
         if (isChosen && index != tempInt)
@@ -88,5 +79,4 @@ public class PlayerSelectCollider : MonoBehaviour, IPointerEnterHandler, IPointe
             isChosen = false;
         }
     }
-
 }

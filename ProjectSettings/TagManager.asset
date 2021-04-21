@@ -9,6 +9,8 @@ TagManager:
   - Enemy Holder
   - Node
   - Link
+  - Player Choice
+  - Class Choice
   layers:
   - Default
   - TransparentFX
