@@ -44,8 +44,15 @@ public class BaseUnitFunctions:MonoBehaviour
 
     public void Start()
     {
+        ///////////////////////////////override this to start with combatManager
+        //This should not be here and must be called from Combatmanager because the stats should only be available once we load the UniversalInformation
         InitializeStats();
         unitStatusHolder = gameObject.GetComponent<UnitStatusHolder>();
+    }
+
+    public void BaseUnitStatsInitialize()
+    {
+        InitializeStats();
     }
 
     //Initialize HP for all units
@@ -65,9 +72,7 @@ public class BaseUnitFunctions:MonoBehaviour
         CreativitySlider.maxValue = maxCreativity;
         CreativitySlider.minValue = 0;
         CreativitySlider.value = currCreativity;
-        CreativityText.text = $"{currCreativity}/{maxCreativity}";
-
-        
+        CreativityText.text = $"{currCreativity}/{maxCreativity}";        
 
     }
 

@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using System;
 
+[Serializable]
 [CreateAssetMenu(fileName = "Card", menuName = "Card")]
 public class Card : ScriptableObject
 {
@@ -36,8 +38,8 @@ public class Card : ScriptableObject
     //abstract enum for identifying keys in the dictionary for effect factory
     public AllCards enumCardName;
 
-    public delegate void D_CardEffect();
-    public D_CardEffect d_cardEffect;
+    //public delegate void D_CardEffect();
+    //public D_CardEffect d_cardEffect;
 
     //none initially, must be added later
     //must only be added for offense and utility cards

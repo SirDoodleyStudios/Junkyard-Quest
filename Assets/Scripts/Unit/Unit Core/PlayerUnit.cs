@@ -1,7 +1,7 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System;
 using UnityEngine;
 
+[Serializable]
 [CreateAssetMenu(fileName = "Player Unit", menuName = "Player Unit")]
 public class PlayerUnit : Unit
 {
@@ -10,5 +10,5 @@ public class PlayerUnit : Unit
     //public int Creativity;
     //only playerUnits use this
     public int energy;
-
+    public ChosenPlayer chosenPlayer;
 }

@@ -1,5 +1,8 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
+using System;
+
+[Serializable]
 [CreateAssetMenu(fileName = "Jigsaw", menuName = "Jigsaw")]
 public class JigsawFormat : ScriptableObject
 {

@@ -35,6 +35,7 @@ public class ClassSelectCollider : MonoBehaviour, IPointerEnterHandler, IPointer
         objectCollider = gameObject.GetComponent<BoxCollider2D>();
         objectRect = gameObject.GetComponent<RectTransform>();
         objectCollider.size = objectRect.rect.size;
+        
     }
 
 

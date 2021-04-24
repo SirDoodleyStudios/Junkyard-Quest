@@ -103,6 +103,7 @@ public class DeckManager : MonoBehaviour
     }
 
     //first state of player deck every start of battle
+    //THIS CAN BE CALLED BY COMBATMANAGER DURING INITIALIZATION
     public void InitializeBattleDeck()
     {
         battleDeck = initialDeck;

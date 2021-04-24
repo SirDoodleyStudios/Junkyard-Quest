@@ -83,6 +83,9 @@ public class CombatManager : MonoBehaviour
         //initial caching of creativeUnleash object's arrow handler
         creativeUnleashArrow = creativeUnleash.GetComponent<TargetArrowHandler>();
 
+        //load the universalInformation saved from the selection and overworld screen
+        UniversalInformation universalInfo = UniversalSaveState.LoadUniversalInformation();
+
         
         //for just copying the default energy and draws from playerFunctions
         //defaultEnergy = player.GetComponent<PlayerFunctions>().defaultEnergy;
@@ -93,10 +96,12 @@ public class CombatManager : MonoBehaviour
         //EnergyUpdater(defaultEnergy);
         //DeckUpdater();
 
+        //assigns the initializers in the event d_StartTurn
         d_StartTurn += StartTurnInCombatManager;
         d_StartTurn += enemyHolder.GetComponent<EnemyAIManager>().EnemyStart;
         d_StartTurn += player.GetComponent<PlayerFunctions>().PlayerTurn;
         d_StartTurn += player.GetComponent<UnitStatusHolder>().StatusUpdateForNewTurn;
+
         //d_StartTurn += player.GetComponent<UnitStatusHolder>().TurnStatusUpdater;
         //d_StartTurn += player.GetComponent<UnitStatusHolder>().ConsumeTurnStackUpdate;
         foreach (Transform enemy in enemyHolder.transform)

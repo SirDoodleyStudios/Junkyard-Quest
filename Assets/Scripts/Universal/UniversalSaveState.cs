@@ -74,6 +74,9 @@ public static class UniversalSaveState
     //saves info that are to be used in multiple scenes
     public static void SaveUniversalInformation(UniversalInformation universalInfo)
     {
+        PlayerUnitWrapper playerWrapper = new PlayerUnitWrapper(universalInfo.playerStats);
+        universalInfo.playerStatsWrapper = playerWrapper;
+
         string universal = JsonUtility.ToJson(universalInfo);
         File.WriteAllText(Application.persistentDataPath + "/UniversalInfo.json", universal);
     }
@@ -82,6 +85,18 @@ public static class UniversalSaveState
         //for loading universal data like current node selected and where it's at
         string universalInfo = File.ReadAllText(Application.persistentDataPath + "/UniversalInfo.json");
         UniversalInformation loadedState = JsonUtility.FromJson<UniversalInformation>(universalInfo);
+
+        //extracts the player wrapper and reverts it back to PlayerUnit
+        PlayerUnitWrapper unitWrapper = loadedState.playerStatsWrapper;
+        PlayerUnit loadedUnit = Resources.Load<PlayerUnit>("/PlayerSO/Current Stats");
+        loadedUnit.HP = unitWrapper.HP;
+        loadedUnit.Creativity = unitWrapper.Creativity;
+        loadedUnit.draw = unitWrapper.draw;
+        loadedUnit.energy = unitWrapper.energy;
+        loadedUnit.chosenPlayer = unitWrapper.chosenPlayer;
+        //after the extract, assign the playerUnit in the universalInformation
+        loadedState.playerStats = loadedUnit;
+
         return loadedState;
     }
 
@@ -203,24 +218,46 @@ public class NodeDataListWrapper
     }
 }
 
-//di ko alaam ang gagawin dito
-public class UniversalParameters
+[Serializable]
+public class PlayerUnitWrapper
 {
-    //will contain the enum as string
-    public string currentState;
-    //node selected
-    public int NodeIndex;
-    public int NodeParent;
-    //bool found in UniversaolSaveState script
-    public bool isInitialized;
+    public int HP;
+    public int Creativity;
+    public int draw;
 
-    UniversalParameters(OverworldState worldState, int nodeIndex, int parentIndex)
+    //for player
+    public int energy;
+    public ChosenPlayer chosenPlayer;
+
+    //for enemy
+    public PlayerUnitWrapper(PlayerUnit unit)
     {
-        currentState = worldState.ToString();
-        NodeIndex = nodeIndex;
-        NodeParent = parentIndex;
-        isInitialized = UniversalSaveState.isMapInitialized;
+        HP = unit.HP;
+        Creativity = unit.Creativity;
+        draw = unit.draw;
+        energy = unit.energy;
+        chosenPlayer = unit.chosenPlayer;
     }
 }
+
+//di ko alaam ang gagawin dito
+//public class UniversalParameters
+//{
+//    //will contain the enum as string
+//    public string currentState;
+//    //node selected
+//    public int NodeIndex;
+//    public int NodeParent;
+//    //bool found in UniversaolSaveState script
+//    public bool isInitialized;
+
+//    UniversalParameters(OverworldState worldState, int nodeIndex, int parentIndex)
+//    {
+//        currentState = worldState.ToString();
+//        NodeIndex = nodeIndex;
+//        NodeParent = parentIndex;
+//        isInitialized = UniversalSaveState.isMapInitialized;
+//    }
+//}
 
 /////////////////////////////////

@@ -16,6 +16,10 @@ public class SelectionManager : MonoBehaviour
     public GameObject playerPanel;
     public GameObject rolePanel;
 
+    //for storing the initial decks, and player stats
+    //public GameObject objectDirectory;
+    public InitialObjectDirectory directory;
+
     //identifier checked by the individual choice objects
     //this is set as true when a choice has been made
     public bool isPlayerChosen { get; set; }
@@ -32,6 +36,11 @@ public class SelectionManager : MonoBehaviour
     Vector2 PointRay;
     Ray ray;
     RaycastHit2D pointedObject;
+
+    private void Start()
+    {
+        //directory = objectDirectory.GetComponent<InitialObjectDirectory>();
+    }
 
     // Update is called once per frame
     void Update()
@@ -77,6 +86,77 @@ public class SelectionManager : MonoBehaviour
     //loads the scene when play button is clicked
     public void SwitchToOverworld()
     {
+        //for determining the initial deck and stats to be saved first
+        UniversalInformation universalInformation = new UniversalInformation();
+        List<Card> startingDeck = new List<Card>();
+        List<AllCards> cardKeys = new List<AllCards>();
+        //instance will contain the player Unit template of choice
+        //assigns the chosen playerstats to the universalInformation instance
+
+        //PlayerUnit playerStats = ScriptableObject.CreateInstance<PlayerUnit>();
+        PlayerUnit playerStats;
+
+        //switch cases that will determine the basic decks chosen based on the chosen player and class
+        switch (chosenPlayer)
+        {
+            case ChosenPlayer.Arlen:
+                startingDeck.AddRange(directory.arlenBasic);
+                playerStats = Instantiate(directory.arlenUnit);
+                universalInformation.playerStats = playerStats;
+                break;
+            case ChosenPlayer.Cedric:
+                startingDeck.AddRange(directory.cedricBasic);
+                playerStats = Instantiate(directory.cedricUnit);
+                universalInformation.playerStats = playerStats;
+                break;
+            case ChosenPlayer.Francine:
+                startingDeck.AddRange(directory.francineBasic);
+                playerStats = Instantiate(directory.francineUnit);
+                universalInformation.playerStats = playerStats;
+                break;
+            case ChosenPlayer.Tilly:
+                startingDeck.AddRange(directory.tillyBasic);
+                playerStats = Instantiate(directory.tillyUnit);
+                universalInformation.playerStats = playerStats;
+                break;
+            case ChosenPlayer.Princess:
+                startingDeck.AddRange(directory.princessBasic);
+                playerStats = Instantiate(directory.princessUnit);
+                universalInformation.playerStats = playerStats;
+                break;
+            default:
+                break;
+        }
+
+        switch (chosenClass)
+        {
+            case ChosenClass.Warrior:
+                startingDeck.AddRange(directory.warriorBasic);
+                break;
+            case ChosenClass.Rogue:
+                startingDeck.AddRange(directory.rogueBasic);
+                break;
+            case ChosenClass.Mage:
+                startingDeck.AddRange(directory.mageBasic);
+                break;
+            default:
+                break;
+        }
+
+
+
+        //extract the Allcards enum key from the card pool
+        foreach (Card card in startingDeck)
+        {
+            cardKeys.Add(card.enumCardName);
+        }
+        universalInformation.currentDeck = cardKeys;
+
+        //saves the universal info and create a json file for loading later
+        UniversalSaveState.SaveUniversalInformation(universalInformation);
+
         SceneManager.LoadScene("OverworldScene");
     }
+
+    
 }
