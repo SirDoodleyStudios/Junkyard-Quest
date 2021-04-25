@@ -27,6 +27,13 @@ public class PlayerFunctions : BaseUnitFunctions
     //for installing abilities in ability slots
 
 
+    //for loading the playerFunction loaded as the playerUnit
+    //called by combatManager during combatStart after loading
+    public void LoadPlayerUnitFromFile(PlayerUnit unit)
+    {
+        playerUnit = unit;
+    }
+
 
     public override void InitializeStats()
     {
@@ -39,6 +46,7 @@ public class PlayerFunctions : BaseUnitFunctions
         //initializes creativity stats for players only
         defaultEnergy = playerUnit.energy;
         currEnergy = defaultEnergy;
+        Debug.Log("player function");
     }
 
     //called by StartTurn event from combat manager

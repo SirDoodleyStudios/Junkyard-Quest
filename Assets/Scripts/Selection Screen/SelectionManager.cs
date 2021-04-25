@@ -90,9 +90,13 @@ public class SelectionManager : MonoBehaviour
         UniversalInformation universalInformation = new UniversalInformation();
         List<Card> startingDeck = new List<Card>();
         List<AllCards> cardKeys = new List<AllCards>();
+
+        //assigns chosen class and chosen player
+        universalInformation.chosenPlayer = chosenPlayer;
+        universalInformation.chosenClass = chosenClass;
+
         //instance will contain the player Unit template of choice
         //assigns the chosen playerstats to the universalInformation instance
-
         //PlayerUnit playerStats = ScriptableObject.CreateInstance<PlayerUnit>();
         PlayerUnit playerStats;
 
@@ -152,6 +156,7 @@ public class SelectionManager : MonoBehaviour
         }
         universalInformation.currentDeck = cardKeys;
 
+        CardSOFactory.InitializeCardSOFactory(chosenPlayer, chosenClass);
         //saves the universal info and create a json file for loading later
         UniversalSaveState.SaveUniversalInformation(universalInformation);
 

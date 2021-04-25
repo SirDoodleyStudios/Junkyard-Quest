@@ -7,7 +7,8 @@ public enum CombatState { PlayerTurn, CreativeMode, UnleashCreativity, ActiveCar
 
 //STATE OF OVERWORLD WHEN MOVING
 public enum OverworldState { StartingNode, MoveNode}
-
+//list of scenes
+public enum SceneList { PlayerSelectScreen, Overworld, Combat, Event, Merchant, Forge, Rest, Boon, LinkActivities }
 public enum ChosenPlayer { Arlen, Cedric, Francine, Tilly, Princess};
 public enum ChosenClass { Warrior, Rogue, Mage};
 

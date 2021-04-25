@@ -19,6 +19,7 @@ public class OverworldManager : MonoBehaviour
     //public GameObject linkHolder;
     //references for camera movement
     public Camera camera;
+    public CameraUIScript cameraUI;
     bool isPanning;
     Vector2 mouseOriginPos;
     Vector2 panningMousePos;
@@ -37,6 +38,9 @@ public class OverworldManager : MonoBehaviour
     List<GameObject> startingReachableNodes = new List<GameObject>();
     List<GameObject> adjacentNodes = new List<GameObject>();
 
+    //holds the universalInformation Loaded
+    UniversalInformation universalInformation;
+
     //wrapper internal class that holds the ionformation for the next node to be loaded by the activity scenes
     NextNodeWrapper nodeWrapper;
 
@@ -47,6 +51,10 @@ public class OverworldManager : MonoBehaviour
 
     void Start()
     {
+        //automatically assign the universalInformation file's scene to overworld
+        universalInformation = new UniversalInformation();
+        universalInformation = UniversalSaveState.LoadUniversalInformation();
+        universalInformation.scene = SceneList.Overworld;
 
         //calls circleManager
         circleGenerator.GenerateMap();
@@ -60,6 +68,9 @@ public class OverworldManager : MonoBehaviour
 
         //orthographic size is equal to your desired screenheight/2. I want the ortho height to be half of screen size, so i divided the canvas height by 4
         camera.orthographicSize = mainCanvas.GetComponent<RectTransform>().rect.height / 4f;
+        //calls the UI panel attached in the camera to reset the size based on the calculated orthographic size
+        cameraUI.SetUISize(camera.orthographicSize);
+
         //boundaries for he map
         //canvas position is at the 0,0 and camera pivot is at center, ortho camera is effectively half of screen size
         xBoundary = camera.aspect * camera.orthographicSize;
@@ -309,6 +320,8 @@ public class OverworldManager : MonoBehaviour
         //UniversalSaveState.SaveUniversalInformation(universalInfo);
         //for nodes and links architecture
         circleGenerator.SaveOverworldState();
+        //for saving the universalInformation
+        UniversalSaveState.SaveUniversalInformation(universalInformation);
         //for overworld releveant data like current node selected
         UniversalSaveState.SaveOverWorldData(new SaveKeyOverworld(worldState, currentNode.transform, adjacentNodes, camera.transform.position, nodeWrapper));
     }

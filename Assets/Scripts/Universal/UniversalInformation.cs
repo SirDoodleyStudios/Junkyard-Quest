@@ -9,6 +9,9 @@ using System;
 [Serializable]
 public class UniversalInformation
 {
+    //what scene the game was last left from
+    public SceneList scene;
+
     //used for identifying whether a player and class have already  been selected
     //might not need these actually
     public bool isPlayerSelected;
@@ -21,6 +24,10 @@ public class UniversalInformation
     public PlayerUnit playerStats;
     public PlayerUnitWrapper playerStatsWrapper;
     public int scraps;
+
+    //chosens
+    public ChosenPlayer chosenPlayer;
+    public ChosenClass chosenClass;
 
     //only used when game session has been saved from combat
     public List<AllCards> combatDeck;

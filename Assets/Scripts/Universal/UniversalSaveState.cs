@@ -80,6 +80,7 @@ public static class UniversalSaveState
         string universal = JsonUtility.ToJson(universalInfo);
         File.WriteAllText(Application.persistentDataPath + "/UniversalInfo.json", universal);
     }
+
     public static UniversalInformation LoadUniversalInformation()
     {
         //for loading universal data like current node selected and where it's at
@@ -88,7 +89,7 @@ public static class UniversalSaveState
 
         //extracts the player wrapper and reverts it back to PlayerUnit
         PlayerUnitWrapper unitWrapper = loadedState.playerStatsWrapper;
-        PlayerUnit loadedUnit = Resources.Load<PlayerUnit>("/PlayerSO/Current Stats");
+        PlayerUnit loadedUnit = Resources.Load<PlayerUnit>("PlayerSO/Current Stats");
         loadedUnit.HP = unitWrapper.HP;
         loadedUnit.Creativity = unitWrapper.Creativity;
         loadedUnit.draw = unitWrapper.draw;

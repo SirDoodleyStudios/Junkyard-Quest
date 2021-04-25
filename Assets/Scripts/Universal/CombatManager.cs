@@ -7,9 +7,13 @@ using UnityEngine.SceneManagement;
 
 public class CombatManager : MonoBehaviour
 {
+    //event to call when a player turn is started
     public delegate void D_StartTurn();
     public event D_StartTurn d_StartTurn;
 
+    //event to call when combat starts
+    public delegate void D_StartCombat();
+    public event D_StartCombat d_StartCombat;
 
 
     CombatState state;
@@ -37,14 +41,12 @@ public class CombatManager : MonoBehaviour
     public PlayerHand playerHand;
 
     //related to energy
-    int defaultEnergy;
     //Energy gets accessed by playingField
     public int Energy;
     public Text energyText;
 
     //related to decks
     //int defaultDraw = 5;
-    int Draw;
     public Text deckText;
     public Text discardText;
     public Text consumeText;
@@ -61,15 +63,19 @@ public class CombatManager : MonoBehaviour
     Vector2 PointRay;
     Ray ray;
     RaycastHit2D pointedObject;
-    RaycastHit2D pointedTarget;
+    //RaycastHit2D pointedTarget;
     //for arrow pointing dynamic position
     TargetArrowHandler targetArrowHandler;
+
+    //the loaded stats from universalInformation
+    UniversalInformation universalInformation = new UniversalInformation();
 
     public void Awake()
     {
         //one time run to add dictionary entries of cardMechanic enums and text descriptions
         CardTagManager.InitializeTextDescriptionDictionaries();
         EffectFactory.InitializeCardFactory();
+
 
     }
 
@@ -83,10 +89,12 @@ public class CombatManager : MonoBehaviour
         //initial caching of creativeUnleash object's arrow handler
         creativeUnleashArrow = creativeUnleash.GetComponent<TargetArrowHandler>();
 
-        //load the universalInformation saved from the selection and overworld screen
-        UniversalInformation universalInfo = UniversalSaveState.LoadUniversalInformation();
 
-        
+
+        //for exe3ctuing stuff during startcombat
+        //calls the stats initialize for all units
+        d_StartCombat += player.GetComponent<BaseUnitFunctions>().BaseUnitStatsInitialize;
+
         //for just copying the default energy and draws from playerFunctions
         //defaultEnergy = player.GetComponent<PlayerFunctions>().defaultEnergy;
         //Draw = player.GetComponent<PlayerFunctions>().defaultDraw;
@@ -107,10 +115,20 @@ public class CombatManager : MonoBehaviour
         foreach (Transform enemy in enemyHolder.transform)
         {
             d_StartTurn += enemy.GetComponent<UnitStatusHolder>().StatusUpdateForNewTurn;
+            d_StartCombat += enemy.GetComponent<BaseUnitFunctions>().BaseUnitStatsInitialize;
             //d_StartTurn += enemy.gameObject.GetComponent<UnitStatusHolder>().TurnStatusUpdater;
             //d_StartTurn += enemy.GetComponent<UnitStatusHolder>().ConsumeTurnStackUpdate;
         }
 
+        //load the universalInformation saved from the selection and overworld screen
+        // sends playerfunctions to playerPrefab and card list to deckmanager
+        universalInformation = UniversalSaveState.LoadUniversalInformation();
+        CardSOFactory.InitializeCardSOFactory(universalInformation.chosenPlayer, universalInformation.chosenClass);
+        playerFunctions.LoadPlayerUnitFromFile(universalInformation.playerStats);
+        deckManager.InitializeBattleDeck(universalInformation.currentDeck);
+
+        //will be called only during the beginiing
+        d_StartCombat();
 
         //d_StartTurn += Player.GetComponent<AbilityManager>().EnableAbilities;
         //d_StartTurn += Player.GetComponent<PlayerFunctions>().AlterPlayerCreativity;
@@ -157,6 +175,11 @@ public class CombatManager : MonoBehaviour
             SceneManager.LoadScene("OverWorldScene");
         }
 
+        //for test saving
+        if (Input.GetKey(KeyCode.F5))
+        {
+
+        }
 
         //For Choosing Cards to play
         if (state == CombatState.PlayerTurn)
@@ -319,7 +342,7 @@ public class CombatManager : MonoBehaviour
                     state = CombatState.PlayerTurn;
                     //activeCard.GetComponent<DragNDrop>().StateChanger(state);////////////////////
                     //playerHand.StateChanger(state);
-                    DeckUpdater();
+                    //DeckUpdater();
 
 
 
@@ -369,13 +392,14 @@ public class CombatManager : MonoBehaviour
                     //playerHand.StateChanger(state);
                     //resets sorting orders, box colliders, and positions
                     //activeCardDragNDrop.ResetSortingCanvasAndCollider();
-                    DeckUpdater();
+                    //DeckUpdater();
 
 
                     //for thedropfield moving up approach targetting system
                     ////returns dropfield to back after activate of card
                     //dropField.transform.localPosition = originalDropFieldPosition;
                 }
+
                 //if card is ablity, target object will always be player
                 //else if (targetObject.layer == 13 && activeCardCard.cardMethod == CardMethod.Dropped && activeCardCard.cardType == CardType.Ability)
                 else if (activeCardCard.cardMethod == CardMethod.Dropped && activeCardCard.cardType == CardType.Ability)
@@ -412,7 +436,7 @@ public class CombatManager : MonoBehaviour
                     //playerHand.StateChanger(state);
                     //resets sorting orders, box colliders, and positions
                     //activeCardDragNDrop.ResetSortingCanvasAndCollider();
-                    DeckUpdater();
+                    //DeckUpdater();
 
                 }
                 else
@@ -628,7 +652,7 @@ public class CombatManager : MonoBehaviour
                         creativeUnleash.SetActive(false);
                         //playerHand.StateChanger(state); -- not yet sure
 
-                        DeckUpdater();
+                        //DeckUpdater();
 
                     }
                     //disables arrow after use
@@ -680,7 +704,7 @@ public class CombatManager : MonoBehaviour
                 state = CombatState.PlayerTurn;
                 creativeUnleash.SetActive(false);
                 //playerHand.StateChanger(state); -- not yet sure
-                DeckUpdater();
+                //DeckUpdater();
             }
             //back button, goes back to last state of creativity panel and re-enables it
             else if (Input.GetMouseButtonDown(1))
@@ -751,7 +775,9 @@ public class CombatManager : MonoBehaviour
         deckManager.StartCoroutine(deckManager.DrawCards(playerFunctions.defaultDraw));
         //deckManager.DrawCards(playerFunctions.defaultDraw);
 
-        DeckUpdater();
+        //moved to the end of draw, discard, and consume scripts in DeckManager to ensure sync
+        //DeckUpdater();
+
         //turn back to playerTurn phase after drawing
         //playerHand.StateChanger(CombatState.PlayerTurn);
     }
@@ -769,16 +795,17 @@ public class CombatManager : MonoBehaviour
     }
 
     //updates deck and discardpile numbers
+    //Method moved to DeckManager so that the discard, draw and consume Coroutines match the timings with DeckUpdater
     public void DeckUpdater()
     {
-        int deckCardsCount = deckManager.deckCount;
-        int discardCardsCount = deckManager.discardCount;
-        int consumeCardsCount = deckManager.consumeCount;
+        //int deckCardsCount = deckManager.deckCount;
+        //int discardCardsCount = deckManager.discardCount;
+        //int consumeCardsCount = deckManager.consumeCount;
 
-        deckText.text = deckCardsCount.ToString();
-        discardText.text = discardCardsCount.ToString();
-        consumeText.text = consumeCardsCount.ToString();
-
+        //deckText.text = deckCardsCount.ToString();
+        //discardText.text = discardCardsCount.ToString();
+        //consumeText.text = consumeCardsCount.ToString();
+        //Debug.Log("deckupdater");
     }
 
 
@@ -799,7 +826,7 @@ public class CombatManager : MonoBehaviour
            
         }
 
-        DeckUpdater();
+        //DeckUpdater();
         state = CombatState.EnemyTurn;
         //Activate Enemy Actions from enemylist
         StartCoroutine(ProceedEnemyActions());

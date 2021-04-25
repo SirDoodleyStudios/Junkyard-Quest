@@ -27,9 +27,14 @@ public class DeckManager : MonoBehaviour
     public List<CardPool> cardPools = new List<CardPool>();
 
     //can be called by combat manager for updating texts
+    //texts are now updated in deckmanager then deckUpdater is always called every after draw, discard or consume
     public int deckCount { get; private set; }
     public int discardCount { get; private set; }
     public int consumeCount { get; private set; }
+    public Text deckText;
+    public Text discardText;
+    public Text consumeText;
+
 
     //related to deck viewing
     //buttons that point to one method, just different lists to check
@@ -59,6 +64,8 @@ public class DeckManager : MonoBehaviour
 
         //must depend on chosen character and class
 
+
+        /*
         //look through pools first, LOGIC MIGHT CHANGE
         foreach (CardPool pool in cardPools)
         {
@@ -93,19 +100,44 @@ public class DeckManager : MonoBehaviour
             }
 
         }
+        */
+
+
         //assigns the same methodfor deck viewing on each button
         deckViewButton.onClick.AddListener(() => DeckCollectionView(deckViewButton));
         discardPileViewButton.onClick.AddListener(() => DeckCollectionView(discardPileViewButton));
         consumePileViewButton.onClick.AddListener(() => DeckCollectionView(consumePileViewButton));
-        InitializeBattleDeck();
+        //InitializeBattleDeck();
 
 
     }
 
     //first state of player deck every start of battle
     //THIS CAN BE CALLED BY COMBATMANAGER DURING INITIALIZATION
-    public void InitializeBattleDeck()
+    public void InitializeBattleDeck(List<AllCards> savedDeck)
     {
+        foreach (AllCards cardKey in savedDeck)
+        {
+            //calls the factory to instantiate a copy of the base card SO
+            Card tempCard = Instantiate(CardSOFactory.GetCardSO(cardKey));
+            tempCard.effectText = CardTagManager.GetCardEffectDescriptions(tempCard);
+
+            if (tempCard.cardType == CardType.Offense || tempCard.cardType == CardType.Utility)
+            {
+                JigsawFormat instantiatedJigsaw = Instantiate(testJigsawList[Random.Range(0, testJigsawList.Count)]);
+                tempCard.jigsawEffect = instantiatedJigsaw;
+                JigsawFormat assignedJigsaw = tempCard.jigsawEffect;
+
+                assignedJigsaw.inputLink = (JigsawLink)Random.Range(0, 2);
+                assignedJigsaw.outputLink = (JigsawLink)Random.Range(0, 2);
+
+                assignedJigsaw.jigsawDescription = CardTagManager.GetJigsawDescriptions(assignedJigsaw.enumJigsawName);
+                assignedJigsaw.jigsawImage = CardTagManager.DetermineJigsawImage(assignedJigsaw.inputLink, assignedJigsaw.outputLink);
+            }
+
+            initialDeck.Add(tempCard);
+        }
+
         battleDeck = initialDeck;
         deckCount = battleDeck.Count;
         discardCount = discardPile.Count;
@@ -189,6 +221,8 @@ public class DeckManager : MonoBehaviour
             deckCount = battleDeck.Count;
         }
 
+        Debug.Log("draw");
+        DeckUpdater();
     }
 
 
@@ -237,6 +271,8 @@ public class DeckManager : MonoBehaviour
         playerHandScript.StateChanger(CombatState.PlayerTurn);
 
         //playerHandScript.ResetToDeckPosition();
+        Debug.Log("Discard");
+        DeckUpdater();
     }
     //for consumed cards, similar to discard but cards in consume pile will not be drawn upon
     public IEnumerator ConsumeCards(GameObject consumedCardObject)
@@ -261,6 +297,8 @@ public class DeckManager : MonoBehaviour
         playerHandScript.StateChanger(CombatState.PlayerTurn);
 
         //playerHandScript.ResetToDeckPosition();
+        Debug.Log("Consume");
+        DeckUpdater();
     }
 
     //Just for Plain rearrangement without any discard or consume
@@ -394,7 +432,14 @@ public class DeckManager : MonoBehaviour
 
     }
 
-
+    //updates the count text in deck, discard and consume
+    public void DeckUpdater()
+    {
+        deckText.text = deckCount.ToString();
+        discardText.text = discardCount.ToString();
+        consumeText.text = consumeCount.ToString();
+        Debug.Log("deckupdater");
+    }
 
 
 

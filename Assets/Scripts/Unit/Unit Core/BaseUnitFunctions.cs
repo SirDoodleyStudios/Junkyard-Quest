@@ -46,10 +46,11 @@ public class BaseUnitFunctions:MonoBehaviour
     {
         ///////////////////////////////override this to start with combatManager
         //This should not be here and must be called from Combatmanager because the stats should only be available once we load the UniversalInformation
-        InitializeStats();
+        //InitializeStats();
         unitStatusHolder = gameObject.GetComponent<UnitStatusHolder>();
     }
 
+    //called at the begining of combatManager
     public void BaseUnitStatsInitialize()
     {
         InitializeStats();
@@ -72,7 +73,8 @@ public class BaseUnitFunctions:MonoBehaviour
         CreativitySlider.maxValue = maxCreativity;
         CreativitySlider.minValue = 0;
         CreativitySlider.value = currCreativity;
-        CreativityText.text = $"{currCreativity}/{maxCreativity}";        
+        CreativityText.text = $"{currCreativity}/{maxCreativity}";
+        Debug.Log("BASEuNITfUNCTION");
 
     }
 
