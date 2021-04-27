@@ -9,6 +9,7 @@ public class PlayerUnit : Unit
     //public int HP;
     //public int Creativity;
     //only playerUnits use this
+    public int currHP;
     public int energy;
     public ChosenPlayer chosenPlayer;
 }

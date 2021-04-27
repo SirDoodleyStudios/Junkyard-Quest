@@ -1,23 +1,56 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
 
 public class CameraUIScript : MonoBehaviour
 {
     public delegate void D_ResizeCameraUI(float i);
     public event D_ResizeCameraUI d_ResizeCameraUI;
 
+    //loaded Information
+    UniversalInformation universalInfo;
+
+    TextMeshProUGUI HPText;
+    TextMeshProUGUI CreativityText;
+    TextMeshProUGUI ScrapsText;
+
     RectTransform objectRect;
     public void Awake()
     {
         objectRect = gameObject.GetComponent<RectTransform>();
 
+        universalInfo = UniversalSaveState.LoadUniversalInformation();
+
+        //get text object of the overworld UI, the getChild(1) is the the TMPro itself
+        //HP slot is in the index 2 under the Overworld UI
+        //Creativity slot is in index 3
+        //scraps is in index 4
+        HPText = transform.GetChild(2).GetChild(1).gameObject.GetComponent<TextMeshProUGUI>();
+        CreativityText = transform.GetChild(3).GetChild(1).gameObject.GetComponent<TextMeshProUGUI>();
+        ScrapsText = transform.GetChild(4).GetChild(1).gameObject.GetComponent<TextMeshProUGUI>();
     }
 
+    //called by overworld manager when it instantiates
     public void SetUISize(float orthoSize)
     {
+        //sets the size of the UI based on 
         objectRect.sizeDelta = new Vector2(orthoSize/3.6f, 0);
         d_ResizeCameraUI(orthoSize / 3.8f);
 
+        float fontSize = (orthoSize / 3.6f) * .35f;
+        //sets the size of texts in UI depending on the Size of slot
+        HPText.fontSize = fontSize;
+        CreativityText.fontSize = fontSize;
+        ScrapsText.fontSize = fontSize;
+
+    }
+
+    //called by overworld manager
+    public void AssignUIObjects(UniversalInformation universalInfo)
+    {
+        HPText.text = $"{universalInfo.playerStats.currHP}/\n{universalInfo.playerStats.HP}";
+        CreativityText.text = $"{universalInfo.playerStats.Creativity}";
+        ScrapsText.text = $"{universalInfo.scraps}";
     }
 }

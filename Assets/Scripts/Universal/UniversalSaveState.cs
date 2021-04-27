@@ -95,6 +95,7 @@ public static class UniversalSaveState
         loadedUnit.draw = unitWrapper.draw;
         loadedUnit.energy = unitWrapper.energy;
         loadedUnit.chosenPlayer = unitWrapper.chosenPlayer;
+        loadedUnit.currHP = unitWrapper.currHP;
         //after the extract, assign the playerUnit in the universalInformation
         loadedState.playerStats = loadedUnit;
 
@@ -219,12 +220,14 @@ public class NodeDataListWrapper
     }
 }
 
+//this is the serializable version of the PlayerUnit that can be saved in the json
 [Serializable]
 public class PlayerUnitWrapper
 {
     public int HP;
     public int Creativity;
     public int draw;
+    public int currHP;
 
     //for player
     public int energy;
@@ -238,6 +241,7 @@ public class PlayerUnitWrapper
         draw = unit.draw;
         energy = unit.energy;
         chosenPlayer = unit.chosenPlayer;
+        currHP = unit.currHP;
     }
 }
 
