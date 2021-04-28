@@ -68,9 +68,13 @@ public class CameraUIScript : MonoBehaviour
         CreativityText.text = $"{universalInfo.playerStats.Creativity}";
         ScrapsText.text = $"{universalInfo.scraps}";
 
+        //generates the CardSO itself
         foreach (AllCards cardKey in universalInfo.currentDeck)
         {
-            cardList.Add(CardSOFactory.GetCardSO(cardKey));
+            //calls the factory to instantiate a copy of the base card SO
+            Card tempCard = Instantiate(CardSOFactory.GetCardSO(cardKey));
+            tempCard.effectText = CardTagManager.GetCardEffectDescriptions(tempCard);
+            cardList.Add(tempCard);
         }
     }
 
