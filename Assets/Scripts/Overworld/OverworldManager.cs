@@ -59,7 +59,7 @@ public class OverworldManager : MonoBehaviour
         //calls circleManager
         circleGenerator.GenerateMap();
 
-        //after generating map, call method in CameraUIScript to assign the HP, creativity and other UI Visuals
+        //after generating map, call method in CameraUIScript to assign the HP, creativity and other UI Visuals and loads the deck as well
         cameraUI.AssignUIObjects(universalInformation);
 
         //once inserted before GenerateMap()

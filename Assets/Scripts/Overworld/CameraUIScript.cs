@@ -16,6 +16,18 @@ public class CameraUIScript : MonoBehaviour
     TextMeshProUGUI ScrapsText;
 
     RectTransform objectRect;
+
+    //for Deck Viewing
+    //the actual UI to back drop to be activated 
+    public GameObject deckViewUI;
+    List<Card> cardList = new List<Card>();
+    //card prefab for viewing in deck
+    public GameObject deckViewPrefab;
+    //Content gameobject, parent of all prefabs to be shown after button click
+    public Transform deckScrollContent;
+
+
+
     public void Awake()
     {
         objectRect = gameObject.GetComponent<RectTransform>();
@@ -49,8 +61,61 @@ public class CameraUIScript : MonoBehaviour
     //called by overworld manager
     public void AssignUIObjects(UniversalInformation universalInfo)
     {
+        //initializes theCardSO factory
+        CardSOFactory.InitializeCardSOFactory(universalInfo.chosenPlayer, universalInfo.chosenClass);
+
         HPText.text = $"{universalInfo.playerStats.currHP}/\n{universalInfo.playerStats.HP}";
         CreativityText.text = $"{universalInfo.playerStats.Creativity}";
         ScrapsText.text = $"{universalInfo.scraps}";
+
+        foreach (AllCards cardKey in universalInfo.currentDeck)
+        {
+            cardList.Add(CardSOFactory.GetCardSO(cardKey));
+        }
+    }
+
+
+
+    //single method for viewing a card collection in view
+    public void ViewSavedDeck()
+    {
+        deckViewUI.SetActive(true);
+
+        //actual logic to show each card in UI one by one
+
+        foreach (Card deckCard in cardList)
+        {
+            bool hasNoDisabledPrefabs = true;
+            deckViewPrefab.GetComponent<Display>().card = deckCard;
+
+            //checks the scroll contents if there are already instantiated card prefabs that can be recycled
+            foreach (Transform content in deckScrollContent)
+            {
+                GameObject disabledPrefabs = content.gameObject;
+                if (!disabledPrefabs.activeSelf)
+                {
+                    disabledPrefabs.GetComponent<Display>().card = deckCard;
+                    disabledPrefabs.SetActive(true);
+                    hasNoDisabledPrefabs = false;
+                    break;
+                }
+                //if no card prefab can be recycled, instantiate a new one
+            }
+            if (hasNoDisabledPrefabs)
+            {
+                GameObject instantiatedPrefab = Instantiate(deckViewPrefab, deckScrollContent);
+                instantiatedPrefab.GetComponent<Display>().card = deckCard;
+                instantiatedPrefab.SetActive(true);
+            }
+        }
+    }
+    //close deck view
+    public void UnviewSavedDeck()
+    {
+        foreach (Transform content in deckScrollContent)
+        {
+            content.gameObject.SetActive(false);
+        }
+        deckViewUI.SetActive(false);
     }
 }
