@@ -5,15 +5,13 @@ using UnityEngine.UI;
 using TMPro;
 using UnityEngine.EventSystems;
 
-public class CardDescriptionLayout : MonoBehaviour/*, IPointerEnterHandler, IPointerExitHandler*/
+public class CardDescriptionDeckViewLayout : MonoBehaviour/*, IPointerEnterHandler, IPointerExitHandler*/
 {
-    
+
     //parent empty object of popup decriptions and it's RectTransform cache
     public GameObject descriptionLayoutHolder;
     RectTransform descriptionRect;
     List<RectTransform> popupPosList = new List<RectTransform>();
-    //The rectTransform of the card itself
-    RectTransform cardRect;
     //contains the prefab of description GameObject
     public GameObject popupPrefab;
     //constant space between popus
@@ -40,7 +38,6 @@ public class CardDescriptionLayout : MonoBehaviour/*, IPointerEnterHandler, IPoi
         //cache of canvasgroup
         //gets the last child of card prefab which is the tag description holder
         canvasGroup = gameObject.transform.GetChild(gameObject.transform.childCount - 1).gameObject.GetComponent<CanvasGroup>();
-        cardRect = gameObject.GetComponent<RectTransform>();
 
     }
     //on enable assign descriptions
@@ -79,7 +76,7 @@ public class CardDescriptionLayout : MonoBehaviour/*, IPointerEnterHandler, IPoi
                 if (gameObject.GetComponent<Display>().card.cardTags != null)
                 {
                     uiText.text = CardTagManager.GetCardTagDescriptions(tag);
-                }                    
+                }
 
             }
             //create popup fields
@@ -99,7 +96,7 @@ public class CardDescriptionLayout : MonoBehaviour/*, IPointerEnterHandler, IPoi
                 }
                 //popupDesc.GetComponent<Text>().text = CardTagManager.GetCardTagDescriptions(tag);
                 popupPosList.Add(popupDescRect);
-            }           
+            }
 
         }
     }
@@ -127,7 +124,7 @@ public class CardDescriptionLayout : MonoBehaviour/*, IPointerEnterHandler, IPoi
 
 
     IEnumerator OrderPopups()
-    {       
+    {
         //counts as timer for hover
         for (float timer = 0; timer <= 5; timer += Time.deltaTime)
         {
@@ -142,9 +139,10 @@ public class CardDescriptionLayout : MonoBehaviour/*, IPointerEnterHandler, IPoi
                 float nextPosY = -descriptionRect.rect.height * .8f;
                 //0f means that the popups will start on level with the top of the cards because popup anchors are in top right corner of card
                 //float nextPosY = 0f;
-                
+
 
                 //for assigining positions of popups based on it's order
+
                 for (int i = 0; tagsList.Count > i; i++)
                 {
                     RectTransform popupDescRect = popupPosList[i];
@@ -156,57 +154,35 @@ public class CardDescriptionLayout : MonoBehaviour/*, IPointerEnterHandler, IPoi
 
                     //determines whether popups spawn on left or right
                     float nextPosX;
-                    //check first if there is a playerHand script on the parent, if so, it's the player hand and use the original logic for orientation
-                    if (transform.parent.gameObject.GetComponent<PlayerHand>() == null)
+                    //deck view has 5 columns, this determines which card the column is in
+                    int tempIndex;
+                    if (gameObject.transform.GetSiblingIndex()>= 5)
                     {
-                        //deck view has 5 columns, this determines which card the column is in
-                        int tempIndex;
-                        if (gameObject.transform.GetSiblingIndex() >= 5)
-                        {
-                            tempIndex = transform.GetSiblingIndex();
+                        tempIndex = transform.GetSiblingIndex();
 
-                            for (int j = 1; tempIndex >= 5; j++)
-                            {
-                                tempIndex = transform.GetSiblingIndex() - (j * 5);
-                            }
-
-                        }
-                        else
+                        for (int j = 1; tempIndex >= 5; j++)
                         {
-                            tempIndex = transform.GetSiblingIndex();
+                            tempIndex -= j*5;
                         }
 
-                        //if card is at the 3 to 5 slot, show the tags in the left
-                        //This is the only difference between the combat deck layout
-                        if (2 <= tempIndex)
-                        {
-                            //card width and popup width
-                            nextPosX = -cardRect.rect.width -popupPrefab.GetComponent<RectTransform>().rect.width - 10;
-                            //nextPosX = -530;
-                        }
-                        //if not, spawn on right
-                        else
-                        {
-                            nextPosX = 10;
-                        }
                     }
-                    // the original orientation logic, only gets here when the parent has a playerHand script
                     else
                     {
-                        //if card is at the 8 or 9 index spot, spawn the popups in the left
-                        if (gameObject.transform.GetSiblingIndex() >= 8)
-                        {
-                            //card width and popup width
-                            nextPosX = -530;
-                        }
-                        //if not, spawn on right
-                        else
-                        {
-                            nextPosX = 10;
-                        }
+                        tempIndex = transform.GetSiblingIndex();
                     }
 
-
+                    //if card is at the 3 to 5 slot, show the tags in the left
+                    //This is the only difference between the combat deck layout
+                    if (2 <= tempIndex)
+                    {
+                        //card width and popup width
+                        nextPosX = -530;
+                    }
+                    //if not, spawn on right
+                    else
+                    {
+                        nextPosX = 10;
+                    }
 
                     popupDescRect.anchoredPosition = new Vector2(nextPosX, nextPosY);
 

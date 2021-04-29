@@ -789,6 +789,7 @@ GameObject:
   - component: {fileID: 323488169}
   - component: {fileID: 323488162}
   - component: {fileID: 1319250700}
+  - component: {fileID: 1605115919893622963}
   m_Layer: 15
   m_Name: AJ Card Deck Preview Template
   m_TagString: Card
@@ -863,7 +864,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6316217203015278146}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 3e82fe9293cccf1488dd15eb443e0c1a, type: 3}
   m_Name: 
@@ -961,6 +962,18 @@ MonoBehaviour:
   popupPrefab: {fileID: 542886225887752032, guid: 17f10836bfb52f341b8570b7107edfe2,
     type: 3}
   isInCardCollider: 0
+--- !u!114 &1605115919893622963
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6316217203015278146}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 51cda447de21a394391283a9e4e08f8f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &6970827207892172210
 GameObject:
   m_ObjectHideFlags: 0

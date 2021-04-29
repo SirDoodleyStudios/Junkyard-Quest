@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using TMPro;
 
 public class CameraUIScript : MonoBehaviour
@@ -47,14 +48,21 @@ public class CameraUIScript : MonoBehaviour
     public void SetUISize(float orthoSize)
     {
         //sets the size of the UI based on 
-        objectRect.sizeDelta = new Vector2(orthoSize/3.6f, 0);
-        d_ResizeCameraUI(orthoSize / 3.8f);
+        //objectRect.sizeDelta = new Vector2(orthoSize/3.6f, 0);
+        //d_ResizeCameraUI(orthoSize / 3.8f);
+
+        //fix the UI size to a screen percent
+        objectRect.sizeDelta = new Vector2(Screen.width * .1f, Screen.height);
+        d_ResizeCameraUI(Screen.width * .08f);
+        Debug.Log($"W{Screen.width}, H{Screen.height}");
 
         float fontSize = (orthoSize / 3.6f) * .35f;
         //sets the size of texts in UI depending on the Size of slot
         HPText.fontSize = fontSize;
         CreativityText.fontSize = fontSize;
         ScrapsText.fontSize = fontSize;
+
+
 
     }
 
@@ -91,6 +99,12 @@ public class CameraUIScript : MonoBehaviour
         {
             bool hasNoDisabledPrefabs = true;
             deckViewPrefab.GetComponent<Display>().card = deckCard;
+
+            //sets the size of each cell in the content holder depending on the size of screen
+            //the numbers are calculated to get the exact amount needed
+            //I just generated the cards on the screen wtih a sixe that I liked with a fixed 100,143.75 cell size then divided the screen sizes from them
+            GridLayoutGroup gridLayout = deckScrollContent.GetComponent<GridLayoutGroup>();
+            gridLayout.cellSize = new Vector2(Screen.width*.13440860215f, Screen.height*.34389952153f);
 
             //checks the scroll contents if there are already instantiated card prefabs that can be recycled
             foreach (Transform content in deckScrollContent)
