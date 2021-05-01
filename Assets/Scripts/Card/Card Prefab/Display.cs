@@ -30,12 +30,20 @@ public class Display : MonoBehaviour
     public Image displayJigsawImage;
     public Image displayCardType;
 
-    private void Start()
-    {
+    RectTransform cardRect;
 
+    //indentifier if the card is already instantiated so the the font resize function doesnt trigger again
+    //mostly used for non combat card display
+    bool isInstantiated;
+
+    private void Awake()
+    {
+        cardRect = gameObject.GetComponent<RectTransform>();
     }
     private void OnEnable()
     {
+
+
         //For displaying values in scriptable object to card prefab
         displayCardName.text = card.cardName;
         displayEffect.text = card.effectText;
@@ -78,6 +86,22 @@ public class Display : MonoBehaviour
         //        gameObject.layer = 11;
         //        break;
         //}
+    }
+
+    //called by the instantiating script, this allows the font size to adapt after the card is instantiated
+    public void FontResize()
+    {
+        if (!isInstantiated)
+        {
+            isInstantiated = true;
+            //the multiplier is derived from dividing an optimal fontsize for a screen size and dividing it with the card width, this will make it consistently appealing for all screen sizes
+            float multiplier = .0665474137f;
+            displayCardName.fontSize = (cardRect.rect.width * multiplier) + 1;
+            displayEffect.fontSize = cardRect.rect.width * multiplier;
+            displayEnergyCost.fontSize = cardRect.rect.width * multiplier+2;
+            displayJigsawText.fontSize = cardRect.rect.width * multiplier;
+
+        }
     }
 
 }

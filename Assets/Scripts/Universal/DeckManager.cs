@@ -397,7 +397,18 @@ public class DeckManager : MonoBehaviour
             {
                 GameObject instantiatedPrefab = Instantiate(deckViewPrefab, deckScrollContent);
                 instantiatedPrefab.GetComponent<Display>().card = deckCard;
+                CardDescriptionLayout instantiatedPopups = instantiatedPrefab.GetComponent<CardDescriptionLayout>();
+                instantiatedPopups.ResizePopups();
                 instantiatedPrefab.SetActive(true);
+
+
+                //GameObject instantiatedPrefab = Instantiate(deckViewPrefab, deckScrollContent);
+                //RectTransform instantiatedRect = instantiatedPrefab.GetComponent<RectTransform>();
+                //Display instantiatedDisplay = instantiatedPrefab.GetComponent<Display>();
+                //instantiatedRect.sizeDelta = new Vector2(Screen.width * .13440860215f, Screen.height * .34389952153f);
+                //instantiatedDisplay.card = deckCard;
+                //instantiatedDisplay.FontResize();
+                //instantiatedPrefab.SetActive(true);
             }
         }
     }

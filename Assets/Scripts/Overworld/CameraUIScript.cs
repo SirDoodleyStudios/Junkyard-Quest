@@ -105,6 +105,7 @@ public class CameraUIScript : MonoBehaviour
             //I just generated the cards on the screen wtih a sixe that I liked with a fixed 100,143.75 cell size then divided the screen sizes from them
             GridLayoutGroup gridLayout = deckScrollContent.GetComponent<GridLayoutGroup>();
             gridLayout.cellSize = new Vector2(Screen.width*.13440860215f, Screen.height*.34389952153f);
+            gridLayout.spacing = new Vector2(Screen.width * .0237247924f, Screen.height * .04219409282f);
 
             //checks the scroll contents if there are already instantiated card prefabs that can be recycled
             foreach (Transform content in deckScrollContent)
@@ -119,12 +120,22 @@ public class CameraUIScript : MonoBehaviour
                 }
                 //if no card prefab can be recycled, instantiate a new one
             }
+
             if (hasNoDisabledPrefabs)
             {
                 GameObject instantiatedPrefab = Instantiate(deckViewPrefab, deckScrollContent);
-                instantiatedPrefab.GetComponent<Display>().card = deckCard;
+                RectTransform instantiatedRect = instantiatedPrefab.GetComponent<RectTransform>();
+                Display instantiatedDisplay = instantiatedPrefab.GetComponent<Display>();
+                CardDescriptionLayout instantiatedPopups = instantiatedPrefab.GetComponent<CardDescriptionLayout>();
+                instantiatedRect.sizeDelta = new Vector2(Screen.width * .13440860215f, Screen.height * .34389952153f);
+                instantiatedDisplay.card = deckCard;
+                instantiatedDisplay.FontResize();
+                instantiatedPopups.ResizePopups();
                 instantiatedPrefab.SetActive(true);
             }
+
+
+
         }
     }
     //close deck view

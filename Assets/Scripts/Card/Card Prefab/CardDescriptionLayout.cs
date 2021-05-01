@@ -34,6 +34,9 @@ public class CardDescriptionLayout : MonoBehaviour/*, IPointerEnterHandler, IPoi
 
     public bool isInCardCollider;
 
+    //idnetifier if the popus have been resized already
+    bool isPopupResized;
+
     //cache once
     void Awake()
     {
@@ -99,7 +102,11 @@ public class CardDescriptionLayout : MonoBehaviour/*, IPointerEnterHandler, IPoi
                 }
                 //popupDesc.GetComponent<Text>().text = CardTagManager.GetCardTagDescriptions(tag);
                 popupPosList.Add(popupDescRect);
-            }           
+
+
+            }
+
+
 
         }
     }
@@ -180,8 +187,10 @@ public class CardDescriptionLayout : MonoBehaviour/*, IPointerEnterHandler, IPoi
                         //This is the only difference between the combat deck layout
                         if (2 <= tempIndex)
                         {
+                            //spawn in left
                             //card width and popup width
-                            nextPosX = -cardRect.rect.width -popupPrefab.GetComponent<RectTransform>().rect.width - 10;
+                            //-10 is for alloqwance
+                            nextPosX = -cardRect.rect.width*2.5f - 10;
                             //nextPosX = -530;
                         }
                         //if not, spawn on right
@@ -197,7 +206,7 @@ public class CardDescriptionLayout : MonoBehaviour/*, IPointerEnterHandler, IPoi
                         if (gameObject.transform.GetSiblingIndex() >= 8)
                         {
                             //card width and popup width
-                            nextPosX = -530;
+                            nextPosX = -cardRect.rect.width * 2.5f - 10;
                         }
                         //if not, spawn on right
                         else
@@ -237,6 +246,25 @@ public class CardDescriptionLayout : MonoBehaviour/*, IPointerEnterHandler, IPoi
 
 
 
+    }
+    
+    //can be called in script after initializing the card itself, this will allow the generated popus to resize depending on the final card size and not the one in prefab
+    public void ResizePopups()
+    {
+        if (!isPopupResized)
+        {
+            isPopupResized = true;
+            foreach (GameObject popup in existingDescObjList)
+            {
+                TextMeshProUGUI popupText = popup.GetComponent<TextMeshProUGUI>();
+                RectTransform popupRect = popup.GetComponent<RectTransform>();
+                //popupwidth and font size depends on the card size itself
+                //popupText.fontSize = cardRect.rect.width * .07985689644f;
+                popupText.fontSize = cardRect.rect.width * .0665474137f;
+                popupRect.sizeDelta = new Vector2(cardRect.rect.width * 1.5f, 0f);
+            }
+
+        }
     }
 
 
