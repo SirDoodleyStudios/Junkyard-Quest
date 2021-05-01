@@ -39,6 +39,7 @@ public class CombatManager : MonoBehaviour
     public DeckManager deckManager;
     public CreativeManager creativeManager;
     public PlayerHand playerHand;
+    public CardDrafting cardDrafting;
 
     //related to energy
     //Energy gets accessed by playingField
@@ -126,6 +127,7 @@ public class CombatManager : MonoBehaviour
         CardSOFactory.InitializeCardSOFactory(universalInformation.chosenPlayer, universalInformation.chosenClass);
         playerFunctions.LoadPlayerUnitFromFile(universalInformation.playerStats);
         deckManager.InitializeBattleDeck(universalInformation.currentDeck);
+        cardDrafting.InitializeDraftPool(universalInformation.chosenPlayer, universalInformation.chosenClass);
 
         //will be called only during the beginiing
         d_StartCombat();
@@ -179,6 +181,12 @@ public class CombatManager : MonoBehaviour
         if (Input.GetKey(KeyCode.F5))
         {
 
+        }
+
+        //test for showing card Draft
+        if (Input.GetKey(KeyCode.V))
+        {
+            cardDrafting.StartCardDraft();
         }
 
         //For Choosing Cards to play
@@ -857,5 +865,16 @@ public class CombatManager : MonoBehaviour
         d_StartTurn();
     }
 
+    public void DefeatFunction()
+    {
+
+    }
+
+    public void VictoryFunction()
+    {
+
+    }
 }
+
+
 //add some new effects
