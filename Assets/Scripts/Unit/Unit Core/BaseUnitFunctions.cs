@@ -74,7 +74,6 @@ public class BaseUnitFunctions:MonoBehaviour
         CreativitySlider.minValue = 0;
         CreativitySlider.value = currCreativity;
         CreativityText.text = $"{currCreativity}/{maxCreativity}";
-        Debug.Log("BASEuNITfUNCTION");
 
     }
 

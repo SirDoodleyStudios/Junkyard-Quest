@@ -396,11 +396,14 @@ public class DeckManager : MonoBehaviour
             if (hasNoDisabledPrefabs)
             {
                 GameObject instantiatedPrefab = Instantiate(deckViewPrefab, deckScrollContent);
-                instantiatedPrefab.GetComponent<Display>().card = deckCard;
+                Display instantiatedDisplay = instantiatedPrefab.GetComponent<Display>();
+                instantiatedDisplay.card = deckCard;
                 CardDescriptionLayout instantiatedPopups = instantiatedPrefab.GetComponent<CardDescriptionLayout>();
-                instantiatedPopups.ResizePopups();
-                instantiatedPrefab.SetActive(true);
 
+                instantiatedPrefab.SetActive(true);
+                //in deckManager, the setactive true must come first for some reason
+                instantiatedPopups.ResizePopups();
+                instantiatedDisplay.FontResize();
 
                 //GameObject instantiatedPrefab = Instantiate(deckViewPrefab, deckScrollContent);
                 //RectTransform instantiatedRect = instantiatedPrefab.GetComponent<RectTransform>();

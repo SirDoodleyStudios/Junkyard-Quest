@@ -184,9 +184,10 @@ public class CombatManager : MonoBehaviour
         }
 
         //test for showing card Draft
-        if (Input.GetKey(KeyCode.V))
+        if (Input.GetKeyDown(KeyCode.V))
         {
             cardDrafting.StartCardDraft();
+            Debug.Log("starting draft");
         }
 
         //For Choosing Cards to play

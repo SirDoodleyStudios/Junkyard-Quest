@@ -292,7 +292,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.2, y: 0.02}
   m_AnchorMax: {x: 0.8, y: 0.2}
-  m_AnchoredPosition: {x: 0, y: 3.4199982}
+  m_AnchoredPosition: {x: 0, y: 3.4200134}
   m_SizeDelta: {x: 0, y: 6.840004}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &31512082
@@ -1832,20 +1832,16 @@ MonoBehaviour:
   tillyBasic: []
   princessBasic: []
   warriorBasic:
-  - {fileID: 11400000, guid: 0b2140addd939f14c97e388f8cf0d8a5, type: 2}
-  - {fileID: 11400000, guid: bb6f0b61bd303384da3ffdb1e8750889, type: 2}
-  - {fileID: 11400000, guid: 0b2140addd939f14c97e388f8cf0d8a5, type: 2}
-  - {fileID: 11400000, guid: bb6f0b61bd303384da3ffdb1e8750889, type: 2}
+  - {fileID: 11400000, guid: c5c68d533a14d074a99a3fd7f2f79553, type: 2}
+  - {fileID: 11400000, guid: c5c68d533a14d074a99a3fd7f2f79553, type: 2}
+  - {fileID: 11400000, guid: c5c68d533a14d074a99a3fd7f2f79553, type: 2}
+  - {fileID: 11400000, guid: c5c68d533a14d074a99a3fd7f2f79553, type: 2}
+  - {fileID: 11400000, guid: 8676c6459c9e035429c8f79f826798ea, type: 2}
+  - {fileID: 11400000, guid: 8676c6459c9e035429c8f79f826798ea, type: 2}
+  - {fileID: 11400000, guid: 8676c6459c9e035429c8f79f826798ea, type: 2}
+  - {fileID: 11400000, guid: 8676c6459c9e035429c8f79f826798ea, type: 2}
   - {fileID: 11400000, guid: 57d52c0d80bae5748a4f04c17d49a924, type: 2}
-  - {fileID: 11400000, guid: 57d52c0d80bae5748a4f04c17d49a924, type: 2}
-  - {fileID: 11400000, guid: c5c68d533a14d074a99a3fd7f2f79553, type: 2}
-  - {fileID: 11400000, guid: c5c68d533a14d074a99a3fd7f2f79553, type: 2}
-  - {fileID: 11400000, guid: c5c68d533a14d074a99a3fd7f2f79553, type: 2}
-  - {fileID: 11400000, guid: 8676c6459c9e035429c8f79f826798ea, type: 2}
-  - {fileID: 11400000, guid: 8676c6459c9e035429c8f79f826798ea, type: 2}
-  - {fileID: 11400000, guid: 8676c6459c9e035429c8f79f826798ea, type: 2}
-  - {fileID: 11400000, guid: f63e284c51fcf8943bf2434bb92ce6ea, type: 2}
-  - {fileID: 11400000, guid: 3827456cf248d754ca766c2e1dcc7fb2, type: 2}
+  - {fileID: 11400000, guid: f8da9032880073f4f9a930263f9ea61e, type: 2}
   rogueBasic: []
   mageBasic: []
   arlenUnit: {fileID: 11400000, guid: 9360e45a4c8d8a84f8aec23451521358, type: 2}

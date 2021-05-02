@@ -8,13 +8,15 @@ public class DragNDropDraft : MonoBehaviour, IPointerEnterHandler, IPointerExitH
     CardDescriptionLayout cardDescriptionLayout;
     RectTransform cardRect;
     CardDrafting cardDrafting;
+    Display cardDisplay;
 
     private void Start()
     {
         //calls activate and deactivate popup methods in cardDescriptionLayout
         cardDescriptionLayout = gameObject.GetComponent<CardDescriptionLayout>();
         cardRect = gameObject.GetComponent<RectTransform>();
-        cardDrafting = gameObject.GetComponent<CardDrafting>();
+        cardDrafting = transform.parent.parent.gameObject.GetComponent<CardDrafting>();
+        cardDisplay = gameObject.GetComponent<Display>();
     }
     public void OnPointerEnter(PointerEventData eventData)
     {
@@ -30,6 +32,8 @@ public class DragNDropDraft : MonoBehaviour, IPointerEnterHandler, IPointerExitH
 
     public void OnPointerClick(PointerEventData eventData)
     {
-        Debug.Log("add to deck");
+        //calls cardDrafting to add the chosen card to the deck
+        Debug.Log(cardDisplay.card);
+        cardDrafting.AddtoDeck(cardDisplay.card);
     }
 }

@@ -36,9 +36,17 @@ public class Display : MonoBehaviour
     //mostly used for non combat card display
     bool isInstantiated;
 
+    //this is the main canvas where the holder and 
+    RectTransform canvasRect;
+
     private void Awake()
     {
         cardRect = gameObject.GetComponent<RectTransform>();
+        canvasRect = transform.parent.parent.gameObject.GetComponent<RectTransform>();
+        if (transform.parent.parent.gameObject.GetComponent<CardDrafting>() != null)
+        {
+            Debug.Log(cardRect.rect.width);
+        }
     }
     private void OnEnable()
     {
@@ -95,7 +103,9 @@ public class Display : MonoBehaviour
         {
             isInstantiated = true;
             //the multiplier is derived from dividing an optimal fontsize for a screen size and dividing it with the card width, this will make it consistently appealing for all screen sizes
-            float multiplier = .0665474137f;
+            //float multiplier = .0665474137f;
+            //this multiplier is from default font in cmbat card 14/ default combat card width 240
+            float multiplier = .0583333333f;
             displayCardName.fontSize = (cardRect.rect.width * multiplier) + 1;
             displayEffect.fontSize = cardRect.rect.width * multiplier;
             displayEnergyCost.fontSize = cardRect.rect.width * multiplier+2;
