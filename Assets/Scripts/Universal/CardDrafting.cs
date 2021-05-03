@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class CardDrafting : MonoBehaviour
 {
@@ -91,11 +92,15 @@ public class CardDrafting : MonoBehaviour
 
     //called by DragNDrop after click
     // loads the current deck, adds the card then save immediately
+ 
     public void AddtoDeck(Card card)
     {
         UniversalInformation universalInfo = UniversalSaveState.LoadUniversalInformation();
         universalInfo.currentDeck.Add(card.enumCardName);
         UniversalSaveState.SaveUniversalInformation(universalInfo);
         gameObject.SetActive(false);
+
+        //return Toggle overworld after picking a card
+        SceneManager.LoadScene("OverWorldScene");
     }
 }

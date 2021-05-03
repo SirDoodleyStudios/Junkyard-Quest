@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f76e23768d43ea64c86d4c4328119601, type: 3}
   m_Name: Spearie
   m_EditorClassIdentifier: 
-  HP: 50
+  HP: 5
   Creativity: 3
   draw: 4
   actionList:

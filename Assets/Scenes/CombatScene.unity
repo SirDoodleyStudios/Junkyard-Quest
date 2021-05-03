@@ -826,7 +826,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.92200005, y: 0}
   m_AnchorMax: {x: 1, y: 0.20700002}
-  m_AnchoredPosition: {x: 38.80005, y: 0}
+  m_AnchoredPosition: {x: 38.799988, y: 0}
   m_SizeDelta: {x: -77.4875, y: 0.000015258789}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &150308838
@@ -2675,6 +2675,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   EndTurnButton: {fileID: 1436910261}
+  cardDrafting: {fileID: 703709459}
+  enemyCount: 0
 --- !u!224 &679543449 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 1074423846794374599, guid: 1522c6d952ce7b04b8e0821c780c1638,
@@ -6865,7 +6867,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -721.76, y: 234.98997}
+  m_AnchoredPosition: {x: -721.76, y: 234.98999}
   m_SizeDelta: {x: -1443.5175, y: -469.98163}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &2059557456

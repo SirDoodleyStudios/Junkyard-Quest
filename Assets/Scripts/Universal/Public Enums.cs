@@ -13,10 +13,13 @@ public enum ChosenPlayer { Arlen, Cedric, Francine, Tilly, Princess};
 public enum ChosenClass { Warrior, Rogue, Mage};
 
 //SCENES DEPENDED
-public enum NodeActivityEnum { Combat, Event, Merchant, Forge, Rest, Boon }
+public enum NodeActivityEnum { Combat, Event, Merchant, Forge, Rest, Boon, Rival }
 //Link activites are not seen from overworld and random like darkest dungeon
 //SCENES DEPENDENT
 public enum LinkActivityEnum {Skirmish, Chest, Booth, SmallEvent}
+
+//Options for Combat Rewards
+public enum CombatRewards {CardDraft, Scraps, Treasures, Abilities, Upgrades }
 
 public enum CardClass { Neutral, Warrior, Rogue, Mage, Arlen, Cedric, Francine, Tilly, Princess }
 

@@ -7,6 +7,24 @@ public class EnemyAIManager : MonoBehaviour
 {
     public Button EndTurnButton;
 
+    //referenced from editor
+    public CombatManager combatManager;
+
+    //count on how many enemies there are in combat, to be used in RegisterEnemyKill
+    public int enemyCount;
+
+    private void Start()
+    {
+        //counts first how many enemies are enabled
+        foreach (Transform enemy in transform)
+        {
+            if (enemy.gameObject.activeSelf)
+            {
+                enemyCount++;
+            }
+        }
+    }
+
     public void EnemyStart()
     {
         
@@ -17,6 +35,15 @@ public class EnemyAIManager : MonoBehaviour
         }
     }
 
+    public void RegisterEnemyKill()
+    {
+        //reduce enemycount then if count is 0, start Victory
+        enemyCount--;
+        if (enemyCount == 0)
+        {
+            combatManager.VictoryFunction();
+        }
+    }
 
 
 

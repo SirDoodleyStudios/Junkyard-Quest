@@ -41,6 +41,9 @@ public class BaseUnitFunctions:MonoBehaviour
     //The UnitStatusHolder attached to this unit
     UnitStatusHolder unitStatusHolder;
 
+    //cache for the holder's scripr
+    EnemyAIManager enemyAIManager;
+
 
     public void Start()
     {
@@ -48,6 +51,7 @@ public class BaseUnitFunctions:MonoBehaviour
         //This should not be here and must be called from Combatmanager because the stats should only be available once we load the UniversalInformation
         //InitializeStats();
         unitStatusHolder = gameObject.GetComponent<UnitStatusHolder>();
+        enemyAIManager = transform.parent.gameObject.GetComponent<EnemyAIManager>();
     }
 
     //called at the begining of combatManager
@@ -105,6 +109,9 @@ public class BaseUnitFunctions:MonoBehaviour
         //at death
         if (currHP <= 0)
         {
+            //calls the enemyCounterIdentifier that calls an event when all enemies are gone
+            enemyAIManager.RegisterEnemyKill();
+
             //Comment out for Testing
             gameObject.SetActive(false);
 

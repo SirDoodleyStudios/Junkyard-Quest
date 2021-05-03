@@ -871,10 +871,12 @@ public class CombatManager : MonoBehaviour
 
     }
 
+    //called by enemyAIManager when all enemies are destroyed
     public void VictoryFunction()
     {
-
+        cardDrafting.StartCardDraft();
     }
+
 }
 
 
