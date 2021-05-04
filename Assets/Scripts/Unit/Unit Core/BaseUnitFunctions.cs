@@ -107,6 +107,7 @@ public class BaseUnitFunctions:MonoBehaviour
         ShowBlock();
 
         //at death
+        //WILL CHANGE THIS TO NOT IMMEDIATELY KILL FOR OVERKILL MECHANIC
         if (currHP <= 0)
         {
             //calls the enemyCounterIdentifier that calls an event when all enemies are gone
