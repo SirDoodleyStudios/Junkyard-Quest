@@ -102,6 +102,19 @@ public static class UniversalSaveState
         return loadedState;
     }
 
+    //Specifically foir elements in the RewardsScene
+    public static void SaveRewardsState(RewardsSaveState rewardsSaveState)
+    {
+        string rewards = JsonUtility.ToJson(rewardsSaveState);
+        File.WriteAllText(Application.persistentDataPath + "/Rewards.json", rewards);
+    }
+    public static RewardsSaveState LoadRewardsState()
+    {
+        string rewards = File.ReadAllText(Application.persistentDataPath + "/Rewards.json");
+        RewardsSaveState rewardsState = JsonUtility.FromJson<RewardsSaveState>(rewards);
+        return rewardsState;
+    }
+
 
 
 }

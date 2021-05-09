@@ -6,10 +6,13 @@ using TMPro;
 
 public class ScrapsDrafting : MonoBehaviour
 {
+    //this int is to identify from what object index it came from
+    public int objectOriginIndex;
     //the holder of choice cards
     public GameObject choiceHolder;
     GridLayoutGroup gridLayout;
     RectTransform parentCanvas;
+    int scrapsValue;
 
     private void Awake()
     {
@@ -33,8 +36,11 @@ public class ScrapsDrafting : MonoBehaviour
     }
 
     //should be called by rewards manager
+    //all values are in here, no reason to add value in the draft objects
     public void InitializeScrapValue(int scraps)
     {
+        scrapsValue = scraps;
+
         //child 6 of each choice is the Effect texf
         GameObject scrapObject = choiceHolder.transform.GetChild(0).gameObject;
         GameObject HPObject = choiceHolder.transform.GetChild(1).gameObject;
@@ -63,6 +69,42 @@ public class ScrapsDrafting : MonoBehaviour
             CreativityGainText.text = $"Gain +{Mathf.Floor(scraps / 50)} Creativity";
         }
 
+    }
+
+    //called by the dragNdrop
+    public void ClaimScraps(int index)
+    {
+        //load the universalInformation and change it with values to save
+        UniversalInformation universalInfo = UniversalSaveState.LoadUniversalInformation();
+
+        switch (index)
+        {
+            case 0:
+                universalInfo.scraps += scrapsValue;
+                break;
+            case 1:
+                universalInfo.playerStats.HP += (int)Mathf.Floor(scrapsValue / 10);
+                universalInfo.playerStats.currHP += (int)Mathf.Floor(scrapsValue / 10);
+                break;
+            case 2:
+                universalInfo.playerStats.Creativity += (int)Mathf.Floor(scrapsValue / 50);
+                break;
+            default:
+                break;
+        }
+
+        //save after changing
+        UniversalSaveState.SaveUniversalInformation(universalInfo);
+
+        //destroy after picking
+        Destroy(gameObject);
+    }
+    //calls the manager to incite countdown for closing rewards scene
+    private void OnDestroy()
+    {
+        //index 2 of the canvas panel is always the rewards manager
+        RewardsManager rewardManager = transform.parent.GetChild(2).GetComponent<RewardsManager>();
+        rewardManager.ClaimReward(objectOriginIndex);
     }
 
 

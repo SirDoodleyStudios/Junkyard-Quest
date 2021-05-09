@@ -127,7 +127,8 @@ public class CombatManager : MonoBehaviour
         CardSOFactory.InitializeCardSOFactory(universalInformation.chosenPlayer, universalInformation.chosenClass);
         playerFunctions.LoadPlayerUnitFromFile(universalInformation.playerStats);
         deckManager.InitializeBattleDeck(universalInformation.currentDeck);
-        cardDrafting.InitializeDraftPool(universalInformation.chosenPlayer, universalInformation.chosenClass);
+        //Card Drafting migrated to rewardsscene
+        //cardDrafting.InitializeDraftPool(universalInformation.chosenPlayer, universalInformation.chosenClass);
 
         //will be called only during the beginiing
         d_StartCombat();
@@ -186,7 +187,7 @@ public class CombatManager : MonoBehaviour
         //test for showing card Draft
         if (Input.GetKeyDown(KeyCode.V))
         {
-            cardDrafting.StartCardDraft();
+            VictoryFunction();
             Debug.Log("starting draft");
         }
 
@@ -874,7 +875,8 @@ public class CombatManager : MonoBehaviour
     //called by enemyAIManager when all enemies are destroyed
     public void VictoryFunction()
     {
-        cardDrafting.StartCardDraft();
+        //cardDrafting.StartCardDraft();
+        SceneManager.LoadScene("RewardsScene");
     }
 
 }

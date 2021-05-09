@@ -826,7 +826,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.92200005, y: 0}
   m_AnchorMax: {x: 1, y: 0.20700002}
-  m_AnchoredPosition: {x: 38.799988, y: 0}
+  m_AnchoredPosition: {x: 38.80002, y: 0}
   m_SizeDelta: {x: -77.4875, y: 0.000015258789}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &150308838
@@ -2675,7 +2675,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   EndTurnButton: {fileID: 1436910261}
-  cardDrafting: {fileID: 703709459}
+  combatManager: {fileID: 2085359251}
   enemyCount: 0
 --- !u!224 &679543449 stripped
 RectTransform:
@@ -2732,7 +2732,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.92200005, y: 0}
   m_AnchorMax: {x: 1, y: 0.20700002}
-  m_AnchoredPosition: {x: -38.799927, y: -1.3426514}
+  m_AnchoredPosition: {x: -38.799805, y: -1.3427734}
   m_SizeDelta: {x: -77.48754, y: 0.000015258789}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &746266364
@@ -6659,7 +6659,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.92200005, y: 0.20700002}
   m_AnchorMax: {x: 1, y: 0.2775926}
-  m_AnchoredPosition: {x: -1, y: -1.2000732}
+  m_AnchoredPosition: {x: -1, y: -1.2001953}
   m_SizeDelta: {x: -0.0013427734, y: 0.28515625}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &2008568318

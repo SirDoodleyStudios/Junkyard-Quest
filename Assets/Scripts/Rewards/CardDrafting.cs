@@ -1,11 +1,13 @@
-﻿using System.Collections;
+﻿
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using UnityEngine.SceneManagement;
+
 
 public class CardDrafting : MonoBehaviour
 {
+    //this int is to identify from what object index it came from
+    public int objectOriginIndex;
     //the holder of choice cards
     public GameObject choiceHolder;
     GridLayoutGroup gridLayout;
@@ -13,10 +15,13 @@ public class CardDrafting : MonoBehaviour
     
 
     //reference to the Deck Directory Holder
-    public DeckPools deckPoolDirectories;
+    DeckPools deckPoolDirectories;
     List<Card> poolCards = new List<Card>();
     private void Awake()
     {
+        //the DeckPool directory is located at index 0 of the canvas
+        deckPoolDirectories = transform.parent.GetChild(0).GetComponent<DeckPools>();
+
         //first child is the holder of cards
         parentCanvas = transform.parent.GetComponent<RectTransform>();
         gridLayout = choiceHolder.GetComponent<GridLayoutGroup>();
@@ -49,6 +54,7 @@ public class CardDrafting : MonoBehaviour
         List<CardDescriptionLayout> draftedPopups = new List<CardDescriptionLayout>();
         for (int i = 0; indices.Count < 3; i++)
         {
+            //this is used for accessing the idex of the saved pool
             int tempInt = Random.Range(0, poolCards.Count - 1);
             if (!indices.Contains(tempInt))
             {
@@ -72,13 +78,15 @@ public class CardDrafting : MonoBehaviour
             }
         }
 
-        gameObject.SetActive(true);
+        //gameObject.SetActive(true);
+        
+        //enable the choices one by one
+        foreach (Transform card in choiceHolder.transform)
+        {
+            card.gameObject.SetActive(true);
+        }
 
-        //foreach(Transform card in choiceHolder.transform)
-        //{
-        //    card.gameObject.SetActive(true);
-        //}
-
+        //resizing for the correct display and popups
         foreach (Display display in draftedDisplay)
         {
             display.FontResize();
@@ -98,9 +106,15 @@ public class CardDrafting : MonoBehaviour
         UniversalInformation universalInfo = UniversalSaveState.LoadUniversalInformation();
         universalInfo.currentDeck.Add(card.enumCardName);
         UniversalSaveState.SaveUniversalInformation(universalInfo);
-        gameObject.SetActive(false);
+        Destroy(gameObject);
 
-        //return Toggle overworld after picking a card
-        SceneManager.LoadScene("OverWorldScene");
+
+    }
+    //calls the manager to incite countdown for closing rewards scene
+    private void OnDestroy()
+    {
+        //index 2 of the canvas panel is always the rewards manager
+        RewardsManager rewardManager = transform.parent.GetChild(2).GetComponent<RewardsManager>();
+        rewardManager.ClaimReward(objectOriginIndex);
     }
 }

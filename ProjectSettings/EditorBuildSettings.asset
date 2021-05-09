@@ -32,4 +32,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/LinkActivitiesScene.unity
     guid: d97db6bad66f28040aa7214db2409524
+  - enabled: 1
+    path: Assets/Scenes/RewardsScene.unity
+    guid: fed6363da86d1b145b447a6255052b99
   m_configObjects: {}
