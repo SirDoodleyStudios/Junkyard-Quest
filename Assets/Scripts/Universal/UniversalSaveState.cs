@@ -89,7 +89,9 @@ public static class UniversalSaveState
 
         //extracts the player wrapper and reverts it back to PlayerUnit
         PlayerUnitWrapper unitWrapper = loadedState.playerStatsWrapper;
+
         PlayerUnit loadedUnit = Resources.Load<PlayerUnit>("PlayerSO/Current Stats");
+        
         loadedUnit.HP = unitWrapper.HP;
         loadedUnit.Creativity = unitWrapper.Creativity;
         loadedUnit.draw = unitWrapper.draw;

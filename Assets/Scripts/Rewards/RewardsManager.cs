@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using System.IO;
+using System;
 
 public class RewardsManager : MonoBehaviour
 {
@@ -15,6 +16,9 @@ public class RewardsManager : MonoBehaviour
     //same for RewardsSaveState
     UniversalInformation universalInfo;
     //RewardsSaveState rewardsSaveState;
+
+    //this is a holder class for the list<int> for cardDrafts
+    CardDraftListWrapper cardDraftListWrapper;
 
     //indicator if the rewardsscene has already been initialized, this is determined if we load or not
     public bool isRewardsSceneInitiated;
@@ -103,10 +107,23 @@ public class RewardsManager : MonoBehaviour
     {
         //stores the determined rewards list and availability list
         RewardsSaveState rewardsSaveState = new RewardsSaveState();
+        //temporary list to hold all the lists inside rewardsSaveState so that we can match indices
+        List<List<int>> cardDrafts = new List<List<int>>(); ;
+        //int counter t6o determine what list to load during CardDraftLoading
+        int cardListCounter = 0;
         //Load the RewardsSaveState immediately if isLoadedfromFile
         if (isLoadedFromFile)
         {
             rewardsSaveState = UniversalSaveState.LoadRewardsState();
+            //decode the CardDraftListWrapper into a list of lists
+            CardDraftListWrapper cardDraftListWrapper = rewardsSaveState.cardDraftListWrapper;
+            cardDrafts.Add(cardDraftListWrapper.possibleCardDraft1);
+            cardDrafts.Add(cardDraftListWrapper.possibleCardDraft2);
+            cardDrafts.Add(cardDraftListWrapper.possibleCardDraft3);
+            cardDrafts.Add(cardDraftListWrapper.possibleCardDraft4);
+            cardDrafts.Add(cardDraftListWrapper.possibleCardDraft5);
+            cardDrafts.Add(cardDraftListWrapper.possibleCardDraft6);
+
         }
 
         //iterate through the rewardsList to one by one generate their respective rewardObjects
@@ -169,12 +186,63 @@ public class RewardsManager : MonoBehaviour
                 }
 
             }
-            //if not scraps, just send 0 value in scraps parameter
-            else
+
+
+            //if cardDraft, assign 0 scraps and send a list of ints for the indices to be used for the randomized card draft
+            else if(rewardsList[i] == CombatRewards.CardDraft)
             {
                 if (choiceObject.activeSelf)
                 {
                     rewardObject.AssignReward(rewardsList[i], rewardsRepository[rewardsList[i]], 0);
+                    //if not loaded fom file, perform randomization of indices from scratch
+                    if (isLoadedFromFile == false)
+                    {
+                        //contains the deck directories gameObject
+                        DeckPools deckPoolDirectories = transform.parent.GetChild(0).GetComponent<DeckPools>();
+
+                        List<int> cardPoolIndex = new List<int>();
+                        //total card pools if we add the class and player decks, this is necessary because carddraft will combine the decks and pick from indices of combined decks
+                        //the indices are created here so that we can store it and n
+                        int deckPoolTotal = deckPoolDirectories.GetPlayerPool(universalInfo.chosenPlayer).Count + deckPoolDirectories.GetClassPool(universalInfo.chosenClass).Count;
+                        for (int j = 0; 3 > j; j++)
+                        {
+                            //prevents an index from repeating
+                            int tempInt = UnityEngine.Random.Range(0, deckPoolTotal);
+                            if (!cardPoolIndex.Contains(tempInt))
+                            {
+                                cardPoolIndex.Add(tempInt);
+                            }
+                            else
+                            {
+                                j--;
+                            }
+
+                        }
+
+                        //send the preloaded draft to reward object
+                        rewardObject.PreLoadCardDraft(cardPoolIndex);
+
+                        //create instance of the cardDraft wrapper class then insert the generated list to the wrapper
+                        if (cardDraftListWrapper == null)
+                        {
+                            cardDraftListWrapper = new CardDraftListWrapper();
+                            cardDraftListWrapper.AssignList(cardPoolIndex);
+                        }
+                        else
+                        {
+                            cardDraftListWrapper.AssignList(cardPoolIndex);
+                        }
+
+                    }
+                    //if loaded from file
+                    else
+                    {
+                        //send the preloaded draft to reward object
+                        rewardObject.PreLoadCardDraft(cardDrafts[cardListCounter]);
+                        //increase counter so that the next loaded CardDraft will take the next list
+                        cardListCounter++;
+                    }
+
                 }
 
             }
@@ -189,6 +257,12 @@ public class RewardsManager : MonoBehaviour
         }
         rewardsSaveState.rewardsList = rewardsList;
         rewardsSaveState.rewardsAvailabilityList = rewardsAvailabilityList;
+        //only save the cardDraftListWrapper if from rewardObjects are not loaded
+        if (!isLoadedFromFile)
+        {
+            rewardsSaveState.cardDraftListWrapper = cardDraftListWrapper;
+        }
+
         UniversalSaveState.SaveRewardsState(rewardsSaveState);
     }
 
@@ -254,15 +328,52 @@ public class RewardsManager : MonoBehaviour
         if (rewardsList.Count == claimedRewardCounter)
         {
             //delete the file before going back to overworld
-            File.Delete(Application.persistentDataPath + "/Rewards");
+            File.Delete(Application.persistentDataPath + "/Rewards.json");
             SceneManager.LoadScene("OverworldScene");
         }
 
     }
 
+}
 
+//this is a classwrapper that will hold the preloaded CardDraft Lists
+[Serializable]
+public class CardDraftListWrapper
+{
+    public List<int> possibleCardDraft1;
+    public List<int> possibleCardDraft2;
+    public List<int> possibleCardDraft3;
+    public List<int> possibleCardDraft4;
+    public List<int> possibleCardDraft5;
+    public List<int> possibleCardDraft6;
 
-
-
+    public void AssignList(List<int> draftList)
+    {
+        //everytim AssignList is called, the List<int> parametr will be assigned on empty Lists
+        if (possibleCardDraft1 == null)
+        {
+            possibleCardDraft1 = draftList;
+        }
+        else if(possibleCardDraft2 == null)
+        {
+            possibleCardDraft2 = draftList;
+        }
+        else if (possibleCardDraft3 == null)
+        {
+            possibleCardDraft3 = draftList;
+        }
+        else if (possibleCardDraft4 == null)
+        {
+            possibleCardDraft4 = draftList;
+        }
+        else if (possibleCardDraft5 == null)
+        {
+            possibleCardDraft5 = draftList;
+        }
+        else if (possibleCardDraft6 == null)
+        {
+            possibleCardDraft6 = draftList;
+        }
+    }
 
 }

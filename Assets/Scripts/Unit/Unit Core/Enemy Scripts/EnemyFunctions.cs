@@ -53,6 +53,7 @@ public class EnemyFunctions : BaseUnitFunctions
     {
         //Copies HP, Creativity, and Draw from scriptable Object first
         maxHP = enemyUnit.HP;
+        currHP = enemyUnit.currHP;
         maxCreativity = enemyUnit.Creativity;
         defaultDraw = enemyUnit.draw;
         base.InitializeStats();
@@ -76,6 +77,25 @@ public class EnemyFunctions : BaseUnitFunctions
         //actionIconsDict.Add(EnemyActionType.Summon, actionIconSprites[4]);
         //actionIconsDict.Add(EnemyActionType.Special, actionIconSprites[5]);
 
+    }
+
+    public override void TakeDamage(int damageValue)
+    {
+        base.TakeDamage(damageValue);
+        //at death
+        //WILL CHANGE THIS TO NOT IMMEDIATELY KILL FOR OVERKILL MECHANIC
+        if (currHP <= 0)
+        {
+            //calls the enemyCounterIdentifier that calls an event when all enemies are gone
+            //defined in BaseUnitFunctions
+            enemyAIManager.RegisterEnemyKill();
+
+            //Comment out for Testing
+            gameObject.SetActive(false);
+
+            //nothing in death delegate yet
+            //d_death();
+        }
     }
 
 

@@ -876,6 +876,9 @@ public class CombatManager : MonoBehaviour
     public void VictoryFunction()
     {
         //cardDrafting.StartCardDraft();
+        UniversalInformation universalInfo = UniversalSaveState.LoadUniversalInformation();
+        universalInfo.playerStats = playerFunctions.playerUnit;
+        UniversalSaveState.SaveUniversalInformation(universalInfo);
         SceneManager.LoadScene("RewardsScene");
     }
 

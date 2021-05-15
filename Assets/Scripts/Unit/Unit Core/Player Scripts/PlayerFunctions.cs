@@ -31,7 +31,9 @@ public class PlayerFunctions : BaseUnitFunctions
     //called by combatManager during combatStart after loading
     public void LoadPlayerUnitFromFile(PlayerUnit unit)
     {
-        playerUnit = unit;
+        //so that the assigned playerUnit SO is just a copy of the one in resources
+        PlayerUnit unitCopy = Instantiate(unit);
+        playerUnit = unitCopy;
     }
 
 
@@ -39,6 +41,7 @@ public class PlayerFunctions : BaseUnitFunctions
     {
         //Copies HP, Creativity, and Draw from scriptable Object first
         maxHP = playerUnit.HP;
+        currHP = playerUnit.currHP;
         maxCreativity = playerUnit.Creativity;
         defaultDraw = playerUnit.draw;
         base.InitializeStats();              
@@ -55,6 +58,22 @@ public class PlayerFunctions : BaseUnitFunctions
     {
         base.RemoveBlock();
         gameObject.GetComponent<AbilityManager>().EnableAbilities();
+    }
+
+    public override void TakeDamage(int damageValue)
+    {
+        base.TakeDamage(damageValue);
+
+        Debug.Log(playerUnit.currHP);
+        //update the playerUnit HP attachement
+        playerUnit.currHP = currHP;
+        Debug.Log(playerUnit.currHP);
+    }
+
+    public override void HealHealth(int healValue)
+    {
+        base.HealHealth(healValue);
+        playerUnit.currHP = currHP;
     }
 
     //expect to receive negative ints for costs and positive ints for gains
@@ -97,7 +116,6 @@ public class PlayerFunctions : BaseUnitFunctions
     {
         currEnergy += value;
     }
-
 
 
 }

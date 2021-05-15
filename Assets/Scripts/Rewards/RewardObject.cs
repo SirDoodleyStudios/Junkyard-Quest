@@ -18,6 +18,11 @@ public class RewardObject : MonoBehaviour
     //only used when the reward is scaps
     int scrapsValue;
 
+    //currently only used for CardDrafting check parameters
+    //UniversalInformation universalInfo;
+    //DeckPools deckPoolDirectories;
+    List<int> cardPoolIndex;
+
 
     public void Awake()
     {
@@ -39,7 +44,45 @@ public class RewardObject : MonoBehaviour
         {
             scrapsValue = scraps;
         }
+
+        else if(rewardKey == CombatRewards.CardDraft)
+        {
+            scrapsValue = 0;
+
+            ////extract the player and class for the pools
+            //universalInfo = UniversalSaveState.LoadUniversalInformation();
+            ////contains the deck directories gameObject
+            //deckPoolDirectories = transform.parent.parent.GetChild(0).GetComponent<DeckPools>();
+
+            //cardPoolIndex = new List<int>();
+            ////total card pools if we add the class and player decks, this is necessary because carddraft will combine the decks and pick from indices of combined decks
+            ////the indices are created here so that we can store it and n
+            //int deckPoolTotal = deckPoolDirectories.GetPlayerPool(universalInfo.chosenPlayer).Count + deckPoolDirectories.GetClassPool(universalInfo.chosenClass).Count;
+            //for (int i = 0; 3 > i; i++)
+            //{
+            //    //prevents an index from repeating
+            //    int tempInt = Random.Range(0, deckPoolTotal);
+            //    if (!cardPoolIndex.Contains(tempInt))
+            //    {
+            //        cardPoolIndex.Add(tempInt);
+            //    }
+            //    else
+            //    {
+            //        i--;
+            //    }          
+
+            //}
+
+        }           
+       
     }
+
+    public void PreLoadCardDraft(List<int> preDraft)
+    {
+        cardPoolIndex = new List<int>();
+        cardPoolIndex = preDraft;
+    }
+
 
     //This is called by buttons assigned from editor
     //reward objects are buttons
@@ -56,13 +99,12 @@ public class RewardObject : MonoBehaviour
         //instantiate the card drafting object under the canvas
         else if (rewardEnum == CombatRewards.CardDraft)
         {
-            //extract the player and class for the pools
             UniversalInformation universalInfo = UniversalSaveState.LoadUniversalInformation();
 
             CardDrafting cardDrafting = rewardWindow.transform.GetComponent<CardDrafting>();
             cardDrafting.objectOriginIndex = transform.GetSiblingIndex();
             cardDrafting.InitializeDraftPool(universalInfo.chosenPlayer, universalInfo.chosenClass);
-            cardDrafting.StartCardDraft();
+            cardDrafting.StartCardDraft(cardPoolIndex);
         }
 
         //functionality migrated to the rewards manager and activated after picking the draft

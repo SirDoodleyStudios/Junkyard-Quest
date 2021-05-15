@@ -17,6 +17,8 @@ public class RewardsSaveState
     public int claimRewardCounter;
     public List<CombatRewards> rewardsList = new List<CombatRewards>();
     public List<bool> rewardsAvailabilityList = new List<bool>();
-    
+
+    //wrapper class that contains the list of cardDraft ints
+    public CardDraftListWrapper cardDraftListWrapper = new CardDraftListWrapper();
     
 }

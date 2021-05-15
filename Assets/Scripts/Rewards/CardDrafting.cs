@@ -44,39 +44,56 @@ public class CardDrafting : MonoBehaviour
     }
 
     //enables the Drafting Window
-    public void StartCardDraft()
+    //an int array is sent as parameter and will contain the indices of cards so that it's predetermined at reward object creation
+    public void StartCardDraft(List<int> indices)
     {
         //iterates 3 timesand assign a random card from the pool, it won't repeat
 
-        List<int> indices = new List<int>();
+        //List<int> indices = new List<int>();
         //store the card displays so that we can resize the fonts after enabling the holder and children
         List<Display> draftedDisplay = new List<Display>();
         List<CardDescriptionLayout> draftedPopups = new List<CardDescriptionLayout>();
-        for (int i = 0; indices.Count < 3; i++)
+
+        foreach (int index in indices)
         {
-            //this is used for accessing the idex of the saved pool
-            int tempInt = Random.Range(0, poolCards.Count - 1);
-            if (!indices.Contains(tempInt))
-            {
-                indices.Add(tempInt);
+            //calls the factory to instantiate a copy of the base card SO
+            Card tempCard = Instantiate(poolCards[index]);
+            tempCard.effectText = CardTagManager.GetCardEffectDescriptions(tempCard);
 
-                //calls the factory to instantiate a copy of the base card SO
-                Card tempCard = Instantiate(poolCards[tempInt]);
-                tempCard.effectText = CardTagManager.GetCardEffectDescriptions(tempCard);
+            //children indices are determined by the int list index as well
+            Display cardDisplay = choiceHolder.transform.GetChild(indices.IndexOf(index)).gameObject.GetComponent<Display>();
+            cardDisplay.card = tempCard;
+            draftedDisplay.Add(cardDisplay);
 
-                Display cardDisplay = choiceHolder.transform.GetChild(i).gameObject.GetComponent<Display>();
-                cardDisplay.card = tempCard;
-                draftedDisplay.Add(cardDisplay);
-
-                CardDescriptionLayout cardPopups = choiceHolder.transform.GetChild(i).gameObject.GetComponent<CardDescriptionLayout>();
-                draftedPopups.Add(cardPopups);
-
-            }
-            else
-            {
-                i--;
-            }
+            CardDescriptionLayout cardPopups = choiceHolder.transform.GetChild(indices.IndexOf(index)).gameObject.GetComponent<CardDescriptionLayout>();
+            draftedPopups.Add(cardPopups);
         }
+
+        //for (int i = 0; indices.Count < 3; i++)
+        //{
+        //    //this is used for accessing the idex of the saved pool
+        //    int tempInt = Random.Range(0, poolCards.Count - 1);
+        //    if (!indices.Contains(tempInt))
+        //    {
+        //        indices.Add(tempInt);
+
+        //        //calls the factory to instantiate a copy of the base card SO
+        //        Card tempCard = Instantiate(poolCards[tempInt]);
+        //        tempCard.effectText = CardTagManager.GetCardEffectDescriptions(tempCard);
+
+        //        Display cardDisplay = choiceHolder.transform.GetChild(i).gameObject.GetComponent<Display>();
+        //        cardDisplay.card = tempCard;
+        //        draftedDisplay.Add(cardDisplay);
+
+        //        CardDescriptionLayout cardPopups = choiceHolder.transform.GetChild(i).gameObject.GetComponent<CardDescriptionLayout>();
+        //        draftedPopups.Add(cardPopups);
+
+        //    }
+        //    else
+        //    {
+        //        i--;
+        //    }
+        //}
 
         //gameObject.SetActive(true);
         
@@ -106,15 +123,21 @@ public class CardDrafting : MonoBehaviour
         UniversalInformation universalInfo = UniversalSaveState.LoadUniversalInformation();
         universalInfo.currentDeck.Add(card.enumCardName);
         UniversalSaveState.SaveUniversalInformation(universalInfo);
+
+
+        //calls rewardManager to disable to reward object
+        RewardsManager rewardManager = transform.parent.GetChild(2).GetComponent<RewardsManager>();
+        rewardManager.ClaimReward(objectOriginIndex);
+
         Destroy(gameObject);
 
 
     }
     //calls the manager to incite countdown for closing rewards scene
-    private void OnDestroy()
-    {
-        //index 2 of the canvas panel is always the rewards manager
-        RewardsManager rewardManager = transform.parent.GetChild(2).GetComponent<RewardsManager>();
-        rewardManager.ClaimReward(objectOriginIndex);
-    }
+    //private void OnDestroy()
+    //{
+    //    //index 2 of the canvas panel is always the rewards manager
+    //    RewardsManager rewardManager = transform.parent.GetChild(2).GetComponent<RewardsManager>();
+    //    rewardManager.ClaimReward(objectOriginIndex);
+    //}
 }

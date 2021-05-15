@@ -42,7 +42,8 @@ public class BaseUnitFunctions:MonoBehaviour
     UnitStatusHolder unitStatusHolder;
 
     //cache for the holder's scripr
-    EnemyAIManager enemyAIManager;
+    //used in Enemy Functions
+    public EnemyAIManager enemyAIManager;
 
 
     public void Start()
@@ -65,7 +66,7 @@ public class BaseUnitFunctions:MonoBehaviour
     {
         //this line is moved to the inheritted classes
         //maxHP = unit.HP;
-        currHP = maxHP;
+        //currHP = maxHP;
         currCreativity = maxCreativity;
         currDraw = defaultDraw;
 
@@ -91,6 +92,7 @@ public class BaseUnitFunctions:MonoBehaviour
 
 
     //Method for changing HP and block values
+    //inheritted classes has these for updating Unit files
     public virtual void TakeDamage(int damageValue)
     {
         //gets difference of currentHP and damage/heal value, prevents negatives
@@ -106,22 +108,26 @@ public class BaseUnitFunctions:MonoBehaviour
         }
         ShowBlock();
 
-        //at death
-        //WILL CHANGE THIS TO NOT IMMEDIATELY KILL FOR OVERKILL MECHANIC
-        if (currHP <= 0)
-        {
-            //calls the enemyCounterIdentifier that calls an event when all enemies are gone
-            enemyAIManager.RegisterEnemyKill();
+        //Migrated to enemy Functions
+        ////at death
+        ////WILL CHANGE THIS TO NOT IMMEDIATELY KILL FOR OVERKILL MECHANIC
+        //if (currHP <= 0)
+        //{
+        //    //calls the enemyCounterIdentifier that calls an event when all enemies are gone
+        //    enemyAIManager.RegisterEnemyKill();
 
-            //Comment out for Testing
-            gameObject.SetActive(false);
+        //    //Comment out for Testing
+        //    gameObject.SetActive(false);
 
-            //nothing in death delegate yet
-            //d_death();
-        }
+        //    //nothing in death delegate yet
+        //    //d_death();
+        //}
+
 
     }
+
     //for healing a unit
+    //inheritted classes has these for updating Unit files
     public virtual void HealHealth(int healValue)
     {
         currHP = Mathf.Min(currHP + healValue, maxHP);

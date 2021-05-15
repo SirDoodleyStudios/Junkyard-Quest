@@ -96,16 +96,20 @@ public class ScrapsDrafting : MonoBehaviour
         //save after changing
         UniversalSaveState.SaveUniversalInformation(universalInfo);
 
+        //index 2 of the canvas panel is always the rewards manager
+        RewardsManager rewardManager = transform.parent.GetChild(2).GetComponent<RewardsManager>();
+        rewardManager.ClaimReward(objectOriginIndex);
+
         //destroy after picking
         Destroy(gameObject);
     }
     //calls the manager to incite countdown for closing rewards scene
-    private void OnDestroy()
-    {
-        //index 2 of the canvas panel is always the rewards manager
-        RewardsManager rewardManager = transform.parent.GetChild(2).GetComponent<RewardsManager>();
-        rewardManager.ClaimReward(objectOriginIndex);
-    }
+    //private void OnDestroy()
+    //{
+    //    //index 2 of the canvas panel is always the rewards manager
+    //    RewardsManager rewardManager = transform.parent.GetChild(2).GetComponent<RewardsManager>();
+    //    rewardManager.ClaimReward(objectOriginIndex);
+    //}
 
 
 
