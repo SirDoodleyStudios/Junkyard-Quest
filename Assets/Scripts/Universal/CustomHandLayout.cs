@@ -216,10 +216,12 @@ public class CustomHandLayout : MonoBehaviour
             if (hoverIndex - i == 0)
             {
                 //DORewind makes sure that other tween effects are terminated when hovering quickly to other objects
-                childTransform.DORewind(false);
-                childTransform.localScale = new Vector3(1.4f, 1.4f, childTransform.localScale.z);
-                cardRect.anchoredPosition = new Vector2(cardRect.anchoredPosition.x, 90);
-                childTransform.rotation = Quaternion.Euler(0, 0, 0);
+                //childTransform.DORewind(false);
+                //childTransform.localScale = new Vector3(1.4f, 1.4f, childTransform.localScale.z);
+                //cardRect.anchoredPosition = new Vector2(cardRect.anchoredPosition.x, 90);
+                //childTransform.rotation = Quaternion.Euler(0, 0, 0);
+
+                CardZoomFunction(childTransform, cardRect);
 
             }
 
@@ -267,11 +269,13 @@ public class CustomHandLayout : MonoBehaviour
             //originally in DragNDrop
             if (hoverIndex - i == 0)
             {
-                //DORewind makes sure that other tween effects are terminated when hovering quickly to other objects
-                childTransform.DORewind(false);
-                childTransform.localScale = new Vector3(1.4f, 1.4f, childTransform.localScale.z);
-                cardRect.anchoredPosition = new Vector2(cardRect.anchoredPosition.x, 30);
-                childTransform.rotation = Quaternion.Euler(0, 0, 0);
+                ////DORewind makes sure that other tween effects are terminated when hovering quickly to other objects
+                //childTransform.DORewind(false);
+                //childTransform.localScale = new Vector3(1.4f, 1.4f, childTransform.localScale.z);
+                //cardRect.anchoredPosition = new Vector2(cardRect.anchoredPosition.x, 30);
+                //childTransform.rotation = Quaternion.Euler(0, 0, 0);
+
+                CardZoomFunction(childTransform, cardRect);
 
             }
             //only calculates neighbor indexes and not the hovered card itself
@@ -299,6 +303,14 @@ public class CustomHandLayout : MonoBehaviour
         yield return null;
     }
 
+    public void CardZoomFunction(Transform childTransform, RectTransform cardRect)
+    {
+        //DORewind makes sure that other tween effects are terminated when hovering quickly to other objects
+        childTransform.DORewind(false);
+        childTransform.localScale = new Vector3(1.4f, 1.4f, childTransform.localScale.z);
+        cardRect.anchoredPosition = new Vector2(cardRect.anchoredPosition.x, 90);
+        childTransform.rotation = Quaternion.Euler(0, 0, 0);
+    }
     
 
 

@@ -238,6 +238,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: AJ Card Hand Template (5)
       objectReference: {fileID: 0}
+    - target: {fileID: 6464637262997976180, guid: 4ab1b58faaf37b64d84f8e9db3421871,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 4ab1b58faaf37b64d84f8e9db3421871, type: 3}
 --- !u!1001 &24331309

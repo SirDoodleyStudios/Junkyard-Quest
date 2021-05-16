@@ -12,13 +12,21 @@ public class CardDrafting : MonoBehaviour
     public GameObject choiceHolder;
     GridLayoutGroup gridLayout;
     RectTransform parentCanvas;
-    
+
+    //Skil buttoon
+    Button skipButton;
+
 
     //reference to the Deck Directory Holder
     DeckPools deckPoolDirectories;
     List<Card> poolCards = new List<Card>();
     private void Awake()
     {
+        //the skip button is always the last child under the cardDrafting object
+        skipButton = transform.GetChild(transform.childCount - 1).GetComponent<Button>();
+        //assign the button for skipCard
+        skipButton.onClick.AddListener(() => SkipCard());
+
         //the DeckPool directory is located at index 0 of the canvas
         deckPoolDirectories = transform.parent.GetChild(0).GetComponent<DeckPools>();
 
@@ -28,12 +36,12 @@ public class CardDrafting : MonoBehaviour
         gridLayout.cellSize = new Vector2(parentCanvas.rect.width * .13416815742f, parentCanvas.rect.height * .34280604133f);
 
         //also assigns the cell size of the holder to the rect sizes of the cards themselves
-        foreach(Transform card in choiceHolder.transform)
+        foreach (Transform card in choiceHolder.transform)
         {
-            RectTransform tempRect= card.gameObject.GetComponent<RectTransform>();
+            RectTransform tempRect = card.gameObject.GetComponent<RectTransform>();
             tempRect.sizeDelta = new Vector2(parentCanvas.rect.width * .13416815742f, parentCanvas.rect.height * .34280604133f);
         }
-        
+
     }
 
     public void InitializeDraftPool(ChosenPlayer playerKey, ChosenClass classKey)
@@ -96,7 +104,7 @@ public class CardDrafting : MonoBehaviour
         //}
 
         //gameObject.SetActive(true);
-        
+
         //enable the choices one by one
         foreach (Transform card in choiceHolder.transform)
         {
@@ -117,7 +125,7 @@ public class CardDrafting : MonoBehaviour
 
     //called by DragNDrop after click
     // loads the current deck, adds the card then save immediately
- 
+
     public void AddtoDeck(Card card)
     {
         UniversalInformation universalInfo = UniversalSaveState.LoadUniversalInformation();
@@ -133,6 +141,15 @@ public class CardDrafting : MonoBehaviour
 
 
     }
+
+    //skip card button
+    void SkipCard()
+    {
+        RewardsManager rewardManager = transform.parent.GetChild(2).GetComponent<RewardsManager>();
+        rewardManager.ClaimReward(objectOriginIndex);
+        Destroy(gameObject);
+    }
+
     //calls the manager to incite countdown for closing rewards scene
     //private void OnDestroy()
     //{

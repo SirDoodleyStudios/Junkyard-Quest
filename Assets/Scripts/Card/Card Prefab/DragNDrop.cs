@@ -33,6 +33,12 @@ public class DragNDrop : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
     //identifier for drag and end drag when to stop
     bool isDragging;
 
+    //identifier that identifies if the card was hovered on during pointer enter
+    //set to true during Drawphase OnPointerEnter
+    //set to false during Drawphase OnPointerExit and PlayerTurn OnPointer Enter
+    bool isPointerEntered;
+    //will contain the event data captured during DraePhase PointerEnter
+    PointerEventData hoveredEventData;
 
     //identifier if card is Dropped or targetted, if true, it can be dragged naturally
     CardMethod cardMethod;
@@ -143,13 +149,25 @@ public class DragNDrop : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
     
     }
 
+    //used for redirecting the OnPointerEnter after drawphase is finished and simulate pointerEnter on wherever the mouse is hovered
+    public void OnMouseOver()
+    {
+        if (isPointerEntered)
+        {
+            OnPointerEnter(hoveredEventData);
+        }
+    }
+
     public void OnPointerEnter(PointerEventData eventData)
     {
+
 
         //Debug.Log(playerHand.state);
         //OriginalPosition = gameObject.transform.localPosition;
         if (playerHand != null && playerHand.state == CombatState.PlayerTurn)
         {
+            isPointerEntered = false;
+            //Debug.Log("entered");
             //records original position, scale, and rotation first for reverting later on
 
             //reset everything first
@@ -188,6 +206,15 @@ public class DragNDrop : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
                 cardDescriptionLayout.EnablePopups();
             }
         }
+        //if hovwered during drawphase, and drawphase ended on this card, will use these parameters to sen to OnMouseOver
+        else if (playerHand != null && playerHand.state == CombatState.DrawPhase)
+        {
+            sortingCanvas.overrideSorting = true;
+            cardCollider.enabled = true;
+            isPointerEntered = true;
+            hoveredEventData = eventData;
+            
+        }
     }
 
 
@@ -196,6 +223,7 @@ public class DragNDrop : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
     //OnpointerExit calls ActivateCardBehavior when player stops hovering at card
     public void OnPointerExit(PointerEventData eventData)
     {
+
         if (playerHand != null && playerHand.state == CombatState.PlayerTurn)
         {
 
@@ -219,15 +247,25 @@ public class DragNDrop : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
 
 
         }
+        //withdraws all of these so that they act as normal cards if not hovered after Drawphase
+        else if (playerHand != null && playerHand.state == CombatState.DrawPhase)
+        {
+            sortingCanvas.overrideSorting = false;
+            cardCollider.enabled = false;
+            isPointerEntered = false;
+        }
         //prevents popup from appearing when mouse is no longer hovered on card
         cardDescriptionLayout.DisablePopups();
+        
+
+        
     }    
 
     public void ResetSortingCanvasAndCollider()
     {
         ResetToAssignedPosition();
+        //CONTROLS IF A CARD CAN BE HOVERED ON DURING THE TWEENING ANIMATION
         sortingCanvas.overrideSorting = false;
-        //gameObject.transform.localPosition = new Vector3(gameObject.transform.localPosition.x, gameObject.transform.localPosition.y, (gameObject.transform.GetSiblingIndex() * -1));
         cardCollider.enabled = false;
     }
 
@@ -241,6 +279,7 @@ public class DragNDrop : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
         objectTransform.rotation = OriginalOrientation;
         objectTransform.localScale = OriginalScale;
     }
+
 
     //on firs instance of click, assign event data so that we can pass it to OnDrag using ActivateSingleClickDrag
     public void OnPointerDown(PointerEventData eventData)

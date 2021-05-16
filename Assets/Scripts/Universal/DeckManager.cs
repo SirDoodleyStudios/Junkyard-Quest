@@ -249,7 +249,7 @@ public class DeckManager : MonoBehaviour
     {
         playerHandScript.StateChanger(CombatState.DrawPhase);
         //time differential between each rearrange
-        float lagTime = .2f;
+        float lagTime = .1f;
 
         Card discardedCard = discardedCardObject.GetComponent<Display>().card;
         //for moving the card to discard and removing from player hand
@@ -279,7 +279,7 @@ public class DeckManager : MonoBehaviour
     {
         playerHandScript.StateChanger(CombatState.DrawPhase);
         //time differential between each rearrange
-        float lagTime = .2f;
+        float lagTime = .1f;
         Card consumedCard = consumedCardObject.GetComponent<Display>().card;
         consumePile.Add(consumedCard);
         playerHandList.Remove(consumedCard);
@@ -307,7 +307,7 @@ public class DeckManager : MonoBehaviour
         DragNDrop dragNDrop = rearrangedCard.GetComponent<DragNDrop>();
 
         playerHandScript.StateChanger(CombatState.DrawPhase);
-        float lagTime = .2f;
+        float lagTime = .1f;
         handLayout.ActivateRearrange(playerHandList.Count, rearrangedCard);
         yield return new WaitForSeconds(lagTime);
         playerHandScript.FixCardPositions();

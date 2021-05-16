@@ -273,6 +273,7 @@ public class RewardsManager : MonoBehaviour
 
         rewardsList = rewardsSaveState.rewardsList;
         rewardsAvailabilityList = rewardsSaveState.rewardsAvailabilityList;
+        claimedRewardCounter = rewardsSaveState.claimRewardCounter;
 
         //the bool is for GenerateRewardsObjects if the command is from file or not
         GenerateRewardsObjects(true);
