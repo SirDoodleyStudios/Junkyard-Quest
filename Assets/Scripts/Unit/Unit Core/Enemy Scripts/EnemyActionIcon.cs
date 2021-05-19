@@ -7,4 +7,8 @@ public class EnemyActionIcon : MonoBehaviour
 {
     public Image actionIcon;
     public EnemyActionFormat enemyAction;
+
+    //image for the links
+    public Image inputLinkImage;
+    public Image outputLinkImage;
 }

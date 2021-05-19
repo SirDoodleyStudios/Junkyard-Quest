@@ -197,138 +197,6 @@ public class EnemyFunctions : BaseUnitFunctions
         return enemyIntent;
     }
 
-    public void EnemyDrawHand()
-    {
-
-        for(int i = 0; enemyUnit.draw > i; i++)
-        {
-            
-            EnemyActionFormat tempAction = actionDeck[Random.Range(0, actionDeck.Count)];
-            //actionHand.Add(tempAction);
-            //actionDeck.Remove(tempAction);
-
-            //for assigning sprites and enabling action slot gameObject
-            //foreach (GameObject action in actionSlotObjects)
-            //{
-            //    if (action.activeSelf == false)
-            //    {
-            //        Image tempActionImage = action.GetComponent<Image>();
-            //        tempActionImage.sprite = actionIconsDict[tempAction.actionType];
-            //        action.SetActive(true);
-            //        break;
-
-            //    }
-            //}
-
-            //for assigning sprites and enabling action slot gameObject
-            //iterates through the action panel to enable action slots and assign sprites
-            foreach (Transform actionSlot in actionPanel.transform)
-            {
-                //cache for the child transform's gameObject
-                GameObject actionObject = actionSlot.gameObject;
-                //iterates till it finds a disabled slot, enables it then breaks
-                if (actionObject.activeSelf == false)
-                {
-                    //at draw, moves actions from pool to hand by draw times
-                    actionHand.Add(tempAction);
-                    actionDeck.Remove(tempAction);
-
-                    Image tempActionImage = actionObject.GetComponent<Image>();
-                    //tempActionImage.sprite = actionIconsDict[tempAction.actionType];      //dictionaryApproach
-                    //CONSIDER USING SCRIPTABLE OBJECTS INSTEAD OF RESOURCE FOLDER
-                    tempActionImage.sprite = Resources.Load<Sprite>($"EnemyActionIcon/{tempAction.actionType}");
-                    actionObject.SetActive(true);
-                    actionSlotObjects.Add(actionObject);
-
-
-                    break;
-                }
-            }
-        } 
-    }
-
-    public void EnemyCastIntent()
-    {
-        bool isNoMoreLinks = false;
-
-        //display intent first
-        //foreach (GameObject intent in intentSlots)
-        foreach (Transform intentTransform in intentPanel.transform)
-        {
-            GameObject intent = intentTransform.gameObject;
-            if (intent.activeSelf == false)
-            {
-                //cache for intent object's image
-                Image tempIntentImage = intent.GetComponent<Image>();
-
-                //picks a random EnemyActionformat from enemy hand if intents are empty
-                //tries to pick a linkable action if not empty
-                //actions are added to intendedActionsList
-                int actionIntentIndexMatcher = new int();
-                if (intendedActions.Count <= 0)
-                {
-                    actionIntentIndexMatcher = Random.Range(0, actionHand.Count);
-                    isNoMoreLinks = false;
-                }
-                else 
-                {
-                    //checks each remaining card in in actionHand if there are linkables
-                    foreach (EnemyActionFormat action in actionHand)
-                    {
-                        //checks the last element of the link if its output link matches the elements iterated through
-                        if (action.inputLink == intendedActions[intendedActions.Count - 1].outputLink)
-                        {
-                            actionIntentIndexMatcher = actionHand.IndexOf(action);
-                            isNoMoreLinks = false;
-                            break;
-                        }
-                        //if we got here as final, there are no links
-                        isNoMoreLinks = true;
-
-                    }
-
-                }
-
-                //if searching for linkable failed and if the last search drained the actionHand
-                if (isNoMoreLinks == true || actionHand.Count <= 0)
-                {
-                    break;
-                }
-                else
-                {
-                    //Adds the EnemyActionFormat that was randomized or deemed linkable by the else above
-                    //this list contains all EnemyActionFormats to be executed later
-                    intendedActions.Add(actionHand[actionIntentIndexMatcher]);
-                    //instantly removes from actionhand when picked as linkable
-                    actionHand.RemoveAt(actionIntentIndexMatcher);
-                    //This list contains all gameObjects under intent panel to be enabled or disabled later on
-                    intendedActionHolders.Add(intent);
-
-
-
-
-                    //assigns image to intent slot and enables the intent slot
-                    //tempIntentImage.sprite = actionIconsDict[intendedActions[intendedActions.Count - 1].actionType];      //dictionary approach
-                    //CONSIDER USING SCRIPTABLE OBJECTS INSTEAD OF RESOURCE FOLDER
-                    tempIntentImage.sprite = Resources.Load<Sprite>($"EnemyActionIcon/{intendedActions[intendedActions.Count - 1].actionType}");
-                    intent.SetActive(true);
-
-                    //disables the gameObject that holds the action then sets as last so that the Matcher still matches the indices of actionSlotObjects and actionHand
-                    actionSlotObjects[actionIntentIndexMatcher].SetActive(false);
-                    actionSlotObjects[actionIntentIndexMatcher].transform.SetAsLastSibling();
-                    actionSlotObjects.RemoveAt(actionIntentIndexMatcher);
-                }
-
-
-
-
-
-                
-            }
-        }
-
-
-    }
     public void EnemyDrawHand2()
     {
         //defaults the draw to enemy's EnemyActionFormat draw stat
@@ -340,8 +208,9 @@ public class EnemyFunctions : BaseUnitFunctions
             foreach (Transform actionSlot in actionPanel.transform)
             {
                 //cache for the child transform's gameObject
+                //child 3 is the text object
                 GameObject actionObject = actionSlot.gameObject;
-                TextMeshProUGUI actionObjectNumberText = actionObject.transform.GetChild(0).GetComponent<TextMeshProUGUI>();
+                TextMeshProUGUI actionObjectNumberText = actionObject.transform.GetChild(3).GetComponent<TextMeshProUGUI>();
                 //iterates till it finds a disabled slot, enables it then breaks
                 if (actionObject.activeSelf == false)
                 {
@@ -356,6 +225,14 @@ public class EnemyFunctions : BaseUnitFunctions
                     enemyActionIcon.actionIcon.sprite = Resources.Load<Sprite>($"EnemyActionIcon/{tempAction.actionType}");
                     //assigns the EnemyActionFormat from the deck to the EnemyActionIcon holder
                     enemyActionIcon.enemyAction = tempAction;
+                    //assign random input and output link
+                    JigsawLink tempInput = (JigsawLink)Random.Range(0, 2);
+                    JigsawLink tempOutput = (JigsawLink)Random.Range(0, 2);
+                    enemyActionIcon.enemyAction.inputLink = tempInput;
+                    enemyActionIcon.enemyAction.outputLink = tempOutput;
+                    enemyActionIcon.inputLinkImage.sprite = Resources.Load<Sprite>($"EnemyActionIcon/{tempInput}");
+                    enemyActionIcon.outputLinkImage.sprite = Resources.Load<Sprite>($"EnemyActionIcon/{tempOutput}");
+
                     //calls local function to get respective action pattern number texts, potency for attacks and blocks, stacks for enhance and debilitates
                     actionObjectNumberText.text = ActionNumbersGet(tempAction.enumEnemyAction);
                     actionObject.SetActive(true);
@@ -502,5 +379,134 @@ public class EnemyFunctions : BaseUnitFunctions
         } while (isNoMoreLinks == false);
 
     }
+
+
+    //OUTDATED
+    public void EnemyDrawHand()
+    {
+
+        for (int i = 0; enemyUnit.draw > i; i++)
+        {
+
+            EnemyActionFormat tempAction = actionDeck[Random.Range(0, actionDeck.Count)];
+            //actionHand.Add(tempAction);
+            //actionDeck.Remove(tempAction);
+
+            //for assigning sprites and enabling action slot gameObject
+            //foreach (GameObject action in actionSlotObjects)
+            //{
+            //    if (action.activeSelf == false)
+            //    {
+            //        Image tempActionImage = action.GetComponent<Image>();
+            //        tempActionImage.sprite = actionIconsDict[tempAction.actionType];
+            //        action.SetActive(true);
+            //        break;
+
+            //    }
+            //}
+
+            //for assigning sprites and enabling action slot gameObject
+            //iterates through the action panel to enable action slots and assign sprites
+            foreach (Transform actionSlot in actionPanel.transform)
+            {
+                //cache for the child transform's gameObject
+                GameObject actionObject = actionSlot.gameObject;
+                //iterates till it finds a disabled slot, enables it then breaks
+                if (actionObject.activeSelf == false)
+                {
+                    //at draw, moves actions from pool to hand by draw times
+                    actionHand.Add(tempAction);
+                    actionDeck.Remove(tempAction);
+
+                    Image tempActionImage = actionObject.GetComponent<Image>();
+                    //tempActionImage.sprite = actionIconsDict[tempAction.actionType];      //dictionaryApproach
+                    //CONSIDER USING SCRIPTABLE OBJECTS INSTEAD OF RESOURCE FOLDER
+                    tempActionImage.sprite = Resources.Load<Sprite>($"EnemyActionIcon/{tempAction.actionType}");
+                    actionObject.SetActive(true);
+                    actionSlotObjects.Add(actionObject);
+
+
+                    break;
+                }
+            }
+        }
+    }
+    //OUTDATED
+    //public void EnemyCastIntent()
+    //{
+    //    bool isNoMoreLinks = false;
+
+    //    //display intent first
+    //    //foreach (GameObject intent in intentSlots)
+    //    foreach (Transform intentTransform in intentPanel.transform)
+    //    {
+    //        GameObject intent = intentTransform.gameObject;
+    //        if (intent.activeSelf == false)
+    //        {
+    //            //cache for intent object's image
+    //            Image tempIntentImage = intent.GetComponent<Image>();
+
+    //            //picks a random EnemyActionformat from enemy hand if intents are empty
+    //            //tries to pick a linkable action if not empty
+    //            //actions are added to intendedActionsList
+    //            int actionIntentIndexMatcher = new int();
+    //            if (intendedActions.Count <= 0)
+    //            {
+    //                actionIntentIndexMatcher = Random.Range(0, actionHand.Count);
+    //                isNoMoreLinks = false;
+    //            }
+    //            else
+    //            {
+    //                //checks each remaining card in in actionHand if there are linkables
+    //                foreach (EnemyActionFormat action in actionHand)
+    //                {
+    //                    //checks the last element of the link if its output link matches the elements iterated through
+    //                    if (action.inputLink == intendedActions[intendedActions.Count - 1].outputLink)
+    //                    {
+    //                        actionIntentIndexMatcher = actionHand.IndexOf(action);
+    //                        isNoMoreLinks = false;
+    //                        break;
+    //                    }
+    //                    //if we got here as final, there are no links
+    //                    isNoMoreLinks = true;
+
+    //                }
+
+    //            }
+
+    //            //if searching for linkable failed and if the last search drained the actionHand
+    //            if (isNoMoreLinks == true || actionHand.Count <= 0)
+    //            {
+    //                break;
+    //            }
+    //            else
+    //            {
+    //                //Adds the EnemyActionFormat that was randomized or deemed linkable by the else above
+    //                //this list contains all EnemyActionFormats to be executed later
+    //                intendedActions.Add(actionHand[actionIntentIndexMatcher]);
+    //                //instantly removes from actionhand when picked as linkable
+    //                actionHand.RemoveAt(actionIntentIndexMatcher);
+    //                //This list contains all gameObjects under intent panel to be enabled or disabled later on
+    //                intendedActionHolders.Add(intent);
+
+
+
+
+    //                //assigns image to intent slot and enables the intent slot
+    //                //tempIntentImage.sprite = actionIconsDict[intendedActions[intendedActions.Count - 1].actionType];      //dictionary approach
+    //                //CONSIDER USING SCRIPTABLE OBJECTS INSTEAD OF RESOURCE FOLDER
+    //                tempIntentImage.sprite = Resources.Load<Sprite>($"EnemyActionIcon/{intendedActions[intendedActions.Count - 1].actionType}");
+    //                intent.SetActive(true);
+
+    //                //disables the gameObject that holds the action then sets as last so that the Matcher still matches the indices of actionSlotObjects and actionHand
+    //                actionSlotObjects[actionIntentIndexMatcher].SetActive(false);
+    //                actionSlotObjects[actionIntentIndexMatcher].transform.SetAsLastSibling();
+    //                actionSlotObjects.RemoveAt(actionIntentIndexMatcher);
+    //            }
+    //        }
+    //    }
+
+
+    //}
 }
 
