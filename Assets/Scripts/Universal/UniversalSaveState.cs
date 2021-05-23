@@ -117,9 +117,40 @@ public static class UniversalSaveState
         return rewardsState;
     }
 
+    //FOR COMBAT SAVES
+    public static void SaveCombatState(CombatSaveState combatSaveState)
+    {
+        PlayerUnitWrapper playerWrapper = new PlayerUnitWrapper(combatSaveState.playerUnitStats);
+        combatSaveState.playerStatsWrapper = playerWrapper;
 
+        string combat = JsonUtility.ToJson(combatSaveState);
+        File.WriteAllText(Application.persistentDataPath + "/Combat.json", combat);
+    }
+    public static CombatSaveState LoadCombatState()
+    {
+        //for loading other components in CombatSave
+        string combatState = File.ReadAllText(Application.persistentDataPath + "/Combat.json");
+        CombatSaveState loadedState = JsonUtility.FromJson<CombatSaveState>(combatState);
 
+        //extracts the player wrapper and reverts it back to PlayerUnit
+        PlayerUnitWrapper unitWrapper = loadedState.playerStatsWrapper;
+
+        PlayerUnit loadedUnit = Resources.Load<PlayerUnit>("PlayerSO/Current Stats");
+
+        loadedUnit.HP = unitWrapper.HP;
+        loadedUnit.Creativity = unitWrapper.Creativity;
+        loadedUnit.draw = unitWrapper.draw;
+        loadedUnit.energy = unitWrapper.energy;
+        loadedUnit.chosenPlayer = unitWrapper.chosenPlayer;
+        loadedUnit.currHP = unitWrapper.currHP;
+        //after the extract, assign the playerUnit in the universalInformation
+        loadedState.playerUnitStats = loadedUnit;
+
+        return loadedState;
+    }
 }
+
+
 
 //HELPER CLASSES for saving the OverWorld
 

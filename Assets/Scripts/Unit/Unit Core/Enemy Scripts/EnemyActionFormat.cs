@@ -1,5 +1,7 @@
 ﻿using UnityEngine;
+using System;
 
+[Serializable]
 [CreateAssetMenu(fileName = "EnemyAction", menuName = "EnemyAction")]
 public class EnemyActionFormat : ScriptableObject
 {

@@ -5,6 +5,10 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "Enemy Unit", menuName = "Enemy Unit")]
 public class EnemyUnit : Unit
 {
+    //will be used as an Identifier to fetch the base SO in Resources
+    //currently used in saveing functions
+    public EnemyEnumName enemyEnumName;
+
     //in Base
     //public int HP;
     //public int Creativity;

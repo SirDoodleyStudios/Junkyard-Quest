@@ -35,11 +35,14 @@ public class UniversalInformation
     public LinkActivityEnum linkActivity;
 
     //only used when game session has been saved from combat
-    public List<AllCards> combatDeck;
-    public List<AllCards> combatHand;
-    public List<AllCards> combatDiscard;
-    public List<AllCards> combatConsumed;
-    public List<EnemyUnit> enemyUnits;
+    //mgrated to CombatSaveState script
+    //public List<AllCards> combatDeck;
+    //public List<AllCards> combatHand;
+    //public List<AllCards> combatDiscard;
+    //public List<AllCards> combatConsumed;
+    //public List<EnemyUnit> enemyUnits;
+    //public int currEnergy;
+
 
     //combat statistics
     //these are determined during combat and used for determining rewards in the rewards scene

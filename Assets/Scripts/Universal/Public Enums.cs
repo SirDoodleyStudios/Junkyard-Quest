@@ -56,6 +56,22 @@ public enum AllJigsaws
 
 }
 
+//ENEMY RELATED
+//
+public enum EnemyEnumName
+{
+    //rivals, exactly 15, each playable with 3 classes
+    //giving way to a new class and new character in the future
+
+
+    //normal enemies
+    Spearie = 25
+
+    //bosses
+
+
+}
+
 public enum EnemyActionType { Offense, Block, Enhance, Debilitate, Special}
 public enum AllEnemyActions
 {

@@ -16,6 +16,7 @@ MonoBehaviour:
   Creativity: 3
   draw: 4
   currHP: 5
+  enemyEnumName: 25
   actionList:
   - {fileID: 11400000, guid: 3c5d32bc0d2369e45bd1c54530675f85, type: 2}
   - {fileID: 11400000, guid: a440eb396f9b07946bb30d49f187be34, type: 2}

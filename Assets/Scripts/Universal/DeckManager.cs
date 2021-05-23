@@ -5,11 +5,12 @@ using UnityEngine.UI;
 
 public class DeckManager : MonoBehaviour
 {
+    //Made public so that we can save them in CombatSaveState
     List<Card> initialDeck = new List<Card>();
 
-    List<Card> battleDeck = new List<Card>();
-    List<Card> discardPile = new List<Card>();
-    List<Card> consumePile = new List<Card>();
+    public List<Card> battleDeck = new List<Card>();
+    public List<Card> discardPile = new List<Card>();
+    public List<Card> consumePile = new List<Card>();
     public List<Card> playerHandList { get; private set; } = new List<Card>();
 
     JigsawFormat jigsaw;

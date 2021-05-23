@@ -26,7 +26,7 @@ public class CombatManager : MonoBehaviour
     public GameObject player;
     public PlayerFunctions playerFunctions;
     //list of enemies
-    //public List<GameObject> enemyList = new List<GameObject>();
+    public List<GameObject> enemyObjects = new List<GameObject>();
     public GameObject enemyHolder;
     //for creativeField
     public GameObject creativeUI;
@@ -90,8 +90,6 @@ public class CombatManager : MonoBehaviour
         //initial caching of creativeUnleash object's arrow handler
         creativeUnleashArrow = creativeUnleash.GetComponent<TargetArrowHandler>();
 
-
-
         //for exe3ctuing stuff during startcombat
         //calls the stats initialize for all units
         d_StartCombat += player.GetComponent<BaseUnitFunctions>().BaseUnitStatsInitialize;
@@ -130,6 +128,9 @@ public class CombatManager : MonoBehaviour
         //Card Drafting migrated to rewardsscene
         //cardDrafting.InitializeDraftPool(universalInformation.chosenPlayer, universalInformation.chosenClass);
 
+        //Save of combatState should be last
+        d_StartTurn += SaveCombatState;
+
         //will be called only during the beginiing
         d_StartCombat();
 
@@ -158,6 +159,24 @@ public class CombatManager : MonoBehaviour
 
 
     }
+    //for saving all the Combat parameters
+    public void SaveCombatState()
+    {
+        //for counting the list of gameObjects existing in the enemyHolder
+        enemyObjects.Clear();
+        foreach (Transform enemyTrans in enemyHolder.transform)
+        {
+            enemyObjects.Add(enemyTrans.gameObject);
+        }
+
+        //SAVE FUNCTION COMMENCES AT START OF TURN
+        PlayerUnit playerUnit = Instantiate(player.GetComponent<PlayerFunctions>().playerUnit);
+        CombatSaveState combatSaveState = new CombatSaveState(deckManager, playerUnit, enemyObjects);
+        //saves combatState and generate save file
+        UniversalSaveState.SaveCombatState(combatSaveState);
+
+    }
+
 
     public void Update()
     {

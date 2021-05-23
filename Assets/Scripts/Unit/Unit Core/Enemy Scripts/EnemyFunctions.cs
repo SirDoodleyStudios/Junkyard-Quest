@@ -15,7 +15,8 @@ public class EnemyFunctions : BaseUnitFunctions
     //contains stats and list of actions
     public EnemyUnit enemyUnit;
     //the list of EAFormats that the enemy can draw
-    List<EnemyActionFormat> actionDeck = new List<EnemyActionFormat>();
+    //made public so that it can be saved in CombatSaveState
+    public List<EnemyActionFormat> actionDeck = new List<EnemyActionFormat>();
     //the list of EAFormats that the enemy has in hand
     List<EnemyActionFormat> actionHand = new List<EnemyActionFormat>();
 
@@ -42,11 +43,11 @@ public class EnemyFunctions : BaseUnitFunctions
 
     //EnemyActionformat from enemy hand, intendedAction becomes the actual action at player's end turn
     //intendedActionHolder is the gameObject to enable and disable that contains the indededAction
-    EnemyActionFormat intendedAction;
-    GameObject intendedActionHolder;
+    //EnemyActionFormat intendedAction;
+    //GameObject intendedActionHolder;
 
-    List<EnemyActionFormat> intendedActions = new List<EnemyActionFormat>();
-    List<GameObject> intendedActionHolders = new List<GameObject>();
+    //List<EnemyActionFormat> intendedActions = new List<EnemyActionFormat>();
+    //List<GameObject> intendedActionHolders = new List<GameObject>();
 
 
     public override void InitializeStats()
@@ -200,6 +201,7 @@ public class EnemyFunctions : BaseUnitFunctions
     public void EnemyDrawHand2()
     {
         //defaults the draw to enemy's EnemyActionFormat draw stat
+        //THE ACTION DECK WILL BE SAVED AND LOADED IN COMBAT SAVES
         for(int i = 0; enemyUnit.draw > i; i++)
         {
             EnemyActionFormat tempAction = actionDeck[Random.Range(0, actionDeck.Count)];
@@ -329,6 +331,7 @@ public class EnemyFunctions : BaseUnitFunctions
             if (intentPanel.transform.childCount <= 0)
             {
                 //only finds from actions that are enabled
+                //adds the action from action panel to in a list to be transported to the intents panel
                 List<GameObject> tempList = new List<GameObject>();               
                 foreach (Transform actionTransform in actionPanel.transform)
                 {
@@ -338,6 +341,7 @@ public class EnemyFunctions : BaseUnitFunctions
                     }
                     
                 }
+                //actual action transferring line
                 tempList[Random.Range(0, tempList.Count - 1)].transform.SetParent(intentPanel.transform);
 
 
