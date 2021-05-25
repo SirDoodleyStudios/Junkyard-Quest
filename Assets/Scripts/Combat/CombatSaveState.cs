@@ -15,6 +15,7 @@ public class CombatSaveState
 
     //same playerUnitStats should be in UniversalInformation except for current creativity
     //player unit has a wrapper class available ion UniversalSaveState with constructor parameter PlayerUnit
+    //playerUnitStats is not serialized and will only be used to create the playerStatsWrapper which will be serialized
     public PlayerUnit playerUnitStats;
     public PlayerUnitWrapper playerStatsWrapper;
     public UnitStatusHolder playerStatuses;
@@ -75,13 +76,14 @@ public class EnemyUnitStatsWrapper
     public int currHP;
     public int block;
 
+    //The Wrappers are serializable classes for EnemyActionFormat when saving
     //contains EnemyActionFomats in the intentPanel 
-    public List<EnemyActionFormat> intentPanelActions = new List<EnemyActionFormat>();
+    public List<EnemyActionFormatWrapper> intentPanelActions = new List<EnemyActionFormatWrapper>();
     //contains EnemyActionFormats in the actionPanel
-    public List<EnemyActionFormat> actionPanelActions = new List<EnemyActionFormat>();
+    public List<EnemyActionFormatWrapper> actionPanelActions = new List<EnemyActionFormatWrapper>();
     //contains the current list of EnemyActionFormats in the enemy's deck
     //for this one, action deck should already be subtracted with the intent and actionPanelActions
-    public List<EnemyActionFormat> currentActionDeck = new List<EnemyActionFormat>();
+    public List<EnemyActionFormatWrapper> currentActionDeck = new List<EnemyActionFormatWrapper>();
 
 
 
@@ -92,19 +94,50 @@ public class EnemyUnitStatsWrapper
         //EnemyFunctions Variables
         block = enemyFunctions.block;
         //enumerates through the children in intentsHolder and add the existing EnemyActionFormats
+        //creates a new instance of EnemyActionFormat before saving it
         foreach (Transform iconTrans in enemyFunctions.intentPanel.transform)
         {
-            intentPanelActions.Add(iconTrans.GetComponent<EnemyActionIcon>().enemyAction);
+            EnemyActionFormatWrapper tempAction = new EnemyActionFormatWrapper(iconTrans.GetComponent<EnemyActionIcon>().enemyAction);
+            intentPanelActions.Add(tempAction);
         }
         foreach(Transform iconTrans in enemyFunctions.actionPanel.transform)
         {
-            actionPanelActions.Add(iconTrans.GetComponent<EnemyActionIcon>().enemyAction);
+            EnemyActionFormatWrapper tempAction = new EnemyActionFormatWrapper(iconTrans.GetComponent<EnemyActionIcon>().enemyAction);
+            actionPanelActions.Add(tempAction);
         }
 
-        currentActionDeck.AddRange(enemyFunctions.actionDeck);
+        foreach (EnemyActionFormat action in enemyFunctions.actionDeck)
+        {
+            EnemyActionFormatWrapper tempAction = new EnemyActionFormatWrapper(action);
+            currentActionDeck.Add(tempAction);
+        }
+        //currentActionDeck.AddRange(enemyFunctions.actionDeck);
 
         //EnemyUnit Variables
         currHP = enemyUnit.currHP;    
 
     }
+}
+
+//Wrapper to contain EnemyActionFormat so we xan serialize it
+[Serializable]
+public class EnemyActionFormatWrapper
+{
+    //everytime a jigsaw is instantiated, inputs and outputs are going to be randomized
+    public JigsawLink inputLink;
+    public JigsawLink outputLink;
+    public EnemyActionType actionType;
+
+    //THIS SHOULD BE ADDED AFTER RANDOMIZING
+    public AllEnemyActions enumEnemyAction;
+
+    public EnemyActionFormatWrapper(EnemyActionFormat action)
+    {
+        inputLink = action.inputLink;
+        outputLink = action.outputLink;
+        actionType = action.actionType;
+        enumEnemyAction = action.enumEnemyAction;
+    }
+
+
 }

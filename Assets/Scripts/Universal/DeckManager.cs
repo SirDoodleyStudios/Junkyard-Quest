@@ -158,6 +158,9 @@ public class DeckManager : MonoBehaviour
         //sets playerHand state to DrawPhase so that DragNDrop logics wont work while drawing
         playerHandScript.StateChanger(CombatState.DrawPhase);
 
+        //MAKE IT SO THAT WE ASSIGN AND REMOVE CARDS FROM DECK TO HAND TO DISCARD FIRST BEFORE DOING THE TWEENING COROUTINE
+        //THIS IS SO THAT WE CAN AVOID RUNNING IN WITH THE TIMING WHEN EXECUTING DRAW AND SAVING
+
         foreach (Card deckCard in battleDeck)
         {           
 
@@ -191,7 +194,6 @@ public class DeckManager : MonoBehaviour
                 yield return new WaitForSeconds(lagTime);
                 //calls the event in playerHand to make the set positions of cards after tweening its fixed final positions
                 playerHandScript.FixCardPositions();
-
 
             }
 
@@ -454,6 +456,7 @@ public class DeckManager : MonoBehaviour
         discardText.text = discardCount.ToString();
         consumeText.text = consumeCount.ToString();
         Debug.Log("deckupdater");
+        
     }
 
 

@@ -129,7 +129,8 @@ public class CombatManager : MonoBehaviour
         //cardDrafting.InitializeDraftPool(universalInformation.chosenPlayer, universalInformation.chosenClass);
 
         //Save of combatState should be last
-        d_StartTurn += SaveCombatState;
+        //move this to be executed in the end of StartTurnInCombatManager()
+        //d_StartTurn += SaveCombatState;
 
         //will be called only during the beginiing
         d_StartCombat();
@@ -138,7 +139,9 @@ public class CombatManager : MonoBehaviour
         //d_StartTurn += Player.GetComponent<PlayerFunctions>().AlterPlayerCreativity;
         //d_StartTurn += playerFunctions.StartTurnUpdates;
         d_StartTurn();
-        
+        //save after all start turn prep is done
+        SaveCombatState();
+
 
     }
 
@@ -156,6 +159,7 @@ public class CombatManager : MonoBehaviour
         DrawHand();
         //makes the endTurnButton interactable again during player turn
         EndTurnButt.interactable = true;
+
 
 
     }
@@ -884,6 +888,8 @@ public class CombatManager : MonoBehaviour
 
         //delegate for startTurn Event
         d_StartTurn();
+        //save after all start turn prep is done
+        SaveCombatState();
     }
 
     public void DefeatFunction()
