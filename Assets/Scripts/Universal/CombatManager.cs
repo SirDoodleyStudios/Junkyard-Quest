@@ -139,10 +139,7 @@ public class CombatManager : MonoBehaviour
         //d_StartTurn += Player.GetComponent<PlayerFunctions>().AlterPlayerCreativity;
         //d_StartTurn += playerFunctions.StartTurnUpdates;
         d_StartTurn();
-        //save after all start turn prep is done
         SaveCombatState();
-
-
     }
 
     //this is an event called everytime a player turn is started
@@ -805,8 +802,8 @@ public class CombatManager : MonoBehaviour
         //setting the state of all cards to drawsphase will supposedly prevent accidental onPointerExit logic while drawing cards
         //playerHand.StateChanger(CombatState.DrawPhase);
 
-        deckManager.StartCoroutine(deckManager.DrawCards(playerFunctions.defaultDraw));
-        //deckManager.DrawCards(playerFunctions.defaultDraw);
+        //deckManager.StartCoroutine(deckManager.DrawCards(playerFunctions.defaultDraw));
+        deckManager.DrawCards(playerFunctions.defaultDraw);
 
         //moved to the end of draw, discard, and consume scripts in DeckManager to ensure sync
         //DeckUpdater();
@@ -888,7 +885,6 @@ public class CombatManager : MonoBehaviour
 
         //delegate for startTurn Event
         d_StartTurn();
-        //save after all start turn prep is done
         SaveCombatState();
     }
 

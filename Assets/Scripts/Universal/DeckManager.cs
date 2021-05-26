@@ -12,6 +12,9 @@ public class DeckManager : MonoBehaviour
     public List<Card> discardPile = new List<Card>();
     public List<Card> consumePile = new List<Card>();
     public List<Card> playerHandList { get; private set; } = new List<Card>();
+    //this list is a temporary holder for the cards to be stored on before tweening during draw
+    //this is cleared immediately if used
+    public List<GameObject> beforeTweeningCardDraw = new List<GameObject>();
 
     JigsawFormat jigsaw;
 
@@ -148,7 +151,7 @@ public class DeckManager : MonoBehaviour
 
     //drawcount is sent by combatmanager
     //return int is the remaining deck cards
-    public IEnumerator DrawCards(int drawCount)
+    public void DrawCards(int drawCount)
     {
         //serves as counter when receiving draw count value
         int drawtemp = 0;
@@ -186,15 +189,17 @@ public class DeckManager : MonoBehaviour
                 ///////////////////////////////////////////////////////////////////////////////////////////////////////
                 ///create a logic that warps position of card gameObject from deck first then enable it then show animation going from deck to hand
                 ///
+                beforeTweeningCardDraw.Add(enabledCard);
 
                 //enabledCard.SetActive(true);
                 //yield return new WaitForSeconds(.01f);
 
-                handLayout.ActivateRearrange(playerHandList.Count, enabledCard);
-                yield return new WaitForSeconds(lagTime);
-                //calls the event in playerHand to make the set positions of cards after tweening its fixed final positions
-                playerHandScript.FixCardPositions();
-
+                /////////////////////////////////////////////////////////////////
+                //handLayout.ActivateRearrange(playerHandList.Count, enabledCard);
+                //yield return new WaitForSeconds(lagTime);
+                ////calls the event in playerHand to make the set positions of cards after tweening its fixed final positions
+                //playerHandScript.FixCardPositions();
+                //////////////////////////////////////////////////////////////////////
             }
 
             drawtemp++;
@@ -222,10 +227,38 @@ public class DeckManager : MonoBehaviour
             //this line removes from deck
             battleDeck.RemoveRange(0, drawCount);
             deckCount = battleDeck.Count;
+            StartCoroutine(DrawTween());
+
+            //foreach (GameObject enabledCard in beforeTweeningCardDraw)
+            //{
+            //    handLayout.ActivateRearrange(playerHandList.Count, enabledCard);
+            //    yield return new WaitForSeconds(lagTime);
+            //    //calls the event in playerHand to make the set positions of cards after tweening its fixed final positions
+            //    playerHandScript.FixCardPositions();
+            //}
+            //clear the holding list
+            //beforeTweeningCardDraw.Clear();
+
         }
 
         Debug.Log("draw");
         DeckUpdater();
+
+        //Actual part where we tween animate the cards 
+    }
+
+    //The Tweening code of drawcards is separated because the coroutine is messing up the timing of te start of turn save
+    public IEnumerator DrawTween()
+    {
+
+        float lagTime = .1f;
+        foreach (GameObject enabledCard in beforeTweeningCardDraw)
+        {
+            handLayout.ActivateRearrange(playerHandList.Count, enabledCard);
+            yield return new WaitForSeconds(lagTime);
+            //calls the event in playerHand to make the set positions of cards after tweening its fixed final positions
+            playerHandScript.FixCardPositions();
+        }
     }
 
 
@@ -242,8 +275,8 @@ public class DeckManager : MonoBehaviour
         Shuffle(battleDeck);
         if (remainingDraw != 0)
         {
-            StartCoroutine(DrawCards(remainingDraw));
-            //DrawCards(remainingDraw);
+            //StartCoroutine(DrawCards(remainingDraw));
+            DrawCards(remainingDraw);
         }
     }
 
