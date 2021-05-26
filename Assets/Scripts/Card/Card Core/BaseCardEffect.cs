@@ -271,8 +271,8 @@ public abstract class BaseCardEffect
     //this a hack
     public void DrawCard()
     {
-        targetPlayingField.deckManager.DrawCards(draw);
-        //targetPlayingField.deckManager.StartCoroutine(targetPlayingField.deckManager.DrawCards(draw));
+        //targetPlayingField.deckManager.DrawCards(draw);
+        targetPlayingField.deckManager.StartCoroutine(targetPlayingField.deckManager.DrawCards(draw));
         targetPlayingField.playerHandScript.StateChanger(CombatState.PlayerTurn);
     }
 
