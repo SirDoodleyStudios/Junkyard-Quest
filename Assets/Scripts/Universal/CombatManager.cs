@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
+using System.IO;
 
 
 public class CombatManager : MonoBehaviour
@@ -14,6 +15,10 @@ public class CombatManager : MonoBehaviour
     //event to call when combat starts
     public delegate void D_StartCombat();
     public event D_StartCombat d_StartCombat;
+
+    //After initializing stuffs, assign the player and enemy ststs
+    public delegate void D_GenerateUnits();
+    public event D_GenerateUnits d_GenerateUnits;
 
 
     CombatState state;
@@ -36,10 +41,12 @@ public class CombatManager : MonoBehaviour
     //playing field, automatically sent when a card is a dropped type and not an ability
     public GameObject playingField;
 
+    //Assigned in editor
     public DeckManager deckManager;
     public CreativeManager creativeManager;
     public PlayerHand playerHand;
     public CardDrafting cardDrafting;
+    public EnemyPools enemyPools;
 
     //related to energy
     //Energy gets accessed by playingField
@@ -76,13 +83,14 @@ public class CombatManager : MonoBehaviour
         //one time run to add dictionary entries of cardMechanic enums and text descriptions
         CardTagManager.InitializeTextDescriptionDictionaries();
         EffectFactory.InitializeCardFactory();
-
+        //EnemyUnitFactory.InitializeEnemyUnitFactory();
 
     }
 
     //Tried making this Awake(), destroyed some logic in EnemyFunctions
     public void Start()
     {
+
 
         //initial caching of player stats
         playerFunctions = player.GetComponent<PlayerFunctions>();
@@ -132,6 +140,44 @@ public class CombatManager : MonoBehaviour
         //move this to be executed in the end of StartTurnInCombatManager()
         //d_StartTurn += SaveCombatState;
 
+        //CODE FOR LOADING FROM COMBATFILE
+        ///////////////////////////////////////////////////////
+
+        ////if a combat file exists, load the player unit and enemy unit from combatSaveState
+        //if (File.Exists(Application.persistentDataPath + "/Combat.json"))
+        //{
+        //    CombatSaveState combatSaveState = UniversalSaveState.LoadCombatState();
+
+        //    //instantiate copies of the base SO per spawn in list and assign them to respective enemyHolder position
+        //    for (int i = 0; combatSaveState.enemyUnitWrappers.Count - 1 >= i; i++)
+        //    {
+        //        GameObject enemy = enemyHolder.transform.GetChild(i).gameObject;
+        //        enemy.SetActive(true);
+
+        //        //enemyUnit generated from factory then edited to match the enemy stats
+        //        EnemyUnitStatsWrapper enemyWrapper = combatSaveState.enemyUnitWrappers[i];
+        //        Debug.Log($"debug on {enemyWrapper.enemyEnumName}");
+        //        EnemyUnit enemyUnit = EnemyUnitFactory.GetEnemySO(enemyWrapper.enemyEnumName);
+
+        //        enemyUnit.currHP = enemyWrapper.currHP;
+        //        enemy.GetComponent<EnemyFunctions>().enemyUnit = Instantiate(enemyUnit);
+        //    }
+        //}
+        ////if combat file does not exist, get ebemy base unit from enemyPools
+        //else
+        //{
+        //    List<EnemyUnit> enemySpawn = enemyPools.GetEnemySpawn(universalInformation.nodeCount);
+
+        //    //instantiate copies of the base SO per spawn in list and assign them to respective enemyHolder position
+        //    for (int i =0; enemySpawn.Count-1 >= i; i++)
+        //    {
+        //        GameObject enemy = enemyHolder.transform.GetChild(i).gameObject;
+        //        enemy.SetActive(true);
+        //        enemy.GetComponent<EnemyFunctions>().enemyUnit = Instantiate(enemySpawn[i]);                
+        //    }
+        //}
+        ////////////////////////////////////////////////////
+
         //will be called only during the beginiing
         d_StartCombat();
 
@@ -141,6 +187,9 @@ public class CombatManager : MonoBehaviour
         d_StartTurn();
         SaveCombatState();
     }
+
+
+
 
     //this is an event called everytime a player turn is started
     //called by d_StartTurn()

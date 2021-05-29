@@ -25,6 +25,10 @@ public class UniversalInformation
     public PlayerUnitWrapper playerStatsWrapper;
     public int scraps;
 
+    //information about enemy
+    //will be used to find the base SO in resources depending on the key
+    public EnemyEnumName enemyEnumKey;
+
     //chosens
     public ChosenPlayer chosenPlayer;
     public ChosenClass chosenClass;
@@ -50,6 +54,10 @@ public class UniversalInformation
     public int overkills;
     public int enemyCount;
 
-    
+    //count of player progress in terms of number of nodes looted
+    //this will determine the difficulty of enemy spawns generated
+    public int nodeCount;
 
 }
+
+

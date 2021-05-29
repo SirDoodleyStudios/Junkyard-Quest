@@ -38,7 +38,8 @@ public class OverworldManager : MonoBehaviour
     List<GameObject> startingReachableNodes = new List<GameObject>();
     List<GameObject> adjacentNodes = new List<GameObject>();
 
-    //holds the universalInformation Loaded
+    //holds the universalInformation Loaded\
+    //Universal information is first created in Selection Screen
     UniversalInformation universalInformation;
 
     //wrapper internal class that holds the ionformation for the next node to be loaded by the activity scenes
@@ -153,6 +154,7 @@ public class OverworldManager : MonoBehaviour
         }
 
         //Reset Function that immediately resets the map
+        //UPDATE THIS TO DELETE ALL SAVE FILES AND GO BACK TO SELECTION SCREEN
         if (Input.GetKey(KeyCode.R))
         {
             activitiesManager.ResetMap();
@@ -324,10 +326,19 @@ public class OverworldManager : MonoBehaviour
         //UniversalSaveState.SaveUniversalInformation(universalInfo);
         //for nodes and links architecture
         circleGenerator.SaveOverworldState();
-        //for saving the universalInformation
-        UniversalSaveState.SaveUniversalInformation(universalInformation);
+
         //for overworld releveant data like current node selected
-        UniversalSaveState.SaveOverWorldData(new SaveKeyOverworld(worldState, currentNode.transform, adjacentNodes, camera.transform.position, nodeWrapper));
+        SaveKeyOverworld saveKeyOverworld = new SaveKeyOverworld(worldState, currentNode.transform, adjacentNodes, camera.transform.position, nodeWrapper);
+        UniversalSaveState.SaveOverWorldData(saveKeyOverworld);
+
+        //for saving the universalInformation
+        //immediately increase node count when transitioning to an new node scene if it is still traversible, this is so that the node tracking is all here
+        //null check is for determining whether it is move node or not. nodeWrapper is null at first node load
+        if (saveKeyOverworld.nodeWrapper != null && saveKeyOverworld.nodeWrapper.isTargetNodeTraversed)
+        {
+            universalInformation.nodeCount = universalInformation.nodeCount + 1;
+        }
+        UniversalSaveState.SaveUniversalInformation(universalInformation);
     }
 
     //this is a wrapper class for the nodeEnum and the isTraversed identifiers

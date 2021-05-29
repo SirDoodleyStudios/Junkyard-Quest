@@ -156,7 +156,7 @@ public class DeckManager : MonoBehaviour
         //serves as counter when receiving draw count value
         int drawtemp = 0;
         //time differential between each draw
-        float lagTime = .1f;
+        //float lagTime = .1f;
 
         //sets playerHand state to DrawPhase so that DragNDrop logics wont work while drawing
         playerHandScript.StateChanger(CombatState.DrawPhase);
