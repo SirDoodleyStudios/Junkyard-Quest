@@ -12,6 +12,8 @@ public class DeckManager : MonoBehaviour
     public List<Card> discardPile = new List<Card>();
     public List<Card> consumePile = new List<Card>();
     public List<Card> playerHandList { get; private set; } = new List<Card>();
+    //List of cards to be drawn and sent later to a seperate Coroutine so that we can save all card hand in a file
+    List<GameObject> enabledCards = new List<GameObject>();
 
     JigsawFormat jigsaw;
 
@@ -148,7 +150,7 @@ public class DeckManager : MonoBehaviour
 
     //drawcount is sent by combatmanager
     //return int is the remaining deck cards
-    public IEnumerator DrawCards(int drawCount)
+    public void DrawCards(int drawCount)
     {
         //serves as counter when receiving draw count value
         int drawtemp = 0;
@@ -190,10 +192,14 @@ public class DeckManager : MonoBehaviour
                 //enabledCard.SetActive(true);
                 //yield return new WaitForSeconds(.01f);
 
-                handLayout.ActivateRearrange(playerHandList.Count, enabledCard);
-                yield return new WaitForSeconds(lagTime);
-                //calls the event in playerHand to make the set positions of cards after tweening its fixed final positions
-                playerHandScript.FixCardPositions();
+                //adds drawn cards to list to be tweened later
+                enabledCards.Add(enabledCard);
+
+
+                //handLayout.ActivateRearrange(playerHandList.Count, enabledCard);
+                //yield return new WaitForSeconds(lagTime);
+                ////calls the event in playerHand to make the set positions of cards after tweening its fixed final positions
+                //playerHandScript.FixCardPositions();
 
             }
 
@@ -210,6 +216,8 @@ public class DeckManager : MonoBehaviour
         //at end of draw, DragNDrop should be albe to work now
         playerHandScript.StateChanger(CombatState.PlayerTurn);
 
+
+
         //ensures that when deck count is 0, only remaining cards are removed then calls the reset
         if (battleDeck.Count - drawtemp == 0)
         {
@@ -222,13 +230,27 @@ public class DeckManager : MonoBehaviour
             //this line removes from deck
             battleDeck.RemoveRange(0, drawCount);
             deckCount = battleDeck.Count;
+            //calls the animation of card draws to proceed
+            StartCoroutine(DrawCardsAnimationTime());
         }
 
         Debug.Log("draw");
         DeckUpdater();
+
     }
 
-
+    IEnumerator DrawCardsAnimationTime()
+    {
+        float lagTime = .1f;
+        foreach (GameObject enabledCard in enabledCards)
+        {
+            handLayout.ActivateRearrange(playerHandList.Count, enabledCard);
+            yield return new WaitForSeconds(lagTime);
+            //calls the event in playerHand to make the set positions of cards after tweening its fixed final positions
+            playerHandScript.FixCardPositions();
+        }
+        enabledCards.Clear();
+    }
 
     //called by draw function when deck count runs out
     //receives the remaining drawcount and passes it back when it calls the draw function again after moving discard to deck and shuffling
@@ -242,8 +264,8 @@ public class DeckManager : MonoBehaviour
         Shuffle(battleDeck);
         if (remainingDraw != 0)
         {
-            StartCoroutine(DrawCards(remainingDraw));
-            //DrawCards(remainingDraw);
+            //StartCoroutine(DrawCards(remainingDraw));
+            DrawCards(remainingDraw);
         }
     }
 

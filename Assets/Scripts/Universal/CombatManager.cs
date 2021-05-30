@@ -83,7 +83,7 @@ public class CombatManager : MonoBehaviour
         //one time run to add dictionary entries of cardMechanic enums and text descriptions
         CardTagManager.InitializeTextDescriptionDictionaries();
         EffectFactory.InitializeCardFactory();
-        //EnemyUnitFactory.InitializeEnemyUnitFactory();
+        EnemyUnitFactory.InitializeEnemyUnitFactory();
 
     }
 
@@ -140,43 +140,8 @@ public class CombatManager : MonoBehaviour
         //move this to be executed in the end of StartTurnInCombatManager()
         //d_StartTurn += SaveCombatState;
 
-        //CODE FOR LOADING FROM COMBATFILE
-        ///////////////////////////////////////////////////////
-
-        ////if a combat file exists, load the player unit and enemy unit from combatSaveState
-        //if (File.Exists(Application.persistentDataPath + "/Combat.json"))
-        //{
-        //    CombatSaveState combatSaveState = UniversalSaveState.LoadCombatState();
-
-        //    //instantiate copies of the base SO per spawn in list and assign them to respective enemyHolder position
-        //    for (int i = 0; combatSaveState.enemyUnitWrappers.Count - 1 >= i; i++)
-        //    {
-        //        GameObject enemy = enemyHolder.transform.GetChild(i).gameObject;
-        //        enemy.SetActive(true);
-
-        //        //enemyUnit generated from factory then edited to match the enemy stats
-        //        EnemyUnitStatsWrapper enemyWrapper = combatSaveState.enemyUnitWrappers[i];
-        //        Debug.Log($"debug on {enemyWrapper.enemyEnumName}");
-        //        EnemyUnit enemyUnit = EnemyUnitFactory.GetEnemySO(enemyWrapper.enemyEnumName);
-
-        //        enemyUnit.currHP = enemyWrapper.currHP;
-        //        enemy.GetComponent<EnemyFunctions>().enemyUnit = Instantiate(enemyUnit);
-        //    }
-        //}
-        ////if combat file does not exist, get ebemy base unit from enemyPools
-        //else
-        //{
-        //    List<EnemyUnit> enemySpawn = enemyPools.GetEnemySpawn(universalInformation.nodeCount);
-
-        //    //instantiate copies of the base SO per spawn in list and assign them to respective enemyHolder position
-        //    for (int i =0; enemySpawn.Count-1 >= i; i++)
-        //    {
-        //        GameObject enemy = enemyHolder.transform.GetChild(i).gameObject;
-        //        enemy.SetActive(true);
-        //        enemy.GetComponent<EnemyFunctions>().enemyUnit = Instantiate(enemySpawn[i]);                
-        //    }
-        //}
-        ////////////////////////////////////////////////////
+        //determines whether player, cards and enemystats are generated for fresh combat or loaded from file
+        InitiatCombatState();
 
         //will be called only during the beginiing
         d_StartCombat();
@@ -191,7 +156,45 @@ public class CombatManager : MonoBehaviour
 
     }
 
+    //Loading combatstate from file
+    ////if a combat file exists, load the player unit and enemy unit from combatSaveState
+    void InitiatCombatState()
+    {
+        if (File.Exists(Application.persistentDataPath + "/Combat.json"))
+        {
+            CombatSaveState combatSaveState = UniversalSaveState.LoadCombatState();
 
+            //instantiate copies of the base SO per spawn in list and assign them to respective enemyHolder position
+            for (int i = 0; combatSaveState.enemyUnitWrappers.Count - 1 >= i; i++)
+            {
+                GameObject enemy = enemyHolder.transform.GetChild(i).gameObject;
+                EnemyFunctions enemyFunction = enemy.GetComponent<EnemyFunctions>();
+                enemy.SetActive(true);
+
+                //enemyUnit generated from factory then edited to match the enemy stats
+                EnemyUnitStatsWrapper enemyWrapper = combatSaveState.enemyUnitWrappers[i];
+                Debug.Log($"debug on {enemyWrapper.enemyEnumName}");
+                EnemyUnit enemyUnit = EnemyUnitFactory.GetEnemySO(enemyWrapper.enemyEnumName);
+                //assigning values
+                enemyUnit.currHP = enemyWrapper.currHP;
+                enemyFunction.GainBlock(enemyWrapper.block);
+                enemy.GetComponent<EnemyFunctions>().enemyUnit = Instantiate(enemyUnit);
+            }
+        }
+        //if combat file does not exist, get ebemy base unit from enemyPools
+        else
+        {
+            List<EnemyUnit> enemySpawn = enemyPools.GetEnemySpawn(universalInformation.nodeCount);
+
+            //instantiate copies of the base SO per spawn in list and assign them to respective enemyHolder position
+            for (int i = 0; enemySpawn.Count - 1 >= i; i++)
+            {
+                GameObject enemy = enemyHolder.transform.GetChild(i).gameObject;
+                enemy.SetActive(true);
+                enemy.GetComponent<EnemyFunctions>().enemyUnit = Instantiate(enemySpawn[i]);
+            }
+        }
+    }
 
 
     //this is an event called everytime a player turn is started
@@ -219,7 +222,13 @@ public class CombatManager : MonoBehaviour
         enemyObjects.Clear();
         foreach (Transform enemyTrans in enemyHolder.transform)
         {
-            enemyObjects.Add(enemyTrans.gameObject);
+            GameObject enemyObject = enemyTrans.gameObject;
+            //only recognizes active objects to save
+            if (enemyObject.activeSelf)
+            {
+                enemyObjects.Add(enemyTrans.gameObject);
+            }
+
         }
 
         //SAVE FUNCTION COMMENCES AT START OF TURN
@@ -854,8 +863,8 @@ public class CombatManager : MonoBehaviour
         //setting the state of all cards to drawsphase will supposedly prevent accidental onPointerExit logic while drawing cards
         //playerHand.StateChanger(CombatState.DrawPhase);
 
-        deckManager.StartCoroutine(deckManager.DrawCards(playerFunctions.defaultDraw));
-        //deckManager.DrawCards(playerFunctions.defaultDraw);
+        //deckManager.StartCoroutine(deckManager.DrawCards(playerFunctions.defaultDraw));
+        deckManager.DrawCards(playerFunctions.defaultDraw);
 
         //moved to the end of draw, discard, and consume scripts in DeckManager to ensure sync
         //DeckUpdater();

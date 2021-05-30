@@ -114,7 +114,9 @@ public class EnemyUnitStatsWrapper
         //currentActionDeck.AddRange(enemyFunctions.actionDeck);
 
         //EnemyUnit Variables
-        currHP = enemyUnit.currHP;    
+        //current HPis in functions
+        currHP = enemyFunctions.currHP;
+
 
     }
 }

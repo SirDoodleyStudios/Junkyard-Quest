@@ -18,6 +18,7 @@ public class EnemyFunctions : BaseUnitFunctions
     //made public so that it can be saved in CombatSaveState
     public List<EnemyActionFormat> actionDeck = new List<EnemyActionFormat>();
     //the list of EAFormats that the enemy has in hand
+    //OUTDTED
     List<EnemyActionFormat> actionHand = new List<EnemyActionFormat>();
 
 
@@ -62,7 +63,7 @@ public class EnemyFunctions : BaseUnitFunctions
         //List of EnemyActionFormats in enemyUnit, add range so that the original scriptableObject is not affected when moving stuff
         actionDeck.AddRange(enemyUnit.actionList);
 
-        //instantiates card prefabs
+        //instantiates empty card prefabs based on the enemy draw
         for (int i = 0; enemyUnit.draw > i; i++)
         {
             GameObject freshInstantiate = Instantiate(enemyActionPrefab, actionPanel.transform);
@@ -108,21 +109,7 @@ public class EnemyFunctions : BaseUnitFunctions
     }
 
     public void EnemyPrepare()
-    {
-
-        //if (actionHand.Count <= 0)
-        //{
-        //    EnemyDrawHand();
-        //}
-        //EnemyCastIntent();
-
-        //if (actionHand.Count <= 0)
-        //{
-        //    EnemyDrawHand2();
-        //}
-        //EnemyCastIntent2();
-
-        
+    {        
 
         if (actionPanel.transform.GetChild(0).gameObject.activeSelf == false)
         {
@@ -133,30 +120,6 @@ public class EnemyFunctions : BaseUnitFunctions
 
     public void EnemyAct()
     {
-
-        //base.RemoveBlock();
-        //foreach (EnemyActionFormat intendedAction in intendedActions)
-        //{
-        //    for (int i = 0; intendedActions.IndexOf(intendedAction) >= i; i++)
-        //    {
-        //        EnemyActionFactory.GetEnemyActionEffect(intendedActions[i].enumEnemyAction).InitializeEnemyAction(enemyUnit, gameObject);
-        //        //EnemyActionFactory.GetEnemyActionEffect(intendedAction.enumEnemyAction).InitializeEnemyAction(enemyUnit, gameObject);
-        //    }
-        //    //intendedActionHolder.SetActive(false);
-        //    //intendedActionHolder.transform.SetAsLastSibling(); 
-
-        //    intendedActionHolders[intendedActions.IndexOf(intendedAction)].SetActive(false);
-        //    //intendedActionHolders[intendedActions.IndexOf(intendedAction)].transform.SetAsLastSibling();
-
-        //    //actionHand.Remove(intendedAction);
-        //    //actionDeck.Add(intendedAction);
-        //    Debug.Log($"index is {intendedActions.IndexOf(intendedAction)}");
-
-
-        //}
-
-        //actionDeck.AddRange(intendedActions);
-        //intendedActions.Clear();
 
         //removes block first before acting
         base.RemoveBlock();
@@ -435,82 +398,79 @@ public class EnemyFunctions : BaseUnitFunctions
             }
         }
     }
-    //OUTDATED
-    //public void EnemyCastIntent()
-    //{
-    //    bool isNoMoreLinks = false;
 
-    //    //display intent first
-    //    //foreach (GameObject intent in intentSlots)
-    //    foreach (Transform intentTransform in intentPanel.transform)
-    //    {
-    //        GameObject intent = intentTransform.gameObject;
-    //        if (intent.activeSelf == false)
-    //        {
-    //            //cache for intent object's image
-    //            Image tempIntentImage = intent.GetComponent<Image>();
+    //For loading enemy intents and actions from CombatSaveState file
+    public void EnemyPrepareFromFileLoad(EnemyUnitStatsWrapper enemyWrapper)
+    {
+        //temporary holder of decryted EnemyActionFormat for ActionPanel and IntentPanel
+        List<EnemyActionFormat> actionPanelList = new List<EnemyActionFormat>();
+        List<EnemyActionFormat> intentPanelList = new List<EnemyActionFormat>();
 
-    //            //picks a random EnemyActionformat from enemy hand if intents are empty
-    //            //tries to pick a linkable action if not empty
-    //            //actions are added to intendedActionsList
-    //            int actionIntentIndexMatcher = new int();
-    //            if (intendedActions.Count <= 0)
-    //            {
-    //                actionIntentIndexMatcher = Random.Range(0, actionHand.Count);
-    //                isNoMoreLinks = false;
-    //            }
-    //            else
-    //            {
-    //                //checks each remaining card in in actionHand if there are linkables
-    //                foreach (EnemyActionFormat action in actionHand)
-    //                {
-    //                    //checks the last element of the link if its output link matches the elements iterated through
-    //                    if (action.inputLink == intendedActions[intendedActions.Count - 1].outputLink)
-    //                    {
-    //                        actionIntentIndexMatcher = actionHand.IndexOf(action);
-    //                        isNoMoreLinks = false;
-    //                        break;
-    //                    }
-    //                    //if we got here as final, there are no links
-    //                    isNoMoreLinks = true;
+        //clear action deck firs becuse it might have been populated during initialize
+        actionDeck.Clear();
+        //decrypts all action format wrappers back to actul scripts
+        //fill-up enemy action deck
+        foreach (EnemyActionFormatWrapper enemyActionWrapper in enemyWrapper.currentActionDeck)
+        {
+            EnemyActionFormat tempFormat = new EnemyActionFormat();
+            //assigns wrapper values to EnemyActionFormt values
+            tempFormat.inputLink = enemyActionWrapper.inputLink;
+            tempFormat.outputLink = enemyActionWrapper.outputLink;
+            tempFormat.actionType = enemyActionWrapper.actionType;
+            tempFormat.enumEnemyAction = enemyActionWrapper.enumEnemyAction;
 
-    //                }
+            actionDeck.Add(tempFormat);
+        }
 
-    //            }
+        //decrypts the actionPanelWrappers
+        foreach (EnemyActionFormatWrapper enemyActionWrapper in enemyWrapper.actionPanelActions)
+        {
+            EnemyActionFormat tempFormat = new EnemyActionFormat();
+            //assigns wrapper values to EnemyActionFormt values
+            tempFormat.inputLink = enemyActionWrapper.inputLink;
+            tempFormat.outputLink = enemyActionWrapper.outputLink;
+            tempFormat.actionType = enemyActionWrapper.actionType;
+            tempFormat.enumEnemyAction = enemyActionWrapper.enumEnemyAction;
 
-    //            //if searching for linkable failed and if the last search drained the actionHand
-    //            if (isNoMoreLinks == true || actionHand.Count <= 0)
-    //            {
-    //                break;
-    //            }
-    //            else
-    //            {
-    //                //Adds the EnemyActionFormat that was randomized or deemed linkable by the else above
-    //                //this list contains all EnemyActionFormats to be executed later
-    //                intendedActions.Add(actionHand[actionIntentIndexMatcher]);
-    //                //instantly removes from actionhand when picked as linkable
-    //                actionHand.RemoveAt(actionIntentIndexMatcher);
-    //                //This list contains all gameObjects under intent panel to be enabled or disabled later on
-    //                intendedActionHolders.Add(intent);
+            actionPanelList.Add(tempFormat);
+        }
+        //ssigns actionFormts to actionPanel game objects
+        for (int i = 0; enemyWrapper.actionPanelActions.Count-1 >= i; i++)
+        {
+            EnemyActionIcon actionIcon = actionPanel.transform.GetChild(i).GetComponent<EnemyActionIcon>();
+            actionIcon.enemyAction = actionPanelList[i];
 
+            actionIcon.actionIcon.sprite = Resources.Load<Sprite>($"EnemyActionIcon/{actionPanelList[i].actionType}");
+            //assign random input and output link
+            actionIcon.inputLinkImage.sprite = Resources.Load<Sprite>($"EnemyActionIcon/{actionPanelList[i].inputLink}");
+            actionIcon.outputLinkImage.sprite = Resources.Load<Sprite>($"EnemyActionIcon/{actionPanelList[i].outputLink}");
+        }
 
+        //assign actionFormats to intentPanel game Objects
+        foreach (EnemyActionFormatWrapper enemyActionWrapper in enemyWrapper.intentPanelActions)
+        {
+            EnemyActionFormat tempFormat = new EnemyActionFormat();
+            //assigns wrapper values to EnemyActionFormt values
+            tempFormat.inputLink = enemyActionWrapper.inputLink;
+            tempFormat.outputLink = enemyActionWrapper.outputLink;
+            tempFormat.actionType = enemyActionWrapper.actionType;
+            tempFormat.enumEnemyAction = enemyActionWrapper.enumEnemyAction;
 
+            intentPanelList.Add(tempFormat);
+        }
+        for (int i = 0; enemyWrapper.intentPanelActions.Count - 1 >= i; i++)
+        {
+            GameObject instantiatedObject = Instantiate(enemyActionPrefab, intentPanel.transform);
+            EnemyActionIcon instantiatedActionIcon = instantiatedObject.GetComponent<EnemyActionIcon>();
+            instantiatedActionIcon.enemyAction = intentPanelList[i];
 
-    //                //assigns image to intent slot and enables the intent slot
-    //                //tempIntentImage.sprite = actionIconsDict[intendedActions[intendedActions.Count - 1].actionType];      //dictionary approach
-    //                //CONSIDER USING SCRIPTABLE OBJECTS INSTEAD OF RESOURCE FOLDER
-    //                tempIntentImage.sprite = Resources.Load<Sprite>($"EnemyActionIcon/{intendedActions[intendedActions.Count - 1].actionType}");
-    //                intent.SetActive(true);
+            instantiatedActionIcon.actionIcon.sprite = Resources.Load<Sprite>($"EnemyActionIcon/{intentPanelList[i].actionType}");
+            //assign random input and output link
+            instantiatedActionIcon.inputLinkImage.sprite = Resources.Load<Sprite>($"EnemyActionIcon/{intentPanelList[i].inputLink}");
+            instantiatedActionIcon.outputLinkImage.sprite = Resources.Load<Sprite>($"EnemyActionIcon/{intentPanelList[i].outputLink}");
+        }
 
-    //                //disables the gameObject that holds the action then sets as last so that the Matcher still matches the indices of actionSlotObjects and actionHand
-    //                actionSlotObjects[actionIntentIndexMatcher].SetActive(false);
-    //                actionSlotObjects[actionIntentIndexMatcher].transform.SetAsLastSibling();
-    //                actionSlotObjects.RemoveAt(actionIntentIndexMatcher);
-    //            }
-    //        }
-    //    }
-
-
-    //}
+    }
+   
 }
 
