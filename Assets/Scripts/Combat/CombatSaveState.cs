@@ -90,7 +90,7 @@ public class EnemyUnitStatsWrapper
     public EnemyUnitStatsWrapper(EnemyFunctions enemyFunctions)
     {
         EnemyUnit enemyUnit = enemyFunctions.enemyUnit;
-
+        enemyEnumName = enemyUnit.enemyEnumName;
         //EnemyFunctions Variables
         block = enemyFunctions.block;
         //enumerates through the children in intentsHolder and add the existing EnemyActionFormats
