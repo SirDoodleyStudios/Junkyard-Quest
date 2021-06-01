@@ -97,13 +97,21 @@ public class EnemyUnitStatsWrapper
         //creates a new instance of EnemyActionFormat before saving it
         foreach (Transform iconTrans in enemyFunctions.intentPanel.transform)
         {
-            EnemyActionFormatWrapper tempAction = new EnemyActionFormatWrapper(iconTrans.GetComponent<EnemyActionIcon>().enemyAction);
-            intentPanelActions.Add(tempAction);
+            if (iconTrans.gameObject.activeSelf)
+            {
+                EnemyActionFormatWrapper tempAction = new EnemyActionFormatWrapper(iconTrans.GetComponent<EnemyActionIcon>().enemyAction);
+                intentPanelActions.Add(tempAction);
+            }
+
         }
         foreach(Transform iconTrans in enemyFunctions.actionPanel.transform)
         {
-            EnemyActionFormatWrapper tempAction = new EnemyActionFormatWrapper(iconTrans.GetComponent<EnemyActionIcon>().enemyAction);
-            actionPanelActions.Add(tempAction);
+            int tempInt = enemyFunctions.actionPanel.transform.childCount;
+            if (iconTrans.gameObject.activeSelf)
+            {
+                EnemyActionFormatWrapper tempAction = new EnemyActionFormatWrapper(iconTrans.GetComponent<EnemyActionIcon>().enemyAction);
+                actionPanelActions.Add(tempAction);
+            }
         }
 
         foreach (EnemyActionFormat action in enemyFunctions.actionDeck)

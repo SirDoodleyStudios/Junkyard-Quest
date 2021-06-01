@@ -39,7 +39,7 @@ public class EnemyAIManager : MonoBehaviour
             //load unitwrappers from the combat save file then send them to the enemyfunctions for loading
             CombatSaveState combatSaveState = UniversalSaveState.LoadCombatState();
             List<EnemyUnitStatsWrapper> enemyUnitWrappers = combatSaveState.enemyUnitWrappers;
-            for(int i = 0; enemyUnitWrappers.Count -1 >= i; i++)
+            for (int i = 0; enemyUnitWrappers.Count - 1 >= i; i++)
             {
                 EnemyFunctions tempenemy = transform.GetChild(i).gameObject.GetComponent<EnemyFunctions>();
                 tempenemy.EnemyPrepareFromFileLoad(enemyUnitWrappers[i]); ;
@@ -54,6 +54,7 @@ public class EnemyAIManager : MonoBehaviour
                 EnemyFunctions tempenemy = enemy.gameObject.GetComponent<EnemyFunctions>();
                 tempenemy.EnemyPrepare();
             }
+            isFirstTurnLoadOfFile = true;
         }
 
         //foreach (Transform enemy in gameObject.transform)

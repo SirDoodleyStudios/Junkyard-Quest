@@ -347,58 +347,6 @@ public class EnemyFunctions : BaseUnitFunctions
 
     }
 
-
-    //OUTDATED
-    public void EnemyDrawHand()
-    {
-
-        for (int i = 0; enemyUnit.draw > i; i++)
-        {
-
-            EnemyActionFormat tempAction = actionDeck[Random.Range(0, actionDeck.Count)];
-            //actionHand.Add(tempAction);
-            //actionDeck.Remove(tempAction);
-
-            //for assigning sprites and enabling action slot gameObject
-            //foreach (GameObject action in actionSlotObjects)
-            //{
-            //    if (action.activeSelf == false)
-            //    {
-            //        Image tempActionImage = action.GetComponent<Image>();
-            //        tempActionImage.sprite = actionIconsDict[tempAction.actionType];
-            //        action.SetActive(true);
-            //        break;
-
-            //    }
-            //}
-
-            //for assigning sprites and enabling action slot gameObject
-            //iterates through the action panel to enable action slots and assign sprites
-            foreach (Transform actionSlot in actionPanel.transform)
-            {
-                //cache for the child transform's gameObject
-                GameObject actionObject = actionSlot.gameObject;
-                //iterates till it finds a disabled slot, enables it then breaks
-                if (actionObject.activeSelf == false)
-                {
-                    //at draw, moves actions from pool to hand by draw times
-                    actionHand.Add(tempAction);
-                    actionDeck.Remove(tempAction);
-
-                    Image tempActionImage = actionObject.GetComponent<Image>();
-                    //tempActionImage.sprite = actionIconsDict[tempAction.actionType];      //dictionaryApproach
-                    //CONSIDER USING SCRIPTABLE OBJECTS INSTEAD OF RESOURCE FOLDER
-                    tempActionImage.sprite = Resources.Load<Sprite>($"EnemyActionIcon/{tempAction.actionType}");
-                    actionObject.SetActive(true);
-                    actionSlotObjects.Add(actionObject);
-
-
-                    break;
-                }
-            }
-        }
-    }
-
     //For loading enemy intents and actions from CombatSaveState file
     public void EnemyPrepareFromFileLoad(EnemyUnitStatsWrapper enemyWrapper)
     {
@@ -406,13 +354,18 @@ public class EnemyFunctions : BaseUnitFunctions
         List<EnemyActionFormat> actionPanelList = new List<EnemyActionFormat>();
         List<EnemyActionFormat> intentPanelList = new List<EnemyActionFormat>();
 
+
+
+
         //clear action deck firs becuse it might have been populated during initialize
         actionDeck.Clear();
         //decrypts all action format wrappers back to actul scripts
         //fill-up enemy action deck
         foreach (EnemyActionFormatWrapper enemyActionWrapper in enemyWrapper.currentActionDeck)
         {
-            EnemyActionFormat tempFormat = new EnemyActionFormat();
+            //Loads the a generic EnemyctioFormt to be instantiated
+            EnemyActionFormat tempFormat = Instantiate(Resources.Load<EnemyActionFormat>("EnemyUnits/EnemyActionFormatBase"));
+
             //assigns wrapper values to EnemyActionFormt values
             tempFormat.inputLink = enemyActionWrapper.inputLink;
             tempFormat.outputLink = enemyActionWrapper.outputLink;
@@ -425,7 +378,9 @@ public class EnemyFunctions : BaseUnitFunctions
         //decrypts the actionPanelWrappers
         foreach (EnemyActionFormatWrapper enemyActionWrapper in enemyWrapper.actionPanelActions)
         {
-            EnemyActionFormat tempFormat = new EnemyActionFormat();
+            //Loads the a generic EnemyctioFormt to be instantiated
+            EnemyActionFormat tempFormat = Instantiate(Resources.Load<EnemyActionFormat>("EnemyUnits/EnemyActionFormatBase"));
+
             //assigns wrapper values to EnemyActionFormt values
             tempFormat.inputLink = enemyActionWrapper.inputLink;
             tempFormat.outputLink = enemyActionWrapper.outputLink;
@@ -437,19 +392,29 @@ public class EnemyFunctions : BaseUnitFunctions
         //ssigns actionFormts to actionPanel game objects
         for (int i = 0; enemyWrapper.actionPanelActions.Count-1 >= i; i++)
         {
-            EnemyActionIcon actionIcon = actionPanel.transform.GetChild(i).GetComponent<EnemyActionIcon>();
+            GameObject actionObject = actionPanel.transform.GetChild(i).gameObject;
+            EnemyActionIcon actionIcon = actionObject.GetComponent<EnemyActionIcon>();
+            //ActionIcon text is stored in a child object at 3 index of the enemyActionIconPrefab
+            TextMeshProUGUI actionNumberText = actionObject.transform.GetChild(3).GetComponent<TextMeshProUGUI>();
             actionIcon.enemyAction = actionPanelList[i];
 
             actionIcon.actionIcon.sprite = Resources.Load<Sprite>($"EnemyActionIcon/{actionPanelList[i].actionType}");
             //assign random input and output link
             actionIcon.inputLinkImage.sprite = Resources.Load<Sprite>($"EnemyActionIcon/{actionPanelList[i].inputLink}");
             actionIcon.outputLinkImage.sprite = Resources.Load<Sprite>($"EnemyActionIcon/{actionPanelList[i].outputLink}");
+
+            actionObject.SetActive(true);
+            //gets text
+            actionNumberText.text = ActionNumbersGet(actionPanelList[i].enumEnemyAction);
+
         }
 
         //assign actionFormats to intentPanel game Objects
         foreach (EnemyActionFormatWrapper enemyActionWrapper in enemyWrapper.intentPanelActions)
         {
-            EnemyActionFormat tempFormat = new EnemyActionFormat();
+            //Loads the a generic EnemyctioFormt to be instantiated
+            EnemyActionFormat tempFormat = Instantiate(Resources.Load<EnemyActionFormat>("EnemyUnits/EnemyActionFormatBase"));
+
             //assigns wrapper values to EnemyActionFormt values
             tempFormat.inputLink = enemyActionWrapper.inputLink;
             tempFormat.outputLink = enemyActionWrapper.outputLink;
@@ -462,12 +427,17 @@ public class EnemyFunctions : BaseUnitFunctions
         {
             GameObject instantiatedObject = Instantiate(enemyActionPrefab, intentPanel.transform);
             EnemyActionIcon instantiatedActionIcon = instantiatedObject.GetComponent<EnemyActionIcon>();
+            //ActionIcon text is stored in a child object at 3 index of the enemyActionIconPrefab
+            TextMeshProUGUI intentActionText = instantiatedObject.transform.GetChild(3).GetComponent<TextMeshProUGUI>();
             instantiatedActionIcon.enemyAction = intentPanelList[i];
 
             instantiatedActionIcon.actionIcon.sprite = Resources.Load<Sprite>($"EnemyActionIcon/{intentPanelList[i].actionType}");
             //assign random input and output link
             instantiatedActionIcon.inputLinkImage.sprite = Resources.Load<Sprite>($"EnemyActionIcon/{intentPanelList[i].inputLink}");
             instantiatedActionIcon.outputLinkImage.sprite = Resources.Load<Sprite>($"EnemyActionIcon/{intentPanelList[i].outputLink}");
+
+            //gets text
+            intentActionText.text = ActionNumbersGet(intentPanelList[i].enumEnemyAction);
         }
 
     }

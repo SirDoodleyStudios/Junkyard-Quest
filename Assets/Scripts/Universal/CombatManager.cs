@@ -141,7 +141,7 @@ public class CombatManager : MonoBehaviour
         //d_StartTurn += SaveCombatState;
 
         //determines whether player, cards and enemystats are generated for fresh combat or loaded from file
-        InitiatCombatState();
+        InitiateCombatState();
 
         //will be called only during the beginiing
         d_StartCombat();
@@ -158,7 +158,7 @@ public class CombatManager : MonoBehaviour
 
     //Loading combatstate from file
     ////if a combat file exists, load the player unit and enemy unit from combatSaveState
-    void InitiatCombatState()
+    void InitiateCombatState()
     {
         if (File.Exists(Application.persistentDataPath + "/Combat.json"))
         {
