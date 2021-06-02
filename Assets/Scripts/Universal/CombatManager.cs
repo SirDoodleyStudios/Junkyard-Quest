@@ -179,6 +179,8 @@ public class CombatManager : MonoBehaviour
                 enemyUnit.currHP = enemyWrapper.currHP;
                 enemyFunction.GainBlock(enemyWrapper.block);
                 enemy.GetComponent<EnemyFunctions>().enemyUnit = Instantiate(enemyUnit);
+
+                playerFunctions.LoadPlayerUnitFromFile(combatSaveState.playerUnitStats);
             }
         }
         //if combat file does not exist, get ebemy base unit from enemyPools

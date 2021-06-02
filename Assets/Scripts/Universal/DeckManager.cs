@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using System.IO;
 
 public class DeckManager : MonoBehaviour
 {
@@ -125,6 +126,7 @@ public class DeckManager : MonoBehaviour
             Card tempCard = Instantiate(CardSOFactory.GetCardSO(cardKey));
             tempCard.effectText = CardTagManager.GetCardEffectDescriptions(tempCard);
 
+            //This is a test Jigsaw Generator function
             if (tempCard.cardType == CardType.Offense || tempCard.cardType == CardType.Utility)
             {
                 JigsawFormat instantiatedJigsaw = Instantiate(testJigsawList[Random.Range(0, testJigsawList.Count)]);
@@ -141,10 +143,73 @@ public class DeckManager : MonoBehaviour
             initialDeck.Add(tempCard);
         }
 
-        battleDeck = initialDeck;
-        deckCount = battleDeck.Count;
-        discardCount = discardPile.Count;
-        Shuffle(battleDeck);
+        //will determine whether the initial combat deck and discard and consume decks are loaded from file of from generic
+        if (File.Exists(Application.persistentDataPath + "/Combat.json"))
+        {
+            //we add the cards in hand first in the deck so that when the draw method is called, the same cards will be in hand from last save
+            CombatSaveState combatSaveState = UniversalSaveState.LoadCombatState();
+            foreach (AllCards handCardEnum in combatSaveState.playerHandList)
+            {
+                Card handCard = Instantiate(CardSOFactory.GetCardSO(handCardEnum));
+                handCard.effectText = CardTagManager.GetCardEffectDescriptions(handCard);
+                battleDeck.Add(handCard);
+            }
+            foreach (AllCards deckCardEnum in combatSaveState.battleDeck)
+            {
+                Card deckCard = Instantiate(CardSOFactory.GetCardSO(deckCardEnum));
+                deckCard.effectText = CardTagManager.GetCardEffectDescriptions(deckCard);
+                battleDeck.Add(deckCard);
+            }
+
+            //populating the discrd and consume decks
+            foreach (AllCards discardCardEnum in combatSaveState.discardPile)
+            {
+                Card discardCard = Instantiate(CardSOFactory.GetCardSO(discardCardEnum));
+                discardCard.effectText = CardTagManager.GetCardEffectDescriptions(discardCard);
+                discardPile.Add(discardCard);
+            }
+            foreach (AllCards consumeCardEnum in combatSaveState.consumePile)
+            {
+                Card consumeCard = Instantiate(CardSOFactory.GetCardSO(consumeCardEnum));
+                consumeCard.effectText = CardTagManager.GetCardEffectDescriptions(consumeCard);
+                consumePile.Add(consumeCard);
+            }
+
+            deckCount = battleDeck.Count;
+            discardCount = discardPile.Count;
+            consumeCount = consumePile.Count;
+        }
+        else
+        {
+            battleDeck = initialDeck;
+            deckCount = battleDeck.Count;
+            discardCount = discardPile.Count;
+            Shuffle(battleDeck);
+        }
+
+    }
+
+    //Helper method called by InitializeBattleDeck method here in deckManager that generates a Card from the loaded AllCards enum
+    //returns the same card after filling it up with information
+    //NOT YET IMPLEMENTED FOR USE
+    Card CardInfoFillup(Card tempCard)
+    {
+        tempCard.effectText = CardTagManager.GetCardEffectDescriptions(tempCard);
+
+        if (tempCard.cardType == CardType.Offense || tempCard.cardType == CardType.Utility)
+        {
+            JigsawFormat instantiatedJigsaw = Instantiate(testJigsawList[Random.Range(0, testJigsawList.Count)]);
+            tempCard.jigsawEffect = instantiatedJigsaw;
+            JigsawFormat assignedJigsaw = tempCard.jigsawEffect;
+
+            assignedJigsaw.inputLink = (JigsawLink)Random.Range(0, 2);
+            assignedJigsaw.outputLink = (JigsawLink)Random.Range(0, 2);
+
+            assignedJigsaw.jigsawDescription = CardTagManager.GetJigsawDescriptions(assignedJigsaw.enumJigsawName);
+            assignedJigsaw.jigsawImage = CardTagManager.DetermineJigsawImage(assignedJigsaw.inputLink, assignedJigsaw.outputLink);
+        }
+
+        return tempCard;
     }
 
 
