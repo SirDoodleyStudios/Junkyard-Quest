@@ -19,6 +19,8 @@ public class CombatSaveState
     public PlayerUnit playerUnitStats;
     public PlayerUnitWrapper playerStatsWrapper;
     public UnitStatusHolder playerStatuses;
+    //this int will be filled up externlly once the CombatSaveState is created from the externlScript
+    public int currCreativity;
 
     //enemy related info
     public List<EnemyUnitStatsWrapper> enemyUnitWrappers = new List<EnemyUnitStatsWrapper>();

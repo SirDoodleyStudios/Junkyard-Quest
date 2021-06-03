@@ -140,11 +140,13 @@ public class CombatManager : MonoBehaviour
         //move this to be executed in the end of StartTurnInCombatManager()
         //d_StartTurn += SaveCombatState;
 
+        //will be called only during the beginiing
+        d_StartCombat();
+
         //determines whether player, cards and enemystats are generated for fresh combat or loaded from file
         InitiateCombatState();
 
-        //will be called only during the beginiing
-        d_StartCombat();
+
 
         //d_StartTurn += Player.GetComponent<AbilityManager>().EnableAbilities;
         //d_StartTurn += Player.GetComponent<PlayerFunctions>().AlterPlayerCreativity;
@@ -180,8 +182,11 @@ public class CombatManager : MonoBehaviour
                 enemyFunction.GainBlock(enemyWrapper.block);
                 enemy.GetComponent<EnemyFunctions>().enemyUnit = Instantiate(enemyUnit);
 
-                playerFunctions.LoadPlayerUnitFromFile(combatSaveState.playerUnitStats);
             }
+            //assign the player unit saved in file
+            playerFunctions.LoadPlayerUnitFromFile(combatSaveState.playerUnitStats);
+            //max is subtracted from current because alterCreativvity funcion needs negative values for reduction
+            playerFunctions.AlterPlayerCreativity(combatSaveState.currCreativity - combatSaveState.playerUnitStats.Creativity);
         }
         //if combat file does not exist, get ebemy base unit from enemyPools
         else
@@ -196,6 +201,8 @@ public class CombatManager : MonoBehaviour
                 enemy.GetComponent<EnemyFunctions>().enemyUnit = Instantiate(enemySpawn[i]);
             }
         }
+
+
     }
 
 
@@ -236,6 +243,7 @@ public class CombatManager : MonoBehaviour
         //SAVE FUNCTION COMMENCES AT START OF TURN
         PlayerUnit playerUnit = Instantiate(player.GetComponent<PlayerFunctions>().playerUnit);
         CombatSaveState combatSaveState = new CombatSaveState(deckManager, playerUnit, enemyObjects);
+        combatSaveState.currCreativity = playerFunctions.currCreativity;
         //saves combatState and generate save file
         UniversalSaveState.SaveCombatState(combatSaveState);
 
