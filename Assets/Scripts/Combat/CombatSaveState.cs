@@ -16,25 +16,29 @@ public class CombatSaveState
     //same playerUnitStats should be in UniversalInformation except for current creativity
     //player unit has a wrapper class available ion UniversalSaveState with constructor parameter PlayerUnit
     //playerUnitStats is not serialized and will only be used to create the playerStatsWrapper which will be serialized
-    public PlayerUnit playerUnitStats;
+    public PlayerUnit playerUnit;
     public PlayerUnitWrapper playerStatsWrapper;
-    public UnitStatusHolder playerStatuses;
     //this int will be filled up externlly once the CombatSaveState is created from the externlScript
     public int currCreativity;
 
+    //for the saving of player unit statuses
+    //the key for accessing the status itself and their stacks
+    //indices will determine which stck is for what status
+    public List<CardMechanics> cardMechanics = new List<CardMechanics>();
+    public List<int> statusStacks = new List<int>();
+
     //enemy related info
     public List<EnemyUnitStatsWrapper> enemyUnitWrappers = new List<EnemyUnitStatsWrapper>();
-    public List<UnitStatusHolder> enemyListStatuses = new List<UnitStatusHolder>();
 
 
-    public CombatSaveState(DeckManager deckManager, PlayerUnit playerUnit, List<GameObject> enemyObjects)
+    public CombatSaveState(DeckManager deckManager, PlayerUnit playerUnit, UnitStatusHolder playerStatuses, List<GameObject> enemyObjects)
     {
         //For Enemy Statuses
         //each gameObject is an enemy, then we extract the enemyUnit in the Onbject's enemy functions
         foreach (GameObject enemyObject in enemyObjects)
         {
             EnemyFunctions enemyFunctions = enemyObject.GetComponent<EnemyFunctions>();
-            EnemyUnitStatsWrapper enemyWrapper = new EnemyUnitStatsWrapper(enemyFunctions);
+            EnemyUnitStatsWrapper enemyWrapper = new EnemyUnitStatsWrapper(enemyFunctions, enemyObject.GetComponent<UnitStatusHolder>());
             enemyUnitWrappers.Add(enemyWrapper);
         }
 
@@ -63,7 +67,14 @@ public class CombatSaveState
 
         //for Player variables
         //player unit has a wrapper class in universalSaveState
-        playerUnitStats = playerUnit;
+        this.playerUnit = playerUnit;
+
+        //assigns the statuses and their stacks, will be linked by index of list
+        foreach (KeyValuePair<CardMechanics, int> existingStatus in playerStatuses.allStatsAndStacks)
+        {
+            cardMechanics.Add(existingStatus.Key);
+            statusStacks.Add(existingStatus.Value);
+        }
 
     }
 }
@@ -78,6 +89,12 @@ public class EnemyUnitStatsWrapper
     public int currHP;
     public int block;
 
+    //for the saving of enemy unit statuses
+    //the key for accessing the status itself and their stacks
+    //indices will determine which stck is for what status
+    public List<CardMechanics> cardMechanics = new List<CardMechanics>();
+    public List<int> statusStacks = new List<int>();
+
     //The Wrappers are serializable classes for EnemyActionFormat when saving
     //contains EnemyActionFomats in the intentPanel 
     public List<EnemyActionFormatWrapper> intentPanelActions = new List<EnemyActionFormatWrapper>();
@@ -89,7 +106,7 @@ public class EnemyUnitStatsWrapper
 
 
 
-    public EnemyUnitStatsWrapper(EnemyFunctions enemyFunctions)
+    public EnemyUnitStatsWrapper(EnemyFunctions enemyFunctions, UnitStatusHolder enemyStatuses)
     {
         EnemyUnit enemyUnit = enemyFunctions.enemyUnit;
         enemyEnumName = enemyUnit.enemyEnumName;
@@ -127,6 +144,13 @@ public class EnemyUnitStatsWrapper
         //current HPis in functions
         currHP = enemyFunctions.currHP;
 
+        //enemyStatuses
+        //assigns the statuses and their stacks, will be linked by index of list
+        foreach (KeyValuePair<CardMechanics, int> existingStatus in enemyStatuses.allStatsAndStacks)
+        {
+            cardMechanics.Add(existingStatus.Key);
+            statusStacks.Add(existingStatus.Value);
+        }
 
     }
 }

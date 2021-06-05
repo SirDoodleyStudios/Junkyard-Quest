@@ -120,7 +120,7 @@ public static class UniversalSaveState
     //FOR COMBAT SAVES
     public static void SaveCombatState(CombatSaveState combatSaveState)
     {
-        PlayerUnitWrapper playerWrapper = new PlayerUnitWrapper(combatSaveState.playerUnitStats);
+        PlayerUnitWrapper playerWrapper = new PlayerUnitWrapper(combatSaveState.playerUnit);
         combatSaveState.playerStatsWrapper = playerWrapper;
 
         string combat = JsonUtility.ToJson(combatSaveState);
@@ -144,7 +144,7 @@ public static class UniversalSaveState
         loadedUnit.chosenPlayer = unitWrapper.chosenPlayer;
         loadedUnit.currHP = unitWrapper.currHP;
         //after the extract, assign the playerUnit in the universalInformation
-        loadedState.playerUnitStats = loadedUnit;
+        loadedState.playerUnit = loadedUnit;
 
         return loadedState;
     }

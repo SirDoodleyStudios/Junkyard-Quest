@@ -14,15 +14,22 @@ public class UnitStatusHolder : MonoBehaviour
     public Dictionary<CardMechanics, int> turnStatusDict { get; private set; } = new Dictionary<CardMechanics, int>();
     public Dictionary<CardMechanics, int> consumeUsageStatusDict { get; private set; } = new Dictionary<CardMechanics, int>();
     public Dictionary<CardMechanics, int> consumeTurnStatusDict { get; private set; } = new Dictionary<CardMechanics, int>();
+    //not an actual dictionary for containing status stacks, more on keeping track of the incrementing stacks per turn
+    //no need for saving because, countin stacks reset per turn
     public Dictionary<CardMechanics, int> stackAlterByCountDict { get; private set; } = new Dictionary<CardMechanics, int>();
+
+    //dictionary that will contain all statuses and their stacks, to be used for saving and loading statuses
+    public Dictionary<CardMechanics, int> allStatsAndStacks = new Dictionary<CardMechanics, int>();
 
     //identifiers for the counting events in BaseCardEffect
     public bool isHitCounting { get; set; }
     public bool isPlayCounting { get; set; }
 
     //maybe only a list of int references are needed?
-    List<CardMechanics> existingStatus = new List<CardMechanics>();
-    Dictionary<CardMechanics, GameObject> existingStatusDict = new Dictionary<CardMechanics, GameObject>();
+    public List<CardMechanics> existingStatus = new List<CardMechanics>();
+    //contains the existing statuses on a unit long with the gmeObject tht will contin the enumKey
+    //this is also all we need for loading and saving 
+    public Dictionary<CardMechanics, GameObject> existingStatusDict = new Dictionary<CardMechanics, GameObject>();
 
     public static List<Sprite> statusIconSprites = new List<Sprite>();
 
@@ -61,7 +68,7 @@ public class UnitStatusHolder : MonoBehaviour
     }
 
     //STACK AMOUNT ALTERERS/////////////////////
-
+    //key alterer, just send the enumkey and stack count here
     public void AlterStatusStack(CardMechanics enumKey, int stack)
     {
         //statusDictionary[enumKey] = statusDictionary[enumKey] + stack;
@@ -78,17 +85,20 @@ public class UnitStatusHolder : MonoBehaviour
             if (!usageStatusDict.ContainsKey(enumKey))
             {
                 usageStatusDict.Add(enumKey, stack);
+                allStatsAndStacks.Add(enumKey, stack);
                 StatusVisualsUpdater(enumKey, stack);
             }
             else
             {
                 //after adding or subtracting, calls visual updater
                 usageStatusDict[enumKey] = usageStatusDict[enumKey] + stack;
+                allStatsAndStacks[enumKey] = allStatsAndStacks[enumKey] + stack;
                 StatusVisualsUpdater(enumKey, usageStatusDict[enumKey]);
                 //if stack becomes 0 at the end, remove from the usageStatusDict
                 if (usageStatusDict[enumKey] <= 0)
                 {
                     usageStatusDict.Remove(enumKey);
+                    allStatsAndStacks.Remove(enumKey);
                 }
             }
 
@@ -99,17 +109,20 @@ public class UnitStatusHolder : MonoBehaviour
             if (!turnStatusDict.ContainsKey(enumKey))
             {
                 turnStatusDict.Add(enumKey, stack);
+                allStatsAndStacks.Add(enumKey, stack);
                 StatusVisualsUpdater(enumKey, stack);
             }
             else
             {
                 //after adding or subtracting, calls visual updater
                 turnStatusDict[enumKey] = turnStatusDict[enumKey] + stack;
+                allStatsAndStacks[enumKey] = allStatsAndStacks[enumKey] + stack;
                 StatusVisualsUpdater(enumKey, turnStatusDict[enumKey]);
                 //if stack becomes 0 at the end, remove from the turnStatusDict
                 if (turnStatusDict[enumKey] <= 0)
                 {
                     turnStatusDict.Remove(enumKey);
+                    allStatsAndStacks.Remove(enumKey);
                 }
             }
             
@@ -120,17 +133,20 @@ public class UnitStatusHolder : MonoBehaviour
             if (!consumeUsageStatusDict.ContainsKey(enumKey))
             {
                 consumeUsageStatusDict.Add(enumKey, stack);
+                allStatsAndStacks.Add(enumKey, stack);
                 StatusVisualsUpdater(enumKey, stack);
             }
             else
             {
                 //after adding or subtracting, calls visual updater
                 consumeUsageStatusDict[enumKey] = consumeUsageStatusDict[enumKey] + stack;
+                allStatsAndStacks[enumKey] = allStatsAndStacks[enumKey] + stack;
                 StatusVisualsUpdater(enumKey, consumeUsageStatusDict[enumKey]);
                 //if stack becomes 0 at the end, remove from the usageStatusDict
                 if (consumeUsageStatusDict[enumKey] <= 0)
                 {
                     consumeUsageStatusDict.Remove(enumKey);
+                    allStatsAndStacks.Remove(enumKey);
                 }
             }
         }
@@ -140,22 +156,25 @@ public class UnitStatusHolder : MonoBehaviour
             if (!consumeTurnStatusDict.ContainsKey(enumKey))
             {
                 consumeTurnStatusDict.Add(enumKey, stack);
+                allStatsAndStacks.Add(enumKey, stack);
                 StatusVisualsUpdater(enumKey, stack);
             }
             else
             {
                 //after adding or subtracting, calls visual updater
                 consumeTurnStatusDict[enumKey] = consumeTurnStatusDict[enumKey] + stack;
+                allStatsAndStacks[enumKey] = allStatsAndStacks[enumKey] + stack;
                 StatusVisualsUpdater(enumKey, consumeTurnStatusDict[enumKey]);
                 //if stack becomes 0 at the end, remove from the usageStatusDict
                 if (consumeTurnStatusDict[enumKey] <= 0)
                 {
                     consumeTurnStatusDict.Remove(enumKey);
+                    allStatsAndStacks.Remove(enumKey);
                 }
             }
         }
 
-
+        Debug.Log($"these are the all Stacks{allStatsAndStacks.Count}");
     }
     //adds statuses that will be increased by other player actions
     //Called by BaseCardEffect as the actual card effect

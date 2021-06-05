@@ -143,15 +143,14 @@ public class CombatManager : MonoBehaviour
         //will be called only during the beginiing
         d_StartCombat();
 
-        //determines whether player, cards and enemystats are generated for fresh combat or loaded from file
-        InitiateCombatState();
-
-
-
         //d_StartTurn += Player.GetComponent<AbilityManager>().EnableAbilities;
         //d_StartTurn += Player.GetComponent<PlayerFunctions>().AlterPlayerCreativity;
         //d_StartTurn += playerFunctions.StartTurnUpdates;
         d_StartTurn();
+
+        //determines whether player, cards and enemystats are generated for fresh combat or loaded from file
+        InitiateCombatState();
+
         //save after all start turn prep is done
         SaveCombatState();
 
@@ -178,15 +177,36 @@ public class CombatManager : MonoBehaviour
                 Debug.Log($"debug on {enemyWrapper.enemyEnumName}");
                 EnemyUnit enemyUnit = EnemyUnitFactory.GetEnemySO(enemyWrapper.enemyEnumName);
                 //assigning values
-                enemyUnit.currHP = enemyWrapper.currHP;
+                enemyFunction.currHP = enemyWrapper.currHP;
+                enemyFunction.SliderValueUpdates();
                 enemyFunction.GainBlock(enemyWrapper.block);
                 enemy.GetComponent<EnemyFunctions>().enemyUnit = Instantiate(enemyUnit);
 
+                //assigning statuses
+                for (int j = 0; enemyWrapper.cardMechanics.Count - 1 >= j; j++)
+                {
+                    UnitStatusHolder enemyStatus = enemy.GetComponent<UnitStatusHolder>();
+                    enemyStatus.AlterStatusStack(enemyWrapper.cardMechanics[j], enemyWrapper.statusStacks[j]);
+                }
+
             }
+
             //assign the player unit saved in file
-            playerFunctions.LoadPlayerUnitFromFile(combatSaveState.playerUnitStats);
+            playerFunctions.LoadPlayerUnitFromFile(combatSaveState.playerUnit);
             //max is subtracted from current because alterCreativvity funcion needs negative values for reduction
-            playerFunctions.AlterPlayerCreativity(combatSaveState.currCreativity - combatSaveState.playerUnitStats.Creativity);
+            playerFunctions.AlterPlayerCreativity(combatSaveState.currCreativity - combatSaveState.playerUnit.Creativity);
+            playerFunctions.currHP = combatSaveState.playerUnit.currHP;
+            playerFunctions.SliderValueUpdates();
+
+            //Loading Player Status stacks from file
+            UnitStatusHolder playerStatus = player.GetComponent<UnitStatusHolder>();
+            for (int i = 0; combatSaveState.cardMechanics.Count-1 >= i; i++)
+            {
+                playerStatus.AlterStatusStack(combatSaveState.cardMechanics[i], combatSaveState.statusStacks[i]);
+            }
+
+
+
         }
         //if combat file does not exist, get ebemy base unit from enemyPools
         else
@@ -242,7 +262,8 @@ public class CombatManager : MonoBehaviour
 
         //SAVE FUNCTION COMMENCES AT START OF TURN
         PlayerUnit playerUnit = Instantiate(player.GetComponent<PlayerFunctions>().playerUnit);
-        CombatSaveState combatSaveState = new CombatSaveState(deckManager, playerUnit, enemyObjects);
+        UnitStatusHolder playerUnitStatuses = player.GetComponent<UnitStatusHolder>();
+        CombatSaveState combatSaveState = new CombatSaveState(deckManager, playerUnit, playerUnitStatuses, enemyObjects);
         combatSaveState.currCreativity = playerFunctions.currCreativity;
         //saves combatState and generate save file
         UniversalSaveState.SaveCombatState(combatSaveState);

@@ -1832,18 +1832,18 @@ MonoBehaviour:
   tillyBasic: []
   princessBasic: []
   warriorBasic:
-  - {fileID: 11400000, guid: c5c68d533a14d074a99a3fd7f2f79553, type: 2}
-  - {fileID: 11400000, guid: c5c68d533a14d074a99a3fd7f2f79553, type: 2}
+  - {fileID: 11400000, guid: 0779708b04e9e38459d9228ea35319b0, type: 2}
+  - {fileID: 11400000, guid: 96c7c26e01573dd42b250aeddddbc7b8, type: 2}
+  - {fileID: 11400000, guid: 356160f9381062f4dbb7fef9917370c5, type: 2}
   - {fileID: 11400000, guid: c5c68d533a14d074a99a3fd7f2f79553, type: 2}
   - {fileID: 11400000, guid: f8da9032880073f4f9a930263f9ea61e, type: 2}
-  - {fileID: 11400000, guid: f8da9032880073f4f9a930263f9ea61e, type: 2}
-  - {fileID: 11400000, guid: 8676c6459c9e035429c8f79f826798ea, type: 2}
-  - {fileID: 11400000, guid: 8676c6459c9e035429c8f79f826798ea, type: 2}
-  - {fileID: 11400000, guid: 8676c6459c9e035429c8f79f826798ea, type: 2}
-  - {fileID: 11400000, guid: 8676c6459c9e035429c8f79f826798ea, type: 2}
-  - {fileID: 11400000, guid: 8676c6459c9e035429c8f79f826798ea, type: 2}
-  - {fileID: 11400000, guid: 56cbebcae0714fb4d8d299e91962b3b2, type: 2}
-  - {fileID: 11400000, guid: c5c68d533a14d074a99a3fd7f2f79553, type: 2}
+  - {fileID: 11400000, guid: 9b42a4d26e12d6c41a5d8e8fdde4fd09, type: 2}
+  - {fileID: 11400000, guid: 8e7c7515a54de114d85ff40f2bea01d8, type: 2}
+  - {fileID: 11400000, guid: 98a3d312f964b2c4c9ee1f5ef2d35412, type: 2}
+  - {fileID: 11400000, guid: a3442c69418326842b03bb7153269801, type: 2}
+  - {fileID: 11400000, guid: 47f782c40aa3b63468c99f1e77c885f5, type: 2}
+  - {fileID: 11400000, guid: 47f782c40aa3b63468c99f1e77c885f5, type: 2}
+  - {fileID: 11400000, guid: aeadad4440d803440b25f5043f08d253, type: 2}
   - {fileID: 11400000, guid: c5c68d533a14d074a99a3fd7f2f79553, type: 2}
   rogueBasic: []
   mageBasic: []

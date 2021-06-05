@@ -387,7 +387,6 @@ public class DeckManager : MonoBehaviour
         playerHandScript.StateChanger(CombatState.PlayerTurn);
 
         //playerHandScript.ResetToDeckPosition();
-        Debug.Log("Consume");
         DeckUpdater();
     }
 
@@ -542,7 +541,6 @@ public class DeckManager : MonoBehaviour
         deckText.text = deckCount.ToString();
         discardText.text = discardCount.ToString();
         consumeText.text = consumeCount.ToString();
-        Debug.Log("deckupdater");
         
     }
 
