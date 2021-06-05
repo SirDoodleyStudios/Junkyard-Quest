@@ -30,6 +30,7 @@ public class CombatManager : MonoBehaviour
     //related to player
     public GameObject player;
     public PlayerFunctions playerFunctions;
+
     //list of enemies
     public List<GameObject> enemyObjects = new List<GameObject>();
     public GameObject enemyHolder;
@@ -47,6 +48,7 @@ public class CombatManager : MonoBehaviour
     public PlayerHand playerHand;
     public CardDrafting cardDrafting;
     public EnemyPools enemyPools;
+    public AbilityManager abilityManager;
 
     //related to energy
     //Energy gets accessed by playingField
@@ -197,6 +199,12 @@ public class CombatManager : MonoBehaviour
             playerFunctions.AlterPlayerCreativity(combatSaveState.currCreativity - combatSaveState.playerUnit.Creativity);
             playerFunctions.currHP = combatSaveState.playerUnit.currHP;
             playerFunctions.SliderValueUpdates();
+            //loading abilities
+            foreach (AllAbilities abilityEnum in combatSaveState.abilityList)
+            {
+                AbilityFormat abilityFormat = Resources.Load<AbilityFormat>($"AbilitySO/{abilityEnum}");
+                abilityManager.InstallAbility(abilityFormat);
+            }
 
             //Loading Player Status stacks from file
             UnitStatusHolder playerStatus = player.GetComponent<UnitStatusHolder>();
@@ -265,6 +273,13 @@ public class CombatManager : MonoBehaviour
         UnitStatusHolder playerUnitStatuses = player.GetComponent<UnitStatusHolder>();
         CombatSaveState combatSaveState = new CombatSaveState(deckManager, playerUnit, playerUnitStatuses, enemyObjects);
         combatSaveState.currCreativity = playerFunctions.currCreativity;
+
+        foreach (AbilityFormat abilityFormat in abilityManager.abilityList)
+        {
+            combatSaveState.abilityList.Add(abilityFormat.enumAbilityName);
+        }
+
+
         //saves combatState and generate save file
         UniversalSaveState.SaveCombatState(combatSaveState);
 

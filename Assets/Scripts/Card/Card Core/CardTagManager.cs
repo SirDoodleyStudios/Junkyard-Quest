@@ -190,10 +190,10 @@ public class CardTagManager
     static void AbilityCardDescriptionInitialize()
     {
         //Neutral Abilities
-        abilityEffectDescriptions.Add(AllAbilities.Neu_Abi_Brainstorm, "ABILITY. Gain 2 CREATIVITY in exchange for 2 energy");
+        abilityEffectDescriptions.Add(AllAbilities.Brainstorm, "ABILITY. Gain 2 CREATIVITY in exchange for 2 energy");
         //Warrior Abilities
-        abilityEffectDescriptions.Add(AllAbilities.War_Abi_BruteForce, "ABILITY. Gain 1 FORCEFUL in exchange for 7 BLOCK");
-        abilityEffectDescriptions.Add(AllAbilities.War_Abi_PrioritizeDefense, "ABILITY. Gain 9 BLOCK for each COUNTER. Remove all COUNTER.");
+        abilityEffectDescriptions.Add(AllAbilities.BruteForce, "ABILITY. Gain 1 FORCEFUL in exchange for 7 BLOCK");
+        abilityEffectDescriptions.Add(AllAbilities.PrioritizeDefense, "ABILITY. Gain 9 BLOCK for each COUNTER. Remove all COUNTER.");
 
     }
 

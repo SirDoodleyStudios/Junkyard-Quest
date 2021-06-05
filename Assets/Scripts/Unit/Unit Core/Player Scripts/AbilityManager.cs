@@ -6,7 +6,8 @@ using UnityEngine.UI;
 public class AbilityManager : MonoBehaviour
 {
     public Transform abilityPanel;
-    List<AbilityFormat> abilityList = new List<AbilityFormat>();
+    //will also be used for saving and loading
+    public List<AbilityFormat> abilityList = new List<AbilityFormat>();
     public Button EndTurnButton;
 
     //cache for PlayingFieldScript

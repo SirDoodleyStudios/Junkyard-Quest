@@ -21,6 +21,11 @@ public class CombatSaveState
     //this int will be filled up externlly once the CombatSaveState is created from the externlScript
     public int currCreativity;
 
+    //holds the player ability list
+    //these keys are to be used to generte an AbilityFormat SO and then assign it there
+    //to be filled-up in combatManager after creating the combatSaveState instance
+    public List<AllAbilities> abilityList = new List<AllAbilities>();
+
     //for the saving of player unit statuses
     //the key for accessing the status itself and their stacks
     //indices will determine which stck is for what status

@@ -5,7 +5,7 @@
 public class Neu_Abi_Brainstorm: BaseAbilityEffect
 {
     public override AllCards enumKeyCard => AllCards.Ability;
-    public override AllAbilities enumKeyAbility => AllAbilities.Neu_Abi_Brainstorm;
+    public override AllAbilities enumKeyAbility => AllAbilities.Brainstorm;
 
     public override void CardEffectActivate(GameObject target, GameObject actor)
     {

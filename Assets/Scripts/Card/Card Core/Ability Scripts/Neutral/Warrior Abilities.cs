@@ -5,7 +5,7 @@ using System.Collections.Generic;
 public class War_Abi_BruteForce : BaseAbilityEffect
 {
     public override AllCards enumKeyCard => AllCards.Ability;
-    public override AllAbilities enumKeyAbility => AllAbilities.War_Abi_BruteForce;
+    public override AllAbilities enumKeyAbility => AllAbilities.BruteForce;
 
     public override void CardEffectActivate(GameObject target, GameObject actor)
     {
@@ -39,7 +39,7 @@ public class War_Abi_BruteForce : BaseAbilityEffect
 public class War_Abi_PrioritizeDefense : BaseAbilityEffect
 {
     public override AllCards enumKeyCard => AllCards.Ability;
-    public override AllAbilities enumKeyAbility => AllAbilities.War_Abi_PrioritizeDefense;
+    public override AllAbilities enumKeyAbility => AllAbilities.PrioritizeDefense;
 
     public override void CardEffectActivate(GameObject target, GameObject actor)
     {

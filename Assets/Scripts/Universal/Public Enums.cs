@@ -30,14 +30,15 @@ public enum CardMethod { Targetted, Dropped}
 public enum JigsawLink { Circle, Triangle, Square, Material, Finisher}
 
 //ABILITIES DEPENDENT
+//name of ability format must match this
 public enum AllAbilities
 {
     //Neutral Abilities
-    Neu_Abi_Brainstorm = 30,
+    Brainstorm = 30,
 
     //Warrior Abilities
-    War_Abi_BruteForce = 60,
-    War_Abi_PrioritizeDefense
+    BruteForce = 60,
+    PrioritizeDefense
 }
 
 public enum AllJigsaws
