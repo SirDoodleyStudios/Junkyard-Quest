@@ -18,8 +18,9 @@ public class CombatSaveState
     //playerUnitStats is not serialized and will only be used to create the playerStatsWrapper which will be serialized
     public PlayerUnit playerUnit;
     public PlayerUnitWrapper playerStatsWrapper;
-    //this int will be filled up externlly once the CombatSaveState is created from the externlScript
+    //these ints will be filled up externlly once the CombatSaveState is created from the externlScript
     public int currCreativity;
+    public int currEnergy;
 
     //holds the player ability list
     //these keys are to be used to generte an AbilityFormat SO and then assign it there
@@ -179,6 +180,20 @@ public class EnemyActionFormatWrapper
         actionType = action.actionType;
         enumEnemyAction = action.enumEnemyAction;
     }
+
+
+}
+
+//Wrapper to caontain JigsawFormat for cards that has Jigsaws
+[Serializable]
+public class JigsawFormatWrapper
+{
+    public JigsawLink inputLink;
+    public JigsawLink outputLink;
+    //key for the jigsaw card attached
+    public AllCards enumJigsawCard;
+    //determines the card method if targetted or dropped
+    public CardMethod jigsawMethod;
 
 
 }

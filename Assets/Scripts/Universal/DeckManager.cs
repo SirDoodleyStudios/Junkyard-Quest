@@ -16,7 +16,8 @@ public class DeckManager : MonoBehaviour
     //List of cards to be drawn and sent later to a seperate Coroutine so that we can save all card hand in a file
     List<GameObject> enabledCards = new List<GameObject>();
 
-    JigsawFormat jigsaw;
+    //used as reference jigsawCard for editing when a JigsawFormat is instantiated
+    public JigsawFormat referenceJigsawFormat;
 
     //panel that shows the player had of cards
     public GameObject playerHandPanel;
@@ -54,6 +55,7 @@ public class DeckManager : MonoBehaviour
     public GameObject deckViewPrefab;
 
     //for test only, randomly apply jigsaw effects to instantiated cards///////////////
+    // in inputted in editor
     public List<JigsawFormat> testJigsawList = new List<JigsawFormat>();
 
 
@@ -129,15 +131,22 @@ public class DeckManager : MonoBehaviour
             //This is a test Jigsaw Generator function
             if (tempCard.cardType == CardType.Offense || tempCard.cardType == CardType.Utility)
             {
-                JigsawFormat instantiatedJigsaw = Instantiate(testJigsawList[Random.Range(0, testJigsawList.Count)]);
+                //just for testing, instead of a reandom jigsaw, just install the same card as the jigsaw of the generated card;
+                Card referenceJigsawCard = CardSOFactory.GetCardSO(cardKey);
+                //JigsawFormat instantiatedJigsaw = Instantiate(testJigsawList[Random.Range(0, testJigsawList.Count)]);
+                JigsawFormat instantiatedJigsaw = Instantiate(referenceJigsawFormat);
+
+                instantiatedJigsaw.inputLink = (JigsawLink)Random.Range(0, 3);
+                instantiatedJigsaw.outputLink = (JigsawLink)Random.Range(0, 3);
+
+                instantiatedJigsaw.enumJigsawCard = cardKey;
+                instantiatedJigsaw.jigsawMethod = referenceJigsawCard.cardMethod;
+
+                instantiatedJigsaw.jigsawDescription = CardTagManager.GetJigsawDescriptions(instantiatedJigsaw.enumJigsawCard);
+                instantiatedJigsaw.jigsawImage = CardTagManager.DetermineJigsawImage(instantiatedJigsaw.inputLink, instantiatedJigsaw.outputLink);
+                instantiatedJigsaw.jigsawCard = Instantiate(CardSOFactory.GetCardSO(cardKey));
+
                 tempCard.jigsawEffect = instantiatedJigsaw;
-                JigsawFormat assignedJigsaw = tempCard.jigsawEffect;
-
-                assignedJigsaw.inputLink = (JigsawLink)Random.Range(0, 2);
-                assignedJigsaw.outputLink = (JigsawLink)Random.Range(0, 2);
-
-                assignedJigsaw.jigsawDescription = CardTagManager.GetJigsawDescriptions(assignedJigsaw.enumJigsawName);
-                assignedJigsaw.jigsawImage = CardTagManager.DetermineJigsawImage(assignedJigsaw.inputLink, assignedJigsaw.outputLink);
             }
 
             initialDeck.Add(tempCard);
@@ -205,7 +214,7 @@ public class DeckManager : MonoBehaviour
             assignedJigsaw.inputLink = (JigsawLink)Random.Range(0, 2);
             assignedJigsaw.outputLink = (JigsawLink)Random.Range(0, 2);
 
-            assignedJigsaw.jigsawDescription = CardTagManager.GetJigsawDescriptions(assignedJigsaw.enumJigsawName);
+            assignedJigsaw.jigsawDescription = CardTagManager.GetJigsawDescriptions(assignedJigsaw.enumJigsawCard);
             assignedJigsaw.jigsawImage = CardTagManager.DetermineJigsawImage(assignedJigsaw.inputLink, assignedJigsaw.outputLink);
         }
 

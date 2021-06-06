@@ -6,6 +6,7 @@ public class EffectLoader : MonoBehaviour
 {
     //deckManager will assign this when card is enabled in hand
     public Card card;
+
     //Cache for the effect animation manager
     EffectAnimationManager eAnimationManager;
     private void Awake()
@@ -56,7 +57,11 @@ public class EffectLoader : MonoBehaviour
 
     public void ActivateJigsawEffect(GameObject target, GameObject actor)
     {
-        JigsawFactory.GetJigsawEffect(card.jigsawEffect.enumJigsawName).CardEffectActivate(target, actor);  //jigsawEffect
+        //old jigsaw logic
+        //JigsawFactory.GetJigsawEffect(card.jigsawEffect.enumJigsawName).CardEffectActivate(target, actor);
+
+        //Transition to jigsaws as actual cards instead of separate effects
+        EffectFactory.GetCardEffect(card.jigsawEffect.enumJigsawCard).CardEffectActivate(target, actor, card);
     }
 
     public void AssignAbility(GameObject targetPlayer)

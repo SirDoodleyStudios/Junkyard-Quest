@@ -18,7 +18,9 @@ public class JigsawFormat : ScriptableObject
     public JigsawLink outputLink;
 
     //THIS SHOULD BE ADDED AFTER RANDOMIZING
-    public AllJigsaws enumJigsawName;
+    //public AllJigsaws enumJigsawName; //old jigsaw logic
+    //Part of change when jigsaws are actually using Card enums now
+    public AllCards enumJigsawCard;
 
     //For Creative mode to determine whether it's targetted or not
     public CardMethod jigsawMethod;
@@ -28,4 +30,7 @@ public class JigsawFormat : ScriptableObject
 
     //description to be determined 
     public string jigsawDescription;
+
+    //pseudo card for the jigsaw efffect
+    public Card jigsawCard;
 }

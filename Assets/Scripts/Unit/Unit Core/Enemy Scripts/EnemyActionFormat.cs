@@ -16,8 +16,6 @@ public class EnemyActionFormat : ScriptableObject
     //for summon, a scriptable?
     //for special something special
 
-
-
     //everytime a jigsaw is instantiated, inputs and outputs are going to be randomized
     public JigsawLink inputLink;
     public JigsawLink outputLink;
@@ -25,6 +23,8 @@ public class EnemyActionFormat : ScriptableObject
 
     //THIS SHOULD BE ADDED AFTER RANDOMIZING
     public AllEnemyActions enumEnemyAction;
+
+
 
 }
 

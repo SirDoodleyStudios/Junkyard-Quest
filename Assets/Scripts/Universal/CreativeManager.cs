@@ -165,15 +165,18 @@ public class CreativeManager : MonoBehaviour
     {
         foreach(GameObject cardPrefab in cardPrefabList)
         {
-            //jigsaws will activate first before the cardeffect
-            //in the case of jigsaws later in the list index, it will activate the preceeding jigsaws first
-            //for example, 2nd jigsaw will activate the 1st's then it's own.... 3rd jigsaw will activate the 1st's then the second's the its own
-            
-            for (int i = 0; cardPrefabList.IndexOf(cardPrefab) >= i; i++)
-            {
-                cardPrefabList[i].GetComponent<EffectLoader>().ActivateJigsawEffect(target, actor);
-            }
-            //the effect of the actual card will be activated last
+            ////jigsaws will activate first before the cardeffect
+            ////in the case of jigsaws later in the list index, it will activate the preceeding jigsaws first
+            ////for example, 2nd jigsaw will activate the 1st's then it's own.... 3rd jigsaw will activate the 1st's then the second's the its own            
+            //for (int i = 0; cardPrefabList.IndexOf(cardPrefab) >= i; i++)
+            //{
+            //    cardPrefabList[i].GetComponent<EffectLoader>().ActivateJigsawEffect(target, actor);
+            //}
+            ////the effect of the actual card will be activated last
+            //cardPrefab.GetComponent<EffectLoader>().ActivateCardEffect(target, actor);
+
+            //Transition of jigsaws as actual cards embedded in another card instead of a separate list of effects
+            cardPrefab.GetComponent<EffectLoader>().ActivateJigsawEffect(target, actor);
             cardPrefab.GetComponent<EffectLoader>().ActivateCardEffect(target, actor);
         }
 

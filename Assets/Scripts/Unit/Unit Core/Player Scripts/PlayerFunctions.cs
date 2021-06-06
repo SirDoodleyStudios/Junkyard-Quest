@@ -111,7 +111,7 @@ public class PlayerFunctions : BaseUnitFunctions
         CreativityText.text = $"{currCreativity}/{maxCreativity}";
 
     }
-
+    //value parameter is used to increase or decrease currEnergy by value
     public void AlterEnergy(int value)
     {
         currEnergy += value;

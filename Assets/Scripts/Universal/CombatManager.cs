@@ -134,7 +134,12 @@ public class CombatManager : MonoBehaviour
         universalInformation = UniversalSaveState.LoadUniversalInformation();
         CardSOFactory.InitializeCardSOFactory(universalInformation.chosenPlayer, universalInformation.chosenClass);
         playerFunctions.LoadPlayerUnitFromFile(universalInformation.playerStats);
+
+        //moved to be at the end of InitiateCombatState
+        //this is so that the test jigsaw generator can only activate if there is no combatFile loaded
         deckManager.InitializeBattleDeck(universalInformation.currentDeck);
+
+
         //Card Drafting migrated to rewardsscene
         //cardDrafting.InitializeDraftPool(universalInformation.chosenPlayer, universalInformation.chosenClass);
 
@@ -199,6 +204,7 @@ public class CombatManager : MonoBehaviour
             playerFunctions.AlterPlayerCreativity(combatSaveState.currCreativity - combatSaveState.playerUnit.Creativity);
             playerFunctions.currHP = combatSaveState.playerUnit.currHP;
             playerFunctions.SliderValueUpdates();
+            playerFunctions.AlterEnergy(playerFunctions.defaultEnergy - combatSaveState.currEnergy);
             //loading abilities
             foreach (AllAbilities abilityEnum in combatSaveState.abilityList)
             {
@@ -219,6 +225,7 @@ public class CombatManager : MonoBehaviour
         //if combat file does not exist, get ebemy base unit from enemyPools
         else
         {
+
             List<EnemyUnit> enemySpawn = enemyPools.GetEnemySpawn(universalInformation.nodeCount);
 
             //instantiate copies of the base SO per spawn in list and assign them to respective enemyHolder position
@@ -273,7 +280,7 @@ public class CombatManager : MonoBehaviour
         UnitStatusHolder playerUnitStatuses = player.GetComponent<UnitStatusHolder>();
         CombatSaveState combatSaveState = new CombatSaveState(deckManager, playerUnit, playerUnitStatuses, enemyObjects);
         combatSaveState.currCreativity = playerFunctions.currCreativity;
-
+        combatSaveState.currEnergy = playerFunctions.currEnergy;
         foreach (AbilityFormat abilityFormat in abilityManager.abilityList)
         {
             combatSaveState.abilityList.Add(abilityFormat.enumAbilityName);

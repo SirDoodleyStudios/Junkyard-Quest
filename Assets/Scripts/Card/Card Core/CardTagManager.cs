@@ -76,9 +76,15 @@ public class CardTagManager
         jigsawDescriptions.Add(AllJigsaws.Gain_10_Block, "Gain 10 BLOCK");
     }
 
-    public static string GetJigsawDescriptions(AllJigsaws jigsawKey)
+    //old jigsaw logic
+    //public static string GetJigsawDescriptions(AllJigsaws jigsawKey)
+    //{
+    //    return jigsawDescriptions[jigsawKey];
+    //}
+
+    public static string GetJigsawDescriptions(AllCards jigsawKey)
     {
-        return jigsawDescriptions[jigsawKey];
+        return cardEffectDescriptions[jigsawKey];
     }
 
 
@@ -197,7 +203,7 @@ public class CardTagManager
 
     }
 
-
+    //changed from card to AllCards enum input parameter
     public static string GetCardEffectDescriptions(Card card)
     {
         AllCards cardKey = card.enumCardName;
