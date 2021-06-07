@@ -141,9 +141,10 @@ public class DeckManager : MonoBehaviour
 
                 instantiatedJigsaw.enumJigsawCard = cardKey;
                 instantiatedJigsaw.jigsawMethod = referenceJigsawCard.cardMethod;
-
+                //jigsaw visuals
                 instantiatedJigsaw.jigsawDescription = CardTagManager.GetJigsawDescriptions(instantiatedJigsaw.enumJigsawCard);
                 instantiatedJigsaw.jigsawImage = CardTagManager.DetermineJigsawImage(instantiatedJigsaw.inputLink, instantiatedJigsaw.outputLink);
+                //jigsaw Effects
                 instantiatedJigsaw.jigsawCard = Instantiate(CardSOFactory.GetCardSO(cardKey));
 
                 tempCard.jigsawEffect = instantiatedJigsaw;
@@ -157,30 +158,54 @@ public class DeckManager : MonoBehaviour
         {
             //we add the cards in hand first in the deck so that when the draw method is called, the same cards will be in hand from last save
             CombatSaveState combatSaveState = UniversalSaveState.LoadCombatState();
-            foreach (AllCards handCardEnum in combatSaveState.playerHandList)
+            foreach (CardAndJigsaWrapper handWrapper in combatSaveState.playerHandList)
             {
-                Card handCard = Instantiate(CardSOFactory.GetCardSO(handCardEnum));
+                Card handCard = Instantiate(CardSOFactory.GetCardSO(handWrapper.cardEnum));
                 handCard.effectText = CardTagManager.GetCardEffectDescriptions(handCard);
+                //assigning the jigsaw to the generated card
+                //the "jigsaw" value represents a null value
+                if (handWrapper.jigsawEnum != AllCards.Jigsaw)
+                {
+                    handCard.jigsawEffect = LoadJigsawFormat(handWrapper);
+                }
                 battleDeck.Add(handCard);
             }
-            foreach (AllCards deckCardEnum in combatSaveState.battleDeck)
+            foreach (CardAndJigsaWrapper deckWrapper in combatSaveState.battleDeck)
             {
-                Card deckCard = Instantiate(CardSOFactory.GetCardSO(deckCardEnum));
+                Card deckCard = Instantiate(CardSOFactory.GetCardSO(deckWrapper.cardEnum));
                 deckCard.effectText = CardTagManager.GetCardEffectDescriptions(deckCard);
+                //assigning the jigsaw to the generated card
+                //the "jigsaw" value represents a null value
+                if (deckWrapper.jigsawEnum != AllCards.Jigsaw)
+                {
+                    deckCard.jigsawEffect = LoadJigsawFormat(deckWrapper);
+                }
                 battleDeck.Add(deckCard);
             }
 
             //populating the discrd and consume decks
-            foreach (AllCards discardCardEnum in combatSaveState.discardPile)
+            foreach (CardAndJigsaWrapper discardWrapper in combatSaveState.discardPile)
             {
-                Card discardCard = Instantiate(CardSOFactory.GetCardSO(discardCardEnum));
+                Card discardCard = Instantiate(CardSOFactory.GetCardSO(discardWrapper.cardEnum));
                 discardCard.effectText = CardTagManager.GetCardEffectDescriptions(discardCard);
+                //assigning the jigsaw to the generated card
+                //the "jigsaw" value represents a null value
+                if (discardWrapper.jigsawEnum != AllCards.Jigsaw)
+                {
+                    discardCard.jigsawEffect = LoadJigsawFormat(discardWrapper);
+                }
                 discardPile.Add(discardCard);
             }
-            foreach (AllCards consumeCardEnum in combatSaveState.consumePile)
+            foreach (CardAndJigsaWrapper consumeWrapper in combatSaveState.consumePile)
             {
-                Card consumeCard = Instantiate(CardSOFactory.GetCardSO(consumeCardEnum));
+                Card consumeCard = Instantiate(CardSOFactory.GetCardSO(consumeWrapper.cardEnum));
                 consumeCard.effectText = CardTagManager.GetCardEffectDescriptions(consumeCard);
+                //assigning the jigsaw to the generated card
+                //the "jigsaw" value represents a null value
+                if (consumeWrapper.jigsawEnum != AllCards.Jigsaw)
+                {
+                    consumeCard.jigsawEffect = LoadJigsawFormat(consumeWrapper);
+                }
                 consumePile.Add(consumeCard);
             }
 
@@ -197,11 +222,28 @@ public class DeckManager : MonoBehaviour
         }
 
     }
+    //helper method that will load the jigsawWEffect and assign it to the card generated
+    //called by Initiate Battledeck here in deckManager
+    JigsawFormat LoadJigsawFormat(CardAndJigsaWrapper cardJigsawWrapper)
+    {
+        JigsawFormat jigsawFormat = Instantiate(referenceJigsawFormat);
+        jigsawFormat.enumJigsawCard = cardJigsawWrapper.jigsawEnum;
+        jigsawFormat.jigsawMethod = cardJigsawWrapper.jigsawMethod;
+        jigsawFormat.inputLink = cardJigsawWrapper.inputLink;
+        jigsawFormat.outputLink = cardJigsawWrapper.outputLink;
+        jigsawFormat.jigsawCard = CardSOFactory.GetCardSO(cardJigsawWrapper.jigsawEnum);
+        //jigsaw visuals
+        jigsawFormat.jigsawDescription = CardTagManager.GetJigsawDescriptions(jigsawFormat.enumJigsawCard);
+        jigsawFormat.jigsawImage = CardTagManager.DetermineJigsawImage(jigsawFormat.inputLink, jigsawFormat.outputLink);
+        //jigsaw Effects
+        jigsawFormat.jigsawCard = Instantiate(CardSOFactory.GetCardSO(cardJigsawWrapper.cardEnum));
+        return jigsawFormat;
+    }
 
     //Helper method called by InitializeBattleDeck method here in deckManager that generates a Card from the loaded AllCards enum
     //returns the same card after filling it up with information
     //NOT YET IMPLEMENTED FOR USE
-    Card CardInfoFillup(Card tempCard)
+    Card CardInfoFillup(Card tempCard, CardAndJigsaWrapper cardAndJigsawWrapper)
     {
         tempCard.effectText = CardTagManager.GetCardEffectDescriptions(tempCard);
 

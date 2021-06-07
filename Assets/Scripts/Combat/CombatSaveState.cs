@@ -7,11 +7,18 @@ using System;
 public class CombatSaveState
 {
     //player related combat info
-    public List<AllCards> initialDeck = new List<AllCards>();
-    public List<AllCards> battleDeck = new List<AllCards>();
-    public List<AllCards> playerHandList = new List<AllCards>();
-    public List<AllCards> discardPile = new List<AllCards>();
-    public List<AllCards> consumePile = new List<AllCards>();
+    //firs was list of Cards, changed to List of wrappers to include jigsaw
+    //public List<AllCards> initialDeck = new List<AllCards>();
+    //public List<AllCards> battleDeck = new List<AllCards>();
+    //public List<AllCards> playerHandList = new List<AllCards>();
+    //public List<AllCards> discardPile = new List<AllCards>();
+    //public List<AllCards> consumePile = new List<AllCards>();
+
+    public List<CardAndJigsaWrapper> initialDeck = new List<CardAndJigsaWrapper>();
+    public List<CardAndJigsaWrapper> battleDeck = new List<CardAndJigsaWrapper>();
+    public List<CardAndJigsaWrapper> playerHandList = new List<CardAndJigsaWrapper>();
+    public List<CardAndJigsaWrapper> discardPile = new List<CardAndJigsaWrapper>();
+    public List<CardAndJigsaWrapper> consumePile = new List<CardAndJigsaWrapper>();
 
     //same playerUnitStats should be in UniversalInformation except for current creativity
     //player unit has a wrapper class available ion UniversalSaveState with constructor parameter PlayerUnit
@@ -51,19 +58,27 @@ public class CombatSaveState
         //For Player Cards saving
         foreach (Card card in deckManager.battleDeck)
         {
-            battleDeck.Add(card.enumCardName);
+            CardAndJigsaWrapper cardAndJigsaw = new CardAndJigsaWrapper(card);
+            battleDeck.Add(cardAndJigsaw);
+            //battleDeck.Add(card.enumCardName);
         }
         foreach(Card card in deckManager.discardPile)
         {
-            discardPile.Add(card.enumCardName);
+            CardAndJigsaWrapper cardAndJigsaw = new CardAndJigsaWrapper(card);
+            discardPile.Add(cardAndJigsaw);
+            //discardPile.Add(card.enumCardName);
         }
         foreach (Card card in deckManager.consumePile)
         {
-            consumePile.Add(card.enumCardName);
+            CardAndJigsaWrapper cardAndJigsaw = new CardAndJigsaWrapper(card);
+            consumePile.Add(cardAndJigsaw);
+            //consumePile.Add(card.enumCardName);
         }
         foreach (Card card in deckManager.playerHandList)
         {
-            playerHandList.Add(card.enumCardName);
+            CardAndJigsaWrapper cardAndJigsaw = new CardAndJigsaWrapper(card);
+            playerHandList.Add(cardAndJigsaw);
+            //playerHandList.Add(card.enumCardName);
         }
         //add everythin for initialDeck
         initialDeck.AddRange(battleDeck);
@@ -80,6 +95,42 @@ public class CombatSaveState
         {
             cardMechanics.Add(existingStatus.Key);
             statusStacks.Add(existingStatus.Value);
+        }
+
+    }
+}
+
+//wrapper class tht represents a card and it's jigsaw, if there is no jigsaw, the jigsaw cariable is nulk
+[Serializable]
+public class CardAndJigsaWrapper
+{
+    //mimicvs a dicitonary of the main card's enum and it's jigsaw
+    //if there is no jigsaw in the card, put in index 0 or "Jigsaw", this element is no longer in use
+    public AllCards cardEnum;
+    public AllCards jigsawEnum;
+    //jigsawlinks
+    public JigsawLink inputLink;
+    public JigsawLink outputLink;
+    //determines the card method if targetted or dropped
+    public CardMethod jigsawMethod;
+    public CardAndJigsaWrapper(Card card)
+    {
+        //give a proper jogsaw entry if the card parameter has a jigsawFormat
+        if (card.jigsawEffect != null)
+        {
+            cardEnum = card.enumCardName;
+            JigsawFormat jigsawFormat = card.jigsawEffect;
+            jigsawEnum = jigsawFormat.enumJigsawCard;
+            inputLink = jigsawFormat.inputLink;
+            outputLink = jigsawFormat.outputLink;
+            jigsawMethod = jigsawFormat.jigsawMethod;
+
+        }
+        else
+        {
+            cardEnum = card.enumCardName;
+            //give jigsaw entry if there is no jigsaw taken from the card parameter, when loading, a "jigsaw" value means null
+            jigsawEnum = AllCards.Jigsaw;
         }
 
     }

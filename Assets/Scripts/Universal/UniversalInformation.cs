@@ -18,6 +18,7 @@ public class UniversalInformation
     public List<AllCards> initialDeck;
 
     //used for information that is consistently accessed throughout the game
+    //will be converted to a wrapper class that will contain the card's jigsaw information
     public List<AllCards> currentDeck;
 
     //information for the player unit
@@ -59,5 +60,7 @@ public class UniversalInformation
     public int nodeCount;
 
 }
+
+
 
 

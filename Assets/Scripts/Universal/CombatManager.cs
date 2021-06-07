@@ -219,8 +219,6 @@ public class CombatManager : MonoBehaviour
                 playerStatus.AlterStatusStack(combatSaveState.cardMechanics[i], combatSaveState.statusStacks[i]);
             }
 
-
-
         }
         //if combat file does not exist, get ebemy base unit from enemyPools
         else
