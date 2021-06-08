@@ -49,7 +49,7 @@ public class PlayerFunctions : BaseUnitFunctions
         //initializes creativity stats for players only
         defaultEnergy = playerUnit.energy;
         currEnergy = defaultEnergy;
-        Debug.Log("player function");
+
     }
 
     //called by StartTurn event from combat manager

@@ -84,22 +84,29 @@ public class EnemyFunctions : BaseUnitFunctions
     public override void TakeDamage(int damageValue)
     {
         base.TakeDamage(damageValue);
-        //at death
-        //WILL CHANGE THIS TO NOT IMMEDIATELY KILL FOR OVERKILL MECHANIC
-        if (currHP <= 0)
+
+    }
+
+    //death method to be called at the start of enemy turn if curr HP is 0 or negative
+    //also called if HP reaches overkill threshhold
+    public void ActivateEnemyDeath()
+    {
+        //overkill logic will occur when death method is called and negative current HP is less than negative of half of max HP
+        if (-currHP >= -(enemyUnit.HP/2))
         {
             //calls the enemyCounterIdentifier that calls an event when all enemies are gone
             //defined in BaseUnitFunctions
-            enemyAIManager.RegisterEnemyKill();
+            //RegisterEnemyKIll parameter will determine if the kill is an overkill
+            enemyAIManager.RegisterEnemyKill(true);
 
             //Comment out for Testing
             gameObject.SetActive(false);
 
-            //nothing in death delegate yet
-            //d_death();
-        }
-    }
+            //increase overkill amount
 
+        }
+
+    }
 
     //Function for updating Sliders
     public override void SliderValueUpdates()

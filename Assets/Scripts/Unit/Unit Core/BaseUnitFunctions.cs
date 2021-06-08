@@ -67,7 +67,11 @@ public class BaseUnitFunctions:MonoBehaviour
         //this line is moved to the inheritted classes
         //maxHP = unit.HP;
         //currHP = maxHP;
-        currCreativity = maxCreativity;
+        //curent creativity overhaul will make creativity start at 0 and then make ways to generate
+        //generate by turn or by kill or by card
+        //currCreativity = maxCreativity;
+        currCreativity = 0;
+
         currDraw = defaultDraw;
 
         HPSlider.maxValue = maxHP;
@@ -103,7 +107,9 @@ public class BaseUnitFunctions:MonoBehaviour
         block = Mathf.Max(block - modifiedValue, 0);
         if (HPdamage < 0)
         {
-            currHP = Mathf.Max(currHP - Mathf.Abs(HPdamage), 0);
+            //might make it so that it reaches negative int so that overkill
+            //currHP = Mathf.Max(currHP - Mathf.Abs(HPdamage), 0);
+            currHP = HPdamage;
             SliderValueUpdates();
         }
         ShowBlock();

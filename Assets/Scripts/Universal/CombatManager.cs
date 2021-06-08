@@ -80,6 +80,9 @@ public class CombatManager : MonoBehaviour
     //the loaded stats from universalInformation
     UniversalInformation universalInformation = new UniversalInformation();
 
+    //identifier that the turn cis the first turn loaded from file
+    bool isFirstTurnLoaded;
+
     public void Awake()
     {
         //one time run to add dictionary entries of cardMechanic enums and text descriptions
@@ -201,7 +204,7 @@ public class CombatManager : MonoBehaviour
             //assign the player unit saved in file
             playerFunctions.LoadPlayerUnitFromFile(combatSaveState.playerUnit);
             //max is subtracted from current because alterCreativvity funcion needs negative values for reduction
-            playerFunctions.AlterPlayerCreativity(combatSaveState.currCreativity - combatSaveState.playerUnit.Creativity);
+            playerFunctions.AlterPlayerCreativity(combatSaveState.currCreativity/* - combatSaveState.playerUnit.Creativity*/);
             playerFunctions.currHP = combatSaveState.playerUnit.currHP;
             playerFunctions.SliderValueUpdates();
             playerFunctions.AlterEnergy(playerFunctions.defaultEnergy - combatSaveState.currEnergy);
@@ -251,6 +254,20 @@ public class CombatManager : MonoBehaviour
         playerFunctions.currEnergy = 0;
         EnergyUpdater(playerFunctions.defaultEnergy);
         DrawHand();
+
+        //update creativity every turn to regenerate naturally by 1
+        //will only activate at the next turn onwards of start combat
+        //if identifier is false which is default, set it to true, this way, all preceeding turns except the firs will avtivte
+        if (!isFirstTurnLoaded)
+        {
+            isFirstTurnLoaded = true;
+        }
+        else
+        {
+            playerFunctions.AlterPlayerCreativity(1);
+        }
+
+
         //makes the endTurnButton interactable again during player turn
         EndTurnButt.interactable = true;
 
@@ -317,11 +334,11 @@ public class CombatManager : MonoBehaviour
         }
 
         //test for showing card Draft
-        if (Input.GetKeyDown(KeyCode.V))
-        {
-            VictoryFunction();
-            Debug.Log("starting draft");
-        }
+        //if (Input.GetKeyDown(KeyCode.V))
+        //{
+        //    VictoryFunction();
+        //    Debug.Log("starting draft");
+        //}
 
         //For Choosing Cards to play
         if (state == CombatState.PlayerTurn)
@@ -1007,13 +1024,14 @@ public class CombatManager : MonoBehaviour
     }
 
     //called by enemyAIManager when all enemies are destroyed
-    public void VictoryFunction()
+    //save overkill count in universalInformation
+    public void VictoryFunction(int overKillCount)
     {
         //cardDrafting.StartCardDraft();
         UniversalInformation universalInfo = UniversalSaveState.LoadUniversalInformation();
         universalInfo.playerStats = playerFunctions.playerUnit;
+        universalInfo.overkills = overKillCount;
         UniversalSaveState.SaveUniversalInformation(universalInfo);
-        SceneManager.LoadScene("RewardsScene");
     }
 
 }

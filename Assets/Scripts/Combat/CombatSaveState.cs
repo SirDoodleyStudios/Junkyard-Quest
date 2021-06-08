@@ -141,6 +141,11 @@ public class CardAndJigsaWrapper
 [Serializable]
 public class EnemyUnitStatsWrapper
 {
+    //identifier if enemy is dead and if overkilled
+    public bool isAlive;
+    public bool isBeingOverkilled;
+    public bool isOverKilled;
+
     //EnemyUnit variables
     public EnemyEnumName enemyEnumName;
     public int currHP;

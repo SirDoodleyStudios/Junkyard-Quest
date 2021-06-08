@@ -11,8 +11,11 @@ public class EnemyAIManager : MonoBehaviour
     //referenced from editor
     public CombatManager combatManager;
 
+    //These ints need to be saved in combatSaveState
     //count on how many enemies there are in combat, to be used in RegisterEnemyKill
     public int enemyCount;
+    //count on how many overkills are there already
+    public int overKillCount;
 
     //bool indicator that tells us if the first turn loaded is from file
     //if so, don't use the generic method but load details from file
@@ -65,13 +68,17 @@ public class EnemyAIManager : MonoBehaviour
 
     }
 
-    public void RegisterEnemyKill()
+    public void RegisterEnemyKill(bool isOverKill)
     {
+        //generate creativity when killing 
+        combatManager.playerFunctions.AlterPlayerCreativity(10);
+
         //reduce enemycount then if count is 0, start Victory
         enemyCount--;
         if (enemyCount == 0)
         {
-            combatManager.VictoryFunction();
+            //int parameter will let the save know how many overkills were done
+            combatManager.VictoryFunction(overKillCount);
         }
     }
 
