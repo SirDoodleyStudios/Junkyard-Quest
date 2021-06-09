@@ -68,7 +68,8 @@ public class EnemyAIManager : MonoBehaviour
 
     }
 
-    public void RegisterEnemyKill(bool isOverKill)
+    //parameter enemyFunction is the actual enemy that was destroyed
+    public void RegisterEnemyKill()
     {
         //generate creativity when killing 
         combatManager.playerFunctions.AlterPlayerCreativity(10);

@@ -109,7 +109,8 @@ public class BaseUnitFunctions:MonoBehaviour
         {
             //might make it so that it reaches negative int so that overkill
             //currHP = Mathf.Max(currHP - Mathf.Abs(HPdamage), 0);
-            currHP = HPdamage;
+            //currHP = HPdamage;
+            currHP = currHP - Mathf.Abs(HPdamage);
             SliderValueUpdates();
         }
         ShowBlock();

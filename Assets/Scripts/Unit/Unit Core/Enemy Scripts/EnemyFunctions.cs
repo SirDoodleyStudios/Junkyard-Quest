@@ -50,6 +50,12 @@ public class EnemyFunctions : BaseUnitFunctions
     //List<EnemyActionFormat> intendedActions = new List<EnemyActionFormat>();
     //List<GameObject> intendedActionHolders = new List<GameObject>();
 
+    //identifier if enemy is dead and if overkilled
+    //is changed by combat manager
+    public bool isAlive;
+    public bool isBeingOverkilled;
+    public bool isOverKilled;
+
 
     public override void InitializeStats()
     {
@@ -81,31 +87,64 @@ public class EnemyFunctions : BaseUnitFunctions
 
     }
 
+    //will determine what will enemy do next
+    public void EnemyStartTurn()
+    {
+        //if the enemy is istill is positive HP, proceed to enemy act, if not, activate death function
+        if (isBeingOverkilled)
+        {
+            ActivateEnemyDeath();
+        }
+        else
+        {
+            EnemyAct();
+        }
+    }
+
     public override void TakeDamage(int damageValue)
     {
         base.TakeDamage(damageValue);
-
+        //if enemy hp reaches 0 or negative, set isbeingOverkilled
+        if (currHP <= 0)
+        {
+            isBeingOverkilled = true;
+        }
     }
 
     //death method to be called at the start of enemy turn if curr HP is 0 or negative
     //also called if HP reaches overkill threshhold
     public void ActivateEnemyDeath()
     {
-        //overkill logic will occur when death method is called and negative current HP is less than negative of half of max HP
-        if (-currHP >= -(enemyUnit.HP/2))
+        //this is so that only active objects are considered
+        if (gameObject.activeSelf)
         {
-            //calls the enemyCounterIdentifier that calls an event when all enemies are gone
-            //defined in BaseUnitFunctions
-            //RegisterEnemyKIll parameter will determine if the kill is an overkill
-            enemyAIManager.RegisterEnemyKill(true);
+            //overkill logic will occur when death method is called and negative current HP is less than negative of half of max HP
+            if (-currHP <= -(enemyUnit.HP / 2))
+            {
+                isAlive = false;
+                isBeingOverkilled = false;
+                isOverKilled = true;
 
-            //Comment out for Testing
-            gameObject.SetActive(false);
+                //calls the enemyCounterIdentifier that calls an event when all enemies are gone
+                //defined in BaseUnitFunctions
+                //RegisterEnemyKIll parameter will determine if the kill is an overkill
+                enemyAIManager.RegisterEnemyKill();
 
-            //increase overkill amount
+                //Comment out for Testing
+                gameObject.SetActive(false);
+            }
+            //no overkill
+            else if (-currHP >= -(enemyUnit.HP / 2))
+            {
+                isAlive = false;
+                isBeingOverkilled = false;
+                isOverKilled = false;
+                enemyAIManager.RegisterEnemyKill();
 
+                //Comment out for Testing
+                gameObject.SetActive(false);
+            }
         }
-
     }
 
     //Function for updating Sliders
@@ -124,6 +163,8 @@ public class EnemyFunctions : BaseUnitFunctions
         }
         EnemyCastIntent2();
     }
+
+
 
     public void EnemyAct()
     {

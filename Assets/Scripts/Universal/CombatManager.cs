@@ -180,23 +180,32 @@ public class CombatManager : MonoBehaviour
             {
                 GameObject enemy = enemyHolder.transform.GetChild(i).gameObject;
                 EnemyFunctions enemyFunction = enemy.GetComponent<EnemyFunctions>();
-                enemy.SetActive(true);
 
                 //enemyUnit generated from factory then edited to match the enemy stats
                 EnemyUnitStatsWrapper enemyWrapper = combatSaveState.enemyUnitWrappers[i];
                 Debug.Log($"debug on {enemyWrapper.enemyEnumName}");
                 EnemyUnit enemyUnit = EnemyUnitFactory.GetEnemySO(enemyWrapper.enemyEnumName);
-                //assigning values
-                enemyFunction.currHP = enemyWrapper.currHP;
-                enemyFunction.SliderValueUpdates();
-                enemyFunction.GainBlock(enemyWrapper.block);
-                enemy.GetComponent<EnemyFunctions>().enemyUnit = Instantiate(enemyUnit);
 
-                //assigning statuses
-                for (int j = 0; enemyWrapper.cardMechanics.Count - 1 >= j; j++)
+                //identifiers of mortality
+                enemyFunction.isAlive = enemyWrapper.isAlive;
+                enemyFunction.isBeingOverkilled = enemyWrapper.isBeingOverkilled;
+                enemyFunction.isOverKilled = enemyWrapper.isOverKilled;
+
+                //only load the enemy if it is is still alive
+                if (enemyFunction.isAlive == true)
                 {
-                    UnitStatusHolder enemyStatus = enemy.GetComponent<UnitStatusHolder>();
-                    enemyStatus.AlterStatusStack(enemyWrapper.cardMechanics[j], enemyWrapper.statusStacks[j]);
+                    enemy.SetActive(true);
+                    //assigning values
+                    enemyFunction.currHP = enemyWrapper.currHP;
+                    enemyFunction.SliderValueUpdates();
+                    enemyFunction.GainBlock(enemyWrapper.block);
+                    enemy.GetComponent<EnemyFunctions>().enemyUnit = Instantiate(enemyUnit);
+                    //assigning statuses
+                    for (int j = 0; enemyWrapper.cardMechanics.Count - 1 >= j; j++)
+                    {
+                        UnitStatusHolder enemyStatus = enemy.GetComponent<UnitStatusHolder>();
+                        enemyStatus.AlterStatusStack(enemyWrapper.cardMechanics[j], enemyWrapper.statusStacks[j]);
+                    }
                 }
 
             }
@@ -233,8 +242,11 @@ public class CombatManager : MonoBehaviour
             for (int i = 0; enemySpawn.Count - 1 >= i; i++)
             {
                 GameObject enemy = enemyHolder.transform.GetChild(i).gameObject;
+                EnemyFunctions enemyFunction = enemy.GetComponent<EnemyFunctions>();
+                enemyFunction.enemyUnit = Instantiate(enemySpawn[i]);
+                enemyFunction.isAlive = true;
                 enemy.SetActive(true);
-                enemy.GetComponent<EnemyFunctions>().enemyUnit = Instantiate(enemySpawn[i]);
+
             }
         }
 
@@ -282,12 +294,7 @@ public class CombatManager : MonoBehaviour
         foreach (Transform enemyTrans in enemyHolder.transform)
         {
             GameObject enemyObject = enemyTrans.gameObject;
-            //only recognizes active objects to save
-            if (enemyObject.activeSelf)
-            {
-                enemyObjects.Add(enemyTrans.gameObject);
-            }
-
+            enemyObjects.Add(enemyObject);
         }
 
         //SAVE FUNCTION COMMENCES AT START OF TURN
@@ -1004,7 +1011,7 @@ public class CombatManager : MonoBehaviour
             //enemy.gameObject.GetComponent<EnemyActionsLogic>().EnemyAct();
             //yield return new WaitForSeconds(.5f);
             EnemyFunctions enemyFunctions = enemy.gameObject.GetComponent<EnemyFunctions>();
-            enemyFunctions.EnemyAct();
+            enemyFunctions.EnemyStartTurn();
             yield return new WaitForSeconds(.5f);
         }
 

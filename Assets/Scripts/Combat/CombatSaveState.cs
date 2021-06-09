@@ -170,8 +170,13 @@ public class EnemyUnitStatsWrapper
 
     public EnemyUnitStatsWrapper(EnemyFunctions enemyFunctions, UnitStatusHolder enemyStatuses)
     {
+        //enemy unit
         EnemyUnit enemyUnit = enemyFunctions.enemyUnit;
         enemyEnumName = enemyUnit.enemyEnumName;
+        //enemy identifier if alivw or being killed
+        isAlive = enemyFunctions.isAlive;
+        isBeingOverkilled = enemyFunctions.isBeingOverkilled;
+        isOverKilled = enemyFunctions.isOverKilled;
         //EnemyFunctions Variables
         block = enemyFunctions.block;
         //enumerates through the children in intentsHolder and add the existing EnemyActionFormats
