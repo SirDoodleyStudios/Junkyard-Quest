@@ -20,6 +20,9 @@ public class CombatSaveState
     public List<CardAndJigsaWrapper> discardPile = new List<CardAndJigsaWrapper>();
     public List<CardAndJigsaWrapper> consumePile = new List<CardAndJigsaWrapper>();
 
+    //int that counts how many enemies are alive
+    public int enemyCounter;
+
     //same playerUnitStats should be in UniversalInformation except for current creativity
     //player unit has a wrapper class available ion UniversalSaveState with constructor parameter PlayerUnit
     //playerUnitStats is not serialized and will only be used to create the playerStatsWrapper which will be serialized

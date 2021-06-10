@@ -12,10 +12,13 @@ public class EnemyAIManager : MonoBehaviour
     public CombatManager combatManager;
 
     //These ints need to be saved in combatSaveState
-    //count on how many enemies there are in combat, to be used in RegisterEnemyKill
-    public int enemyCount;
     //count on how many overkills are there already
     public int overKillCount;
+    //this is checked by ccombatManager in victoryFunction
+    //original number of enemies at the very beginning of combat
+    //also used to count down for determining if victory was achieved
+    //saved in CombatSaveState as the counter and not the actual original enemycount
+    public int enemyCounter;
 
     //bool indicator that tells us if the first turn loaded is from file
     //if so, don't use the generic method but load details from file
@@ -24,14 +27,24 @@ public class EnemyAIManager : MonoBehaviour
 
     private void Start()
     {
-        //counts first how many enemies are enabled
-        foreach (Transform enemy in transform)
-        {
-            if (enemy.gameObject.activeSelf)
-            {
-                enemyCount++;
-            }
-        }
+        ////counts first how many enemies are enabled
+        //foreach (Transform enemy in transform)
+        //{
+        //    if (enemy.gameObject.activeSelf)
+        //    {
+        //        enemyDeathCounter++;
+        //    }
+        //}
+        ////assigns the original count of enemies at the very beginning
+        //enemyCount = enemyDeathCounter;
+    }
+
+    //pseudo start called by combat manager
+    //if a file is loaded, the enemyCOunt is the saved enemyCounter from last session
+    //if fresh, the enemyCount is from the unversalInfo
+    public void PseudoStartCombat(int enemyCount)
+    {
+        enemyCounter = enemyCount;
     }
 
     public void EnemyStart()
@@ -75,12 +88,28 @@ public class EnemyAIManager : MonoBehaviour
         combatManager.playerFunctions.AlterPlayerCreativity(10);
 
         //reduce enemycount then if count is 0, start Victory
-        enemyCount--;
-        if (enemyCount == 0)
+        enemyCounter--;
+        if (enemyCounter == 0)
         {
             //int parameter will let the save know how many overkills were done
-            combatManager.VictoryFunction(overKillCount);
+            combatManager.VictoryFunction();
         }
+
+
+        //int enemyCount = 0;
+        //foreach (Transform enemy in transform)
+        //{
+        //    if (enemy.gameObject.activeSelf)
+        //    {
+        //        enemyCount++;
+        //    }
+        //}
+        //if(enemyCount == 0)
+        //{
+        //    combatManager.VictoryFunction();
+        //}
+
+
     }
 
 

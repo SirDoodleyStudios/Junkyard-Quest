@@ -139,10 +139,9 @@ public class EnemyFunctions : BaseUnitFunctions
                 isAlive = false;
                 isBeingOverkilled = false;
                 isOverKilled = false;
-                enemyAIManager.RegisterEnemyKill();
-
                 //Comment out for Testing
                 gameObject.SetActive(false);
+                enemyAIManager.RegisterEnemyKill();
             }
         }
     }

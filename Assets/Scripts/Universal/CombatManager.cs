@@ -49,6 +49,7 @@ public class CombatManager : MonoBehaviour
     public CardDrafting cardDrafting;
     public EnemyPools enemyPools;
     public AbilityManager abilityManager;
+    public EnemyAIManager enemyAIManager;
 
     //related to energy
     //Energy gets accessed by playingField
@@ -209,6 +210,10 @@ public class CombatManager : MonoBehaviour
                 }
 
             }
+            //calling enemyAI functions
+            //if from file, get the counter that was saved, since there might already be dead enemies there and the original enemy count is not the one needed
+            enemyAIManager.PseudoStartCombat(combatSaveState.enemyCounter);
+            
 
             //assign the player unit saved in file
             playerFunctions.LoadPlayerUnitFromFile(combatSaveState.playerUnit);
@@ -231,11 +236,13 @@ public class CombatManager : MonoBehaviour
                 playerStatus.AlterStatusStack(combatSaveState.cardMechanics[i], combatSaveState.statusStacks[i]);
             }
 
+
+
         }
         //if combat file does not exist, get ebemy base unit from enemyPools
         else
         {
-
+            UniversalInformation universalInfo = UniversalSaveState.LoadUniversalInformation();
             List<EnemyUnit> enemySpawn = enemyPools.GetEnemySpawn(universalInformation.nodeCount);
 
             //instantiate copies of the base SO per spawn in list and assign them to respective enemyHolder position
@@ -246,8 +253,10 @@ public class CombatManager : MonoBehaviour
                 enemyFunction.enemyUnit = Instantiate(enemySpawn[i]);
                 enemyFunction.isAlive = true;
                 enemy.SetActive(true);
-
             }
+            //use the predetermined enemy count if fresh combat scene is being generated
+            //enemyAIManager.PseudoStartCombat(universalInfo.enemyCount);
+            enemyAIManager.PseudoStartCombat(2); //THIS IS TEST ONLY BECAUSE THE COUNT BEFORE COMBAT IS NOT IMPLEMENTED YET
         }
 
 
@@ -303,6 +312,7 @@ public class CombatManager : MonoBehaviour
         CombatSaveState combatSaveState = new CombatSaveState(deckManager, playerUnit, playerUnitStatuses, enemyObjects);
         combatSaveState.currCreativity = playerFunctions.currCreativity;
         combatSaveState.currEnergy = playerFunctions.currEnergy;
+        combatSaveState.enemyCounter = enemyAIManager.enemyCounter;
         foreach (AbilityFormat abilityFormat in abilityManager.abilityList)
         {
             combatSaveState.abilityList.Add(abilityFormat.enumAbilityName);
@@ -1032,13 +1042,28 @@ public class CombatManager : MonoBehaviour
 
     //called by enemyAIManager when all enemies are destroyed
     //save overkill count in universalInformation
-    public void VictoryFunction(int overKillCount)
+    public void VictoryFunction()
     {
         //cardDrafting.StartCardDraft();
+
         UniversalInformation universalInfo = UniversalSaveState.LoadUniversalInformation();
         universalInfo.playerStats = playerFunctions.playerUnit;
-        universalInfo.overkills = overKillCount;
+
+        //checks each enemyFunction if it was overkilled
+        int tempOverkillCount = 0;
+        foreach (Transform enemyObject in enemyHolder.transform)
+        {
+            EnemyFunctions enemyFunction = enemyObject.GetComponent<EnemyFunctions>();
+            if (enemyFunction.isOverKilled)
+            {
+                tempOverkillCount++;
+            }
+        }
+        universalInfo.overkills = tempOverkillCount;
         UniversalSaveState.SaveUniversalInformation(universalInfo);
+
+        SceneManager.LoadScene("RewardsScene");
+
     }
 
 }

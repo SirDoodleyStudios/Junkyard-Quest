@@ -51,6 +51,8 @@ public class UniversalInformation
 
     //combat statistics
     //these are determined during combat and used for determining rewards in the rewards scene
+    //these must be cleared every battle start
+    //enemycount must be determined before entering battle and assign it in combat immediately
     //NOT YET SAVED IN UNIVERSALINFO
     public int overkills;
     public int enemyCount;

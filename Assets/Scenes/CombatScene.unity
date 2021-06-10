@@ -2686,6 +2686,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   EndTurnButton: {fileID: 1436910261}
   combatManager: {fileID: 2085359251}
+  enemyDeathCounter: 0
+  overKillCount: 0
   enemyCount: 0
 --- !u!224 &679543449 stripped
 RectTransform:
@@ -7534,6 +7536,7 @@ MonoBehaviour:
   cardDrafting: {fileID: 703709459}
   enemyPools: {fileID: 1360122175}
   abilityManager: {fileID: 1712888394}
+  enemyAIManager: {fileID: 676333092}
   Energy: 0
   energyText: {fileID: 1296847235}
   deckText: {fileID: 2048802908}
