@@ -46,6 +46,10 @@ public class CombatSaveState
     //enemy related info
     public List<EnemyUnitStatsWrapper> enemyUnitWrappers = new List<EnemyUnitStatsWrapper>();
 
+    //identifier if the player is now being overkilled
+    //if this is true, the next player turn will activate defeat function
+    public bool isPlayerBeingOverkilled;
+
 
     public CombatSaveState(DeckManager deckManager, PlayerUnit playerUnit, UnitStatusHolder playerStatuses, List<GameObject> enemyObjects)
     {

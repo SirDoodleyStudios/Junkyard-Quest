@@ -57,6 +57,9 @@ public class CardTagManager
         popupDescriptions.Add(CardMechanics.AdrenalineRush, "Adrenaline Rush: Recover health equal to incoming health damage this turn.");
         popupDescriptions.Add(CardMechanics.Payback, "Payback: Gain 1 COUNTER everytime an attack is about to be fully blocked this turn.");
         popupDescriptions.Add(CardMechanics.Confidefense, "Confidefense: This turn, gain 1 MOMENTUM after playing a BLOCK card.");
+
+        //special and events
+        popupDescriptions.Add(CardMechanics.WornOut, "Worn Out: Reduces Energy and Draw by 1 at the start of turn");
     }
 
     //returns descriptions when called depending on CardTag enum passed

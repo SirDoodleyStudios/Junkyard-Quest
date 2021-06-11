@@ -12,9 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d957d5c15a5f78e42adab1805c8a3f3a, type: 3}
   m_Name: Arlen with Energy
   m_EditorClassIdentifier: 
-  HP: 888
+  HP: 10
   Creativity: 50
   draw: 5
-  currHP: 888
+  currHP: 10
   energy: 80
   chosenPlayer: 0

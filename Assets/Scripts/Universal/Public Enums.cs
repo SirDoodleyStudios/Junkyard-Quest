@@ -141,6 +141,7 @@ public enum CardMechanics
     AdrenalineRush, // unique
     Payback, //unique
     Confidefense, //unique
+    WornOut,
     
     //Consume Usage Stack Statuses
 

@@ -61,6 +61,8 @@ public class UniversalInformation
     //this will determine the difficulty of enemy spawns generated
     public int nodeCount;
 
+    //this is a counter that assigns the worn-out status on the player if the last battle that he survived overkilled him
+    public int wornOutCount;
 }
 
 

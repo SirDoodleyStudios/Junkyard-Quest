@@ -29,6 +29,7 @@ public class PlayerFunctions : BaseUnitFunctions
 
     //for loading the playerFunction loaded as the playerUnit
     //called by combatManager during combatStart after loading
+
     public void LoadPlayerUnitFromFile(PlayerUnit unit)
     {
         //so that the assigned playerUnit SO is just a copy of the one in resources
@@ -49,6 +50,7 @@ public class PlayerFunctions : BaseUnitFunctions
         //initializes creativity stats for players only
         defaultEnergy = playerUnit.energy;
         currEnergy = defaultEnergy;
+
 
     }
 

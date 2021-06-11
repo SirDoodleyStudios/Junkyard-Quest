@@ -83,6 +83,8 @@ public class CombatManager : MonoBehaviour
 
     //identifier that the turn cis the first turn loaded from file
     bool isFirstTurnLoaded;
+    //identifier if player is currently being overkilled
+    bool isPlayerBeingOverkilled;
 
     public void Awake()
     {
@@ -118,7 +120,7 @@ public class CombatManager : MonoBehaviour
         //DeckUpdater();
 
         //assigns the initializers in the event d_StartTurn
-        d_StartTurn += StartTurnInCombatManager;
+        d_StartTurn += StartTurnInCombatManager; //this must stay in front of StatusUpdateTurn
         d_StartTurn += enemyHolder.GetComponent<EnemyAIManager>().EnemyStart;
         d_StartTurn += player.GetComponent<PlayerFunctions>().PlayerTurn;
         d_StartTurn += player.GetComponent<UnitStatusHolder>().StatusUpdateForNewTurn;
@@ -236,6 +238,9 @@ public class CombatManager : MonoBehaviour
                 playerStatus.AlterStatusStack(combatSaveState.cardMechanics[i], combatSaveState.statusStacks[i]);
             }
 
+            //identifiers
+            isPlayerBeingOverkilled = combatSaveState.isPlayerBeingOverkilled;
+
 
 
         }
@@ -245,6 +250,12 @@ public class CombatManager : MonoBehaviour
             UniversalInformation universalInfo = UniversalSaveState.LoadUniversalInformation();
             List<EnemyUnit> enemySpawn = enemyPools.GetEnemySpawn(universalInformation.nodeCount);
 
+            //gives the player Worn-out Status if universalInfo has a worn-out count
+            if(universalInfo.wornOutCount > 0)
+            {
+                UnitStatusHolder playerStatus = player.GetComponent<UnitStatusHolder>();
+                playerStatus.AlterStatusStack(CardMechanics.WornOut, universalInfo.wornOutCount);
+            }
             //instantiate copies of the base SO per spawn in list and assign them to respective enemyHolder position
             for (int i = 0; enemySpawn.Count - 1 >= i; i++)
             {
@@ -255,8 +266,14 @@ public class CombatManager : MonoBehaviour
                 enemy.SetActive(true);
             }
             //use the predetermined enemy count if fresh combat scene is being generated
-            //enemyAIManager.PseudoStartCombat(universalInfo.enemyCount);
-            enemyAIManager.PseudoStartCombat(2); //THIS IS TEST ONLY BECAUSE THE COUNT BEFORE COMBAT IS NOT IMPLEMENTED YET
+            //currently the enemyCount in universalInfo is 2 just for testing
+            universalInfo.enemyCount = 2;
+            //clear the overkills and worn-outs from last combat
+            universalInfo.overkills = 0;
+            universalInfo.wornOutCount = 0;
+            UniversalSaveState.SaveUniversalInformation(universalInfo);
+
+            enemyAIManager.PseudoStartCombat(universalInfo.enemyCount);
         }
 
 
@@ -267,32 +284,44 @@ public class CombatManager : MonoBehaviour
     //called by d_StartTurn()
     public void StartTurnInCombatManager()
     {
-        state = CombatState.PlayerTurn;
-
-        //Energy = 0;
-        //EnergyUpdater(defaultEnergy);
-
-        playerFunctions.currEnergy = 0;
-        EnergyUpdater(playerFunctions.defaultEnergy);
-        DrawHand();
-
-        //update creativity every turn to regenerate naturally by 1
-        //will only activate at the next turn onwards of start combat
-        //if identifier is false which is default, set it to true, this way, all preceeding turns except the firs will avtivte
-        if (!isFirstTurnLoaded)
+        //if player HP is below 0 and being overkilled during the start of turn, call Defeat Function
+        if (playerFunctions.currHP <= 0 && isPlayerBeingOverkilled)
         {
-            isFirstTurnLoaded = true;
+            //if current turn is the first time player is overkilled, proceed with turn and set identifier to true
+            DefeatFunction();
+            
         }
+        //if not yet being overkilled, proceed to normal turn
         else
         {
-            playerFunctions.AlterPlayerCreativity(1);
+            state = CombatState.PlayerTurn;
+
+            //for getting status effects from unitStatusHolder of player
+            UnitStatusHolder unitStatusHolder = player.GetComponent<UnitStatusHolder>();
+            playerFunctions.currEnergy = 0;
+            EnergyUpdater(playerFunctions.defaultEnergy + unitStatusHolder.EnergyAlteringModifierCalculator());
+            DrawHand(playerFunctions.defaultDraw + unitStatusHolder.DrawAlteringModifierCalculator());
+
+            //update creativity every turn to regenerate naturally by 1
+            //will only activate at the next turn onwards of start combat
+            //if identifier is false which is default, set it to true, this way, all preceeding turns except the firs will avtivte
+            if (!isFirstTurnLoaded)
+            {
+                isFirstTurnLoaded = true;
+            }
+            else
+            {
+                playerFunctions.AlterPlayerCreativity(1);
+            }
+            //makes the endTurnButton interactable again during player turn
+            EndTurnButt.interactable = true;
+
+            //if has negative HP, set isBeingOverkilled to True
+            if (playerFunctions.currHP<= 0)
+            {
+                isPlayerBeingOverkilled = true;
+            }
         }
-
-
-        //makes the endTurnButton interactable again during player turn
-        EndTurnButt.interactable = true;
-
-
 
     }
     //for saving all the Combat parameters
@@ -313,10 +342,12 @@ public class CombatManager : MonoBehaviour
         combatSaveState.currCreativity = playerFunctions.currCreativity;
         combatSaveState.currEnergy = playerFunctions.currEnergy;
         combatSaveState.enemyCounter = enemyAIManager.enemyCounter;
+        combatSaveState.isPlayerBeingOverkilled = isPlayerBeingOverkilled;
         foreach (AbilityFormat abilityFormat in abilityManager.abilityList)
         {
             combatSaveState.abilityList.Add(abilityFormat.enumAbilityName);
         }
+        //if 
 
 
         //saves combatState and generate save file
@@ -943,13 +974,14 @@ public class CombatManager : MonoBehaviour
     }
 
     //function for drawing during start of turn
-    public void DrawHand()
+    public void DrawHand(int turnDraw)
     {
         //setting the state of all cards to drawsphase will supposedly prevent accidental onPointerExit logic while drawing cards
         //playerHand.StateChanger(CombatState.DrawPhase);
 
         //deckManager.StartCoroutine(deckManager.DrawCards(playerFunctions.defaultDraw));
-        deckManager.DrawCards(playerFunctions.defaultDraw);
+        //deckManager.DrawCards(playerFunctions.defaultDraw); //replaced when draw affecting statuses were created, now number of card draw is dictated by combatManager from calculation
+        deckManager.DrawCards(turnDraw);
 
         //moved to the end of draw, discard, and consume scripts in DeckManager to ensure sync
         //DeckUpdater();
@@ -1038,6 +1070,7 @@ public class CombatManager : MonoBehaviour
     public void DefeatFunction()
     {
 
+        Debug.Log("defeated");
     }
 
     //called by enemyAIManager when all enemies are destroyed
@@ -1047,7 +1080,6 @@ public class CombatManager : MonoBehaviour
         //cardDrafting.StartCardDraft();
 
         UniversalInformation universalInfo = UniversalSaveState.LoadUniversalInformation();
-        universalInfo.playerStats = playerFunctions.playerUnit;
 
         //checks each enemyFunction if it was overkilled
         int tempOverkillCount = 0;
@@ -1060,8 +1092,34 @@ public class CombatManager : MonoBehaviour
             }
         }
         universalInfo.overkills = tempOverkillCount;
+
+        //if player HP is overkilled equal to full HP, get 3 worn-out turns next combat
+        if (playerFunctions.currHP <= -(playerFunctions.currHP))
+        {
+            universalInfo.wornOutCount = 3;
+            playerFunctions.playerUnit.currHP = 1;
+        }
+        //if only overkilled through half health, get 2 worn-out necxt combat
+        else if (playerFunctions.currHP <= -(playerFunctions.currHP/2))
+        {
+            universalInfo.wornOutCount = 2;
+            playerFunctions.playerUnit.currHP = 1;
+        }
+        //if it just reached below 0, get 1 worn-out next combat
+        else if (playerFunctions.currHP <= 0)
+        {
+            universalInfo.wornOutCount = 1;
+            playerFunctions.playerUnit.currHP = 1;
+        }
+
+        universalInfo.playerStats = playerFunctions.playerUnit;
         UniversalSaveState.SaveUniversalInformation(universalInfo);
 
+        //delete the combat file
+        File.Delete(Application.persistentDataPath + "/Combat.json");
+
+
+        //go to rewards scene if victorious
         SceneManager.LoadScene("RewardsScene");
 
     }

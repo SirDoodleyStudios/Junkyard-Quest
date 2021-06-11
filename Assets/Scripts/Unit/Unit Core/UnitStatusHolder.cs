@@ -423,6 +423,27 @@ public class UnitStatusHolder : MonoBehaviour
         return total;
     }
 
+    //for energy modifying Statuses
+    public int EnergyAlteringModifierCalculator()
+    {
+        int energyModifier = 0;
+        if (turnStatusDict.ContainsKey(CardMechanics.WornOut))
+        {
+            energyModifier--;
+        }
+        return energyModifier;
+    }
+
+    //for draw modifying statuses
+    public int DrawAlteringModifierCalculator()
+    {
+        int drawModifier = 0;
+        if (turnStatusDict.ContainsKey(CardMechanics.WornOut))
+        {
+            drawModifier--;
+        }
+        return drawModifier;
+    }
 
 
     public int BlockModifierCalculator(int baseBlock)

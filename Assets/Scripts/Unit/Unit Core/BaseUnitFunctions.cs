@@ -46,6 +46,8 @@ public class BaseUnitFunctions:MonoBehaviour
     public EnemyAIManager enemyAIManager;
 
 
+
+
     public void Start()
     {
         ///////////////////////////////override this to start with combatManager

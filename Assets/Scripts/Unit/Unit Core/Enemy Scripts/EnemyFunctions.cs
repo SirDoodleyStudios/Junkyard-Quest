@@ -119,7 +119,7 @@ public class EnemyFunctions : BaseUnitFunctions
         if (gameObject.activeSelf)
         {
             //overkill logic will occur when death method is called and negative current HP is less than negative of half of max HP
-            if (-currHP <= -(enemyUnit.HP / 2))
+            if (currHP <= -(enemyUnit.HP / 2))
             {
                 isAlive = false;
                 isBeingOverkilled = false;
@@ -134,7 +134,7 @@ public class EnemyFunctions : BaseUnitFunctions
                 gameObject.SetActive(false);
             }
             //no overkill
-            else if (-currHP >= -(enemyUnit.HP / 2))
+            else if (currHP >= -(enemyUnit.HP / 2))
             {
                 isAlive = false;
                 isBeingOverkilled = false;
