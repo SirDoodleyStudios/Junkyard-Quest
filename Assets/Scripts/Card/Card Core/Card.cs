@@ -59,9 +59,7 @@ public class Card : ScriptableObject
 
     //List of tags that the card have, only for displaying text during Hover
     public List<CardMechanics> cardTags = new List<CardMechanics>();
-
-
-
+    
 
 
 

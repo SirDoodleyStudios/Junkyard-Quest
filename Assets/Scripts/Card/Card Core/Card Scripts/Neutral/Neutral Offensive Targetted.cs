@@ -9,7 +9,6 @@ public class Neu_OT_Attack : BaseCardEffect
 
     public override void CardEffectActivate(GameObject target, GameObject actor, Card card)
     {
-        Debug.Log("attack");
         damage = 5;
         hits = 1;
         ActingCardLoad(card);

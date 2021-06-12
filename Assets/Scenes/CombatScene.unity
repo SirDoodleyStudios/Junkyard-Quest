@@ -441,6 +441,26 @@ PrefabInstance:
       propertyPath: m_SizeDelta.x
       value: 378.63013
       objectReference: {fileID: 0}
+    - target: {fileID: 5806702369580366232, guid: 8dba59f21d2aa7a4a94b5e22544fb88d,
+        type: 3}
+      propertyPath: m_fontColor.r
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5806702369580366232, guid: 8dba59f21d2aa7a4a94b5e22544fb88d,
+        type: 3}
+      propertyPath: m_fontColor.g
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5806702369580366232, guid: 8dba59f21d2aa7a4a94b5e22544fb88d,
+        type: 3}
+      propertyPath: m_fontColor.b
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5806702369580366232, guid: 8dba59f21d2aa7a4a94b5e22544fb88d,
+        type: 3}
+      propertyPath: m_fontColor32.rgba
+      value: 4294967295
+      objectReference: {fileID: 0}
     - target: {fileID: 6061975681835386892, guid: 8dba59f21d2aa7a4a94b5e22544fb88d,
         type: 3}
       propertyPath: m_AnchoredPosition.y
@@ -2686,9 +2706,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   EndTurnButton: {fileID: 1436910261}
   combatManager: {fileID: 2085359251}
-  enemyDeathCounter: 0
   overKillCount: 0
-  enemyCount: 0
+  enemyCounter: 0
 --- !u!224 &679543449 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 1074423846794374599, guid: 1522c6d952ce7b04b8e0821c780c1638,
@@ -5109,6 +5128,26 @@ PrefabInstance:
       propertyPath: m_SizeDelta.x
       value: 378.63013
       objectReference: {fileID: 0}
+    - target: {fileID: 5806702369580366232, guid: 8dba59f21d2aa7a4a94b5e22544fb88d,
+        type: 3}
+      propertyPath: m_fontColor.r
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5806702369580366232, guid: 8dba59f21d2aa7a4a94b5e22544fb88d,
+        type: 3}
+      propertyPath: m_fontColor.g
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5806702369580366232, guid: 8dba59f21d2aa7a4a94b5e22544fb88d,
+        type: 3}
+      propertyPath: m_fontColor.b
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5806702369580366232, guid: 8dba59f21d2aa7a4a94b5e22544fb88d,
+        type: 3}
+      propertyPath: m_fontColor32.rgba
+      value: 4294967295
+      objectReference: {fileID: 0}
     - target: {fileID: 6061975681835386892, guid: 8dba59f21d2aa7a4a94b5e22544fb88d,
         type: 3}
       propertyPath: m_AnchoredPosition.y
@@ -7206,6 +7245,26 @@ PrefabInstance:
         type: 3}
       propertyPath: m_SizeDelta.x
       value: 378.63013
+      objectReference: {fileID: 0}
+    - target: {fileID: 5806702369580366232, guid: 8dba59f21d2aa7a4a94b5e22544fb88d,
+        type: 3}
+      propertyPath: m_fontColor.r
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5806702369580366232, guid: 8dba59f21d2aa7a4a94b5e22544fb88d,
+        type: 3}
+      propertyPath: m_fontColor.g
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5806702369580366232, guid: 8dba59f21d2aa7a4a94b5e22544fb88d,
+        type: 3}
+      propertyPath: m_fontColor.b
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5806702369580366232, guid: 8dba59f21d2aa7a4a94b5e22544fb88d,
+        type: 3}
+      propertyPath: m_fontColor32.rgba
+      value: 4294967295
       objectReference: {fileID: 0}
     - target: {fileID: 6061975681835386892, guid: 8dba59f21d2aa7a4a94b5e22544fb88d,
         type: 3}

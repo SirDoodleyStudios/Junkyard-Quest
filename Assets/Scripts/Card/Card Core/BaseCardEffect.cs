@@ -284,7 +284,7 @@ public abstract class BaseCardEffect
     public void AlterCreativity()
     {
         //make this applicable to enemies as well
-        targetPlayingField.playerPrefab.GetComponent<PlayerFunctions>().AlterPlayerCreativity(creativity);
+        targetPlayingField.playerPrefab.GetComponent<PlayerFunctions>().AlterCreativity(creativity);
 
     }
 

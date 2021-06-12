@@ -19,14 +19,14 @@ public class EnemyFunctions : BaseUnitFunctions
     public List<EnemyActionFormat> actionDeck = new List<EnemyActionFormat>();
     //the list of EAFormats that the enemy has in hand
     //OUTDTED
-    List<EnemyActionFormat> actionHand = new List<EnemyActionFormat>();
+    //List<EnemyActionFormat> actionHand = new List<EnemyActionFormat>();
 
 
 
     //for enemy action hand
     //contains the gameobjects under the actions panel
     public GameObject actionPanel;
-    List<GameObject> actionSlotObjects = new List<GameObject>();
+    //List<GameObject> actionSlotObjects = new List<GameObject>(); // outdated
     //contains the list of sprites for each attack typem this is manually inserted in inspector\
 
     //Decomissioned by 
@@ -95,10 +95,16 @@ public class EnemyFunctions : BaseUnitFunctions
         {
             ActivateEnemyDeath();
         }
-        else
+        else if (!isBeingOverkilled && isAlive)
         {
             EnemyAct();
         }
+    }
+
+    //creativity, called by combatManager delegate during start of turn
+    public override void AlterCreativity(int creativityValue)
+    {
+        base.AlterCreativity(creativityValue);
     }
 
     public override void TakeDamage(int damageValue)
@@ -154,20 +160,23 @@ public class EnemyFunctions : BaseUnitFunctions
     }
 
     public void EnemyPrepare()
-    {        
-
-        if (actionPanel.transform.GetChild(0).gameObject.activeSelf == false)
+    {
+        if (isAlive)
         {
-            EnemyDrawHand2();
+            if (actionPanel.transform.GetChild(0).gameObject.activeSelf == false)
+            {
+                EnemyDrawHand2();
+            }
+            EnemyCastIntent2();
         }
-        EnemyCastIntent2();
+
     }
 
 
 
     public void EnemyAct()
     {
-
+        Debug.Log($"Enemy {transform.GetSiblingIndex()} is acting");
         //removes block first before acting
         base.RemoveBlock();
         //iterates through the intent panel and activate their effects
@@ -182,11 +191,17 @@ public class EnemyFunctions : BaseUnitFunctions
 
             //}
             //intentTransforms.gameObject.SetActive(false);
+
             //for linking without any repetition
             GameObject intentObject = intentTransforms.gameObject;
             EnemyActionFormat actionFormat = intentObject.GetComponent<EnemyActionIcon>().enemyAction;
             EnemyActionFactory.GetEnemyActionEffect(actionFormat.enumEnemyAction).InitializeEnemyAction(enemyUnit, gameObject);
 
+        }
+        //reduces creativity if there are links
+        if (intentPanel.transform.childCount > 1)
+        {
+            AlterCreativity(-intentPanel.transform.childCount);
         }
         //for transferring enemy actions back to the actionPanel 
         //only checks index 0 because we're returning the prefabs to actionHand one by one
@@ -196,9 +211,16 @@ public class EnemyFunctions : BaseUnitFunctions
             EnemyActionFormat returningActionFormat = returningAction.gameObject.GetComponent<EnemyActionIcon>().enemyAction;
             //returns the EnemyActionFormat to deckHolder
             actionDeck.Add(returningAction.gameObject.GetComponent<EnemyActionIcon>().enemyAction);
+
+            //this makes it so that the used action is sent back to action panel, we don't want that, we want the enemy to have it's own deck
+            //this should only move the icon object but not as an activated action
+            returningAction.gameObject.SetActive(false);
             returningAction.SetParent(actionPanel.transform);
             returningAction.SetAsLastSibling();
+            
         }
+        Debug.Log("break");
+
     }
 
     //returning the enemyactionformat attached to the enemy intent
@@ -214,7 +236,7 @@ public class EnemyFunctions : BaseUnitFunctions
         //THE ACTION DECK WILL BE SAVED AND LOADED IN COMBAT SAVES
         for(int i = 0; enemyUnit.draw > i; i++)
         {
-            EnemyActionFormat tempAction = actionDeck[Random.Range(0, actionDeck.Count)];
+            EnemyActionFormat tempAction = Instantiate(actionDeck[Random.Range(0, actionDeck.Count)]);
             //for assigning sprites and enabling action slot gameObject
             //iterates through the action panel to enable action slots and assign sprites
             foreach (Transform actionSlot in actionPanel.transform)
@@ -238,8 +260,8 @@ public class EnemyFunctions : BaseUnitFunctions
                     //assigns the EnemyActionFormat from the deck to the EnemyActionIcon holder
                     enemyActionIcon.enemyAction = tempAction;
                     //assign random input and output link
-                    JigsawLink tempInput = (JigsawLink)Random.Range(0, 2);
-                    JigsawLink tempOutput = (JigsawLink)Random.Range(0, 2);
+                    JigsawLink tempInput = (JigsawLink)Random.Range(0, 3);
+                    JigsawLink tempOutput = (JigsawLink)Random.Range(0, 3);
                     enemyActionIcon.enemyAction.inputLink = tempInput;
                     enemyActionIcon.enemyAction.outputLink = tempOutput;
                     enemyActionIcon.inputLinkImage.sprite = Resources.Load<Sprite>($"EnemyActionIcon/{tempInput}");
@@ -358,7 +380,8 @@ public class EnemyFunctions : BaseUnitFunctions
             }
             //for finding available links for the initial intent
             //limit of 2 links only or 3 actions
-            else if (intentPanel.transform.childCount < 3)
+            //the && condition makes sure that before finding a link, the enemy creativity has enough creativity
+            else if (intentPanel.transform.childCount < 3 && currCreativity >= intentPanel.transform.childCount + 1)
             {
                 //checks each remaining card in in actionHand if there are linkables
                 foreach (Transform actionTransform in actionPanel.transform)

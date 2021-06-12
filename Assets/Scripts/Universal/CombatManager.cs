@@ -20,6 +20,10 @@ public class CombatManager : MonoBehaviour
     public delegate void D_GenerateUnits();
     public event D_GenerateUnits d_GenerateUnits;
 
+    //delegate to generate creativity for all units at the start of player turn
+    public delegate void D_NaturalGenerateCreativity(int i);
+    public event D_NaturalGenerateCreativity d_NaturalGenerateCreativity;
+
 
     CombatState state;
     //for thedropfield moving up approach targetting system
@@ -122,8 +126,10 @@ public class CombatManager : MonoBehaviour
         //assigns the initializers in the event d_StartTurn
         d_StartTurn += StartTurnInCombatManager; //this must stay in front of StatusUpdateTurn
         d_StartTurn += enemyHolder.GetComponent<EnemyAIManager>().EnemyStart;
-        d_StartTurn += player.GetComponent<PlayerFunctions>().PlayerTurn;
+        //d_StartTurn += player.GetComponent<PlayerFunctions>().PlayerTurn;
+        d_StartTurn += playerFunctions.PlayerTurn;
         d_StartTurn += player.GetComponent<UnitStatusHolder>().StatusUpdateForNewTurn;
+        d_NaturalGenerateCreativity += playerFunctions.AlterCreativity;
 
         //d_StartTurn += player.GetComponent<UnitStatusHolder>().TurnStatusUpdater;
         //d_StartTurn += player.GetComponent<UnitStatusHolder>().ConsumeTurnStackUpdate;
@@ -131,6 +137,7 @@ public class CombatManager : MonoBehaviour
         {
             d_StartTurn += enemy.GetComponent<UnitStatusHolder>().StatusUpdateForNewTurn;
             d_StartCombat += enemy.GetComponent<BaseUnitFunctions>().BaseUnitStatsInitialize;
+            d_NaturalGenerateCreativity += enemy.GetComponent<EnemyFunctions>().AlterCreativity;
             //d_StartTurn += enemy.gameObject.GetComponent<UnitStatusHolder>().TurnStatusUpdater;
             //d_StartTurn += enemy.GetComponent<UnitStatusHolder>().ConsumeTurnStackUpdate;
         }
@@ -156,13 +163,13 @@ public class CombatManager : MonoBehaviour
         //will be called only during the beginiing
         d_StartCombat();
 
+        //determines whether player, cards and enemystats are generated for fresh combat or loaded from file
+        InitiateCombatState();
+
         //d_StartTurn += Player.GetComponent<AbilityManager>().EnableAbilities;
         //d_StartTurn += Player.GetComponent<PlayerFunctions>().AlterPlayerCreativity;
         //d_StartTurn += playerFunctions.StartTurnUpdates;
         d_StartTurn();
-
-        //determines whether player, cards and enemystats are generated for fresh combat or loaded from file
-        InitiateCombatState();
 
         //save after all start turn prep is done
         SaveCombatState();
@@ -220,7 +227,7 @@ public class CombatManager : MonoBehaviour
             //assign the player unit saved in file
             playerFunctions.LoadPlayerUnitFromFile(combatSaveState.playerUnit);
             //max is subtracted from current because alterCreativvity funcion needs negative values for reduction
-            playerFunctions.AlterPlayerCreativity(combatSaveState.currCreativity/* - combatSaveState.playerUnit.Creativity*/);
+            playerFunctions.AlterCreativity(combatSaveState.currCreativity/* - combatSaveState.playerUnit.Creativity*/);
             playerFunctions.currHP = combatSaveState.playerUnit.currHP;
             playerFunctions.SliderValueUpdates();
             playerFunctions.AlterEnergy(playerFunctions.defaultEnergy - combatSaveState.currEnergy);
@@ -298,9 +305,7 @@ public class CombatManager : MonoBehaviour
 
             //for getting status effects from unitStatusHolder of player
             UnitStatusHolder unitStatusHolder = player.GetComponent<UnitStatusHolder>();
-            playerFunctions.currEnergy = 0;
-            EnergyUpdater(playerFunctions.defaultEnergy + unitStatusHolder.EnergyAlteringModifierCalculator());
-            DrawHand(playerFunctions.defaultDraw + unitStatusHolder.DrawAlteringModifierCalculator());
+
 
             //update creativity every turn to regenerate naturally by 1
             //will only activate at the next turn onwards of start combat
@@ -311,8 +316,16 @@ public class CombatManager : MonoBehaviour
             }
             else
             {
-                playerFunctions.AlterPlayerCreativity(1);
+                //all units now generate  creativity naturally
+                //playerFunctions.AlterCreativity(1);
+                d_NaturalGenerateCreativity(1);
             }
+
+            //the energy 
+            playerFunctions.currEnergy = 0;
+            EnergyUpdater(playerFunctions.defaultEnergy + unitStatusHolder.EnergyAlteringModifierCalculator());
+            DrawHand(playerFunctions.defaultDraw + unitStatusHolder.DrawAlteringModifierCalculator());
+
             //makes the endTurnButton interactable again during player turn
             EndTurnButt.interactable = true;
 
@@ -413,7 +426,6 @@ public class CombatManager : MonoBehaviour
 
                 if (pointedObject.collider != null && pointedObject.collider.gameObject.tag == "Card" )
                 {
-                    Debug.Log("getting here");
 
                     activeCard = pointedObject.collider.gameObject;
                     Card activeCardCard = activeCard.GetComponent<Display>().card;
@@ -818,7 +830,7 @@ public class CombatManager : MonoBehaviour
                     if (pointedObject.collider != null && targetObject.tag == "Enemy")
                     {
                         //access player stats and reduces their creativity meter
-                        player.GetComponent<PlayerFunctions>().AlterPlayerCreativity(-creativeManager.creativityCost);
+                        player.GetComponent<PlayerFunctions>().AlterCreativity(-creativeManager.creativityCost);
                         //initiates link effects in CreativeManager
                         //returns the cost for crativity
                         creativeManager.UnleashCreativity(targetObject, player);
@@ -872,7 +884,7 @@ public class CombatManager : MonoBehaviour
             else if (linkMethod == CardMethod.Dropped)
             {
                 //access player stats and reduces their creativity meter
-                player.GetComponent<PlayerFunctions>().AlterPlayerCreativity(-creativeManager.creativityCost);
+                player.GetComponent<PlayerFunctions>().AlterCreativity(-creativeManager.creativityCost);
                 //initiates link effects in CreativeManager
                 //returns the cost for crativity
                 creativeManager.UnleashCreativity(enemyHolder, player);
@@ -1058,7 +1070,6 @@ public class CombatManager : MonoBehaviour
         }
 
         //player.GetComponent<BaseUnitFunctions>().RemoveBlock();
-        Debug.Log("Losing block");
         yield return new WaitForSeconds(1f);
 
         //delegate for startTurn Event
@@ -1069,7 +1080,7 @@ public class CombatManager : MonoBehaviour
 
     public void DefeatFunction()
     {
-
+        //sends player to defeat screen then delete all save files
         Debug.Log("defeated");
     }
 
@@ -1094,21 +1105,22 @@ public class CombatManager : MonoBehaviour
         universalInfo.overkills = tempOverkillCount;
 
         //if player HP is overkilled equal to full HP, get 3 worn-out turns next combat
+        //the +1 in worn-out count is an offset because the turn at combat Initiate will decrease it by one
         if (playerFunctions.currHP <= -(playerFunctions.currHP))
         {
-            universalInfo.wornOutCount = 3;
+            universalInfo.wornOutCount = 3 + 1;
             playerFunctions.playerUnit.currHP = 1;
         }
         //if only overkilled through half health, get 2 worn-out necxt combat
         else if (playerFunctions.currHP <= -(playerFunctions.currHP/2))
         {
-            universalInfo.wornOutCount = 2;
+            universalInfo.wornOutCount = 2 + 1;
             playerFunctions.playerUnit.currHP = 1;
         }
         //if it just reached below 0, get 1 worn-out next combat
         else if (playerFunctions.currHP <= 0)
         {
-            universalInfo.wornOutCount = 1;
+            universalInfo.wornOutCount = 1 + 1;
             playerFunctions.playerUnit.currHP = 1;
         }
 

@@ -85,7 +85,7 @@ public class EnemyAIManager : MonoBehaviour
     public void RegisterEnemyKill()
     {
         //generate creativity when killing 
-        combatManager.playerFunctions.AlterPlayerCreativity(10);
+        combatManager.playerFunctions.AlterCreativity(10);
 
         //reduce enemycount then if count is 0, start Victory
         enemyCounter--;

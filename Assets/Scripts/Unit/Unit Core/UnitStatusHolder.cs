@@ -174,7 +174,6 @@ public class UnitStatusHolder : MonoBehaviour
             }
         }
 
-        Debug.Log($"these are the all Stacks{allStatsAndStacks.Count}");
     }
     //adds statuses that will be increased by other player actions
     //Called by BaseCardEffect as the actual card effect

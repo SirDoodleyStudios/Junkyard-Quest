@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using System.IO;
+using System.Linq;
 
 public class DeckManager : MonoBehaviour
 {
@@ -350,7 +351,6 @@ public class DeckManager : MonoBehaviour
             StartCoroutine(DrawCardsAnimationTime());
         }
 
-        Debug.Log("draw");
         DeckUpdater();
 
     }
@@ -412,7 +412,6 @@ public class DeckManager : MonoBehaviour
         playerHandScript.StateChanger(CombatState.PlayerTurn);
 
         //playerHandScript.ResetToDeckPosition();
-        Debug.Log("Discard");
         DeckUpdater();
     }
     //for consumed cards, similar to discard but cards in consume pile will not be drawn upon
@@ -512,6 +511,9 @@ public class DeckManager : MonoBehaviour
         {
             deckCheck = consumePile;
         }
+
+        //this is used for sorting the decks to alphabetical order when viewing the deck only
+        deckCheck = deckCheck.OrderBy(w => w.cardName).ToList();
 
         //actual logic to show each card in UI one by one
 

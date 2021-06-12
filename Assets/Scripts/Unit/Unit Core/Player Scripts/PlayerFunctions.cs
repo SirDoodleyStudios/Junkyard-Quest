@@ -10,7 +10,7 @@ public class PlayerFunctions : BaseUnitFunctions
 
     //delegate for calling all methods on scripts inside the player prefab
     public delegate void D_StartPlayerUpdates();
-    public event D_StartPlayerUpdates d_StartPlayerUpdates;   
+    public event D_StartPlayerUpdates d_StartPlayerUpdates;
 
     //only applicable to player
     public int defaultEnergy;
@@ -65,11 +65,8 @@ public class PlayerFunctions : BaseUnitFunctions
     public override void TakeDamage(int damageValue)
     {
         base.TakeDamage(damageValue);
-
-        Debug.Log(playerUnit.currHP);
         //update the playerUnit HP attachement
         playerUnit.currHP = currHP;
-        Debug.Log(playerUnit.currHP);
     }
 
     public override void HealHealth(int healValue)
@@ -79,24 +76,28 @@ public class PlayerFunctions : BaseUnitFunctions
     }
 
     //expect to receive negative ints for costs and positive ints for gains
-    public void AlterPlayerCreativity(int creativityValue)
+    //migrated to BaseUnitFunctions because enemies will use creativity as well
+    //creativity, called by combatManager delegate during start of turn
+    public override void AlterCreativity(int creativityValue)
     {
-        //prevents from exeeding max
-        if (currCreativity + creativityValue > maxCreativity)
-        {
-            currCreativity = Mathf.Min(maxCreativity, currCreativity + creativityValue);
-        }
-        //prevents from going below 0
-        else if (currCreativity + creativityValue < 0)
-        {
-            currCreativity = Mathf.Max(0, currCreativity + creativityValue);
-        }
-        //change is within 0 to max range
-        else
-        {
-            currCreativity += creativityValue;
-        }
-        SliderValueUpdates();
+        ////prevents from exeeding max
+        //if (currCreativity + creativityValue > maxCreativity)
+        //{
+        //    currCreativity = Mathf.Min(maxCreativity, currCreativity + creativityValue);
+        //}
+        ////prevents from going below 0
+        //else if (currCreativity + creativityValue < 0)
+        //{
+        //    currCreativity = Mathf.Max(0, currCreativity + creativityValue);
+        //}
+        ////change is within 0 to max range
+        //else
+        //{
+        //    currCreativity += creativityValue;
+        //}
+        //SliderValueUpdates();
+
+        base.AlterCreativity(creativityValue);
 
     }
 
@@ -109,8 +110,9 @@ public class PlayerFunctions : BaseUnitFunctions
         base.SliderValueUpdates();
 
         //updates creativity sliders
-        CreativitySlider.value = currCreativity;
-        CreativityText.text = $"{currCreativity}/{maxCreativity}";
+        //migrated to BaseUnitFunctions
+        //CreativitySlider.value = currCreativity;
+        //CreativityText.text = $"{currCreativity}/{maxCreativity}";
 
     }
     //value parameter is used to increase or decrease currEnergy by value

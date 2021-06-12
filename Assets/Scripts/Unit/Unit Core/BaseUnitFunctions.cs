@@ -21,6 +21,8 @@ public class BaseUnitFunctions:MonoBehaviour
     public int currDraw;
     public int block;   //made public for certain abilities
 
+
+
     //Hit counter for cards that need the hit count per turn like steadyImprovement
     protected int hitsCounter;
 
@@ -93,7 +95,9 @@ public class BaseUnitFunctions:MonoBehaviour
     {
         HPSlider.value = currHP;
         HPText.text = $"{currHP}/{maxHP}";
-        //Creativity slider is in playerfunctions
+
+        CreativitySlider.value = currCreativity;
+        CreativityText.text = $"{currCreativity}/{maxCreativity}";
     }
 
 
@@ -173,5 +177,25 @@ public class BaseUnitFunctions:MonoBehaviour
         }
     }
 
+    public virtual void AlterCreativity(int creativityValue)
+    {
+        //prevents from exeeding max
+        if (currCreativity + creativityValue > maxCreativity)
+        {
+            currCreativity = Mathf.Min(maxCreativity, currCreativity + creativityValue);
+        }
+        //prevents from going below 0
+        else if (currCreativity + creativityValue < 0)
+        {
+            currCreativity = Mathf.Max(0, currCreativity + creativityValue);
+        }
+        //change is within 0 to max range
+        else
+        {
+            currCreativity += creativityValue;
+        }
+        SliderValueUpdates();
+
+    }
 
 }
