@@ -318,7 +318,15 @@ public class CombatManager : MonoBehaviour
             {
                 //all units now generate  creativity naturally
                 //playerFunctions.AlterCreativity(1);
-                d_NaturalGenerateCreativity(1);
+                d_NaturalGenerateCreativity(1 + unitStatusHolder.CreativityAlteringModifierCalculator());
+            }
+
+            //if has negative HP, set isBeingOverkilled to True
+            //+1 is offset because status turn update runs after the initialized alterStatus
+            if (playerFunctions.currHP <= 0)
+            {
+                unitStatusHolder.AlterStatusStack(CardMechanics.LastStand, 1+1);
+                isPlayerBeingOverkilled = true;
             }
 
             //the energy 
@@ -329,11 +337,7 @@ public class CombatManager : MonoBehaviour
             //makes the endTurnButton interactable again during player turn
             EndTurnButt.interactable = true;
 
-            //if has negative HP, set isBeingOverkilled to True
-            if (playerFunctions.currHP<= 0)
-            {
-                isPlayerBeingOverkilled = true;
-            }
+
         }
 
     }

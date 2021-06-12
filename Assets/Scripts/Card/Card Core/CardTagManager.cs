@@ -60,6 +60,8 @@ public class CardTagManager
 
         //special and events
         popupDescriptions.Add(CardMechanics.WornOut, "Worn Out: Reduces Energy and Draw by 1 at the start of turn");
+        popupDescriptions.Add(CardMechanics.LastStand, "Last Stand: Increases Energy, Draw and Creativity by 1 this turn");
+
     }
 
     //returns descriptions when called depending on CardTag enum passed

@@ -430,6 +430,10 @@ public class UnitStatusHolder : MonoBehaviour
         {
             energyModifier--;
         }
+        if (turnStatusDict.ContainsKey(CardMechanics.LastStand))
+        {
+            energyModifier++;
+        }
         return energyModifier;
     }
 
@@ -441,7 +445,22 @@ public class UnitStatusHolder : MonoBehaviour
         {
             drawModifier--;
         }
+        if (turnStatusDict.ContainsKey(CardMechanics.LastStand))
+        {
+            drawModifier++;
+        }
         return drawModifier;
+    }
+
+    //for creativity Modifying statuses
+    public int CreativityAlteringModifierCalculator()
+    {
+        int creativityModifier=0;
+        if (turnStatusDict.ContainsKey(CardMechanics.LastStand))
+        {
+            creativityModifier++;
+        }
+        return creativityModifier;
     }
 
 

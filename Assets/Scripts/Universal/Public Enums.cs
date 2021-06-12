@@ -142,6 +142,7 @@ public enum CardMechanics
     Payback, //unique
     Confidefense, //unique
     WornOut,
+    LastStand,
     
     //Consume Usage Stack Statuses
 
