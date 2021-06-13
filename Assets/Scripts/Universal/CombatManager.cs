@@ -54,6 +54,7 @@ public class CombatManager : MonoBehaviour
     public EnemyPools enemyPools;
     public AbilityManager abilityManager;
     public EnemyAIManager enemyAIManager;
+    public CameraUIScript cameraUIScript;
 
     //related to energy
     //Energy gets accessed by playingField
@@ -183,6 +184,7 @@ public class CombatManager : MonoBehaviour
     {
         if (File.Exists(Application.persistentDataPath + "/Combat.json"))
         {
+            UniversalInformation universalInfo = UniversalSaveState.LoadUniversalInformation();
             CombatSaveState combatSaveState = UniversalSaveState.LoadCombatState();
 
             //instantiate copies of the base SO per spawn in list and assign them to respective enemyHolder position
@@ -248,7 +250,8 @@ public class CombatManager : MonoBehaviour
             //identifiers
             isPlayerBeingOverkilled = combatSaveState.isPlayerBeingOverkilled;
 
-
+            //update universal UI
+            cameraUIScript.AssignUIObjects(universalInfo);
 
         }
         //if combat file does not exist, get ebemy base unit from enemyPools
@@ -280,7 +283,11 @@ public class CombatManager : MonoBehaviour
             universalInfo.wornOutCount = 0;
             UniversalSaveState.SaveUniversalInformation(universalInfo);
 
+            //start function of enemy logic
             enemyAIManager.PseudoStartCombat(universalInfo.enemyCount);
+
+            //update the universal UI panel
+            cameraUIScript.AssignUIObjects(universalInfo);
         }
 
 

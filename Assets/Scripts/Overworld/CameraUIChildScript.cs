@@ -14,12 +14,15 @@ public class CameraUIChildScript : MonoBehaviour
         parentScript = gameObject.transform.parent.gameObject.GetComponent<CameraUIScript>();
         parentRect = transform.parent.gameObject.GetComponent<RectTransform>();
         childRect = gameObject.GetComponent<RectTransform>();
-        parentScript.d_ResizeCameraUI += RepositionChild;
+        
+        //From last logic when UI panel was on side
+        //parentScript.d_ResizeCameraUI += RepositionChild;
 
 
     }
     //used for determining the size based on calculated orthographic from overwolrd manager
     //determines the position of the child depending on the index of the object
+    //parentScript.d_ResizeCameraUI += RepositionChild;
     public void RepositionChild(float orthoOffset)
     {
         childRect.sizeDelta = new Vector2(orthoOffset, orthoOffset);

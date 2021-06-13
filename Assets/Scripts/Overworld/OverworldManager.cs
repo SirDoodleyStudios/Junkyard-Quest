@@ -150,7 +150,11 @@ public class OverworldManager : MonoBehaviour
             float xPanning = camera.transform.position.x - distance.x;
             float yPanning = camera.transform.position.y - distance.y;
             //position of camera will not go beyond the set positive and negative boundaries
-            camera.transform.position = new Vector3(Mathf.Clamp(xPanning, -xBoundary, xBoundary), Mathf.Clamp(yPanning, -yBoundary, yBoundary), -10f);
+            //the 15% multiplier in yBoundary lets it leave the boundary above because we'll be putting shit there like map, deck, treasures and more
+            //the 40% multiplier in xboundary will cut the excess map area that won't be filled up by the map generator
+            //the panel above must be consistent across all scenes
+            //THE -10f parameter in the end is important, clicking in overworld messes it up if changed
+            camera.transform.position = new Vector3(Mathf.Clamp(xPanning, -xBoundary*.40f, xBoundary*.40f), Mathf.Clamp(yPanning, -yBoundary, yBoundary*1.15f), -10f);
         }
 
         //Reset Function that immediately resets the map
@@ -163,12 +167,22 @@ public class OverworldManager : MonoBehaviour
         //during start of overworld manager, player will get to choose starting position node
         if (worldState == OverworldState.StartingNode)
         {
+
+
             PointRay = Input.mousePosition;
             ray = Camera.main.ScreenPointToRay(PointRay);
             pointedObject = Physics2D.GetRayIntersection(ray);
+
+            //test
+            if (pointedObject.collider != null)
+            {
+                Debug.Log("object hovered");
+            }
+
             //makes sure that the click has a collider
             if (Input.GetMouseButtonDown(0) && pointedObject.collider !=null)
             {
+
                 GameObject clickedObject = pointedObject.collider.gameObject;
                 //for when a node is clicked
                 if (clickedObject.tag == "Node")
@@ -223,6 +237,7 @@ public class OverworldManager : MonoBehaviour
             PointRay = Input.mousePosition;
             ray = Camera.main.ScreenPointToRay(PointRay);
             pointedObject = Physics2D.GetRayIntersection(ray);
+
 
             //makes sure that clicked object has a collider
             if (Input.GetMouseButtonDown(0) && pointedObject.collider != null)

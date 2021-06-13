@@ -12,9 +12,11 @@ public class CameraUIScript : MonoBehaviour
     //loaded Information
     UniversalInformation universalInfo;
 
-    TextMeshProUGUI HPText;
-    TextMeshProUGUI CreativityText;
-    TextMeshProUGUI ScrapsText;
+    //set in editor prefab
+    public TextMeshProUGUI currHPText;
+    public TextMeshProUGUI maxHPText;
+    public TextMeshProUGUI creativityText;
+    public TextMeshProUGUI scrapsText;
 
     RectTransform objectRect;
 
@@ -39,9 +41,11 @@ public class CameraUIScript : MonoBehaviour
         //HP slot is in the index 2 under the Overworld UI
         //Creativity slot is in index 3
         //scraps is in index 4
-        HPText = transform.GetChild(2).GetChild(1).gameObject.GetComponent<TextMeshProUGUI>();
-        CreativityText = transform.GetChild(3).GetChild(1).gameObject.GetComponent<TextMeshProUGUI>();
-        ScrapsText = transform.GetChild(4).GetChild(1).gameObject.GetComponent<TextMeshProUGUI>();
+
+        //this is removed and all assignments are now done in editor
+        //HPText = transform.GetChild(2).GetChild(1).gameObject.GetComponent<TextMeshProUGUI>();
+        //CreativityText = transform.GetChild(3).GetChild(1).gameObject.GetComponent<TextMeshProUGUI>();
+        //ScrapsText = transform.GetChild(4).GetChild(1).gameObject.GetComponent<TextMeshProUGUI>();
     }
 
     //called by overworld manager when it instantiates
@@ -52,29 +56,40 @@ public class CameraUIScript : MonoBehaviour
         //d_ResizeCameraUI(orthoSize / 3.8f);
 
         //fix the UI size to a screen percent
-        objectRect.sizeDelta = new Vector2(Screen.width * .1f, Screen.height);
-        d_ResizeCameraUI(Screen.width * .08f);
-        Debug.Log($"W{Screen.width}, H{Screen.height}");
+        //the 85% multiplier in height is offset for giving way to the menu panel above
+        //0 width because the prefab usedis set as stretch horizontally
+        objectRect.sizeDelta = new Vector2(0, Screen.height * .075f);
 
-        float fontSize = (orthoSize / 3.6f) * .35f;
+        //this is outdated, from the logic when Ui was in the side panel
+        //d_ResizeCameraUI(Screen.width * .08f);
+        Debug.Log(objectRect.sizeDelta);
+
+        //OLD Font sizing logic
+        //float fontSize = (orthoSize / 3.6f) * .35f;
         //sets the size of texts in UI depending on the Size of slot
-        HPText.fontSize = fontSize;
-        CreativityText.fontSize = fontSize;
-        ScrapsText.fontSize = fontSize;
+        //currHPText.fontSize = fontSize;
+        //maxHPText.fontSize = fontSize;
+        //creativityText.fontSize = fontSize;
+        //scrapsText.fontSize = fontSize;
+
+        //new one where HP is auto-sized then all texts will copy it
+        creativityText.fontSize = currHPText.fontSize;
+        scrapsText.fontSize = currHPText.fontSize;
 
 
 
     }
 
-    //called by overworld manager
+    //called by the scene's manager at awake
     public void AssignUIObjects(UniversalInformation universalInfo)
     {
         //initializes theCardSO factory
         CardSOFactory.InitializeCardSOFactory(universalInfo.chosenPlayer, universalInfo.chosenClass);
 
-        HPText.text = $"{universalInfo.playerStats.currHP}/\n{universalInfo.playerStats.HP}";
-        CreativityText.text = $"{universalInfo.playerStats.Creativity}";
-        ScrapsText.text = $"{universalInfo.scraps}";
+        currHPText.text = $"{universalInfo.playerStats.currHP}";
+        maxHPText.text = $"{universalInfo.playerStats.HP}";
+        creativityText.text = $"{universalInfo.playerStats.Creativity}";
+        scrapsText.text = $"{universalInfo.scraps}";
 
         //generates the CardSO itself
         foreach (AllCards cardKey in universalInfo.currentDeck)
