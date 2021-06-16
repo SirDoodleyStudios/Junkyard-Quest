@@ -23,7 +23,10 @@ public class CameraUIScript : MonoBehaviour
     //for Deck Viewing
     //the actual UI to back drop to be activated 
     public GameObject deckViewUI;
+
+    //holder for loaded cards from file
     List<Card> cardList = new List<Card>();
+
     //card prefab for viewing in deck
     public GameObject deckViewPrefab;
     //Content gameobject, parent of all prefabs to be shown after button click
@@ -92,6 +95,23 @@ public class CameraUIScript : MonoBehaviour
         scrapsText.text = $"{universalInfo.scraps}";
 
         //generates the CardSO itself
+        //updated to check the key of allCards inside the cardandJigsawWrapper list
+        foreach (CardAndJigsaWrapper CJW in universalInfo.currentDeckWithJigsaw)
+        {
+            //calls the factory to instantiate a copy of the base card SO
+            Card tempCard = Instantiate(CardSOFactory.GetCardSO(CJW.cardEnum));
+            tempCard.effectText = CardTagManager.GetCardEffectDescriptions(tempCard);
+
+            if (CJW.jigsawEnum != AllCards.Jigsaw)
+            {
+                //calls a universal function that will extract a JigsawFormat using the wrapper and jigsaw Allcards enum
+                tempCard.jigsawEffect = UniversalFunctions.LoadJigsawFormat(tempCard.jigsawEffect, CJW);
+            }
+            cardList.Add(tempCard);
+            
+        }
+
+        //outdated, used when the saved parameter of the cards were just the AllCards enum
         foreach (AllCards cardKey in universalInfo.currentDeck)
         {
             //calls the factory to instantiate a copy of the base card SO
@@ -104,6 +124,7 @@ public class CameraUIScript : MonoBehaviour
 
 
     //single method for viewing a card collection in view
+    //usually used in deck viewing button but in forgeMaster, can aslo call it with the set Main or augment buttons
     public void ViewSavedDeck()
     {
         deckViewUI.SetActive(true);

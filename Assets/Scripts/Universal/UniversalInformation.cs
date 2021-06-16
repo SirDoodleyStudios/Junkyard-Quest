@@ -20,6 +20,7 @@ public class UniversalInformation
     //used for information that is consistently accessed throughout the game
     //will be converted to a wrapper class that will contain the card's jigsaw information
     public List<AllCards> currentDeck;
+    public List<CardAndJigsaWrapper> currentDeckWithJigsaw;
 
     //information for the player unit
     public PlayerUnit playerStats;
