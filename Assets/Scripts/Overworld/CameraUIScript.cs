@@ -169,9 +169,6 @@ public class CameraUIScript : MonoBehaviour
                 instantiatedPopups.ResizePopups();
                 instantiatedPrefab.SetActive(true);
             }
-
-
-
         }
     }
     //close deck view
@@ -183,4 +180,30 @@ public class CameraUIScript : MonoBehaviour
         }
         deckViewUI.SetActive(false);
     }
+
+    //function for updating the deck
+    //currently only used by forgemanager since the deck is actively updated there
+    //can add or remove single cards, bool identifier to determine if add or remove, true for add, false for remove
+    public void UpdateCurrentDeck(Card newCardList, bool isToAdd)
+    {
+        if (isToAdd)
+        {
+            cardList.Add(newCardList);
+        }
+        else
+        {
+            cardList.Remove(newCardList);
+        }
+    }
+
+    //when a manager script wants to view a deck but not the whole deck
+    //currently used by ForgeManager for viewing the deck but only with available cards to choose from
+    public void ViewFilteredDeck(List<Card> filteredDeck)
+    {
+        List<Card> originalList = cardList;
+        cardList = filteredDeck;
+        ViewSavedDeck();
+        cardList = originalList;
+    }
+
 }

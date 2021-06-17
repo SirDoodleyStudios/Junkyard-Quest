@@ -451,6 +451,16 @@ PrefabInstance:
       propertyPath: m_AdditionalShaderChannelsFlag
       value: 25
       objectReference: {fileID: 0}
+    - target: {fileID: 1341660503185109262, guid: 9d2fd45e433749941b3eae665a677e69,
+        type: 3}
+      propertyPath: m_RenderMode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1341660503185109262, guid: 9d2fd45e433749941b3eae665a677e69,
+        type: 3}
+      propertyPath: m_Camera
+      value: 
+      objectReference: {fileID: 814652}
     - target: {fileID: 2261374886729457269, guid: 9d2fd45e433749941b3eae665a677e69,
         type: 3}
       propertyPath: m_Name
@@ -712,7 +722,18 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 286203933}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 474943368}
+        m_MethodName: ForgeCardButton
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &286203933
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -919,7 +940,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 1}
   m_AnchorMax: {x: 0.5, y: 1}
-  m_AnchoredPosition: {x: 0, y: 43.3}
+  m_AnchoredPosition: {x: 0, y: 43.300003}
   m_SizeDelta: {x: 240, y: 43.304153}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!114 &372946695
@@ -1059,7 +1080,12 @@ MonoBehaviour:
   mainCardPrefab: {fileID: 3332063664566172735}
   augmentCardPrefab: {fileID: 5459743306863753966}
   forgedCardPrefab: {fileID: 401298263332624773}
+  mainCardDisplay: {fileID: 3332063664566172743}
+  augmentCardDisplay: {fileID: 5459743306863753974}
+  forgedCardDisplay: {fileID: 401298263332624781}
   cameraUIScript: {fileID: 1388349261}
+  referenceJigsawFormat: {fileID: 11400000, guid: 88773f1769c22e84d84ad1051c872f14,
+    type: 2}
   universalInfo:
     scene: 0
     isPlayerSelected: 0
@@ -1121,7 +1147,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 1}
   m_AnchorMax: {x: 0.5, y: 1}
-  m_AnchoredPosition: {x: 0, y: 43.3}
+  m_AnchoredPosition: {x: 0, y: 43.300003}
   m_SizeDelta: {x: 240, y: 43.304153}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!114 &604993398
@@ -1166,7 +1192,18 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 604993399}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 474943368}
+        m_MethodName: AugmentCardButton
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &604993399
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1225,7 +1262,7 @@ PrefabInstance:
         type: 3}
       propertyPath: deckViewPrefab
       value: 
-      objectReference: {fileID: 6316217203015278146, guid: 360a3eedd009d2745b0179795720601a,
+      objectReference: {fileID: 6316217203015278146, guid: fce1596b23c55494c9772c5f5769b62e,
         type: 3}
     - target: {fileID: 8410980135062712104, guid: 3cc4612d58053864a878eb38a6b7cf34,
         type: 3}
@@ -1336,6 +1373,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Header UI
+      objectReference: {fileID: 0}
+    - target: {fileID: 8410980135062712105, guid: 3cc4612d58053864a878eb38a6b7cf34,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 3cc4612d58053864a878eb38a6b7cf34, type: 3}
@@ -2006,6 +2048,11 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 133089404}
     m_Modifications:
+    - target: {fileID: 7926924083737897615, guid: 3edb0c0e6d8f33042984161ca76274e2,
+        type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 80
+      objectReference: {fileID: 0}
     - target: {fileID: 7926924084159566391, guid: 3edb0c0e6d8f33042984161ca76274e2,
         type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
@@ -2016,10 +2063,55 @@ PrefabInstance:
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
       value: UnviewSavedDeck
       objectReference: {fileID: 0}
+    - target: {fileID: 7926924084313350048, guid: 3edb0c0e6d8f33042984161ca76274e2,
+        type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7926924084313350048, guid: 3edb0c0e6d8f33042984161ca76274e2,
+        type: 3}
+      propertyPath: m_SizeDelta.y
+      value: -17
+      objectReference: {fileID: 0}
+    - target: {fileID: 7926924084807501982, guid: 3edb0c0e6d8f33042984161ca76274e2,
+        type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7926924084807501982, guid: 3edb0c0e6d8f33042984161ca76274e2,
+        type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7926924084807501982, guid: 3edb0c0e6d8f33042984161ca76274e2,
+        type: 3}
+      propertyPath: m_SizeDelta.x
+      value: -17
+      objectReference: {fileID: 0}
+    - target: {fileID: 7926924084807501982, guid: 3edb0c0e6d8f33042984161ca76274e2,
+        type: 3}
+      propertyPath: m_SizeDelta.y
+      value: -17
+      objectReference: {fileID: 0}
+    - target: {fileID: 7926924084941894688, guid: 3edb0c0e6d8f33042984161ca76274e2,
+        type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7926924084941894688, guid: 3edb0c0e6d8f33042984161ca76274e2,
+        type: 3}
+      propertyPath: m_SizeDelta.x
+      value: -17
+      objectReference: {fileID: 0}
     - target: {fileID: 7926924085271359668, guid: 3edb0c0e6d8f33042984161ca76274e2,
         type: 3}
       propertyPath: m_Name
       value: Deck View Panel
+      objectReference: {fileID: 0}
+    - target: {fileID: 7926924085271359668, guid: 3edb0c0e6d8f33042984161ca76274e2,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7926924085271359669, guid: 3edb0c0e6d8f33042984161ca76274e2,
         type: 3}
@@ -3087,6 +3179,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: AJ Card Forge Template
       objectReference: {fileID: 0}
+    - target: {fileID: 6316217203015278146, guid: fce1596b23c55494c9772c5f5769b62e,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: fce1596b23c55494c9772c5f5769b62e, type: 3}
 --- !u!224 &401298263332624772 stripped
@@ -3101,6 +3198,18 @@ GameObject:
     type: 3}
   m_PrefabInstance: {fileID: 401298263332624771}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &401298263332624781 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 8899658003579739841, guid: fce1596b23c55494c9772c5f5769b62e,
+    type: 3}
+  m_PrefabInstance: {fileID: 401298263332624771}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 401298263332624773}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 54d9f41070aa4ba4aa844af511b9fdd3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &3332063664566172733
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -3218,6 +3327,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: AJ Card Forge Template
       objectReference: {fileID: 0}
+    - target: {fileID: 6316217203015278146, guid: fce1596b23c55494c9772c5f5769b62e,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: fce1596b23c55494c9772c5f5769b62e, type: 3}
 --- !u!224 &3332063664566172734 stripped
@@ -3232,6 +3346,18 @@ GameObject:
     type: 3}
   m_PrefabInstance: {fileID: 3332063664566172733}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &3332063664566172743 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 8899658003579739841, guid: fce1596b23c55494c9772c5f5769b62e,
+    type: 3}
+  m_PrefabInstance: {fileID: 3332063664566172733}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3332063664566172735}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 54d9f41070aa4ba4aa844af511b9fdd3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &5459743306863753964
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -3349,6 +3475,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: AJ Card Forge Template
       objectReference: {fileID: 0}
+    - target: {fileID: 6316217203015278146, guid: fce1596b23c55494c9772c5f5769b62e,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: fce1596b23c55494c9772c5f5769b62e, type: 3}
 --- !u!224 &5459743306863753965 stripped
@@ -3363,3 +3494,15 @@ GameObject:
     type: 3}
   m_PrefabInstance: {fileID: 5459743306863753964}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &5459743306863753974 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 8899658003579739841, guid: fce1596b23c55494c9772c5f5769b62e,
+    type: 3}
+  m_PrefabInstance: {fileID: 5459743306863753964}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5459743306863753966}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 54d9f41070aa4ba4aa844af511b9fdd3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
