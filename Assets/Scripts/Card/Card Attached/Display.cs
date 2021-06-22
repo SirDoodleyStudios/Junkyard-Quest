@@ -66,34 +66,19 @@ public class Display : MonoBehaviour
         //    displayJigsawImage.sprite = card.attachmentImage;
         //}
 
-        //Using Randomizer Test Function
-
+        //show the jigsaw image only if the card has a jigsawEffect, clear the sprites if not
         if (card.jigsawEffect != null)
         {
             displayJigsawImage.sprite = card.jigsawEffect.jigsawImage;
             displayJigsawText.text = card.jigsawEffect.jigsawDescription;
 
         }
+        else
+        {
+            displayJigsawImage.sprite = null;
+            displayJigsawText.text = null;
+        }
 
-
-
-
-        //Determines Card layer from CardType enum
-        //9 is offense, 10 is util, 11 is ability
-        //switch (card.cardType)
-        //{
-        //    case CardType.Offense:
-        //        gameObject.layer = 9;
-        //        break;
-
-        //    case CardType.Utility:
-        //        gameObject.layer = 10;
-        //        break;
-
-        //    case CardType.Ability:
-        //        gameObject.layer = 11;
-        //        break;
-        //}
     }
 
     //called by the instantiating script, this allows the font size to adapt after the card is instantiated
@@ -112,6 +97,13 @@ public class Display : MonoBehaviour
             displayJigsawText.fontSize = cardRect.rect.width * multiplier;
 
         }
+    }
+
+    //called by ForgeManager, reassign the jigsaw image depending on the chosen input and output links
+    // only affects the visuals when this is called, visual of actual card prefab is only a holder for the link reroll window
+    public void JigsawImageReroll(JigsawLink inputLink, JigsawLink outputLink)
+    {
+        displayJigsawImage.sprite = Resources.Load<Sprite>($"Jigsaw/{inputLink}2{outputLink}");
     }
 
 }

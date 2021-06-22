@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-
 public class ForgeManager : MonoBehaviour
 {
     //state that determines if the deck viewing is for main card or augment card
@@ -16,6 +15,11 @@ public class ForgeManager : MonoBehaviour
     public Display mainCardDisplay;
     public Display augmentCardDisplay;
     public Display forgedCardDisplay;
+
+    //holds the hidden panel for rerolling of jigsaw links
+    //set in editor
+    public GameObject alterJigsawLinksPanel;
+    public JigsawLinkAlterer alterJigsawLinksScript;
 
     //the universal UI panel above
     //assigned in editor
@@ -43,7 +47,6 @@ public class ForgeManager : MonoBehaviour
         //initializes the deck viewr
         CardTagManager.InitializeTextDescriptionDictionaries();
         cameraUIScript.AssignUIObjects(universalInfo);
-
     }
     void Start()
     {
@@ -66,6 +69,8 @@ public class ForgeManager : MonoBehaviour
 
     public void MainCardButton()
     {
+        //fetches the current deck that the player has
+        currentDeck = cameraUIScript.FetchDeck();
         //return the chosen card back to deck before reassigning
         if (mainCardPrefab.activeSelf)
         {
@@ -75,13 +80,61 @@ public class ForgeManager : MonoBehaviour
         //cameraUIScript.UpdateCurrentDeck(mainCardPrefab.GetComponent<Display>().card, true);
         //make the prefab holder to be automatically false when choosing a card
         mainCardPrefab.SetActive(false);
-        cameraUIScript.ViewSavedDeck();
+
+        //will contain temporary filtered deck of cards
+        List<Card> filteredDeck = new List<Card>();
+        //checks first if there is a card chosen in augment
+        //if yes, show all cards except for abilities
+        if (augmentCardPrefab.activeSelf)
+        {
+            //check if augment is ability or not
+            if (augmentCardDisplay.card.cardType == CardType.Ability)
+            {
+                //if augment is an ability, only show cards with jigsaw
+                foreach(Card card in currentDeck)
+                {
+                    if (card.cardType != CardType.Ability && card.jigsawEffect != null)
+                    {
+                        filteredDeck.Add(card);
+                    }
+                }
+            }
+            else
+            {
+                //if augment is offence or utility, only show jigsawless cards
+                foreach (Card card in currentDeck)
+                {
+                    if (card.cardType != CardType.Ability && card.jigsawEffect == null)
+                    {
+                        filteredDeck.Add(card);
+                    }
+                }
+            }
+        }
+        //if augment card is chosen first, aonly show available main cards based on the chosen augment
+        //if augment is an ability, show cards with jigsaw, if not, show offence or utility jigsawless cards
+        else
+        {
+            //filter out the cards then view it in deck using the alternate deck viewing function
+            foreach (Card card in currentDeck)
+            {
+                //show all non-ability cards
+                if (card.cardType != CardType.Ability)
+                {
+                    filteredDeck.Add(card);
+                }
+            }
+        }
+
+        cameraUIScript.ViewFilteredDeck(filteredDeck);
         deckViewState = deckViewingPurpose.MainDeckView;
         isChoosingInDeck = true;
     }
 
     public void AugmentCardButton()
     {
+        //fetches the current deck that the player has
+        currentDeck = cameraUIScript.FetchDeck();
         //return the chosen card back to deck before reassigning
         if (augmentCardPrefab.activeSelf)
         {
@@ -91,7 +144,51 @@ public class ForgeManager : MonoBehaviour
         //cameraUIScript.UpdateCurrentDeck(augmentCardPrefab.GetComponent<Display>().card, true);
         //make the prefab holder to be automatically false when choosing a card
         augmentCardPrefab.SetActive(false);
-        cameraUIScript.ViewSavedDeck();
+
+        List<Card> filteredDeck = new List<Card>();
+        //filter out the cards then view it in deck using the alternate deck viewing function
+        //check if there is already a chosen card, if yes, base the choice of cards that you can choose as augment from the main card
+        if (mainCardPrefab.activeSelf)
+        {
+            //if main card doesnt have a jigsaw, allow offence and utility augment choices only
+            if (mainCardDisplay.card.jigsawEffect == null)
+            {
+                foreach (Card card in currentDeck)
+                {
+                    if (card.jigsawEffect == null && (card.cardType == CardType.Offense || card.cardType == CardType.Utility))
+                    {
+                        filteredDeck.Add(card);
+                    }
+                }
+            }
+            //if mainCard has a jigsaw, allow ability augments
+            else
+            {
+                foreach (Card card in currentDeck)
+                {
+                    if (card.jigsawEffect == null &&  card.cardType == CardType.Ability)
+                    {
+                        filteredDeck.Add(card);
+                    }
+                }
+            }
+        }
+        //if no card is chosen for mainCard, show all cards without jigsaw
+        else
+        {
+            foreach (Card card in currentDeck)
+            {
+                // augment cards must be jigsawless
+                if (card.jigsawEffect == null)
+                {
+                    filteredDeck.Add(card);
+                }
+            }
+        }
+
+
+
+        cameraUIScript.ViewFilteredDeck(filteredDeck);
         deckViewState = deckViewingPurpose.AugmentDeckView;
         isChoosingInDeck = true;
     }
@@ -101,80 +198,42 @@ public class ForgeManager : MonoBehaviour
         JigsawFormat instantiatedJigsaw = Instantiate(referenceJigsawFormat);
         instantiatedJigsaw.inputLink = (JigsawLink)Random.Range(0,3);
         instantiatedJigsaw.outputLink = (JigsawLink)Random.Range(0,3);
+        instantiatedJigsaw.jigsawImage = Resources.Load<Sprite>($"Jigsaw/{instantiatedJigsaw.inputLink}2{instantiatedJigsaw.outputLink}");
+        Debug.Log($"Jigsaw/{instantiatedJigsaw.inputLink}2{instantiatedJigsaw.outputLink}");
         instantiatedJigsaw.enumJigsawCard = augmentCardDisplay.card.enumCardName;
         instantiatedJigsaw.jigsawMethod = augmentCardDisplay.card.cardMethod;
         instantiatedJigsaw.jigsawCard = augmentCardDisplay.card;
         instantiatedJigsaw.jigsawDescription = CardTagManager.GetCardEffectDescriptions(augmentCardDisplay.card);
-        instantiatedJigsaw.jigsawImage = DetermineJigsawImage(instantiatedJigsaw.inputLink, instantiatedJigsaw.outputLink);
+        //instantiatedJigsaw.jigsawImage = DetermineJigsawImage(instantiatedJigsaw.inputLink, instantiatedJigsaw.outputLink);
 
-        //create the forged card then remove and disable the cards from the prefabs to make them not have access to the readding of card in currentDeck
-        mainCardDisplay.card.jigsawEffect = instantiatedJigsaw;
+        //if card is not an ability, attach 
+        if (augmentCardDisplay.card.cardType != CardType.Ability)
+        {
+            //create the forged card then remove and disable the cards from the prefabs to make them not have access to the readding of card in currentDeck
+            mainCardDisplay.card.jigsawEffect = instantiatedJigsaw;
+        }
+
+
+        //the deck updating function in cameraUIScript, also returns the updated deck for use
         cameraUIScript.UpdateCurrentDeck(mainCardDisplay.card, true);
         mainCardPrefab.SetActive(false);
         augmentCardPrefab.SetActive(false);
 
+        //REVISE, IF THE UGMENT IS INDEED AN ABILITY MAKE THE DECK UPDATES AFTER THE ALTERING FUNCTION
+        //call the jigsaw alterer if the augmenter is an ability
+        if (augmentCardDisplay.card.cardType == CardType.Ability)
+        {
+            alterJigsawLinksPanel.SetActive(true);
+        }
+
 
     }
-    //THIS IS A TEST METHOD
-    //THINKING OF JUST NAMING THE JIGSAWIMAGES AS CircleToSquare SO THAT WE CAN JUST USE THE RESOURCES.LOAD USING THE JIGSAWLINK ENUM NAMES
-    Sprite DetermineJigsawImage(JigsawLink input, JigsawLink output)
+    //return main and augment cards to blank
+    public void ResetCardsButton()
     {
-        Sprite jigsawSprite;
-
-        //circle starting
-        if (input == JigsawLink.Circle)
-        {
-            if (output == JigsawLink.Circle)
-                jigsawSprite = Resources.Load<Sprite>("Jigsaw/C2C");
-
-            else if (output == JigsawLink.Square)
-                jigsawSprite = Resources.Load<Sprite>("Jigsaw/C2S");
-
-            else if (output == JigsawLink.Triangle)
-                jigsawSprite = Resources.Load<Sprite>("Jigsaw/C2T");
-            else
-                jigsawSprite = Resources.Load<Sprite>("Jigsaw/Blank");
-
-            return jigsawSprite;
-
-        }
-        else if (input == JigsawLink.Square)
-        {
-            if (output == JigsawLink.Circle)
-                jigsawSprite = Resources.Load<Sprite>("Jigsaw/S2C");
-
-            else if (output == JigsawLink.Square)
-                jigsawSprite = Resources.Load<Sprite>("Jigsaw/S2S");
-
-            else if (output == JigsawLink.Triangle)
-                jigsawSprite = Resources.Load<Sprite>("Jigsaw/S2T");
-            jigsawSprite = Resources.Load<Sprite>("Jigsaw/Blank");
-
-            return jigsawSprite;
-
-        }
-        else if (input == JigsawLink.Triangle)
-        {
-            if (output == JigsawLink.Circle)
-                jigsawSprite = Resources.Load<Sprite>("Jigsaw/T2C");
-
-            else if (output == JigsawLink.Square)
-                jigsawSprite = Resources.Load<Sprite>("Jigsaw/T2S");
-
-            else if (output == JigsawLink.Triangle)
-                jigsawSprite = Resources.Load<Sprite>("Jigsaw/T2T");
-            else
-                jigsawSprite = Resources.Load<Sprite>("Jigsaw/Blank");
-
-            return jigsawSprite;
-
-        }
-        else
-            jigsawSprite = Resources.Load<Sprite>("Jigsaw/Blank");
-        return jigsawSprite;
+        mainCardPrefab.SetActive(false);
+        augmentCardPrefab.SetActive(false);
     }
-
-
 
     public void EnableCardChoice(GameObject cardPrefab, Card cardChoice)
     {

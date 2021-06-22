@@ -196,6 +196,12 @@ public class CameraUIScript : MonoBehaviour
         }
     }
 
+    //fetching the deck 
+    public List<Card> FetchDeck()
+    {
+        return cardList;
+    }
+
     //when a manager script wants to view a deck but not the whole deck
     //currently used by ForgeManager for viewing the deck but only with available cards to choose from
     public void ViewFilteredDeck(List<Card> filteredDeck)
