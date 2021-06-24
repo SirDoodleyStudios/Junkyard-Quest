@@ -27,7 +27,7 @@ public enum CardType { Offense, Utility, Ability, Material, Prosthetic }
 
 public enum CardMethod { Targetted, Dropped}
 
-public enum JigsawLink { Circle, Triangle, Square, Material, Finisher}
+public enum JigsawLink { Circle, Triangle, Square, Material, Finisher, Unknown}
 
 //ABILITIES DEPENDENT
 //name of ability format must match this

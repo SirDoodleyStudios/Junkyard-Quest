@@ -19,7 +19,12 @@ public class JigsawLinkAlterer : MonoBehaviour
     Card forgedCardCard;
     //sets the initial links
     JigsawLink inputLink;
-    JigsawLink outputLink; 
+    JigsawLink outputLink;
+    Image jigsawImage;
+
+    //cmeraUIScript that contains the deck update function
+    //assigned in editor
+    public CameraUIScript cameraUIScript;
 
     void Start()
     {
@@ -29,18 +34,20 @@ public class JigsawLinkAlterer : MonoBehaviour
         outputUp.onClick.AddListener(() => RespecJigsawLinks(outputUp));
         outputDown.onClick.AddListener(() => RespecJigsawLinks(outputDown));
 
-        forgedCardDisplay = forgedCardPrefab.GetComponent<Display>();
-        forgedCardCard = forgedCardPrefab.GetComponent<Display>().card;
+
         //sets the initial links
-        inputLink = forgedCardCard.jigsawEffect.inputLink;
-        outputLink = forgedCardCard.jigsawEffect.outputLink;
+        //inputLink = forgedCardCard.jigsawEffect.inputLink;
+        //outputLink = forgedCardCard.jigsawEffect.outputLink;
+
+
     }
 
     //calls the display in the cardPrefab here to change the visuals of the image
     public void RespecJigsawLinks(Button button)
     {
-        if(button = inputUp)
+        if(button == inputUp)
         {
+            //for up buttons
             //if JigsawLink is already index 2, go to 0
             if (inputLink == (JigsawLink)2)
             {
@@ -55,6 +62,8 @@ public class JigsawLinkAlterer : MonoBehaviour
         }
         else if (button == inputDown)
         {
+            //for down buttons
+            //if JigsawLink is already 0, go to 2
             if (inputLink == 0)
             {
                 inputLink = (JigsawLink)2;
@@ -92,5 +101,30 @@ public class JigsawLinkAlterer : MonoBehaviour
         }
 
 
+    }
+
+    //functin called by the forge manager once forge button is clicked in the forge manager
+    public void InitialAlterState(Card card)
+    {
+        forgedCardDisplay = forgedCardPrefab.GetComponent<Display>();
+        forgedCardPrefab.GetComponent<Display>().card = card;
+        forgedCardCard = forgedCardPrefab.GetComponent<Display>().card;
+        inputLink = forgedCardCard.jigsawEffect.inputLink;
+        outputLink = forgedCardCard.jigsawEffect.outputLink;
+        forgedCardPrefab.SetActive(true);
+    }
+
+    //called after pressing the ok button once forging is acceptable
+    //saves the card list and returns the card prefab and choosing panel to disabled
+    public void BackToForgeButton()
+    {
+        JigsawFormat forgedJigsaw = forgedCardCard.jigsawEffect;
+        forgedJigsaw.inputLink = inputLink;
+        forgedJigsaw.outputLink = outputLink;
+        forgedJigsaw.jigsawImage = forgedCardDisplay.JigsawImageReroll(inputLink, outputLink).sprite;
+        //forgedCardDisplay.JigsawImageReroll(inputLink, outputLink);
+        forgedCardPrefab.SetActive(false);
+        cameraUIScript.UpdateCurrentDeck(forgedCardCard, true);
+        gameObject.SetActive(false);
     }
 }

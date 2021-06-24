@@ -101,9 +101,12 @@ public class Display : MonoBehaviour
 
     //called by ForgeManager, reassign the jigsaw image depending on the chosen input and output links
     // only affects the visuals when this is called, visual of actual card prefab is only a holder for the link reroll window
-    public void JigsawImageReroll(JigsawLink inputLink, JigsawLink outputLink)
+    // will return the determined sprite back to jigsaw alterer so that we can save it
+    public Image JigsawImageReroll(JigsawLink inputLink, JigsawLink outputLink)
     {
         displayJigsawImage.sprite = Resources.Load<Sprite>($"Jigsaw/{inputLink}2{outputLink}");
+        return displayJigsawImage;
+
     }
 
 }
