@@ -90,6 +90,7 @@ public class SelectionManager : MonoBehaviour
         UniversalInformation universalInformation = new UniversalInformation();
         List<Card> startingDeck = new List<Card>();
         List<AllCards> cardKeys = new List<AllCards>();
+        List<CardAndJigsaWrapper> cardAndJigsawList = new List<CardAndJigsaWrapper>();
 
         //assigns chosen class and chosen player
         universalInformation.chosenPlayer = chosenPlayer;
@@ -152,12 +153,18 @@ public class SelectionManager : MonoBehaviour
         //extract the Allcards enum key from the card pool
         foreach (Card card in startingDeck)
         {
-            cardKeys.Add(card.enumCardName);
+            //cardKeys.Add(card.enumCardName);
+            CardAndJigsaWrapper CJW = new CardAndJigsaWrapper(card);
+            cardAndJigsawList.Add(CJW);
         }
-        universalInformation.currentDeck = cardKeys;
+        //universalInformation.currentDeck = cardKeys;
+        universalInformation.currentDeckWithJigsaw = cardAndJigsawList;
 
         CardSOFactory.InitializeCardSOFactory(chosenPlayer, chosenClass);
         //saves the universal info and create a json file for loading later
+        //sets initial scraps values, the currentForgeCost dictates the first price of forging
+        universalInformation.scraps = 300;
+        universalInformation.currentForgeCost = 50;
         UniversalSaveState.SaveUniversalInformation(universalInformation);
 
         SceneManager.LoadScene("OverworldScene");

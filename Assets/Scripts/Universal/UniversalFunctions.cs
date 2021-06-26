@@ -16,7 +16,8 @@ public static class UniversalFunctions
         jigsawFormat.jigsawCard = CardSOFactory.GetCardSO(cardJigsawWrapper.jigsawEnum);
         //jigsaw visuals
         jigsawFormat.jigsawDescription = CardTagManager.GetJigsawDescriptions(jigsawFormat.enumJigsawCard);
-        jigsawFormat.jigsawImage = CardTagManager.DetermineJigsawImage(jigsawFormat.inputLink, jigsawFormat.outputLink);
+        jigsawFormat.jigsawImage = Resources.Load<Sprite>($"Jigsaw/{jigsawFormat.inputLink}2{jigsawFormat.outputLink}");
+        //jigsawFormat.jigsawImage = CardTagManager.DetermineJigsawImage(jigsawFormat.inputLink, jigsawFormat.outputLink);
         //jigsaw Effects
         //jigsawFormat.jigsawCard = Instantiate(CardSOFactory.GetCardSO(cardJigsawWrapper.cardEnum));
         return jigsawFormat;

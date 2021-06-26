@@ -1122,6 +1122,8 @@ MonoBehaviour:
   deckViewPrefab: {fileID: 6316217203015278146, guid: 360a3eedd009d2745b0179795720601a,
     type: 3}
   deckScrollContent: {fileID: 0}
+  referenceJigsawFormat: {fileID: 11400000, guid: 88773f1769c22e84d84ad1051c872f14,
+    type: 2}
 --- !u!1 &8410980135081962449
 GameObject:
   m_ObjectHideFlags: 0

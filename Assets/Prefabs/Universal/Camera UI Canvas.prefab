@@ -243,6 +243,12 @@ PrefabInstance:
       propertyPath: deckScrollContent
       value: 
       objectReference: {fileID: 3118542382686174898}
+    - target: {fileID: 8410980135062712101, guid: 3cc4612d58053864a878eb38a6b7cf34,
+        type: 3}
+      propertyPath: referenceJigsawFormat
+      value: 
+      objectReference: {fileID: 11400000, guid: 88773f1769c22e84d84ad1051c872f14,
+        type: 2}
     - target: {fileID: 8410980135062712104, guid: 3cc4612d58053864a878eb38a6b7cf34,
         type: 3}
       propertyPath: m_LocalPosition.x

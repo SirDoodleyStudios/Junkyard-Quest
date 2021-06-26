@@ -32,6 +32,9 @@ public class CameraUIScript : MonoBehaviour
     //Content gameobject, parent of all prefabs to be shown after button click
     public Transform deckScrollContent;
 
+    //reference SO for instantiating JigsawFormats during loading
+    //set in editor
+    public JigsawFormat referenceJigsawFormat;
 
 
     public void Awake()
@@ -84,16 +87,19 @@ public class CameraUIScript : MonoBehaviour
     }
 
     //called by the scene's manager at awake
+    //only used for initializing values from universlInfo load file
     public void AssignUIObjects(UniversalInformation universalInfo)
     {
-        //initializes theCardSO factory
-        CardSOFactory.InitializeCardSOFactory(universalInfo.chosenPlayer, universalInfo.chosenClass);
-
         currHPText.text = $"{universalInfo.playerStats.currHP}";
         maxHPText.text = $"{universalInfo.playerStats.HP}";
         creativityText.text = $"{universalInfo.playerStats.Creativity}";
         scrapsText.text = $"{universalInfo.scraps}";
-
+    }
+    //initially part of AssignUIObjects but now separated
+    public void GenerateDeck(UniversalInformation universalInfo)
+    {
+        //initializes theCardSO factory
+        CardSOFactory.InitializeCardSOFactory(universalInfo.chosenPlayer, universalInfo.chosenClass);
         //generates the CardSO itself
         //updated to check the key of allCards inside the cardandJigsawWrapper list
         foreach (CardAndJigsaWrapper CJW in universalInfo.currentDeckWithJigsaw)
@@ -105,23 +111,14 @@ public class CameraUIScript : MonoBehaviour
             if (CJW.jigsawEnum != AllCards.Jigsaw)
             {
                 //calls a universal function that will extract a JigsawFormat using the wrapper and jigsaw Allcards enum
-                tempCard.jigsawEffect = UniversalFunctions.LoadJigsawFormat(tempCard.jigsawEffect, CJW);
+
+                tempCard.jigsawEffect = UniversalFunctions.LoadJigsawFormat(Instantiate(referenceJigsawFormat), CJW);
+
             }
             cardList.Add(tempCard);
-            
-        }
 
-        //outdated, used when the saved parameter of the cards were just the AllCards enum
-        foreach (AllCards cardKey in universalInfo.currentDeck)
-        {
-            //calls the factory to instantiate a copy of the base card SO
-            Card tempCard = Instantiate(CardSOFactory.GetCardSO(cardKey));
-            tempCard.effectText = CardTagManager.GetCardEffectDescriptions(tempCard);
-            cardList.Add(tempCard);
         }
     }
-
-
 
     //single method for viewing a card collection in view
     //usually used in deck viewing button but in forgeMaster, can aslo call it with the set Main or augment buttons
@@ -194,6 +191,7 @@ public class CameraUIScript : MonoBehaviour
         {
             cardList.Remove(newCardList);
         }
+
     }
 
     //fetching the deck 

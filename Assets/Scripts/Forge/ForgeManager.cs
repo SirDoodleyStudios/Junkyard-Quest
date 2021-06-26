@@ -1,6 +1,8 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
+using TMPro;
 
 public class ForgeManager : MonoBehaviour
 {
@@ -13,6 +15,7 @@ public class ForgeManager : MonoBehaviour
     public GameObject augmentCardPrefab;
     public GameObject forgedCardPrefab;
     JigsawFormat forgedCardJigsaw;
+    public Button forgedCardButton;
     public Display mainCardDisplay;
     public Display augmentCardDisplay;
     public Display forgedCardDisplay;
@@ -35,6 +38,12 @@ public class ForgeManager : MonoBehaviour
     public UniversalInformation universalInfo;
     public List<Card> currentDeck = new List<Card>();
 
+    //current scraps requirement for forging, it will increase consistently after a successful forge
+    int scrapsRequirement;
+    //text object for the scraps requirement value, assigned in editor
+    public TextMeshProUGUI scrapsText;
+    bool isInitialLoad;
+
     //for mouse pointing and clicking
     Vector2 PointRay;
     Ray ray;
@@ -47,21 +56,48 @@ public class ForgeManager : MonoBehaviour
         CardSOFactory.InitializeCardSOFactory(universalInfo.chosenPlayer, universalInfo.chosenClass);
         //initializes the deck viewr
         CardTagManager.InitializeTextDescriptionDictionaries();
+        cameraUIScript.GenerateDeck(universalInfo);
         cameraUIScript.AssignUIObjects(universalInfo);
+
+
     }
     void Start()
     {
+        //TESTING
+        //the script for loading the deck is in CameraScriptUI
+        ////Might migrate to InitializeForge
+        //foreach (CardAndJigsaWrapper CJW in universalInfo.currentDeckWithJigsaw)
+        //{
+        //    //generate the card and the jigsaw if it has one
+        //    Card tempCard = Instantiate(CardSOFactory.GetCardSO(CJW.cardEnum));
+        //    if (CJW.jigsawEnum != AllCards.Jigsaw)
+        //    {
+        //        JigsawFormat tempJigsawFormat = Instantiate(referenceJigsawFormat);
+        //        tempCard.jigsawEffect = UniversalFunctions.LoadJigsawFormat(tempJigsawFormat, CJW);
+        //    }
+        //    currentDeck.Add(CardSOFactory.GetCardSO(CJW.cardEnum));
+        //}
 
-        foreach (CardAndJigsaWrapper CJW in universalInfo.currentDeckWithJigsaw)
+        scrapsRequirement = universalInfo.currentForgeCost;
+        scrapsText.text = $"{scrapsRequirement}";
+        if (universalInfo.scraps < scrapsRequirement)
         {
-            //generate the card and the jigsaw if it has one
-            Card tempCard = Instantiate(CardSOFactory.GetCardSO(CJW.cardEnum));
-            if (CJW.jigsawEnum != AllCards.Jigsaw)
-            {
-                JigsawFormat tempJigsawFormat = new JigsawFormat();
-                tempCard.jigsawEffect = UniversalFunctions.LoadJigsawFormat(tempJigsawFormat, CJW);
-            }
-            currentDeck.Add(CardSOFactory.GetCardSO(CJW.cardEnum));
+            scrapsText.color = new Color(1, 0, 0, 1);
+        }
+
+
+    }
+
+    //function that starts, changes depend if loaded from file or not
+    //MIGHT NOT BE NEEDED, the only value saved here is the current scraps cost which is now saved in universalInfo, migrated back to Start
+    void InitializeForge()
+    {
+        //initial scrapsRequirement is 50
+        scrapsRequirement = universalInfo.currentForgeCost;
+        scrapsText.text = $"{scrapsRequirement}";
+        if (universalInfo.scraps < scrapsRequirement)
+        {
+            scrapsText.color = new Color(1, 0, 0, 1);
         }
     }
 
@@ -83,6 +119,9 @@ public class ForgeManager : MonoBehaviour
         mainCardPrefab.SetActive(false);
         //if player chooses to go back, the main slot will be forced to be blank so turn the forgedCardPrefab to disabled too
         forgedCardPrefab.SetActive(false);
+        //make the forge card button disabled immediately, 
+        //if the player chooses a card instead of going back, the logic in Update will set it as interactable if both card slots are filled up
+        AlterForgeButtonInteractability();
 
         //will contain temporary filtered deck of cards
         List<Card> filteredDeck = new List<Card>();
@@ -149,6 +188,9 @@ public class ForgeManager : MonoBehaviour
         augmentCardPrefab.SetActive(false);
         //if player chooses to go back, the augment slot will be forced to be blank so turn the forgedCardPrefab to disabled too
         forgedCardPrefab.SetActive(false);
+        //make the forge card button disabled immediately, 
+        //if the player chooses a card instead of going back, the logic in Update will set it as interactable if both card slots are filled up
+        AlterForgeButtonInteractability();
 
         List<Card> filteredDeck = new List<Card>();
         //filter out the cards then view it in deck using the alternate deck viewing function
@@ -216,6 +258,23 @@ public class ForgeManager : MonoBehaviour
         forgedCardDisplay.card = Instantiate(mainCardDisplay.card);
         forgedCardDisplay.card.jigsawEffect = forgedCardJigsaw;
         forgedCardPrefab.SetActive(true);
+
+        //set the forged button to be interactable
+        AlterForgeButtonInteractability();
+    }
+
+    //method called to update iteractability of the forge button
+    void AlterForgeButtonInteractability()
+    {
+        //of both main and augment slots are enabled and the scraps requirement are met
+        if (mainCardPrefab.activeSelf && augmentCardPrefab.activeSelf && scrapsRequirement <= universalInfo.scraps)
+        {
+            forgedCardButton.interactable = true;
+        }
+        else
+        {
+            forgedCardButton.interactable = false;
+        }
     }
 
 
@@ -230,6 +289,7 @@ public class ForgeManager : MonoBehaviour
         mainCardPrefab.SetActive(false);
         augmentCardPrefab.SetActive(false);
         forgedCardPrefab.SetActive(false);
+        AlterForgeButtonInteractability();
 
 
         //call the jigsaw alterer if the augmenter is an ability
@@ -250,7 +310,14 @@ public class ForgeManager : MonoBehaviour
             cameraUIScript.UpdateCurrentDeck(mainCardDisplay.card, true);
         }
 
+        //increase scraps reqirement after successful forge
+        if (universalInfo.scraps >= scrapsRequirement)
+        {
+            UpdateScrapsValues();
+        }
 
+        SaveForgeChanges();
+        
 
     }
     //return main and augment cards to blank
@@ -263,6 +330,50 @@ public class ForgeManager : MonoBehaviour
         //return the cards to deck
         cameraUIScript.UpdateCurrentDeck(mainCardDisplay.card, true);
         cameraUIScript.UpdateCurrentDeck(augmentCardDisplay.card, true);
+        //make Forge button uninteractable
+        AlterForgeButtonInteractability();
+    }
+
+    //function that alters scraps requirement and update the scraps text\
+    void UpdateScrapsValues()
+    {
+
+        int tempScraps = universalInfo.scraps - scrapsRequirement;
+        universalInfo.scraps = tempScraps;
+
+        //updates the scraps value in header UI
+        cameraUIScript.AssignUIObjects(universalInfo);
+
+        //consistently increase scraps requirement everytime it's called
+        scrapsRequirement += 10;
+        universalInfo.currentForgeCost = scrapsRequirement;
+
+        //if the scraps requirement now exceeds the player's scraps, turn the cost value to red
+        if (tempScraps < scrapsRequirement)
+        {
+            scrapsText.color = new Color(1, 0, 0, 1);
+            scrapsText.text = $"{scrapsRequirement}";
+        }
+        else
+        {
+            scrapsText.text = $"{scrapsRequirement}";
+        }
+
+        UniversalSaveState.SaveUniversalInformation(universalInfo);
+    }
+
+    //called for saving
+    void SaveForgeChanges()
+    {
+        //convert cards to CardAndJigsawWrapper for saving
+        List<CardAndJigsaWrapper> forgedDeck = new List<CardAndJigsaWrapper>();
+        foreach (Card card in currentDeck)
+        {
+            CardAndJigsaWrapper CJW = new CardAndJigsaWrapper(card);
+            forgedDeck.Add(CJW);
+        }
+        universalInfo.currentDeckWithJigsaw = forgedDeck;
+        UniversalSaveState.SaveUniversalInformation(universalInfo);
     }
 
     public void EnableCardChoice(GameObject cardPrefab, Card cardChoice)

@@ -151,7 +151,7 @@ public class CombatManager : MonoBehaviour
 
         //moved to be at the end of InitiateCombatState
         //this is so that the test jigsaw generator can only activate if there is no combatFile loaded
-        deckManager.InitializeBattleDeck(universalInformation.currentDeck);
+        deckManager.InitializeBattleDeck(universalInformation.currentDeckWithJigsaw);
 
 
         //Card Drafting migrated to rewardsscene
@@ -251,6 +251,7 @@ public class CombatManager : MonoBehaviour
             isPlayerBeingOverkilled = combatSaveState.isPlayerBeingOverkilled;
 
             //update universal UI
+            cameraUIScript.GenerateDeck(universalInfo);
             cameraUIScript.AssignUIObjects(universalInfo);
 
         }
@@ -287,6 +288,7 @@ public class CombatManager : MonoBehaviour
             enemyAIManager.PseudoStartCombat(universalInfo.enemyCount);
 
             //update the universal UI panel
+            cameraUIScript.GenerateDeck(universalInfo);
             cameraUIScript.AssignUIObjects(universalInfo);
         }
 

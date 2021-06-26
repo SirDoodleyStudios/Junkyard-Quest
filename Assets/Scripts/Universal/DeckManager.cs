@@ -121,38 +121,73 @@ public class DeckManager : MonoBehaviour
 
     //first state of player deck every start of battle
     //THIS CAN BE CALLED BY COMBATMANAGER DURING INITIALIZATION
-    public void InitializeBattleDeck(List<AllCards> savedDeck)
+    public void InitializeBattleDeck(List<CardAndJigsaWrapper> savedDeck)
     {
-        foreach (AllCards cardKey in savedDeck)
+        //foreach (AllCards CJW in savedDeck)
+        //{
+        //    //calls the factory to instantiate a copy of the base card SO
+        //    Card tempCard = Instantiate(CardSOFactory.GetCardSO(CJW));
+        //    tempCard.effectText = CardTagManager.GetCardEffectDescriptions(tempCard);
+
+        //    //This is a test Jigsaw Generator function
+        //    if (tempCard.cardType == CardType.Offense || tempCard.cardType == CardType.Utility)
+        //    {
+        //        //just for testing, instead of a reandom jigsaw, just install the same card as the jigsaw of the generated card;
+        //        Card referenceJigsawCard = CardSOFactory.GetCardSO(CJW);
+        //        //JigsawFormat instantiatedJigsaw = Instantiate(testJigsawList[Random.Range(0, testJigsawList.Count)]);
+        //        JigsawFormat instantiatedJigsaw = Instantiate(referenceJigsawFormat);
+
+        //        instantiatedJigsaw.inputLink = (JigsawLink)Random.Range(0, 3);
+        //        instantiatedJigsaw.outputLink = (JigsawLink)Random.Range(0, 3);
+
+        //        instantiatedJigsaw.enumJigsawCard = CJW;
+        //        instantiatedJigsaw.jigsawMethod = referenceJigsawCard.cardMethod;
+        //        //jigsaw visuals
+        //        instantiatedJigsaw.jigsawDescription = CardTagManager.GetJigsawDescriptions(instantiatedJigsaw.enumJigsawCard);
+        //        instantiatedJigsaw.jigsawImage = Resources.Load<Sprite>($"Jigsaw/{instantiatedJigsaw.inputLink}2{instantiatedJigsaw.outputLink}");
+        //        //instantiatedJigsaw.jigsawImage = CardTagManager.DetermineJigsawImage(instantiatedJigsaw.inputLink, instantiatedJigsaw.outputLink);
+        //        //jigsaw Effects
+        //        instantiatedJigsaw.jigsawCard = Instantiate(CardSOFactory.GetCardSO(CJW));
+
+        //        tempCard.jigsawEffect = instantiatedJigsaw;
+        //    }
+
+        //    initialDeck.Add(tempCard);
+
+
+        //}
+
+        foreach (CardAndJigsaWrapper CJW in savedDeck)
         {
             //calls the factory to instantiate a copy of the base card SO
-            Card tempCard = Instantiate(CardSOFactory.GetCardSO(cardKey));
+            Card tempCard = Instantiate(CardSOFactory.GetCardSO(CJW.cardEnum));
             tempCard.effectText = CardTagManager.GetCardEffectDescriptions(tempCard);
 
             //This is a test Jigsaw Generator function
-            if (tempCard.cardType == CardType.Offense || tempCard.cardType == CardType.Utility)
+            if ((tempCard.cardType == CardType.Offense || tempCard.cardType == CardType.Utility) && CJW.jigsawEnum != AllCards.Jigsaw)
             {
                 //just for testing, instead of a reandom jigsaw, just install the same card as the jigsaw of the generated card;
-                Card referenceJigsawCard = CardSOFactory.GetCardSO(cardKey);
+                //Card referenceJigsawCard = CardSOFactory.GetCardSO(CJW);
                 //JigsawFormat instantiatedJigsaw = Instantiate(testJigsawList[Random.Range(0, testJigsawList.Count)]);
                 JigsawFormat instantiatedJigsaw = Instantiate(referenceJigsawFormat);
-
-                instantiatedJigsaw.inputLink = (JigsawLink)Random.Range(0, 3);
-                instantiatedJigsaw.outputLink = (JigsawLink)Random.Range(0, 3);
-
-                instantiatedJigsaw.enumJigsawCard = cardKey;
-                instantiatedJigsaw.jigsawMethod = referenceJigsawCard.cardMethod;
+                tempCard.jigsawEffect = UniversalFunctions.LoadJigsawFormat(instantiatedJigsaw, CJW);
+                instantiatedJigsaw.jigsawCard = Instantiate(CardSOFactory.GetCardSO(instantiatedJigsaw.enumJigsawCard));
+                //instantiatedJigsaw.inputLink = (JigsawLink)Random.Range(0, 3);
+                //instantiatedJigsaw.outputLink = (JigsawLink)Random.Range(0, 3);
+                //instantiatedJigsaw.enumJigsawCard = CJW;
+                //instantiatedJigsaw.jigsawMethod = referenceJigsawCard.cardMethod;
                 //jigsaw visuals
-                instantiatedJigsaw.jigsawDescription = CardTagManager.GetJigsawDescriptions(instantiatedJigsaw.enumJigsawCard);
-                instantiatedJigsaw.jigsawImage = CardTagManager.DetermineJigsawImage(instantiatedJigsaw.inputLink, instantiatedJigsaw.outputLink);
+                //instantiatedJigsaw.jigsawDescription = CardTagManager.GetJigsawDescriptions(instantiatedJigsaw.enumJigsawCard);
+                //instantiatedJigsaw.jigsawImage = Resources.Load<Sprite>($"Jigsaw/{instantiatedJigsaw.inputLink}2{instantiatedJigsaw.outputLink}");
+                //instantiatedJigsaw.jigsawImage = CardTagManager.DetermineJigsawImage(instantiatedJigsaw.inputLink, instantiatedJigsaw.outputLink);
                 //jigsaw Effects
-                instantiatedJigsaw.jigsawCard = Instantiate(CardSOFactory.GetCardSO(cardKey));
+                //instantiatedJigsaw.jigsawCard = Instantiate(CardSOFactory.GetCardSO(CJW));
 
                 tempCard.jigsawEffect = instantiatedJigsaw;
             }
-
             initialDeck.Add(tempCard);
         }
+
 
         //will determine whether the initial combat deck and discard and consume decks are loaded from file of from generic
         if (File.Exists(Application.persistentDataPath + "/Combat.json"))
@@ -264,7 +299,8 @@ public class DeckManager : MonoBehaviour
             assignedJigsaw.outputLink = (JigsawLink)Random.Range(0, 2);
 
             assignedJigsaw.jigsawDescription = CardTagManager.GetJigsawDescriptions(assignedJigsaw.enumJigsawCard);
-            assignedJigsaw.jigsawImage = CardTagManager.DetermineJigsawImage(assignedJigsaw.inputLink, assignedJigsaw.outputLink);
+            assignedJigsaw.jigsawImage = Resources.Load<Sprite>($"Jigsaw/{assignedJigsaw.inputLink}2{assignedJigsaw.outputLink}");
+            //assignedJigsaw.jigsawImage = CardTagManager.DetermineJigsawImage(assignedJigsaw.inputLink, assignedJigsaw.outputLink);
         }
 
         return tempCard;

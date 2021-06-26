@@ -784,7 +784,7 @@ GameObject:
   - component: {fileID: 286203933}
   - component: {fileID: 286203932}
   m_Layer: 5
-  m_Name: Button
+  m_Name: Forged Card Button
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -834,7 +834,7 @@ MonoBehaviour:
     m_HighlightedColor: {r: 0.5293439, g: 1, b: 0.514151, a: 1}
     m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
     m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
-    m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
+    m_DisabledColor: {r: 0, g: 0, b: 0, a: 0.5019608}
     m_ColorMultiplier: 1
     m_FadeDuration: 0.1
   m_SpriteState:
@@ -848,7 +848,7 @@ MonoBehaviour:
     m_PressedTrigger: Pressed
     m_SelectedTrigger: Selected
     m_DisabledTrigger: Disabled
-  m_Interactable: 1
+  m_Interactable: 0
   m_TargetGraphic: {fileID: 286203933}
   m_OnClick:
     m_PersistentCalls:
@@ -1350,6 +1350,7 @@ MonoBehaviour:
   mainCardPrefab: {fileID: 3332063664566172735}
   augmentCardPrefab: {fileID: 5459743306863753966}
   forgedCardPrefab: {fileID: 401298263332624773}
+  forgedCardButton: {fileID: 286203932}
   mainCardDisplay: {fileID: 3332063664566172743}
   augmentCardDisplay: {fileID: 5459743306863753974}
   forgedCardDisplay: {fileID: 401298263332624781}
@@ -1383,6 +1384,7 @@ MonoBehaviour:
     nodeCount: 0
     wornOutCount: 0
   currentDeck: []
+  scrapsText: {fileID: 1730044637}
 --- !u!1 &480294362
 GameObject:
   m_ObjectHideFlags: 0
