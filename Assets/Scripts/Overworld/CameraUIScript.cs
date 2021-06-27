@@ -95,6 +95,23 @@ public class CameraUIScript : MonoBehaviour
         creativityText.text = $"{universalInfo.playerStats.Creativity}";
         scrapsText.text = $"{universalInfo.scraps}";
     }
+
+    //for actively updating the text in UI without using a universalInformation
+    //mainly used by Combat Scene for UI for active updates
+    //parameters are new values to be assigned
+    public void UpdateUIObjectsActive(int currHPChange, int maxHPChange, int currCreativityChange)
+    {
+        currHPText.text = $"{currHPChange}";
+        maxHPText.text = $"{ maxHPChange}";
+        creativityText.text = $"{currCreativityChange}";
+
+    }
+    //separate function for scraps because we can't get info for scraps from playerfunctions
+    public void UpdateUIObjectsActiveScraps(int scrapsChange)
+    {
+        scrapsText.text = $"{scrapsChange}";
+    }
+
     //initially part of AssignUIObjects but now separated
     public void GenerateDeck(UniversalInformation universalInfo)
     {

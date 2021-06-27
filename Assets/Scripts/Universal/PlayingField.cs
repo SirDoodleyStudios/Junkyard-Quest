@@ -6,6 +6,7 @@ public class PlayingField : MonoBehaviour
 {
     public CombatManager combatManager;
     public DeckManager deckManager;
+    public CameraUIScript cameraUIScript;
 
     public GameObject playerPrefab;
     public GameObject enemyHolder;

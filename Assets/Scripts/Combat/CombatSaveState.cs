@@ -26,6 +26,7 @@ public class CombatSaveState
     //same playerUnitStats should be in UniversalInformation except for current creativity
     //player unit has a wrapper class available ion UniversalSaveState with constructor parameter PlayerUnit
     //playerUnitStats is not serialized and will only be used to create the playerStatsWrapper which will be serialized
+    //playerStatsWrapper is in universalSaveState
     public PlayerUnit playerUnit;
     public PlayerUnitWrapper playerStatsWrapper;
     //these ints will be filled up externlly once the CombatSaveState is created from the externlScript

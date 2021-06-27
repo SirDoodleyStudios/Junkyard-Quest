@@ -3537,6 +3537,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   combatManager: {fileID: 2085359251}
   deckManager: {fileID: 791457652}
+  cameraUIScript: {fileID: 1949506406}
   playerPrefab: {fileID: 1712888391}
   enemyHolder: {fileID: 676333090}
   playerHand: {fileID: 1393909052}

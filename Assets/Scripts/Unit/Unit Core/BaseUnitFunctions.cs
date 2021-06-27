@@ -98,6 +98,8 @@ public class BaseUnitFunctions:MonoBehaviour
 
         CreativitySlider.value = currCreativity;
         CreativityText.text = $"{currCreativity}/{maxCreativity}";
+
+
     }
 
 

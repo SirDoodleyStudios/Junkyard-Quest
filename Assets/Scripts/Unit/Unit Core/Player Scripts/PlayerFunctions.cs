@@ -114,6 +114,9 @@ public class PlayerFunctions : BaseUnitFunctions
         //CreativitySlider.value = currCreativity;
         //CreativityText.text = $"{currCreativity}/{maxCreativity}";
 
+        //updates the HP and creativity in UI
+        transform.parent.GetComponent<PlayingField>().cameraUIScript.UpdateUIObjectsActive(currHP, maxHP, maxCreativity);
+
     }
     //value parameter is used to increase or decrease currEnergy by value
     public void AlterEnergy(int value)

@@ -378,6 +378,7 @@ public class CombatManager : MonoBehaviour
 
         //saves combatState and generate save file
         UniversalSaveState.SaveCombatState(combatSaveState);
+        
 
     }
 
