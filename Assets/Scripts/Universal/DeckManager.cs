@@ -59,6 +59,10 @@ public class DeckManager : MonoBehaviour
     // in inputted in editor
     public List<JigsawFormat> testJigsawList = new List<JigsawFormat>();
 
+    //this image panel is for covering the player hand while the draw animation is ongoing so that the animation is not interrupted
+    //assigned in editor
+    //raycast shoul false default and only turned on during draw animation
+    public Image playerHandCover;
 
 
     void Start()
@@ -316,6 +320,12 @@ public class DeckManager : MonoBehaviour
         //time differential between each draw
         //float lagTime = .1f;
 
+        //caps the draw if the count of the whole deck is less than the draw count
+        if (deckCount + discardCount < drawCount)
+        {
+            drawCount = deckCount + discardCount;
+        }
+
         //sets playerHand state to DrawPhase so that DragNDrop logics wont work while drawing
         playerHandScript.StateChanger(CombatState.DrawPhase);
 
@@ -378,13 +388,15 @@ public class DeckManager : MonoBehaviour
 
 
         //ensures that when deck count is 0, only remaining cards are removed then calls the reset
-        if (battleDeck.Count - drawtemp == 0)
+        //only for when there are more draw cards needed
+        if (battleDeck.Count - drawtemp == 0 && drawCount - drawtemp > 0)
         {
             battleDeck.RemoveRange(0, drawtemp);
             DeckReset(drawCount - drawtemp);
         }
         //just removes card from deck if draw is less than deck
-        else if (battleDeck.Count > drawtemp)
+        //also works if the draw will completely make the deck at 0
+        else if (battleDeck.Count > drawtemp || drawCount - drawtemp == 0)
         {
             //this line removes from deck
             battleDeck.RemoveRange(0, drawCount);
@@ -399,6 +411,10 @@ public class DeckManager : MonoBehaviour
 
     IEnumerator DrawCardsAnimationTime()
     {
+        //makes the invisible panel over card hand to enable it as a raycast target
+        //this is so that the pointer wont interrupt the tweening during animation
+        playerHandCover.raycastTarget = true;
+
         float lagTime = .1f;
         foreach (GameObject enabledCard in enabledCards)
         {
@@ -408,6 +424,10 @@ public class DeckManager : MonoBehaviour
             playerHandScript.FixCardPositions();
         }
         enabledCards.Clear();
+
+        //disable the cover after the animation
+        playerHandCover.raycastTarget = false;
+        
     }
 
     //called by draw function when deck count runs out

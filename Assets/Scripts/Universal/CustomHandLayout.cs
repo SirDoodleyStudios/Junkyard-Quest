@@ -46,7 +46,7 @@ public class CustomHandLayout : MonoBehaviour
 
         //tweeing initialize, needs to be called before any DOTween
         DOTween.Init(true, true, LogBehaviour.Default);
-        DOTween.SetTweensCapacity(2000, 50);
+        DOTween.SetTweensCapacity(20000, 100);
     }
 
     public void Start()

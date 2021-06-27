@@ -1841,9 +1841,6 @@ MonoBehaviour:
   - {fileID: 11400000, guid: ffabfc62e20d3df4e89692130cd523aa, type: 2}
   - {fileID: 11400000, guid: 79e4046d3dfaa864d9058cd0c43118b9, type: 2}
   - {fileID: 11400000, guid: ca9a39afce7442d49bfbbd06cc860eae, type: 2}
-  - {fileID: 11400000, guid: 4a6fb6cdefce5c44da395905187897c0, type: 2}
-  - {fileID: 11400000, guid: 1f35fc03a42030249b704c5fec6abfd0, type: 2}
-  - {fileID: 11400000, guid: 61ccae756361a7c4791dfffe4dfabc4d, type: 2}
   rogueBasic: []
   mageBasic: []
   arlenUnit: {fileID: 11400000, guid: 9360e45a4c8d8a84f8aec23451521358, type: 2}

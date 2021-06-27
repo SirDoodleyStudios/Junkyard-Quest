@@ -190,7 +190,8 @@ public class CardDescriptionLayout : MonoBehaviour/*, IPointerEnterHandler, IPoi
                             //spawn in left
                             //card width and popup width
                             //-10 is for alloqwance
-                            nextPosX = -cardRect.rect.width*2.5f - 10;
+                            //nextPosX = -cardRect.rect.width*2.5f - 10;
+                            nextPosX = -cardRect.rect.width - popupDescRect.rect.width - 10;
                             //nextPosX = -530;
                         }
                         //if not, spawn on right
@@ -202,11 +203,12 @@ public class CardDescriptionLayout : MonoBehaviour/*, IPointerEnterHandler, IPoi
                     // the original orientation logic, only gets here when the parent has a playerHand script
                     else
                     {
-                        //if card is at the 8 or 9 index spot, spawn the popups in the left
-                        if (gameObject.transform.GetSiblingIndex() >= 8)
+                        //if card is at the 7, 8, or 9 index spot, spawn the popups in the left
+                        if (gameObject.transform.GetSiblingIndex() >= 7)
                         {
                             //card width and popup width
-                            nextPosX = -cardRect.rect.width * 2.5f - 10;
+                            //nextPosX = -cardRect.rect.width * 2.5f - 10;
+                            nextPosX = -cardRect.rect.width - popupDescRect.rect.width - 10;
                         }
                         //if not, spawn on right
                         else

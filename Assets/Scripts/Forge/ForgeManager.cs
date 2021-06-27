@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using UnityEngine.SceneManagement;
 
 public class ForgeManager : MonoBehaviour
 {
@@ -376,9 +377,11 @@ public class ForgeManager : MonoBehaviour
         UniversalSaveState.SaveUniversalInformation(universalInfo);
     }
 
-    public void EnableCardChoice(GameObject cardPrefab, Card cardChoice)
+    //return to overWorld
+    //assigned in editor
+    public void LeaveButton()
     {
-        
+        SceneManager.LoadScene("OverWorldScene");
     }
 
     private void Update()
@@ -396,12 +399,12 @@ public class ForgeManager : MonoBehaviour
 
                 if (pointedObject.collider != null)
                 {
-
+                    GameObject chosenCardPrefab = pointedObject.collider.gameObject;
                     //checks what viewing state are we in first
                     if (deckViewState == deckViewingPurpose.MainDeckView)
                     {
                         //assigns the card 
-                        Card chosenCard = pointedObject.collider.gameObject.GetComponent<Display>().card;
+                        Card chosenCard = chosenCardPrefab.GetComponent<Display>().card;
                         mainCardPrefab.GetComponent<Display>().card = chosenCard;
                         mainCardPrefab.SetActive(true);
                         isChoosingInDeck = false;
@@ -433,6 +436,9 @@ public class ForgeManager : MonoBehaviour
                             ShowToBeForgedCard();
                         }
                     }
+
+                    //this will disable the Card Tag Popups of the chosen card before unviewing the deck
+                    chosenCardPrefab.GetComponent<CardDescriptionLayout>().DisablePopups();
                 }
 
             }
