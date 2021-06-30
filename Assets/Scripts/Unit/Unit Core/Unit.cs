@@ -6,7 +6,8 @@ using UnityEngine;
 public class Unit : ScriptableObject
 {
     public int HP;
-    public int Creativity;
+    public int creativity;
+    public int currCreativity;
     public int draw;
     //also added for Enemy Units now to preserve them during save
     public int currHP;

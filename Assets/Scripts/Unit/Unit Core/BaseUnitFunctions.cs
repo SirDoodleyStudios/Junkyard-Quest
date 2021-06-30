@@ -74,7 +74,7 @@ public class BaseUnitFunctions:MonoBehaviour
         //curent creativity overhaul will make creativity start at 0 and then make ways to generate
         //generate by turn or by kill or by card
         //currCreativity = maxCreativity;
-        currCreativity = 0;
+        //currCreativity = 0;
 
         currDraw = defaultDraw;
 

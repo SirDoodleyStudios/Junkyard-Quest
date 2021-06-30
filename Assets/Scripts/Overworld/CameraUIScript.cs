@@ -92,7 +92,7 @@ public class CameraUIScript : MonoBehaviour
     {
         currHPText.text = $"{universalInfo.playerStats.currHP}";
         maxHPText.text = $"{universalInfo.playerStats.HP}";
-        creativityText.text = $"{universalInfo.playerStats.Creativity}";
+        creativityText.text = $"{universalInfo.playerStats.creativity}";
         scrapsText.text = $"{universalInfo.scraps}";
     }
 

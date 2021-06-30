@@ -43,7 +43,8 @@ public class PlayerFunctions : BaseUnitFunctions
         //Copies HP, Creativity, and Draw from scriptable Object first
         maxHP = playerUnit.HP;
         currHP = playerUnit.currHP;
-        maxCreativity = playerUnit.Creativity;
+        currCreativity = playerUnit.currCreativity;
+        maxCreativity = playerUnit.creativity;
         defaultDraw = playerUnit.draw;
         base.InitializeStats();              
 

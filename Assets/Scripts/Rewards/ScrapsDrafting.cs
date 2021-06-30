@@ -87,7 +87,7 @@ public class ScrapsDrafting : MonoBehaviour
                 universalInfo.playerStats.currHP += (int)Mathf.Floor(scrapsValue / 10);
                 break;
             case 2:
-                universalInfo.playerStats.Creativity += (int)Mathf.Floor(scrapsValue / 50);
+                universalInfo.playerStats.creativity += (int)Mathf.Floor(scrapsValue / 50);
                 break;
             default:
                 break;

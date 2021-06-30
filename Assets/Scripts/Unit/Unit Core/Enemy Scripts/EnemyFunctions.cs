@@ -62,7 +62,8 @@ public class EnemyFunctions : BaseUnitFunctions
         //Copies HP, Creativity, and Draw from scriptable Object first
         maxHP = enemyUnit.HP;
         currHP = enemyUnit.currHP;
-        maxCreativity = enemyUnit.Creativity;
+        maxCreativity = enemyUnit.creativity;
+        currCreativity = enemyUnit.currCreativity;
         defaultDraw = enemyUnit.draw;
         base.InitializeStats();
 

@@ -93,7 +93,7 @@ public static class UniversalSaveState
         PlayerUnit loadedUnit = Resources.Load<PlayerUnit>("PlayerSO/Current Stats");
         
         loadedUnit.HP = unitWrapper.HP;
-        loadedUnit.Creativity = unitWrapper.Creativity;
+        loadedUnit.creativity = unitWrapper.Creativity;
         loadedUnit.draw = unitWrapper.draw;
         loadedUnit.energy = unitWrapper.energy;
         loadedUnit.chosenPlayer = unitWrapper.chosenPlayer;
@@ -138,7 +138,7 @@ public static class UniversalSaveState
         PlayerUnit loadedUnit = Resources.Load<PlayerUnit>("PlayerSO/Current Stats");
 
         loadedUnit.HP = unitWrapper.HP;
-        loadedUnit.Creativity = unitWrapper.Creativity;
+        loadedUnit.creativity = unitWrapper.Creativity;
         loadedUnit.draw = unitWrapper.draw;
         loadedUnit.energy = unitWrapper.energy;
         loadedUnit.chosenPlayer = unitWrapper.chosenPlayer;
@@ -275,6 +275,7 @@ public class PlayerUnitWrapper
     public int Creativity;
     public int draw;
     public int currHP;
+    public int currCreativity;
 
     //for player
     public int energy;
@@ -284,11 +285,12 @@ public class PlayerUnitWrapper
     public PlayerUnitWrapper(PlayerUnit unit)
     {
         HP = unit.HP;
-        Creativity = unit.Creativity;
+        Creativity = unit.creativity;
         draw = unit.draw;
         energy = unit.energy;
         chosenPlayer = unit.chosenPlayer;
         currHP = unit.currHP;
+        currCreativity = unit.currCreativity;
     }
 }
 
