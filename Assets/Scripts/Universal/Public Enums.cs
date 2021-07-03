@@ -57,6 +57,45 @@ public enum AllJigsaws
 
 }
 
+//TREASURE RELATED
+//Type of material, determines what is available to use in blueprint
+public enum AllMaterialTypes
+{
+    Slab,
+    Hunk,
+    Pointy,
+    Strip,
+    Stick,
+    Board,
+    Ornament
+}
+//Relic Effects
+public enum AllMaterialEffects
+{
+    LasterStand, //take 2 turns before being overkilled, doubles Worn-out stacks
+    Eureka, //gain 10 creativity at start of combat, creativity no longer recovers every turn
+    DeepSleep, //Rest consumes 2 actions but fully heals HP
+    ForgeFriendly //Forging cost starts at 40 scraps
+}
+//prefix of material that dictates the bonus when crafting
+public enum AllMaterialPrefixes
+{
+    Sturdy,
+    Mysterious,
+    Fancy
+}
+//Gear types, which is also the blueprint types
+public enum AllGearTypes
+{
+    Sword,
+    Axe,
+    Shield,
+    Hammer,
+    Greatsword,
+    Spear
+}
+
+
 //ENEMY RELATED
 //
 public enum EnemyEnumName
@@ -93,12 +132,6 @@ public enum AllEnemyActions
     Enemy_DebilitatePattern3
 
 }
-
-
-
-
-
-
 
 
 ////Status Effects//////////////////////////////////////////////////////////////////////////////////

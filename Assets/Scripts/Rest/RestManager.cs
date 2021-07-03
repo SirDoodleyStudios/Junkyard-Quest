@@ -63,6 +63,7 @@ public class RestManager : MonoBehaviour
         //prevents the HP from being recovered beyond max
         int tempHP = Mathf.Min((universalInfo.playerStats.currHP += healthRecovery), universalInfo.playerStats.HP);
         universalInfo.playerStats.currHP = tempHP;
+        universalInfo.wornOutCount = 0;
         cameraUIScript.AssignUIObjects(universalInfo);
         UpdateRemainingActions();
     }
