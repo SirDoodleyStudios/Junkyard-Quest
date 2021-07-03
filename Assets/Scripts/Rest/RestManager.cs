@@ -1,14 +1,14 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using UnityEngine.SceneManagement;
 
 public class RestManager : MonoBehaviour
 {
     UniversalInformation universalInfo;
     //the panel that contains all rest action buttons, assigned in editor
     public GameObject actionsPanel;
+
     //remaining actions that the player can take during rest
     int remainingActions;
 
@@ -27,6 +27,11 @@ public class RestManager : MonoBehaviour
     //initialize the header and deck viewers
     private void Awake()
     {
+        //sets the cell size of action buttons based on aspect ratio
+        //constt multipliers are predetermind and precalculated
+        actionsPanel.GetComponent<GridLayoutGroup>().cellSize = new Vector2(Screen.width/4.26666667f, Screen.height/3.6f);
+        actionsPanel.GetComponent<GridLayoutGroup>().spacing = new Vector2(Screen.height / 36, Screen.height / 36f);
+
         universalInfo = UniversalSaveState.LoadUniversalInformation();
         //will initialize the factory for getting cards using allcard enum
         CardSOFactory.InitializeCardSOFactory(universalInfo.chosenPlayer, universalInfo.chosenClass);
@@ -87,5 +92,12 @@ public class RestManager : MonoBehaviour
                 }
             }
         }
+    }
+
+    //used to go back to overworld
+    public void GoBackToOverworldButton()
+    {
+        UniversalSaveState.SaveUniversalInformation(universalInfo);
+        SceneManager.LoadScene("OverWorldScene");
     }
 }

@@ -15,6 +15,7 @@ public class CameraUIScript : MonoBehaviour
     //set in editor prefab
     public TextMeshProUGUI currHPText;
     public TextMeshProUGUI maxHPText;
+    public TextMeshProUGUI currCreativityText;
     public TextMeshProUGUI creativityText;
     public TextMeshProUGUI scrapsText;
 
@@ -90,21 +91,30 @@ public class CameraUIScript : MonoBehaviour
     //only used for initializing values from universlInfo load file
     public void AssignUIObjects(UniversalInformation universalInfo)
     {
-        currHPText.text = $"{universalInfo.playerStats.currHP}";
-        maxHPText.text = $"{universalInfo.playerStats.HP}";
-        creativityText.text = $"{universalInfo.playerStats.creativity}";
+        PlayerUnit playerStats = universalInfo.playerStats;
+        currHPText.text = $"{playerStats.currHP}";
+        maxHPText.text = $"{playerStats.HP}";
+        currCreativityText.text = $"{playerStats.currCreativity }";
+        creativityText.text = $"{playerStats.creativity}";
         scrapsText.text = $"{universalInfo.scraps}";
+
     }
 
     //for actively updating the text in UI without using a universalInformation
     //mainly used by Combat Scene for UI for active updates
     //parameters are new values to be assigned
-    public void UpdateUIObjectsActive(int currHPChange, int maxHPChange, int currCreativityChange)
+
+    //for updating UI text only for HP stats
+    public void UpdateUIObjectsHP(int currHPChange, int maxHPChange)
     {
         currHPText.text = $"{currHPChange}";
         maxHPText.text = $"{ maxHPChange}";
-        creativityText.text = $"{currCreativityChange}";
-
+    }
+    //for updating UI text only for Creativity stats
+    public void UpdateUIObjectsCretivity(int currCreativityChange, int maxCreativityChange)
+    {
+        currCreativityText.text = $"{currCreativityChange}";
+        creativityText.text = $"{maxCreativityChange}";
     }
     //separate function for scraps because we can't get info for scraps from playerfunctions
     public void UpdateUIObjectsActiveScraps(int scrapsChange)

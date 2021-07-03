@@ -6245,6 +6245,11 @@ PrefabInstance:
       propertyPath: blockText
       value: 
       objectReference: {fileID: 1361347295}
+    - target: {fileID: 5827721810874003190, guid: f20ee180e27b19b48a8d6fabda951463,
+        type: 3}
+      propertyPath: cameraUIScript
+      value: 
+      objectReference: {fileID: 1949506406}
     - target: {fileID: 6061975681835386892, guid: f20ee180e27b19b48a8d6fabda951463,
         type: 3}
       propertyPath: m_AnchorMin.x

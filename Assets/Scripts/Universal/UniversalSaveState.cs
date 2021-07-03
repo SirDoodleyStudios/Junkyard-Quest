@@ -98,6 +98,7 @@ public static class UniversalSaveState
         loadedUnit.energy = unitWrapper.energy;
         loadedUnit.chosenPlayer = unitWrapper.chosenPlayer;
         loadedUnit.currHP = unitWrapper.currHP;
+        loadedUnit.currCreativity = unitWrapper.currCreativity;
         //after the extract, assign the playerUnit in the universalInformation
         loadedState.playerStats = loadedUnit;
 

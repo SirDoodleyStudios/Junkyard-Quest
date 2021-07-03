@@ -149,6 +149,7 @@ public class CombatManager : MonoBehaviour
         CardSOFactory.InitializeCardSOFactory(universalInformation.chosenPlayer, universalInformation.chosenClass);
         playerFunctions.LoadPlayerUnitFromFile(universalInformation.playerStats);
 
+
         //moved to be at the end of InitiateCombatState
         //this is so that the test jigsaw generator can only activate if there is no combatFile loaded
         deckManager.InitializeBattleDeck(universalInformation.currentDeckWithJigsaw);
@@ -227,6 +228,7 @@ public class CombatManager : MonoBehaviour
             
 
             //assign the player unit saved in file
+            //overrides the unit saved from universalInfo because there are changes now from last combat save
             playerFunctions.LoadPlayerUnitFromFile(combatSaveState.playerUnit);
             //max is subtracted from current because alterCreativvity funcion needs negative values for reduction
             playerFunctions.AlterCreativity(combatSaveState.currCreativity/* - combatSaveState.playerUnit.Creativity*/);
@@ -253,6 +255,9 @@ public class CombatManager : MonoBehaviour
             //update universal UI
             cameraUIScript.GenerateDeck(universalInfo);
             cameraUIScript.AssignUIObjects(universalInfo);
+            //this is here to override the Cretivity text in UI from being mapped from combatSaveState
+            //if combat is loaded from file, get current creativity from combatSaveState
+            cameraUIScript.UpdateUIObjectsCretivity(playerFunctions.currCreativity, playerFunctions.maxCreativity);
 
         }
         //if combat file does not exist, get ebemy base unit from enemyPools
@@ -290,6 +295,12 @@ public class CombatManager : MonoBehaviour
             //update the universal UI panel
             cameraUIScript.GenerateDeck(universalInfo);
             cameraUIScript.AssignUIObjects(universalInfo);
+            //immediately turns the currCreativity in univesalInfo to 0, this ensures that the combat start bonus does not repeat when loading from file in combat
+            if (universalInformation.playerStats.currCreativity != 0)
+            {
+                universalInformation.playerStats.currCreativity = 0;
+                UniversalSaveState.SaveUniversalInformation(universalInformation);
+            }
         }
 
 
@@ -984,9 +995,6 @@ public class CombatManager : MonoBehaviour
         //activates targetting UI
         creativeUnleash.SetActive(true);
 
-
-
-
     }
 
     //calls deck manager to transfer card from hand to discard pile
@@ -1138,7 +1146,8 @@ public class CombatManager : MonoBehaviour
             universalInfo.wornOutCount = 1 + 1;
             playerFunctions.playerUnit.currHP = 1;
         }
-
+        //alters the creativity in player unit to be 0 after victory
+        playerFunctions.AlterCreativity(-playerFunctions.playerUnit.currCreativity);
         universalInfo.playerStats = playerFunctions.playerUnit;
         UniversalSaveState.SaveUniversalInformation(universalInfo);
 

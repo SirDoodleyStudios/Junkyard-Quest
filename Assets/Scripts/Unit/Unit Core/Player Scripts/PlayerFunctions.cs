@@ -12,6 +12,10 @@ public class PlayerFunctions : BaseUnitFunctions
     public delegate void D_StartPlayerUpdates();
     public event D_StartPlayerUpdates d_StartPlayerUpdates;
 
+    //this is reference for the universalUI that get's updated when there are changes to player stats
+    //assigned in editor
+    public CameraUIScript cameraUIScript;
+
     //only applicable to player
     public int defaultEnergy;
     public int currEnergy;
@@ -29,6 +33,8 @@ public class PlayerFunctions : BaseUnitFunctions
 
     //for loading the playerFunction loaded as the playerUnit
     //called by combatManager during combatStart after loading
+
+
 
     public void LoadPlayerUnitFromFile(PlayerUnit unit)
     {
@@ -51,7 +57,6 @@ public class PlayerFunctions : BaseUnitFunctions
         //initializes creativity stats for players only
         defaultEnergy = playerUnit.energy;
         currEnergy = defaultEnergy;
-
 
     }
 
@@ -116,8 +121,8 @@ public class PlayerFunctions : BaseUnitFunctions
         //CreativityText.text = $"{currCreativity}/{maxCreativity}";
 
         //updates the HP and creativity in UI
-        transform.parent.GetComponent<PlayingField>().cameraUIScript.UpdateUIObjectsActive(currHP, maxHP, maxCreativity);
-
+        cameraUIScript.UpdateUIObjectsHP(currHP, maxHP);
+        cameraUIScript.UpdateUIObjectsCretivity(currCreativity, maxCreativity);
     }
     //value parameter is used to increase or decrease currEnergy by value
     public void AlterEnergy(int value)
