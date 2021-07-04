@@ -165,6 +165,13 @@ public class SelectionManager : MonoBehaviour
         //sets initial scraps values, the currentForgeCost dictates the first price of forging
         universalInformation.scraps = 300;
         universalInformation.currentForgeCost = 50;
+        //TEST LOGIC TO INCLUDE BLUEPRINTS IMMEDIATELY
+        List<AllGearTypes> tempBPList = new List<AllGearTypes>();
+        tempBPList.Add(AllGearTypes.Sword);
+        tempBPList.Add(AllGearTypes.Axe);
+        universalInformation.bluePrints = tempBPList;
+        /////////////////////
+
         UniversalSaveState.SaveUniversalInformation(universalInformation);
 
         SceneManager.LoadScene("OverworldScene");

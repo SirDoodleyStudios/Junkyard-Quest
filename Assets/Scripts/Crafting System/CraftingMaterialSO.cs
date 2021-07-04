@@ -5,7 +5,7 @@ using System;
 
 [Serializable]
 [CreateAssetMenu(fileName = "Crafting Material", menuName = "Crafting Material")]
-public class CraftingMaterial : ScriptableObject
+public class CraftingMaterialSO : ScriptableObject
 {
     //what material it is
     public AllMaterialTypes materialType;

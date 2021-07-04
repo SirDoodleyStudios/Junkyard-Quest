@@ -8,6 +8,7 @@ using System;
 [CreateAssetMenu(fileName = "Card", menuName = "Card")]
 public class Card : ScriptableObject
 {
+
     public string cardName;
 
     public string effectText;

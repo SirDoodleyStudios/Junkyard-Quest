@@ -65,6 +65,12 @@ public class UniversalInformation
 
     //this is a counter that assigns the worn-out status on the player if the last battle that he survived overkilled him
     public int wornOutCount;
+
+    //contains the blueprints that the plye currently posses
+    public List<AllGearTypes> bluePrints;
+
+    //contains all the gear effects that the player currently posses
+    public List<AllMaterialEffects> materialEffects;
 }
 
 

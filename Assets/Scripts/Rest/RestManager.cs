@@ -22,6 +22,9 @@ public class RestManager : MonoBehaviour
     public TextMeshProUGUI meditateText;
     public TextMeshProUGUI remainingActionsCountText;
 
+    //gameObject reference for the CraftingUI
+    public GameObject craftingUI;
+
     //the universal Header UI, assigned in editor
     public CameraUIScript cameraUIScript;
     //initialize the header and deck viewers
@@ -75,6 +78,11 @@ public class RestManager : MonoBehaviour
         universalInfo.playerStats.currCreativity = tempCreativity;
         cameraUIScript.AssignUIObjects(universalInfo);
         UpdateRemainingActions();
+    }
+
+    public void CraftingButton()
+    {
+        craftingUI.SetActive(true);
     }
 
     //function to disable all action buttons when remaining actions count is 0
