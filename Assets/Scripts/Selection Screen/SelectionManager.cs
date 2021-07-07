@@ -53,6 +53,7 @@ public class SelectionManager : MonoBehaviour
         {
             if (pointedObject.collider != null)
             {
+                Debug.Log(pointedObject.point);
                 GameObject chosenObject = pointedObject.collider.gameObject;
                 tempInt = chosenObject.transform.GetSiblingIndex();
 
@@ -83,6 +84,9 @@ public class SelectionManager : MonoBehaviour
         d_ClassChosenEvent(tempInt);
     }
 
+    //TEST FOR INCLUDING MATERIALS IMMEDIATELY AT THE VERY START BUT THIS IS SUPOSED TO BE DELETED
+    //SET IN EDITOR
+    public List<CraftingMaterialSO> testListMaterials = new List<CraftingMaterialSO>();
     //loads the scene when play button is clicked
     public void SwitchToOverworld()
     {
@@ -165,12 +169,19 @@ public class SelectionManager : MonoBehaviour
         //sets initial scraps values, the currentForgeCost dictates the first price of forging
         universalInformation.scraps = 300;
         universalInformation.currentForgeCost = 50;
+
         //TEST LOGIC TO INCLUDE BLUEPRINTS IMMEDIATELY
         List<AllGearTypes> tempBPList = new List<AllGearTypes>();
         tempBPList.Add(AllGearTypes.Sword);
         tempBPList.Add(AllGearTypes.Axe);
         universalInformation.bluePrints = tempBPList;
-        /////////////////////
+        //TEST FOR INCLUDING MATERIALS IMMEDIATELY
+        List<CraftingMaterialSO> tempCraftList = new List<CraftingMaterialSO>();
+        foreach (CraftingMaterialSO craftingMaterialSO in testListMaterials)
+        {
+            tempCraftList.Add(craftingMaterialSO);
+        }
+        universalInformation.craftingMaterialSOList = tempCraftList;
 
         UniversalSaveState.SaveUniversalInformation(universalInformation);
 

@@ -10,6 +10,10 @@ public class CraftingManager : MonoBehaviour
     //will contain all generated blueprintsSO from blueprints
     List<BluePrintSO> blueprintSOList = new List<BluePrintSO>();
 
+    //will contain all materilSOs available for use
+    //will only be instanstiated at start because crafting UI ends after a successful craft
+    List<CraftingMaterialSO> materialSOList = new List<CraftingMaterialSO>();
+
     //SO instantiated
     public CraftingMaterialSO craftingMaterial;
 
@@ -18,6 +22,8 @@ public class CraftingManager : MonoBehaviour
     public GameObject materialSlotsPanel;
     //will be used for instantiating the blueprints
     public BluePrintSO referenceBluePrintSO;
+    //will be used for instantiating materials
+    public CraftingMaterialSO referenceMaaterialSO;
 
     //the content view for blueprints
     public GameObject craftingChoiceUI;
@@ -57,6 +63,22 @@ public class CraftingManager : MonoBehaviour
         }
         //automaticaly shows the first blueprint as default
         ShowBluePrint(blueprintSOList[0]);
+
+        //the wrapper for materials should be decoded in the mono scripts
+        foreach(CraftingMaterialWrapper wrapper in universalInfo.craftingMaterialWrapperList)
+        {
+            CraftingMaterialSO tempMaterial = Instantiate(referenceMaaterialSO);
+            tempMaterial.materialType = wrapper.materialType;
+            tempMaterial.materialPrefix = wrapper.materialPrefix;
+            //for ddecoding the material
+            List<AllMaterialEffects> tempEffectsList = new List<AllMaterialEffects>();
+            foreach(AllMaterialEffects effect in universalInfo.materialEffects)
+            {
+                tempEffectsList.Add(effect);
+            }
+            materialSOList.Add(tempMaterial);
+        }
+
     }
 
     //function to open the blueprint content viewer too choose a blueprint to craft with
@@ -73,7 +95,8 @@ public class CraftingManager : MonoBehaviour
         for (int i = 0; blueprintSOList.Count > i; i++)
         {
             //if the prefab is already existing, if it is, it sould always be disabled already
-            if (blueprintContentTrans.GetChild(i).gameObject != null)
+            //to check if there are children, under bluePrintContent, use childCount and i comparison
+            if (blueprintContentTrans.childCount - 1 >= i && blueprintContentTrans.GetChild(i).gameObject != null)
             {
                 GameObject blueprintObject = blueprintContentTrans.GetChild(i).gameObject;
                 BluePrintSOHolder bluePrintSOHolder = blueprintObject.GetComponent<BluePrintSOHolder>();
@@ -157,6 +180,17 @@ public class CraftingManager : MonoBehaviour
         return materialSlotPositions;
     }
 
+    //called when a material slot is clicked in blueprint UI
+    void ChooseMaterialForSlot()
+    {
+        craftingChoiceUI.SetActive(true);
+        content = choosingContent.material;
+        materialContentViewer.SetActive(true);
+        //decode the mterial wrapper list in universalInfo back to SO
+        ///////////////////////HERE//////////////////////////
+
+    }
+
     //logic for going back from choice panel
     //assigned in editor
     public void EndChoiceButton()
@@ -189,20 +223,19 @@ public class CraftingManager : MonoBehaviour
     //for clicking choices when picking a blueprint or material
     private void Update()
     {
-        //update is for choosing a an option in blueprint and material choice, will only turn true if the buttons to choose are clicked
-        if (isChoosing)
+        PointRay = Input.mousePosition;
+        ray = Camera.main.ScreenPointToRay(PointRay);
+        pointedObject = Physics2D.GetRayIntersection(ray);
+
+        //if the clicked object is a card and has a collider
+        if (Input.GetMouseButtonDown(0))
         {
-            PointRay = Input.mousePosition;
-            ray = Camera.main.ScreenPointToRay(PointRay);
-            pointedObject = Physics2D.GetRayIntersection(ray);
-
-            //if the clicked object is a card and has a collider
-            if (Input.GetMouseButtonDown(0))
+            if (pointedObject.collider != null)
             {
-
-                if (pointedObject.collider != null)
+                //if is choosing, follow the blueprint aor material list logic
+                //update is for choosing a an option in blueprint and material choice, will only turn true if the buttons to choose are clicked
+                if (isChoosing)
                 {
-
                     GameObject chosenPrefab = pointedObject.collider.gameObject;
                     //logic for choice if choosing for blueprint
                     if (content == choosingContent.blueprint)
@@ -222,13 +255,29 @@ public class CraftingManager : MonoBehaviour
                         ShowBluePrint(chosenPrefab.GetComponent<BluePrintSOHolder>().blueprintSO);
 
                     }
+                    //logic for choosing materials
+                    else if (content == choosingContent.material)
+                    {
+
+                    }
 
                     //disables identifier
                     isChoosing = false;
                 }
+                //if not choosing, only monitor clicks on the material slot object
+                //if we got here, it means that we have interacted with the collider of the mteril slot and that only since they're the only objects that has colliders in blueprint UI
+                else
+                {
+
+                    ChooseMaterialForSlot();
+
+
+                }
 
             }
+
         }
+        
     }
 
 }

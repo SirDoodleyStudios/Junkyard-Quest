@@ -2535,6 +2535,11 @@ MonoBehaviour:
   playerPanel: {fileID: 1190044649}
   rolePanel: {fileID: 31512080}
   directory: {fileID: 990326082}
+  testListMaterials:
+  - {fileID: 11400000, guid: 2bae158f67f0dc745a1d49c1d3db063d, type: 2}
+  - {fileID: 11400000, guid: ee3d81e5b5b65d94b92791267a073882, type: 2}
+  - {fileID: 11400000, guid: c666236a585854942bc715c025c6e7e4, type: 2}
+  - {fileID: 11400000, guid: f38e00b0adceee843870fe59fdf6d4ce, type: 2}
 --- !u!1 &1690283233
 GameObject:
   m_ObjectHideFlags: 0

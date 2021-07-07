@@ -76,6 +76,19 @@ public static class UniversalSaveState
     {
         PlayerUnitWrapper playerWrapper = new PlayerUnitWrapper(universalInfo.playerStats);
         universalInfo.playerStatsWrapper = playerWrapper;
+        //for craftihng materials, convert them to wrappers first
+        //when the wrappers are loaded, the loading script will have to be the one to decode it because we cant instantiate here
+        if(universalInfo.craftingMaterialSOList.Count != 0)
+        {
+            List<CraftingMaterialWrapper> tempWrapperList = new List<CraftingMaterialWrapper>();
+            foreach (CraftingMaterialSO craftingMaterial in universalInfo.craftingMaterialSOList)
+            {
+                CraftingMaterialWrapper craftingMaterialWrapper = new CraftingMaterialWrapper(craftingMaterial);
+                tempWrapperList.Add(craftingMaterialWrapper);
+            }
+            universalInfo.craftingMaterialWrapperList = tempWrapperList;
+
+        }
 
         string universal = JsonUtility.ToJson(universalInfo);
         File.WriteAllText(Application.persistentDataPath + "/UniversalInfo.json", universal);
@@ -99,6 +112,7 @@ public static class UniversalSaveState
         loadedUnit.chosenPlayer = unitWrapper.chosenPlayer;
         loadedUnit.currHP = unitWrapper.currHP;
         loadedUnit.currCreativity = unitWrapper.currCreativity;
+
         //after the extract, assign the playerUnit in the universalInformation
         loadedState.playerStats = loadedUnit;
 
@@ -292,6 +306,31 @@ public class PlayerUnitWrapper
         chosenPlayer = unit.chosenPlayer;
         currHP = unit.currHP;
         currCreativity = unit.currCreativity;
+    }
+}
+
+//serializable wrapper of the craftingMaterialSO
+//universalSaveState will receive the SO itself then convert it to this wrapper fir saving and loading
+[Serializable]
+public class CraftingMaterialWrapper
+{
+    //what material it is
+    public AllMaterialTypes materialType;
+
+    //the bound prefix
+    public AllMaterialPrefixes materialPrefix;
+
+    //material's available Effects upon crafting
+    public List<AllMaterialEffects> materialEffects = new List<AllMaterialEffects>();
+
+    public CraftingMaterialWrapper(CraftingMaterialSO craftingMaterialSO)
+    {
+        materialType = craftingMaterialSO.materialType;
+        materialPrefix = craftingMaterialSO.materialPrefix;
+        foreach (AllMaterialEffects materialEffect in craftingMaterialSO.materialEffects)
+        {
+            materialEffects.Add(materialEffect);
+        }
     }
 }
 

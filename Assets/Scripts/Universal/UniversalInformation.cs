@@ -69,6 +69,11 @@ public class UniversalInformation
     //contains the blueprints that the plye currently posses
     public List<AllGearTypes> bluePrints;
 
+    //contains the materials and its' attributes in a wrapper
+    //when saved in universalSaveState, this will be converted in a wrapper for easy loading
+    public List<CraftingMaterialSO> craftingMaterialSOList;
+    public List<CraftingMaterialWrapper> craftingMaterialWrapperList;
+
     //contains all the gear effects that the player currently posses
     public List<AllMaterialEffects> materialEffects;
 }
