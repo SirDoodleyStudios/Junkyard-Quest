@@ -5,5 +5,5 @@ using UnityEngine;
 public class CraftingMaterialSOHolder : MonoBehaviour
 {
 
-    public CraftingMaterialSOHolder craftingMaterialSO;
+    public CraftingMaterialSO craftingMaterialSO;
 }

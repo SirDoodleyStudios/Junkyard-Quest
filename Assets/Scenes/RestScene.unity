@@ -1653,14 +1653,15 @@ MonoBehaviour:
   materialSlotsPanel: {fileID: 577316688}
   referenceBluePrintSO: {fileID: 11400000, guid: e57e7914012a47747a147cb5c4f79323,
     type: 2}
-  referenceMaaterialSO: {fileID: 0}
+  referenceMaaterialSO: {fileID: 11400000, guid: 7976d372efeda3f49b8bcf1a12ad3204,
+    type: 2}
   craftingChoiceUI: {fileID: 555284416}
-  blueprintContentViewer: {fileID: 7890400996935946010}
-  materialContentViewer: {fileID: 2231658060807782505}
+  choiceContentViewer: {fileID: 7890400996935946010}
   blueprintReference: {fileID: 6963627271862642402, guid: e592ef8d034657b44abeeb276f548230,
     type: 3}
   materialReference: {fileID: 8335974971350277751, guid: 6d0c2566fc2a4374b8798a51b64e9911,
     type: 3}
+  contentGridLayoutGroup: {fileID: 7890400996935946013}
 --- !u!1 &955138992
 GameObject:
   m_ObjectHideFlags: 0
@@ -3998,10 +3999,20 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 555284417}
     m_Modifications:
+    - target: {fileID: 5579753639499317313, guid: d8c1b9d4440305c4b88572b4e9012b4e,
+        type: 3}
+      propertyPath: m_CellSize.x
+      value: 1000
+      objectReference: {fileID: 0}
+    - target: {fileID: 5579753639499317313, guid: d8c1b9d4440305c4b88572b4e9012b4e,
+        type: 3}
+      propertyPath: m_ConstraintCount
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 5940799234971795914, guid: d8c1b9d4440305c4b88572b4e9012b4e,
         type: 3}
       propertyPath: m_SizeDelta.y
-      value: 260
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7377797184086897600, guid: d8c1b9d4440305c4b88572b4e9012b4e,
         type: 3}
@@ -4173,6 +4184,11 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8320440755048189810, guid: d8c1b9d4440305c4b88572b4e9012b4e,
+        type: 3}
+      propertyPath: m_Name
+      value: Content View UI
+      objectReference: {fileID: 0}
     - target: {fileID: 8320440755048189811, guid: d8c1b9d4440305c4b88572b4e9012b4e,
         type: 3}
       propertyPath: m_SizeDelta.y
@@ -4180,12 +4196,6 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: d8c1b9d4440305c4b88572b4e9012b4e, type: 3}
---- !u!1 &2231658060807782505 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 7377797184086897600, guid: d8c1b9d4440305c4b88572b4e9012b4e,
-    type: 3}
-  m_PrefabInstance: {fileID: 2231658060807782504}
-  m_PrefabAsset: {fileID: 0}
 --- !u!224 &7890400996327200033 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 8320440753514698057, guid: d8c1b9d4440305c4b88572b4e9012b4e,
@@ -4198,3 +4208,15 @@ GameObject:
     type: 3}
   m_PrefabInstance: {fileID: 2231658060807782504}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &7890400996935946013 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 8320440755048189837, guid: d8c1b9d4440305c4b88572b4e9012b4e,
+    type: 3}
+  m_PrefabInstance: {fileID: 2231658060807782504}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7890400996935946010}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8a8695521f0d02e499659fee002a26c2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

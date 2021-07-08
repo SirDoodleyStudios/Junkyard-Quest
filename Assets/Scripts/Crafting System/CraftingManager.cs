@@ -27,11 +27,12 @@ public class CraftingManager : MonoBehaviour
 
     //the content view for blueprints
     public GameObject craftingChoiceUI;
-    public GameObject blueprintContentViewer;
-    public GameObject materialContentViewer;
+    public GameObject choiceContentViewer;
     //reference prefabs of blueprint and material
     public GameObject blueprintReference;
     public GameObject materialReference;
+    //the Grid layout group of the scroll content viewer, will be used to set the grid size depending if material or blueprit is to be chosen
+    public GridLayoutGroup contentGridLayoutGroup;
 
     UniversalInformation universalInfo;
 
@@ -87,11 +88,13 @@ public class CraftingManager : MonoBehaviour
         //enables the viewer gameObject itself
         craftingChoiceUI.SetActive(true);
         //enable the blueprint contentviewer
-        blueprintContentViewer.SetActive(true);
+        choiceContentViewer.SetActive(true);
+        contentGridLayoutGroup.cellSize = new Vector2(250, 250);
+        contentGridLayoutGroup.constraintCount = 4;
 
         //generate choices depending on how many blueprints are in blueprint list
         //if an there is already an existing prefab in the blueprint choices, enable that then just assign the bluprintSO
-        Transform blueprintContentTrans = blueprintContentViewer.transform;
+        Transform blueprintContentTrans = choiceContentViewer.transform;
         for (int i = 0; blueprintSOList.Count > i; i++)
         {
             //if the prefab is already existing, if it is, it sould always be disabled already
@@ -184,9 +187,22 @@ public class CraftingManager : MonoBehaviour
     void ChooseMaterialForSlot()
     {
         craftingChoiceUI.SetActive(true);
+        //enable the blueprint contentviewer
+        choiceContentViewer.SetActive(true);
+        contentGridLayoutGroup.cellSize = new Vector2(1000, 250);
+        contentGridLayoutGroup.constraintCount = 1;
+
         content = choosingContent.material;
-        materialContentViewer.SetActive(true);
+        //materialContentViewer.SetActive(true);
+        choiceContentViewer.SetActive(true);
         //decode the mterial wrapper list in universalInfo back to SO
+        foreach (CraftingMaterialSO materialSO in materialSOList)
+        {
+            GameObject tempMaterial = Instantiate(materialReference, choiceContentViewer.transform);
+            tempMaterial.GetComponent<CraftingMaterialSOHolder>().craftingMaterialSO = materialSO;
+            tempMaterial.SetActive(true);
+
+        }
         ///////////////////////HERE//////////////////////////
 
     }
@@ -198,13 +214,13 @@ public class CraftingManager : MonoBehaviour
         if (content == choosingContent.blueprint)
         {
             //disables all choices under the content viewer
-            foreach (Transform blueprintTrans in blueprintContentViewer.transform)
+            foreach (Transform blueprintTrans in choiceContentViewer.transform)
             {
                 GameObject blueprintObject = blueprintTrans.gameObject;
                 blueprintObject.SetActive(false);
             }
             //enable the blueprint contentviewer
-            blueprintContentViewer.SetActive(false);
+            choiceContentViewer.SetActive(false);
             //enables the viewer gameObject itself
         }
 
@@ -218,6 +234,14 @@ public class CraftingManager : MonoBehaviour
     {
         //disables the Crafting UI itself
         transform.parent.gameObject.SetActive(false);
+    }
+
+    //go back to crafting UI
+    public void EndChoosingButton()
+    {
+        //disables the content viewer
+        craftingChoiceUI.SetActive(false);
+        isChoosing = false;
     }
 
     //for clicking choices when picking a blueprint or material
@@ -241,13 +265,13 @@ public class CraftingManager : MonoBehaviour
                     if (content == choosingContent.blueprint)
                     {
                         //disables all choices under the content viewer
-                        foreach (Transform blueprintTrans in blueprintContentViewer.transform)
+                        foreach (Transform blueprintTrans in choiceContentViewer.transform)
                         {
                             GameObject blueprintObject = blueprintTrans.gameObject;
                             blueprintObject.SetActive(false);
                         }
                         //enable the blueprint contentviewer
-                        blueprintContentViewer.SetActive(false);
+                        choiceContentViewer.SetActive(false);
                         //enables the viewer gameObject itself
                         craftingChoiceUI.SetActive(false);
 
