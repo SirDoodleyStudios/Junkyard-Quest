@@ -11,6 +11,8 @@ TagManager:
   - Link
   - Player Choice
   - Class Choice
+  - Material
+  - Blueprint
   layers:
   - Default
   - TransparentFX

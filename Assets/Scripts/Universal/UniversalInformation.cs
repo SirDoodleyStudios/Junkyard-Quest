@@ -75,7 +75,7 @@ public class UniversalInformation
     public List<CraftingMaterialWrapper> craftingMaterialWrapperList;
 
     //contains all the gear effects that the player currently posses
-    public List<AllMaterialEffects> materialEffects;
+    //public List<AllMaterialEffects> materialEffects;
 }
 
 

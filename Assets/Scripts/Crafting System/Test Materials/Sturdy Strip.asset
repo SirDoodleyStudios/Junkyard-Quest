@@ -14,4 +14,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   materialType: 3
   materialPrefix: 0
+  materialSprite: {fileID: 21300000, guid: 652f7d66f330e4643a74c1b53ed48c9d, type: 3}
   materialEffects: 00000000

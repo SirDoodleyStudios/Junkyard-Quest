@@ -15,6 +15,9 @@ public class CardTagManager
 
     //for Card Abilities Specificalliy because the Enum keys must be ability for ability cards
     public static Dictionary<AllAbilities, string> abilityEffectDescriptions = new Dictionary<AllAbilities, string>();
+
+    //for material effect descriptions
+    public static Dictionary<AllMaterialEffects, string> materialEffectDescriptions = new Dictionary<AllMaterialEffects, string>();
     //This is called by combatmanager awake then activates all initializers
 
     //identifier so that the static dictionaries dont retrigger addition of entries
@@ -30,6 +33,7 @@ public class CardTagManager
             JigsawDictionaryInitialize();
             CardEffectDictionaryInitialize();
             AbilityCardDescriptionInitialize();
+            MaterialEffectDescriptionInitialize();
         }
         isInitialized = true;
 
@@ -229,5 +233,19 @@ public class CardTagManager
 
     }
 
+    //for Treasure/Relic/Material Effects
+    static void MaterialEffectDescriptionInitialize()
+    {
+        materialEffectDescriptions.Add(AllMaterialEffects.LasterStand, "Laster Stand: Can take 2 turns before getting overkilled. Worn-out stacks are doubled");
+        materialEffectDescriptions.Add(AllMaterialEffects.Eureka, "Eureka: Gain 10 Creativity at start of combat but can no longer passively regenerate Creativity each turn");
+        materialEffectDescriptions.Add(AllMaterialEffects.DeepSleep, "Deep Sleep: Resting in camp costs 2 actions but fully heals HP");
+        materialEffectDescriptions.Add(AllMaterialEffects.ForgeFriendly, "Forge Friendly: Forging cost starts at 40 scraps");
+
+    }
+    //for fetching material Effect Descriptions
+    public static string GetMaterialEffectDescription(AllMaterialEffects materialEffect)
+    {
+        return materialEffectDescriptions[materialEffect];
+    }
 
 }

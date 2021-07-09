@@ -64,7 +64,7 @@ public enum AllMaterialTypes
     Slab,
     Hunk,
     Pointy,
-    Strip,
+    Strips,
     Stick,
     Board,
     Ornament

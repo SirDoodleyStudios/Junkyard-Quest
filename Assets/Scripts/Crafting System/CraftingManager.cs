@@ -5,6 +5,10 @@ using UnityEngine.UI;
 
 public class CraftingManager : MonoBehaviour
 {
+    //Rest Manager reference for calling the remaining actions update when a successful craft is done
+    //assigned in editor
+    public RestManager restManager;
+
     //will contain all available bluprints for crafting
     List<AllGearTypes> blueprints = new List<AllGearTypes>();
     //will contain all generated blueprintsSO from blueprints
@@ -13,9 +17,6 @@ public class CraftingManager : MonoBehaviour
     //will contain all materilSOs available for use
     //will only be instanstiated at start because crafting UI ends after a successful craft
     List<CraftingMaterialSO> materialSOList = new List<CraftingMaterialSO>();
-
-    //SO instantiated
-    public CraftingMaterialSO craftingMaterial;
 
     //assigned from editor
     public Image bluePrintImage;
@@ -26,14 +27,21 @@ public class CraftingManager : MonoBehaviour
     public CraftingMaterialSO referenceMaaterialSO;
 
     //the content view for blueprints
-    public GameObject craftingChoiceUI;
-    public GameObject choiceContentViewer;
+    public GameObject craftingChoiceUIBlueprint;
+    public GameObject craftingChoiceUIMaterial;
+    public GameObject blueprintContentViewer;
+    public GameObject materialContentViewer;
     //reference prefabs of blueprint and material
     public GameObject blueprintReference;
     public GameObject materialReference;
     //the Grid layout group of the scroll content viewer, will be used to set the grid size depending if material or blueprit is to be chosen
-    public GridLayoutGroup contentGridLayoutGroup;
+    public GridLayoutGroup blueprintGridLayoutGroup;
+    public GridLayoutGroup materialGridLayoutGroup;
+    //pop-up UI for choosing the effect of the clicked material in content viewer
+    public GameObject chooseMaterialEffectUI;
+    public ChooseMaterialEffectUI chooseMaterialEffectUIScript;
 
+    //the load file
     UniversalInformation universalInfo;
 
     //identifier to check whether the player is choosing, will enable all functions in Update
@@ -41,6 +49,9 @@ public class CraftingManager : MonoBehaviour
     //will be used for processing the objects chosen during update
     enum choosingContent { blueprint, material}
     choosingContent content;
+
+    //holder for the materialSlot prefab to be configured after choosing a material
+    GameObject currentMaterialSlot;
 
     //for mouse pointing and clicking
     Vector2 PointRay;
@@ -73,32 +84,44 @@ public class CraftingManager : MonoBehaviour
             tempMaterial.materialPrefix = wrapper.materialPrefix;
             //for ddecoding the material
             List<AllMaterialEffects> tempEffectsList = new List<AllMaterialEffects>();
-            foreach(AllMaterialEffects effect in universalInfo.materialEffects)
+            foreach(AllMaterialEffects effect in wrapper.materialEffects)
             {
                 tempEffectsList.Add(effect);
             }
+            tempMaterial.materialEffects = tempEffectsList;
             materialSOList.Add(tempMaterial);
         }
-
     }
 
     //function to open the blueprint content viewer too choose a blueprint to craft with
     public void ChooseBluePrintButton()
     {
         //enables the viewer gameObject itself
-        craftingChoiceUI.SetActive(true);
+        craftingChoiceUIBlueprint.SetActive(true);
         //enable the blueprint contentviewer
-        choiceContentViewer.SetActive(true);
-        contentGridLayoutGroup.cellSize = new Vector2(250, 250);
-        contentGridLayoutGroup.constraintCount = 4;
+        blueprintContentViewer.SetActive(true);
+        blueprintGridLayoutGroup.cellSize = new Vector2(250, 250);
+        blueprintGridLayoutGroup.constraintCount = 4;
+
+        Transform blueprintContentTrans = blueprintContentViewer.transform;
+        ////first, put all existing blueprint prefabs as the first siblings so that it's easier to re-enable them if needed
+        //foreach (Transform contentTrans in blueprintContentTrans)
+        //{
+        //    if (contentTrans.CompareTag("Blueprint"))
+        //    {
+        //        //will set the selected object at the beginning of the transform
+        //        contentTrans.SetAsFirstSibling();
+        //    }
+        //}
 
         //generate choices depending on how many blueprints are in blueprint list
         //if an there is already an existing prefab in the blueprint choices, enable that then just assign the bluprintSO
-        Transform blueprintContentTrans = choiceContentViewer.transform;
+
         for (int i = 0; blueprintSOList.Count > i; i++)
         {
             //if the prefab is already existing, if it is, it sould always be disabled already
             //to check if there are children, under bluePrintContent, use childCount and i comparison
+            //the foreach above ensures that all blueprint objects are at the beginning so if the current object checked is not a blueprint, we instantiate a new one
             if (blueprintContentTrans.childCount - 1 >= i && blueprintContentTrans.GetChild(i).gameObject != null)
             {
                 GameObject blueprintObject = blueprintContentTrans.GetChild(i).gameObject;
@@ -186,24 +209,59 @@ public class CraftingManager : MonoBehaviour
     //called when a material slot is clicked in blueprint UI
     void ChooseMaterialForSlot()
     {
-        craftingChoiceUI.SetActive(true);
+        craftingChoiceUIMaterial.SetActive(true);
         //enable the blueprint contentviewer
-        choiceContentViewer.SetActive(true);
-        contentGridLayoutGroup.cellSize = new Vector2(1000, 250);
-        contentGridLayoutGroup.constraintCount = 1;
+        materialContentViewer.SetActive(true);
+        materialGridLayoutGroup.cellSize = new Vector2(1000, 250);
+        materialGridLayoutGroup.constraintCount = 1;
 
         content = choosingContent.material;
+        Transform materialContentTrans = materialContentViewer.transform;
         //materialContentViewer.SetActive(true);
-        choiceContentViewer.SetActive(true);
+        //choiceContentViewer.SetActive(true);
         //decode the mterial wrapper list in universalInfo back to SO
-        foreach (CraftingMaterialSO materialSO in materialSOList)
+        for (int i = 0; materialSOList.Count > i; i++)
         {
-            GameObject tempMaterial = Instantiate(materialReference, choiceContentViewer.transform);
-            tempMaterial.GetComponent<CraftingMaterialSOHolder>().craftingMaterialSO = materialSO;
-            tempMaterial.SetActive(true);
-
+            //if the prefab is already existing, if it is, it sould always be disabled already
+            //to check if there are children, under bluePrintContent, use childCount and i comparison
+            //the foreach above ensures that all blueprint objects are at the beginning so if the current object checked is not a blueprint, we instantiate a new one
+            if (materialContentTrans.childCount - 1 >= i && materialContentTrans.GetChild(i).gameObject != null)
+            {
+                GameObject materialObject = materialContentTrans.GetChild(i).gameObject;
+                CraftingMaterialSOHolder materialSOHolder = materialObject.GetComponent<CraftingMaterialSOHolder>();
+                //assign accordingly with the SO in list
+                materialSOHolder.craftingMaterialSO = materialSOList[i];
+                //enable the option
+                materialObject.SetActive(true);
+            }
+            //if there is no blueprint Prefab under the content, instantiate a new one
+            else
+            {
+                //instantiate under material content
+                GameObject materialObject = Instantiate(materialReference, materialContentTrans);
+                CraftingMaterialSOHolder materialSOHolder = materialObject.GetComponent<CraftingMaterialSOHolder>();
+                //assign accordingly with the SO in list
+                materialSOHolder.craftingMaterialSO = materialSOList[i];
+                //enable the option
+                materialObject.SetActive(true);
+            }
         }
-        ///////////////////////HERE//////////////////////////
+        //identifier for choosing in content viewers
+        isChoosing = true;
+    }
+
+    //function for initiating the choose material effect
+    void ActivateChooseMaterialEffect(CraftingMaterialSOHolder craftingMaterialSOHolder)
+    {
+        chooseMaterialEffectUI.SetActive(true);
+        chooseMaterialEffectUIScript.StartMaterialEffectChoice(craftingMaterialSOHolder);
+
+    }
+
+    //Function to assign the chosen material to the slot
+    //called by the effectChoice buttons in the material Prefab
+    void AssignMaterialSlot(CraftingMaterialSOHolder materialSOHolder)
+    {
 
     }
 
@@ -214,34 +272,41 @@ public class CraftingManager : MonoBehaviour
         if (content == choosingContent.blueprint)
         {
             //disables all choices under the content viewer
-            foreach (Transform blueprintTrans in choiceContentViewer.transform)
+            foreach (Transform blueprintTrans in blueprintContentViewer.transform)
             {
                 GameObject blueprintObject = blueprintTrans.gameObject;
                 blueprintObject.SetActive(false);
             }
-            //enable the blueprint contentviewer
-            choiceContentViewer.SetActive(false);
+            //disable the blueprint contentviewer
+            blueprintContentViewer.SetActive(false);
             //enables the viewer gameObject itself
+            craftingChoiceUIBlueprint.SetActive(false);
+        }
+        else if (content == choosingContent.material)
+        {
+            foreach (Transform materialTrans in materialContentViewer.transform)
+            {
+                GameObject materialObject = materialTrans.gameObject;
+                materialObject.SetActive(false);
+            }
+            //disable the material contentviewer
+            materialContentViewer.SetActive(false);
+            //enables the viewer gameObject itself
+            craftingChoiceUIMaterial.SetActive(false);
+            //resets the current material Slot
+            currentMaterialSlot = null;
         }
 
-        craftingChoiceUI.SetActive(false);
-        isChoosing = false;
 
+        isChoosing = false;
     }
+
 
     //going back to rest UI
     public void EndCraftingButton()
     {
         //disables the Crafting UI itself
         transform.parent.gameObject.SetActive(false);
-    }
-
-    //go back to crafting UI
-    public void EndChoosingButton()
-    {
-        //disables the content viewer
-        craftingChoiceUI.SetActive(false);
-        isChoosing = false;
     }
 
     //for clicking choices when picking a blueprint or material
@@ -265,15 +330,15 @@ public class CraftingManager : MonoBehaviour
                     if (content == choosingContent.blueprint)
                     {
                         //disables all choices under the content viewer
-                        foreach (Transform blueprintTrans in choiceContentViewer.transform)
+                        foreach (Transform blueprintTrans in blueprintContentViewer.transform)
                         {
                             GameObject blueprintObject = blueprintTrans.gameObject;
                             blueprintObject.SetActive(false);
                         }
                         //enable the blueprint contentviewer
-                        choiceContentViewer.SetActive(false);
+                        blueprintContentViewer.SetActive(false);
                         //enables the viewer gameObject itself
-                        craftingChoiceUI.SetActive(false);
+                        craftingChoiceUIBlueprint.SetActive(false);
 
                         //send the SO assigned for the blueprint prefab
                         ShowBluePrint(chosenPrefab.GetComponent<BluePrintSOHolder>().blueprintSO);
@@ -282,7 +347,8 @@ public class CraftingManager : MonoBehaviour
                     //logic for choosing materials
                     else if (content == choosingContent.material)
                     {
-
+                        //sends the CraftingMaterialHolder to the prefab inside the chooseEffectUI in the script
+                        ActivateChooseMaterialEffect(pointedObject.collider.gameObject.GetComponent<CraftingMaterialSOHolder>());
                     }
 
                     //disables identifier
@@ -292,10 +358,9 @@ public class CraftingManager : MonoBehaviour
                 //if we got here, it means that we have interacted with the collider of the mteril slot and that only since they're the only objects that has colliders in blueprint UI
                 else
                 {
-
+                    //assign the chosen prefab slot as the current slot
+                    currentMaterialSlot = pointedObject.collider.gameObject;
                     ChooseMaterialForSlot();
-
-
                 }
 
             }

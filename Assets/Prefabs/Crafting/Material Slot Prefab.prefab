@@ -73,6 +73,7 @@ GameObject:
   m_Component:
   - component: {fileID: 58940006448242166}
   - component: {fileID: 58940006448242167}
+  - component: {fileID: 3769400057088208027}
   m_Layer: 5
   m_Name: Material Slot Prefab
   m_TagString: Untagged
@@ -111,6 +112,21 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 58940006448242153}
   m_CullTransparentMesh: 0
+--- !u!114 &3769400057088208027
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 58940006448242153}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 961736576b88228489c2d90212b68735, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  materialImage: {fileID: 8221683010892450471}
+  materialName: {fileID: 58940007661246279}
+  materialEffect: {fileID: 58940007393995290}
 --- !u!1 &58940006464157438
 GameObject:
   m_ObjectHideFlags: 0
