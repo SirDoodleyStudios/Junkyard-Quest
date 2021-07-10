@@ -225,8 +225,8 @@ RectTransform:
   m_Father: {fileID: 6107059080843514379}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.025, y: 0.01}
-  m_AnchorMax: {x: 0.975, y: 0.99}
+  m_AnchorMin: {x: 0.025, y: 0.05}
+  m_AnchorMax: {x: 0.975, y: 0.95}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
@@ -629,8 +629,8 @@ RectTransform:
   m_Father: {fileID: 76639697505828812}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.025, y: 0.01}
-  m_AnchorMax: {x: 0.975, y: 0.99}
+  m_AnchorMin: {x: 0.025, y: 0.05}
+  m_AnchorMax: {x: 0.975, y: 0.95}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
@@ -1147,7 +1147,11 @@ MonoBehaviour:
   craftingMaterialSO: {fileID: 0}
   materialImage: {fileID: 4515679353669244078}
   effectTextParentObject: {fileID: 5206110364393999411}
+  effectTextList: []
   materialName: {fileID: 7885086402151846494}
+  effectButton1: {fileID: 0}
+  effectButton2: {fileID: 0}
+  effectButton3: {fileID: 0}
   chosenEffect: 0
 --- !u!1 &8994732594816383910
 GameObject:
@@ -1181,8 +1185,8 @@ RectTransform:
   m_Father: {fileID: 5417980487832400835}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.025, y: 0.01}
-  m_AnchorMax: {x: 0.975, y: 0.99}
+  m_AnchorMin: {x: 0.025, y: 0.05}
+  m_AnchorMax: {x: 0.975, y: 0.95}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}

@@ -233,6 +233,7 @@ public class CraftingManager : MonoBehaviour
                 materialSOHolder.craftingMaterialSO = materialSOList[i];
                 //enable the option
                 materialObject.SetActive(true);
+                materialSOHolder.ShowMaterialInViewer();
             }
             //if there is no blueprint Prefab under the content, instantiate a new one
             else
@@ -244,6 +245,7 @@ public class CraftingManager : MonoBehaviour
                 materialSOHolder.craftingMaterialSO = materialSOList[i];
                 //enable the option
                 materialObject.SetActive(true);
+                materialSOHolder.ShowMaterialInViewer();
             }
         }
         //identifier for choosing in content viewers
@@ -260,10 +262,16 @@ public class CraftingManager : MonoBehaviour
 
     //Function to assign the chosen material to the slot
     //called by the effectChoice buttons in the material Prefab
-    void AssignMaterialSlot(CraftingMaterialSOHolder materialSOHolder)
+    //the int parameter which effect index is to be chosen from the holder's effectList
+    public void AssignChosenMaterialToSlot(CraftingMaterialSOHolder materialSOHolder, int chosenEffectIndex)
     {
-
+        chooseMaterialEffectUI.SetActive(false);
+        //for assigning the objects on material slot
+        MaterialSlot materialSlot = currentMaterialSlot.GetComponent<MaterialSlot>();
+        materialSlot.AssignMaterial(materialSOHolder, chosenEffectIndex);
+        EndChoiceButton();
     }
+
 
     //logic for going back from choice panel
     //assigned in editor
@@ -343,6 +351,9 @@ public class CraftingManager : MonoBehaviour
                         //send the SO assigned for the blueprint prefab
                         ShowBluePrint(chosenPrefab.GetComponent<BluePrintSOHolder>().blueprintSO);
 
+                        //disables identifier
+                        isChoosing = false;
+
                     }
                     //logic for choosing materials
                     else if (content == choosingContent.material)
@@ -351,15 +362,15 @@ public class CraftingManager : MonoBehaviour
                         ActivateChooseMaterialEffect(pointedObject.collider.gameObject.GetComponent<CraftingMaterialSOHolder>());
                     }
 
-                    //disables identifier
-                    isChoosing = false;
+
                 }
                 //if not choosing, only monitor clicks on the material slot object
                 //if we got here, it means that we have interacted with the collider of the mteril slot and that only since they're the only objects that has colliders in blueprint UI
                 else
                 {
                     //assign the chosen prefab slot as the current slot
-                    currentMaterialSlot = pointedObject.collider.gameObject;
+                    //the parent is the actual materialSlot since the clickable part is only a child
+                    currentMaterialSlot = pointedObject.collider.gameObject.transform.parent.gameObject;
                     ChooseMaterialForSlot();
                 }
 

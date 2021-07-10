@@ -18,16 +18,12 @@ public class CraftingMaterialSOHolder : MonoBehaviour
     //text for the name of material
     public TextMeshProUGUI materialName;
 
-    //buttons to be made interactable in Transfer Function
-    public Button effectButton1;
-    public Button effectButton2;
-    public Button effectButton3;
+    //list to hold the effects of this material
+    public List<AllMaterialEffects> effectsList = new List<AllMaterialEffects>();
 
-    //contains the chosen effect after choosing the material
-    public AllMaterialEffects chosenEffect;
-
-
-    private void Awake()
+    //Start function for creting in content viewer
+    //called as if it's awake, this is to prevent executing the code in Effect Choice UI
+    public void ShowMaterialInViewer()
     {
         //assign the image in the SO to the prefab Icon
         materialImage.sprite = Resources.Load<Sprite>($"Materials/{craftingMaterialSO.materialPrefix}{craftingMaterialSO.materialType}");
@@ -38,15 +34,16 @@ public class CraftingMaterialSOHolder : MonoBehaviour
         Transform effectTextParentTrans = effectTextParentObject.transform;
         //assign texts depending on the CraftingMaterialSO
         //count cap is 3
-        for (int i = 0; craftingMaterialSO.materialEffects.Count-1 >= i; i++)
+        for (int i = 0; craftingMaterialSO.materialEffects.Count - 1 >= i; i++)
         {
             //the TMP is in a child of the child of parentObject
             //child 0 is the TMP
             TextMeshProUGUI effectText = effectTextParentTrans.GetChild(i).GetChild(0).GetComponent<TextMeshProUGUI>();
             effectText.text = CardTagManager.GetMaterialEffectDescription(craftingMaterialSO.materialEffects[i]);
             effectTextList.Add(effectText);
+            //store the effects from the CraftingMaterialSO in the local list
+            effectsList.Add(craftingMaterialSO.materialEffects[i]);
         }
-
     }
 
 
@@ -62,7 +59,9 @@ public class CraftingMaterialSOHolder : MonoBehaviour
         {
             effectTextParentObject.transform.GetChild(i).GetChild(0).GetComponent<TextMeshProUGUI>().text = receivedHolder.effectTextList[i].text;
             //makes it so that the only clickable effects are those assigned with text
-            effectTextParentObject.GetComponent<Button>().interactable = true;
+            Button effectButton = effectTextParentObject.transform.GetChild(i).GetComponent<Button>();
+            effectButton.interactable = true;
+
         }
 
     }

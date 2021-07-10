@@ -125,8 +125,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   materialImage: {fileID: 8221683010892450471}
-  materialName: {fileID: 58940007661246279}
-  materialEffect: {fileID: 58940007393995290}
+  materialNameText: {fileID: 58940007661246279}
+  materialEffectText: {fileID: 58940007393995290}
+  materialEffect: 0
 --- !u!1 &58940006464157438
 GameObject:
   m_ObjectHideFlags: 0
