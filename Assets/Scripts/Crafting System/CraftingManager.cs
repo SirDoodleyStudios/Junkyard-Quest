@@ -24,7 +24,11 @@ public class CraftingManager : MonoBehaviour
 
     //will contain all materilSOs available for use
     //will only be instanstiated at start because crafting UI ends after a successful craft
+    [SerializeField]
     List<CraftingMaterialSO> materialSOList = new List<CraftingMaterialSO>();
+    //separate list that will contain the materialSOs currently in a slot
+    [SerializeField]
+    List<CraftingMaterialSO> materialSOListSlotted = new List<CraftingMaterialSO>();
 
     //assigned from editor
     public Image bluePrintImage;
@@ -64,8 +68,7 @@ public class CraftingManager : MonoBehaviour
     //holder for the materialSlot prefab to be configured after choosing a material
     GameObject currentMaterialSlot;
 
-    //separate list that will contain the materialSOs currently in a slot
-    List<CraftingMaterialSO> materialSOListSlotted = new List<CraftingMaterialSO>();
+
 
 
     //for mouse pointing and clicking
@@ -84,7 +87,8 @@ public class CraftingManager : MonoBehaviour
             BluePrintSO tempBlueprint = Instantiate(referenceBluePrintSO);
             tempBlueprint.blueprint = blueprint;
             tempBlueprint.bluePrintSprite = Resources.Load<Sprite>($"Blueprints/{blueprint}");
-            tempBlueprint.materialSlotPositions = AssignUniqueBlueprintValues(blueprint);
+            //send the blueprint ot the AssignBluprintValues to fill out the cevtor and allowable type list
+            tempBlueprint = AssignUniqueBlueprintValues(tempBlueprint);
             //add to list
             blueprintSOList.Add(tempBlueprint);
         }
@@ -156,6 +160,11 @@ public class CraftingManager : MonoBehaviour
         //disables all materialSlot colliders
         d_MaterialSlotColliderAlterer(false);
 
+        //clears all materialSlots first then returns the materials back in materialSOList
+        d_MaterialSlotDataClearer();
+        materialSOList.AddRange(materialSOListSlotted);
+        materialSOListSlotted.Clear();
+
     }
 
     //to be called to show the blueprint
@@ -172,13 +181,19 @@ public class CraftingManager : MonoBehaviour
         bluePrintImage.sprite = bluePrintSO.bluePrintSprite;
 
         //check list of positions in SO and assign them to prefab for materialSlots in materialSlots panel
+        //the count will also apply for the material types available
         for (int i = 0; bluePrintSO.materialSlotPositions.Count > i; i++)
         {
             //materialSlotsPanel.SetActive(true);
-
-            RectTransform materialSlotRect = materialSlotsPanel.transform.GetChild(i).GetComponent<RectTransform>();
+            GameObject materialSlotPrefab = materialSlotsPanel.transform.GetChild(i).gameObject;
+            RectTransform materialSlotRect = materialSlotPrefab.GetComponent<RectTransform>();
+            MaterialSlot materialSlotScript = materialSlotPrefab.GetComponent<MaterialSlot>();
+            //sets the position of the materialSLot prefab
             materialSlotRect.localPosition = bluePrintSO.materialSlotPositions[i];
-            materialSlotsPanel.transform.GetChild(i).gameObject.SetActive(true);
+            //assigns the materialType that this slot will accept
+            materialSlotScript.allowableType = bluePrintSO.acceptableMaterialTypes[i];
+            
+            materialSlotPrefab.SetActive(true);
         }
 
         EndChoiceButton();
@@ -187,20 +202,27 @@ public class CraftingManager : MonoBehaviour
     //helper function to determine the desired positions of material slotes depending on blueprint
     //all positions here are just created from edito to see what looks good with a given image then listed here
     //the position order is always counted from top to bottom
-    List<Vector2> AssignUniqueBlueprintValues(AllGearTypes blueprint)
+    BluePrintSO AssignUniqueBlueprintValues(BluePrintSO blueprint)
     {
-
+        //temporary lists to be assigned to the return bluepriny\t
         List<Vector2> materialSlotPositions = new List<Vector2>();
+        List<AllMaterialTypes> materialTypes = new List<AllMaterialTypes>();
 
-        switch (blueprint)
+        //each blueprint type has a predefined possition for material tpes and what available material types can be slotted in
+        //the two lists must be synchronized by their indices
+        switch (blueprint.blueprint)
         {
             case AllGearTypes.Sword:
                 materialSlotPositions.Add(new Vector2(-312, 86.5f));
                 materialSlotPositions.Add(new Vector2(-312, -165));
+                materialTypes.Add(AllMaterialTypes.Slab);
+                materialTypes.Add(AllMaterialTypes.Strips);
                 break;
             case AllGearTypes.Axe:
                 materialSlotPositions.Add(new Vector2(-204, 105));
                 materialSlotPositions.Add(new Vector2(-333, -173));
+                materialTypes.Add(AllMaterialTypes.Slab);
+                materialTypes.Add(AllMaterialTypes.Stick);
                 break;
             case AllGearTypes.Shield:
                 break;
@@ -213,7 +235,9 @@ public class CraftingManager : MonoBehaviour
             default:
                 break;
         }
-        return materialSlotPositions;
+        blueprint.materialSlotPositions = materialSlotPositions;
+        blueprint.acceptableMaterialTypes = materialTypes;
+        return blueprint;
     }
 
     //called when a material slot is clicked in blueprint UI
@@ -229,10 +253,20 @@ public class CraftingManager : MonoBehaviour
 
         Transform materialContentTrans = materialContentViewer.transform;
 
-
+        //will store the acceptableMaterial from the currentMaterialSlotChoice
+        AllMaterialTypes acceptableMaterial = currentMaterialSlot.GetComponent<MaterialSlot>().allowableType;
+        //separate temporary list that will serve as the filtered list for the materialSOList
+        List<CraftingMaterialSO> tempMaterialSOList = new List<CraftingMaterialSO>();
+        foreach (CraftingMaterialSO originalSO in materialSOList)
+        {
+            if(originalSO.materialType == acceptableMaterial)
+            {
+                tempMaterialSOList.Add(originalSO);
+            }
+        }
 
         //decode the mterial wrapper list in universalInfo back to SO
-        for (int i = 0; materialSOList.Count > i; i++)
+        for (int i = 0; tempMaterialSOList.Count > i; i++)
         {
             //if the prefab is already existing, if it is, it sould always be disabled already
             //to check if there are children, under bluePrintContent, use childCount and i comparison
@@ -245,7 +279,7 @@ public class CraftingManager : MonoBehaviour
                 //enable the option
                 materialObject.SetActive(true);
                 //CraftingMaterialSO instantiatedMatSO = Instantiate(materialSOList[i]);
-                materialSOHolder.ShowMaterialInViewer(materialSOList[i]);
+                materialSOHolder.ShowMaterialInViewer(tempMaterialSOList[i]);
             }
             //if there is no blueprint Prefab under the content, instantiate a new one
             else
@@ -257,7 +291,7 @@ public class CraftingManager : MonoBehaviour
                 //enable the option
                 materialObject.SetActive(true);
                 //CraftingMaterialSO instantiatedMatSO = Instantiate(materialSOList[i]);
-                materialSOHolder.ShowMaterialInViewer(materialSOList[i]);
+                materialSOHolder.ShowMaterialInViewer(tempMaterialSOList[i]);
             }
         }
         //disables all materialSlot colliders
@@ -354,7 +388,7 @@ public class CraftingManager : MonoBehaviour
                         //rejoins Crfting SO in the list if there is a material in the slot then clears the MaterialSlot object
                         MaterialSlot materialSlot = currentMaterialSlot.GetComponent<MaterialSlot>();
                         materialSOList.Add(materialSlot.craftingMaterialSO);
-                        materialSOList.Remove(materialSlot.craftingMaterialSO);
+                        materialSOListSlotted.Remove(materialSlot.craftingMaterialSO);
                         materialSlot.ClearMaterialSlot();
                     }
                     ChooseMaterialForSlot();
@@ -369,12 +403,6 @@ public class CraftingManager : MonoBehaviour
                 if(pointedObject.collider != null)
                 {
                     GameObject chosenPrefab = pointedObject.collider.gameObject;
-
-                    //clears all materialSlots first then returns the materials back in materialSOList
-                    d_MaterialSlotDataClearer();
-                    materialSOList.AddRange(materialSOListSlotted);
-                    materialSOListSlotted.Clear();
-
 
                     //send the SO assigned for the blueprint prefab
                     ShowBluePrint(chosenPrefab.GetComponent<BluePrintSOHolder>().blueprintSO);

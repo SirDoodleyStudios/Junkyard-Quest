@@ -16,7 +16,7 @@ public class BluePrintSO : ScriptableObject
 
     //contains the material type to be accepted
     //must synchronize with materialSLotPositions
-    public AllMaterialTypes acceptableMaterialTypes;
+    public List<AllMaterialTypes> acceptableMaterialTypes = new List<AllMaterialTypes>();
 
     //will contain list of coordinates for wach mterial Slot instantiated by MaterialSlotManager
     public List<Vector2> materialSlotPositions = new List<Vector2>();

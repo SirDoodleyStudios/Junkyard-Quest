@@ -70,10 +70,12 @@ public class MaterialSlot : MonoBehaviour
     //also called by the change blueprint button as a reset to give way to the next blueprint to be used
     public void ClearMaterialSlot()
     {
+
         materialImage.sprite = null;
         materialImage.enabled = false;
         materialNameText.text = "Material Name";
         materialEffectText.text = "Material Effect";
+        craftingMaterialSO = null;
 
     }
 

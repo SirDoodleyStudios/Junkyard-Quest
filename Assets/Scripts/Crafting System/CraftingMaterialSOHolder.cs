@@ -89,6 +89,15 @@ public class CraftingMaterialSOHolder : MonoBehaviour
         craftingMaterialSO = receivedSO;
     }
 
+    //will be used to clear a material prefab's texts and objects
+    public void OnDisable()
+    {
+        foreach (TextMeshProUGUI text in effectTextList)
+        {
+            text.text = "";
+        }
+    }
+
 
 
 }
