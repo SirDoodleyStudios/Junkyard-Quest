@@ -13,5 +13,5 @@ MonoBehaviour:
   m_Name: Fancy Stick
   m_EditorClassIdentifier: 
   materialType: 4
-  materialPrefix: 2
+  materialPrefix: 3
   materialEffects: 000000000100000002000000

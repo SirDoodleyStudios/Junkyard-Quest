@@ -13,5 +13,5 @@ MonoBehaviour:
   m_Name: Sturdy Stick
   m_EditorClassIdentifier: 
   materialType: 4
-  materialPrefix: 0
+  materialPrefix: 1
   materialEffects: 0000000003000000

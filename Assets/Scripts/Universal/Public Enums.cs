@@ -70,16 +70,23 @@ public enum AllMaterialTypes
     Ornament
 }
 //Relic Effects
+//will also contain the set bonus when crafted with the same material type
 public enum AllMaterialEffects
 {
     LasterStand, //take 2 turns before being overkilled, doubles Worn-out stacks
     Eureka, //gain 10 creativity at start of combat, creativity no longer recovers every turn
     DeepSleep, //Rest consumes 2 actions but fully heals HP
-    ForgeFriendly //Forging cost starts at 40 scraps
+    ForgeFriendly, //Forging cost starts at 40 scraps
+
+    Sturdy, //HP bonus
+    Mysterious, //Creativity bonus
+    Fancy //scraps bonus
 }
 //prefix of material that dictates the bonus when crafting
 public enum AllMaterialPrefixes
 {
+    //normal is default, there are no normal materials, but normal gear is given for gear crafted with no 100% match on materials
+    Normal,
     Sturdy,
     Mysterious,
     Fancy

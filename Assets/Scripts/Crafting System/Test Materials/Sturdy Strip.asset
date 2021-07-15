@@ -13,5 +13,5 @@ MonoBehaviour:
   m_Name: Sturdy Strip
   m_EditorClassIdentifier: 
   materialType: 3
-  materialPrefix: 0
+  materialPrefix: 1
   materialEffects: 000000000100000002000000

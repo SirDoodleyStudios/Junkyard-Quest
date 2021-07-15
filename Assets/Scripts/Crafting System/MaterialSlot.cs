@@ -27,17 +27,20 @@ public class MaterialSlot : MonoBehaviour
     private void Awake()
     {
         craftingManager = transform.parent.parent.GetComponent<CraftingManager>();
+
     }
 
     void OnEnable()
     {
         craftingManager.d_MaterialSlotColliderAlterer += AlterMaterialSlotCollider;
         craftingManager.d_MaterialSlotDataClearer += ClearMaterialSlot;
+        //at the start of craft, clear everything
+        ClearMaterialSlot();
     }
     private void OnDisable()
     {
         craftingManager.d_MaterialSlotColliderAlterer -= AlterMaterialSlotCollider;
-        craftingManager.d_MaterialSlotDataClearer += ClearMaterialSlot;
+        craftingManager.d_MaterialSlotDataClearer -= ClearMaterialSlot;
     }
 
     //function called after a material is chosen
@@ -73,7 +76,7 @@ public class MaterialSlot : MonoBehaviour
 
         materialImage.sprite = null;
         materialImage.enabled = false;
-        materialNameText.text = "Material Name";
+        materialNameText.text = $"Material Type: {allowableType}";
         materialEffectText.text = "Material Effect";
         craftingMaterialSO = null;
 

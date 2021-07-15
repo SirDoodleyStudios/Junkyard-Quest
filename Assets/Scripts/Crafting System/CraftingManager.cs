@@ -24,11 +24,12 @@ public class CraftingManager : MonoBehaviour
 
     //will contain all materilSOs available for use
     //will only be instanstiated at start because crafting UI ends after a successful craft
-    [SerializeField]
     List<CraftingMaterialSO> materialSOList = new List<CraftingMaterialSO>();
     //separate list that will contain the materialSOs currently in a slot
-    [SerializeField]
     List<CraftingMaterialSO> materialSOListSlotted = new List<CraftingMaterialSO>();
+    //list that contains all the materialSLot objects
+    //used for easily checking on all materialSlots when checking if all slots are occupied
+    List<MaterialSlot> materialSlotScripts = new List<MaterialSlot>();
 
     //assigned from editor
     public Image bluePrintImage;
@@ -36,16 +37,23 @@ public class CraftingManager : MonoBehaviour
     //will be used for instantiating the blueprints
     public BluePrintSO referenceBluePrintSO;
     //will be used for instantiating materials
-    public CraftingMaterialSO referenceMaaterialSO;
+    public CraftingMaterialSO referenceMaterialSO;
+    //for instantiating gears
+    public GearSO referenceGearSO;
+    //button that will trigger the crafting will be made interactable or not depending if all slots are slotted or not
+    //the button is default interactable false
+    public Button craftButton;
 
     //the content view for blueprints
+    public GameObject craftingUI;
     public GameObject craftingChoiceUIBlueprint;
     public GameObject craftingChoiceUIMaterial;
     public GameObject blueprintContentViewer;
     public GameObject materialContentViewer;
-    //reference prefabs of blueprint and material
+    //reference prefabs of blueprint, material and gear
     public GameObject blueprintReference;
     public GameObject materialReference;
+    public GameObject gearReference;
     //the Grid layout group of the scroll content viewer, will be used to set the grid size depending if material or blueprit is to be chosen
     public GridLayoutGroup blueprintGridLayoutGroup;
     public GridLayoutGroup materialGridLayoutGroup;
@@ -98,7 +106,7 @@ public class CraftingManager : MonoBehaviour
         //the wrapper for materials should be decoded in the mono scripts
         foreach(CraftingMaterialWrapper wrapper in universalInfo.craftingMaterialWrapperList)
         {
-            CraftingMaterialSO tempMaterial = Instantiate(referenceMaaterialSO);
+            CraftingMaterialSO tempMaterial = Instantiate(referenceMaterialSO);
             tempMaterial.materialType = wrapper.materialType;
             tempMaterial.materialPrefix = wrapper.materialPrefix;
             //for ddecoding the material
@@ -119,8 +127,8 @@ public class CraftingManager : MonoBehaviour
         craftingChoiceUIBlueprint.SetActive(true);
         //enable the blueprint contentviewer
         blueprintContentViewer.SetActive(true);
-        blueprintGridLayoutGroup.cellSize = new Vector2(250, 250);
-        blueprintGridLayoutGroup.constraintCount = 4;
+        blueprintGridLayoutGroup.cellSize = new Vector2(1000, 250);
+        blueprintGridLayoutGroup.constraintCount = 1;
 
         Transform blueprintContentTrans = blueprintContentViewer.transform;
 
@@ -177,7 +185,7 @@ public class CraftingManager : MonoBehaviour
         {
             materialSlot.gameObject.SetActive(false);
         }
-
+        materialSlotScripts.Clear();
         bluePrintImage.sprite = bluePrintSO.bluePrintSprite;
 
         //check list of positions in SO and assign them to prefab for materialSlots in materialSlots panel
@@ -192,7 +200,8 @@ public class CraftingManager : MonoBehaviour
             materialSlotRect.localPosition = bluePrintSO.materialSlotPositions[i];
             //assigns the materialType that this slot will accept
             materialSlotScript.allowableType = bluePrintSO.acceptableMaterialTypes[i];
-            
+            //assigns each MaterialSlot prefab in the materialSlotObjects List for processing later
+            materialSlotScripts.Add(materialSlotScript);
             materialSlotPrefab.SetActive(true);
         }
 
@@ -353,14 +362,64 @@ public class CraftingManager : MonoBehaviour
         choiceEnum = choosingMode.overview;
         //isChoosing = false;
         d_MaterialSlotColliderAlterer(true);
+        //enables or disables the craft button
+        CheckCraftGear();
     }
 
 
     //going back to rest UI
     public void EndCraftingButton()
     {
+        if (materialSOListSlotted.Count != 0)
+        {
+            materialSOList.AddRange(materialSOListSlotted);
+            materialSOListSlotted.Clear();
+        }
         //disables the Crafting UI itself
-        transform.parent.gameObject.SetActive(false);
+        craftingUI.SetActive(false);
+    }
+
+    //checks all materialSLots then makes the craft button interactable
+    public void CheckCraftGear()
+    {
+        int materialSlotCounter = 0;
+        foreach (MaterialSlot materialSlotScript in materialSlotScripts)
+        {
+            //checks if the slot has an assigned material
+            //if yes add to counter, if no, break loop
+            if(materialSlotScript.craftingMaterialSO != null)
+            {
+                materialSlotCounter++;
+            }
+            else
+            {
+                break;
+            }
+        }
+
+        //if the counter reached the materialSlotScripts count, it means that all materialSlots has a craftingMaterialSO then make the button interactable
+        if (materialSlotCounter == materialSlotScripts.Count)
+        {
+            craftButton.interactable = true;
+        }
+        else
+        {
+            craftButton.interactable = false;
+        }
+    }
+    //proceeds to crafting
+    public void CraftGearButton()
+    {
+        restManager.UpdateRemainingActions();
+        d_MaterialSlotDataClearer();
+        //the slotted list gets cleared so that the used materials are permanently removed
+        materialSOListSlotted.Clear();
+        EndCraftingButton();
+
+        //instantiate the gear
+        GearSO craftedGear = Instantiate(referenceGearSO);
+        //WE IN HEEEEEEEEEEEEEEEEEEEEEERE
+        
     }
 
     //for clicking choices when picking a blueprint or material
