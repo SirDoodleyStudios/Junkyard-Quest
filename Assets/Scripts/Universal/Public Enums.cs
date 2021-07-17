@@ -101,6 +101,16 @@ public enum AllGearTypes
     Greatsword,
     Spear
 }
+//classification of a gear
+public enum AllGearClassifications
+{
+    MainHand,
+    OffHand,
+    Helm,
+    Armor,
+    Boots,
+    Trinket
+}
 
 
 //ENEMY RELATED

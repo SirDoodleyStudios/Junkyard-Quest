@@ -21,4 +21,7 @@ public class BluePrintSO : ScriptableObject
     //will contain list of coordinates for wach mterial Slot instantiated by MaterialSlotManager
     public List<Vector2> materialSlotPositions = new List<Vector2>();
 
+    //will contain the classification of gear
+    public AllGearClassifications gearClassifications;
+
 }

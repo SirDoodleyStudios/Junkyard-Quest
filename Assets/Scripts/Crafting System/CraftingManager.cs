@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 public class CraftingManager : MonoBehaviour
 {
@@ -33,6 +34,7 @@ public class CraftingManager : MonoBehaviour
 
     //assigned from editor
     public Image bluePrintImage;
+    public TextMeshProUGUI blueprintName;
     public GameObject materialSlotsPanel;
     //will be used for instantiating the blueprints
     public BluePrintSO referenceBluePrintSO;
@@ -53,13 +55,15 @@ public class CraftingManager : MonoBehaviour
     //reference prefabs of blueprint, material and gear
     public GameObject blueprintReference;
     public GameObject materialReference;
-    public GameObject gearReference;
     //the Grid layout group of the scroll content viewer, will be used to set the grid size depending if material or blueprit is to be chosen
     public GridLayoutGroup blueprintGridLayoutGroup;
     public GridLayoutGroup materialGridLayoutGroup;
     //pop-up UI for choosing the effect of the clicked material in content viewer
     public GameObject chooseMaterialEffectUI;
     public ChooseMaterialEffectUI chooseMaterialEffectUIScript;
+    //popup to showcase the Crafted Gear
+    public GameObject craftedGearShowcasePanel;
+    public GearSOHolder craftedGearSOHolder;
 
     //the load file
     UniversalInformation universalInfo;
@@ -75,6 +79,8 @@ public class CraftingManager : MonoBehaviour
 
     //holder for the materialSlot prefab to be configured after choosing a material
     GameObject currentMaterialSlot;
+    //holder for the current blueprint/gearType chosen
+    BluePrintSO chosenBlueprint;
 
 
 
@@ -96,7 +102,7 @@ public class CraftingManager : MonoBehaviour
             tempBlueprint.blueprint = blueprint;
             tempBlueprint.bluePrintSprite = Resources.Load<Sprite>($"Blueprints/{blueprint}");
             //send the blueprint ot the AssignBluprintValues to fill out the cevtor and allowable type list
-            tempBlueprint = AssignUniqueBlueprintValues(tempBlueprint);
+            tempBlueprint = UniversalFunctions.AssignUniqueBlueprintValues(tempBlueprint);
             //add to list
             blueprintSOList.Add(tempBlueprint);
         }
@@ -180,6 +186,9 @@ public class CraftingManager : MonoBehaviour
     //calls are to be received by awake for initial choice, then from another function that chooses a blueprint from a grid list
     void ShowBluePrint(BluePrintSO bluePrintSO)
     {
+        //assigns chosen blueprint for the script variable
+        chosenBlueprint = bluePrintSO;
+
         //disable all material slots first before refreshing
         foreach (Transform materialSlot in materialSlotsPanel.transform)
         {
@@ -187,6 +196,7 @@ public class CraftingManager : MonoBehaviour
         }
         materialSlotScripts.Clear();
         bluePrintImage.sprite = bluePrintSO.bluePrintSprite;
+        blueprintName.text = $"{bluePrintSO.blueprint}";
 
         //check list of positions in SO and assign them to prefab for materialSlots in materialSlots panel
         //the count will also apply for the material types available
@@ -206,47 +216,6 @@ public class CraftingManager : MonoBehaviour
         }
 
         EndChoiceButton();
-    }
-
-    //helper function to determine the desired positions of material slotes depending on blueprint
-    //all positions here are just created from edito to see what looks good with a given image then listed here
-    //the position order is always counted from top to bottom
-    BluePrintSO AssignUniqueBlueprintValues(BluePrintSO blueprint)
-    {
-        //temporary lists to be assigned to the return bluepriny\t
-        List<Vector2> materialSlotPositions = new List<Vector2>();
-        List<AllMaterialTypes> materialTypes = new List<AllMaterialTypes>();
-
-        //each blueprint type has a predefined possition for material tpes and what available material types can be slotted in
-        //the two lists must be synchronized by their indices
-        switch (blueprint.blueprint)
-        {
-            case AllGearTypes.Sword:
-                materialSlotPositions.Add(new Vector2(-312, 86.5f));
-                materialSlotPositions.Add(new Vector2(-312, -165));
-                materialTypes.Add(AllMaterialTypes.Slab);
-                materialTypes.Add(AllMaterialTypes.Strips);
-                break;
-            case AllGearTypes.Axe:
-                materialSlotPositions.Add(new Vector2(-204, 105));
-                materialSlotPositions.Add(new Vector2(-333, -173));
-                materialTypes.Add(AllMaterialTypes.Slab);
-                materialTypes.Add(AllMaterialTypes.Stick);
-                break;
-            case AllGearTypes.Shield:
-                break;
-            case AllGearTypes.Hammer:
-                break;
-            case AllGearTypes.Greatsword:
-                break;
-            case AllGearTypes.Spear:
-                break;
-            default:
-                break;
-        }
-        blueprint.materialSlotPositions = materialSlotPositions;
-        blueprint.acceptableMaterialTypes = materialTypes;
-        return blueprint;
     }
 
     //called when a material slot is clicked in blueprint UI
@@ -410,17 +379,88 @@ public class CraftingManager : MonoBehaviour
     //proceeds to crafting
     public void CraftGearButton()
     {
-        restManager.UpdateRemainingActions();
+
         d_MaterialSlotDataClearer();
         //the slotted list gets cleared so that the used materials are permanently removed
         materialSOListSlotted.Clear();
         EndCraftingButton();
 
-        //instantiate the gear
+        //instantiate the gear then showcase it to the shocase UI
         GearSO craftedGear = Instantiate(referenceGearSO);
-        //WE IN HEEEEEEEEEEEEEEEEEEEEEERE
-        
+
+        //get gear type and classification from the blueprintSO
+        craftedGear.gearType = chosenBlueprint.blueprint;
+        craftedGear.gearClassifications = chosenBlueprint.gearClassifications;
+
+
+        //bool identifier to check if the materials usedin the gear are the same prefix
+        //will start as true then becomes false if the current material being checked's prefix doesn't match the previous
+        bool isSameMaterialType = true;
+
+        //scans the materialSlots and get their chosen effects
+        for (int i = 0; materialSlotScripts.Count - 1 >= i; i++)
+        {
+            //adds the effect in the gear effectList
+            craftedGear.gearEffects.Add(materialSlotScripts[i].materialEffect);
+
+            //if the material is the first one being checked, skip the bool logic
+            //will only keep checking if the identifier is still true so that we don't always check when there's no need if it's already false
+            if (isSameMaterialType == true)
+            {
+                if (i == 0)
+                {
+                    //set the firs prefix as the final if the logic pushes through
+                    craftedGear.gearSetBonus = materialSlotScripts[0].materialPrefix;
+                }
+                else
+                {
+                    //if the current and previous material prefix is not the same, make the final prefix Normal
+                    if (materialSlotScripts[i - 1].materialPrefix != materialSlotScripts[i].materialPrefix)
+                    {
+                        isSameMaterialType = false;
+                        craftedGear.gearSetBonus = AllMaterialPrefixes.Normal;
+                    }
+                }
+            }
+        }
+
+        //determines a bonus effect if all all materials share the same prefix
+        if (isSameMaterialType == true)
+        {
+            switch (craftedGear.gearSetBonus)
+            {
+                case AllMaterialPrefixes.Normal:
+                    break;
+                case AllMaterialPrefixes.Sturdy:
+                    craftedGear.gearEffects.Add(AllMaterialEffects.Sturdy);
+                    break;
+                case AllMaterialPrefixes.Mysterious:
+                    craftedGear.gearEffects.Add(AllMaterialEffects.Mysterious);
+                    break;
+                case AllMaterialPrefixes.Fancy:
+                    craftedGear.gearEffects.Add(AllMaterialEffects.Fancy);
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        craftedGearShowcasePanel.SetActive(true);
+        craftedGearSOHolder.InitializeGearPrefab(craftedGear);
+
+        //saves to universalInfo, restmanager has the saving function
+        //updates materials and gear in the save file
+        restManager.UpdateMaterialAndGearList(materialSOList, craftedGear);
+        restManager.UpdateRemainingActions();
+
     }
+    //proceed button for the Created Gear Scene, just for disabling the UiI and clearing the showcase prefab
+    public void EndGearShowcaseButton()
+    {
+        craftedGearSOHolder.ClearGearPrefab();
+        craftedGearShowcasePanel.SetActive(false);
+    }
+
 
     //for clicking choices when picking a blueprint or material
     private void Update()

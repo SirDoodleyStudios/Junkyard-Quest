@@ -14,4 +14,6 @@ public class GearSO : ScriptableObject
     //determines if the gear has a set bonus
     //the effect of the set bonus hould already be in the gearEffects
     public AllMaterialPrefixes gearSetBonus;
+    //classification of gear
+    public AllGearClassifications gearClassifications;
 }

@@ -85,9 +85,20 @@ public static class UniversalSaveState
             {
                 CraftingMaterialWrapper craftingMaterialWrapper = new CraftingMaterialWrapper(craftingMaterial);
                 tempWrapperList.Add(craftingMaterialWrapper);
+                universalInfo.craftingMaterialWrapperList.Add(craftingMaterialWrapper);
             }
             universalInfo.craftingMaterialWrapperList = tempWrapperList;
-
+        }
+        //gear wrappers are converted here but loading will depend on the calling function
+        if (universalInfo.gearList.Count != 0)
+        {
+            List<GearWrapper> tempGearWrapperList = new List<GearWrapper>();
+            foreach (GearSO gearSO in universalInfo.gearList)
+            {
+                GearWrapper gearWrapper = new GearWrapper(gearSO);
+                tempGearWrapperList.Add(gearWrapper);
+            }
+            universalInfo.gearWrapperList = tempGearWrapperList;
         }
 
         string universal = JsonUtility.ToJson(universalInfo);
@@ -334,24 +345,27 @@ public class CraftingMaterialWrapper
     }
 }
 
-//di ko alaam ang gagawin dito
-//public class UniversalParameters
-//{
-//    //will contain the enum as string
-//    public string currentState;
-//    //node selected
-//    public int NodeIndex;
-//    public int NodeParent;
-//    //bool found in UniversaolSaveState script
-//    public bool isInitialized;
+//serialized wrapper for GearSO
+//accepted as SO in universalSaveState then converted to wrapper when saving
+//when loading, the calling script is responsible for decoding the wrapper into SO again
+[Serializable]
+public class GearWrapper
+{
+    //holds the list of all effects in the gear
+    public List<AllMaterialEffects> gearEffects = new List<AllMaterialEffects>();
+    //determines the gear type
+    public AllGearTypes gearType;
+    //determines if the gear has a set bonus
+    //the effect of the set bonus hould already be in the gearEffects
+    public AllMaterialPrefixes gearSetBonus;
+    //classification of gear
+    public AllGearClassifications gearClassifications;
 
-//    UniversalParameters(OverworldState worldState, int nodeIndex, int parentIndex)
-//    {
-//        currentState = worldState.ToString();
-//        NodeIndex = nodeIndex;
-//        NodeParent = parentIndex;
-//        isInitialized = UniversalSaveState.isMapInitialized;
-//    }
-//}
-
-/////////////////////////////////
+    public GearWrapper(GearSO gearSO)
+    {
+        gearEffects = gearSO.gearEffects;
+        gearType = gearSO.gearType;
+        gearSetBonus = gearSO.gearSetBonus;
+        gearClassifications = gearSO.gearClassifications;
+    }
+}

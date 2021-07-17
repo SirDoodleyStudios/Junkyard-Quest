@@ -37,6 +37,11 @@ public class CameraUIScript : MonoBehaviour
     //set in editor
     public JigsawFormat referenceJigsawFormat;
 
+    //for inventory viewing
+    public GameObject inventoryViewUI;
+    public InventoryViewer inventoryViewer;
+
+
 
     public void Awake()
     {
@@ -85,6 +90,11 @@ public class CameraUIScript : MonoBehaviour
 
 
 
+    }
+    //function to be called when an update was created on the universalUnformation was made and the universalInfo of this instance needs to be updated as well
+    public void UpdateUniversalInfo()
+    {
+        universalInfo = UniversalSaveState.LoadUniversalInformation();
     }
 
     //called by the scene's manager at awake
@@ -236,5 +246,20 @@ public class CameraUIScript : MonoBehaviour
         ViewSavedDeck();
         cardList = originalList;
     }
+
+    //for viewing the inventory
+    public void ViewInventory()
+    {
+        inventoryViewUI.SetActive(true);
+        inventoryViewer.InitializeInventoryView(universalInfo.bluePrints, universalInfo.craftingMaterialWrapperList, universalInfo.gearWrapperList);
+
+    }
+
+    //for viewing gears
+    public void ViewGears()
+    {
+
+    }
+
 
 }

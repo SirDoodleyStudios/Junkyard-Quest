@@ -2,6 +2,7 @@
 using UnityEngine.UI;
 using TMPro;
 using UnityEngine.SceneManagement;
+using System.Collections.Generic;
 
 public class RestManager : MonoBehaviour
 {
@@ -44,7 +45,7 @@ public class RestManager : MonoBehaviour
         cameraUIScript.AssignUIObjects(universalInfo);
 
         //default remaining actions is 3, might get changed with gear modifiers
-        remainingActions = 3;
+        remainingActions = universalInfo.remainingRestActions;
 
     }
 
@@ -84,6 +85,15 @@ public class RestManager : MonoBehaviour
     {
         craftingUI.SetActive(true);
     }
+    //called by crafting list after a successful craft, this will update the universalInformation of the restmanager with the correct material and gear list before being saved
+    public void UpdateMaterialAndGearList(List<CraftingMaterialSO> materialList, GearSO gearSO)
+    {
+        universalInfo.craftingMaterialSOList = materialList;
+        //we can't add an element directly in the universalInfo becasue static scripts can't have it's own instance
+        List<GearSO> gearList = universalInfo.gearList;
+        gearList.Add(gearSO);
+        universalInfo.gearList = gearList;
+    }
 
     //function to disable all action buttons when remaining actions count is 0
     public void UpdateRemainingActions()
@@ -101,11 +111,20 @@ public class RestManager : MonoBehaviour
                 }
             }
         }
+        universalInfo.remainingRestActions = remainingActions;
+
+        //each action will save to universal info now
+        UniversalSaveState.SaveUniversalInformation(universalInfo);
+
+        //will update the universal UI's current copy of universalInformation
+        cameraUIScript.UpdateUniversalInfo();
     }
 
     //used to go back to overworld
     public void GoBackToOverworldButton()
     {
+        //sets the remaining actions back to 3 when exiting
+        universalInfo.remainingRestActions = 3;
         UniversalSaveState.SaveUniversalInformation(universalInfo);
         SceneManager.LoadScene("OverWorldScene");
     }

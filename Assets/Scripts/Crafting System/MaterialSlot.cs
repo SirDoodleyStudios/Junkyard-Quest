@@ -22,7 +22,10 @@ public class MaterialSlot : MonoBehaviour
     public BoxCollider2D materialInteractable;
 
     //the material type that the slot will allow
+    //assigned externally
     public AllMaterialTypes allowableType;
+    //the material's prefix
+    public AllMaterialPrefixes materialPrefix;
 
     private void Awake()
     {
@@ -50,7 +53,7 @@ public class MaterialSlot : MonoBehaviour
     {
         //instantiate a copy for this instance's values
         //CraftingMaterialSO materialSO = Instantiate(materialSO);
-
+        materialPrefix = materialSO.materialPrefix;
 
         materialImage.sprite = Resources.Load<Sprite>($"Materials/{materialSO.materialPrefix}{materialSO.materialType}");
         materialImage.enabled = true;

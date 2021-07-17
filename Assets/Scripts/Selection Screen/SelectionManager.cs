@@ -169,6 +169,7 @@ public class SelectionManager : MonoBehaviour
         //sets initial scraps values, the currentForgeCost dictates the first price of forging
         universalInformation.scraps = 300;
         universalInformation.currentForgeCost = 50;
+        universalInformation.remainingRestActions = 99;
 
         //TEST LOGIC TO INCLUDE BLUEPRINTS IMMEDIATELY
         List<AllGearTypes> tempBPList = new List<AllGearTypes>();

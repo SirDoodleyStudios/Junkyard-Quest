@@ -1221,6 +1221,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 66e3060f6fdb1a54781be279289853bf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  gearEffectsPanel: {fileID: 5206110364393999411}
+  gearName: {fileID: 7885086402151846494}
+  gearIcon: {fileID: 4515679353669244078}
+  gearSO: {fileID: 0}
 --- !u!1 &8994732594816383910
 GameObject:
   m_ObjectHideFlags: 0

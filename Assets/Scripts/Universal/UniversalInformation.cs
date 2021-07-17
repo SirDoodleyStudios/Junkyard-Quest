@@ -66,13 +66,22 @@ public class UniversalInformation
     //this is a counter that assigns the worn-out status on the player if the last battle that he survived overkilled him
     public int wornOutCount;
 
+    //this is a counter for how many actions you currently have left in Rest
+    public int remainingRestActions;
+
     //contains the blueprints that the plye currently posses
+    //all information needed to decode blueprints are in the CraftingManager since that's the only 
     public List<AllGearTypes> bluePrints;
 
     //contains the materials and its' attributes in a wrapper
     //when saved in universalSaveState, this will be converted in a wrapper for easy loading
     public List<CraftingMaterialSO> craftingMaterialSOList;
     public List<CraftingMaterialWrapper> craftingMaterialWrapperList;
+
+    //contains all gear that a player has
+    //converted to wrapper when saving then to SO while loading
+    public List<GearSO> gearList;
+    public List<GearWrapper> gearWrapperList;
 
     //contains all the gear effects that the player currently posses
     //public List<AllMaterialEffects> materialEffects;
