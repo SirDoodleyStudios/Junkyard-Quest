@@ -178,11 +178,14 @@ public class SelectionManager : MonoBehaviour
         universalInformation.bluePrints = tempBPList;
         //TEST FOR INCLUDING MATERIALS IMMEDIATELY
         List<CraftingMaterialSO> tempCraftList = new List<CraftingMaterialSO>();
+        //empty gear test list
+        List<GearSO> tempGearList = new List<GearSO>();
         foreach (CraftingMaterialSO craftingMaterialSO in testListMaterials)
         {
             tempCraftList.Add(craftingMaterialSO);
         }
         universalInformation.craftingMaterialSOList = tempCraftList;
+        universalInformation.gearList = tempGearList;
 
         UniversalSaveState.SaveUniversalInformation(universalInformation);
 

@@ -85,7 +85,7 @@ public static class UniversalSaveState
             {
                 CraftingMaterialWrapper craftingMaterialWrapper = new CraftingMaterialWrapper(craftingMaterial);
                 tempWrapperList.Add(craftingMaterialWrapper);
-                universalInfo.craftingMaterialWrapperList.Add(craftingMaterialWrapper);
+                //universalInfo.craftingMaterialWrapperList.Add(craftingMaterialWrapper);
             }
             universalInfo.craftingMaterialWrapperList = tempWrapperList;
         }
