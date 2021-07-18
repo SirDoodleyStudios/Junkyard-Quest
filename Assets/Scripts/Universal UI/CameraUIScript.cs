@@ -41,6 +41,9 @@ public class CameraUIScript : MonoBehaviour
     public GameObject inventoryViewUI;
     public InventoryViewer inventoryViewer;
 
+    //for equipment viewing
+    public GameObject equipmentViewUI;
+    public EquipmentViewer equipmentViewer;
 
 
     public void Awake()
@@ -256,9 +259,10 @@ public class CameraUIScript : MonoBehaviour
     }
 
     //for viewing gears
-    public void ViewGears()
+    public void ViewEquipment()
     {
-
+        equipmentViewUI.SetActive(true);
+        equipmentViewer.InitiateEquipment(universalInfo);
     }
 
 

@@ -66,4 +66,32 @@ public static class UniversalFunctions
         return blueprint;
     }
 
+    //convert a list of CraftingMaterialSO into a list of CraftingMaterialWrappers
+    public static List<CraftingMaterialWrapper> ConvertCraftingMaterialSOListToWrapper(List<CraftingMaterialSO> craftingMaterialSOList)
+    {
+
+        List<CraftingMaterialWrapper> tempWrapperList = new List<CraftingMaterialWrapper>();
+        foreach (CraftingMaterialSO craftingMaterial in craftingMaterialSOList)
+        {
+            CraftingMaterialWrapper craftingMaterialWrapper = new CraftingMaterialWrapper(craftingMaterial);
+            tempWrapperList.Add(craftingMaterialWrapper);
+            //universalInfo.craftingMaterialWrapperList.Add(craftingMaterialWrapper);
+        }
+        return tempWrapperList;
+        
+    }
+
+    //convert a list of GearSO into a list of GearSOWrappers
+    public static List<GearWrapper> ConvertGearSOListToWrapper(List<GearSO> gearList)
+    {
+        //gear wrappers are converted here but loading will depend on the calling function
+        List<GearWrapper> tempGearWrapperList = new List<GearWrapper>();
+        foreach (GearSO gearSO in gearList)
+        {
+            GearWrapper gearWrapper = new GearWrapper(gearSO);
+            tempGearWrapperList.Add(gearWrapper);
+        }
+        return tempGearWrapperList;
+    }
+
 }

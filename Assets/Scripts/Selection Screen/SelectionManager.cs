@@ -184,8 +184,15 @@ public class SelectionManager : MonoBehaviour
         {
             tempCraftList.Add(craftingMaterialSO);
         }
-        universalInformation.craftingMaterialSOList = tempCraftList;
-        universalInformation.gearList = tempGearList;
+        universalInformation.craftingMaterialWrapperList = UniversalFunctions.ConvertCraftingMaterialSOListToWrapper(tempCraftList);
+        universalInformation.gearWrapperList = UniversalFunctions.ConvertGearSOListToWrapper(tempGearList);
+
+        //empty equippedGearTest
+        for (int i=0; 5 >= i; i++)
+        {
+            universalInformation.equippedGears[i] = null;
+        }
+
 
         UniversalSaveState.SaveUniversalInformation(universalInformation);
 

@@ -133,8 +133,8 @@ public class CraftingManager : MonoBehaviour
         craftingChoiceUIBlueprint.SetActive(true);
         //enable the blueprint contentviewer
         blueprintContentViewer.SetActive(true);
-        blueprintGridLayoutGroup.cellSize = new Vector2(1000, 250);
-        blueprintGridLayoutGroup.constraintCount = 1;
+        blueprintGridLayoutGroup.cellSize = new Vector2(864, 250);
+        blueprintGridLayoutGroup.constraintCount = 2;
 
         Transform blueprintContentTrans = blueprintContentViewer.transform;
 
@@ -224,8 +224,8 @@ public class CraftingManager : MonoBehaviour
         craftingChoiceUIMaterial.SetActive(true);
         //enable the blueprint contentviewer
         materialContentViewer.SetActive(true);
-        materialGridLayoutGroup.cellSize = new Vector2(1000, 250);
-        materialGridLayoutGroup.constraintCount = 1;
+        materialGridLayoutGroup.cellSize = new Vector2(864, 250);
+        materialGridLayoutGroup.constraintCount = 2;
 
         choiceEnum = choosingMode.material;
 

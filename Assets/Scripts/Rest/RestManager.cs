@@ -88,11 +88,13 @@ public class RestManager : MonoBehaviour
     //called by crafting list after a successful craft, this will update the universalInformation of the restmanager with the correct material and gear list before being saved
     public void UpdateMaterialAndGearList(List<CraftingMaterialSO> materialList, GearSO gearSO)
     {
-        universalInfo.craftingMaterialSOList = materialList;
+        //conver the SO to Wrappers first before saving
+        universalInfo.craftingMaterialWrapperList = UniversalFunctions.ConvertCraftingMaterialSOListToWrapper(materialList);
         //we can't add an element directly in the universalInfo becasue static scripts can't have it's own instance
-        List<GearSO> gearList = universalInfo.gearList;
-        gearList.Add(gearSO);
-        universalInfo.gearList = gearList;
+        //no use for the universalFunction because that's just for lists, a single constructor call to GearWrapper is enough
+        List<GearWrapper> gearWrapperList = universalInfo.gearWrapperList;
+        gearWrapperList.Add(new GearWrapper(gearSO));
+        universalInfo.gearWrapperList = gearWrapperList;
     }
 
     //function to disable all action buttons when remaining actions count is 0

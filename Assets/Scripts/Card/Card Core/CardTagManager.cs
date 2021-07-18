@@ -239,8 +239,8 @@ public class CardTagManager
         materialEffectDescriptions.Add(AllMaterialEffects.Sturdy, "Sturdy: Gain 10 Max HP");
         materialEffectDescriptions.Add(AllMaterialEffects.Mysterious, "Mysterious: Gain 5 Max Creativity");
         materialEffectDescriptions.Add(AllMaterialEffects.Fancy, "Fancy: Increase all scraps gained by 5%");
-        materialEffectDescriptions.Add(AllMaterialEffects.LasterStand, "Laster Stand: Can take 2 turns before getting overkilled. Worn-out stacks are doubled");
-        materialEffectDescriptions.Add(AllMaterialEffects.Eureka, "Eureka: Gain 10 Creativity at start of combat but can no longer passively regenerate Creativity each turn");
+        materialEffectDescriptions.Add(AllMaterialEffects.LasterStand, "Laster Stand: Can take 2 turns before dying but replaces Last Stand with Worn Out");
+        materialEffectDescriptions.Add(AllMaterialEffects.Eureka, "Eureka: Gain 10 Creativity at start of combat but can no longer generate per turn.");
         materialEffectDescriptions.Add(AllMaterialEffects.DeepSleep, "Deep Sleep: Resting in camp costs 2 actions but fully heals HP");
         materialEffectDescriptions.Add(AllMaterialEffects.ForgeFriendly, "Forge Friendly: Forging cost starts at 40 scraps");
 

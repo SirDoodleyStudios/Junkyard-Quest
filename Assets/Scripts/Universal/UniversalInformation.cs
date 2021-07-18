@@ -75,13 +75,17 @@ public class UniversalInformation
 
     //contains the materials and its' attributes in a wrapper
     //when saved in universalSaveState, this will be converted in a wrapper for easy loading
-    public List<CraftingMaterialSO> craftingMaterialSOList;
+    //public List<CraftingMaterialSO> craftingMaterialSOList;
     public List<CraftingMaterialWrapper> craftingMaterialWrapperList;
 
     //contains all gear that a player has
     //converted to wrapper when saving then to SO while loading
-    public List<GearSO> gearList;
+    //public List<GearSO> gearList;
     public List<GearWrapper> gearWrapperList;
+
+    //equipped gears will always have a fixed amount, unequipped gear slots will have a null element
+    //0 = mainhand, 1 = offhand, 2 = helm, 3 = armor, 4 = belt, 5 = trinket
+    public GearWrapper[] equippedGears = new GearWrapper[6];
 
     //contains all the gear effects that the player currently posses
     //public List<AllMaterialEffects> materialEffects;

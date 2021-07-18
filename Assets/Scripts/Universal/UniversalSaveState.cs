@@ -78,28 +78,30 @@ public static class UniversalSaveState
         universalInfo.playerStatsWrapper = playerWrapper;
         //for craftihng materials, convert them to wrappers first
         //when the wrappers are loaded, the loading script will have to be the one to decode it because we cant instantiate here
-        if(universalInfo.craftingMaterialSOList.Count != 0)
-        {
-            List<CraftingMaterialWrapper> tempWrapperList = new List<CraftingMaterialWrapper>();
-            foreach (CraftingMaterialSO craftingMaterial in universalInfo.craftingMaterialSOList)
-            {
-                CraftingMaterialWrapper craftingMaterialWrapper = new CraftingMaterialWrapper(craftingMaterial);
-                tempWrapperList.Add(craftingMaterialWrapper);
-                //universalInfo.craftingMaterialWrapperList.Add(craftingMaterialWrapper);
-            }
-            universalInfo.craftingMaterialWrapperList = tempWrapperList;
-        }
-        //gear wrappers are converted here but loading will depend on the calling function
-        if (universalInfo.gearList.Count != 0)
-        {
-            List<GearWrapper> tempGearWrapperList = new List<GearWrapper>();
-            foreach (GearSO gearSO in universalInfo.gearList)
-            {
-                GearWrapper gearWrapper = new GearWrapper(gearSO);
-                tempGearWrapperList.Add(gearWrapper);
-            }
-            universalInfo.gearWrapperList = tempGearWrapperList;
-        }
+
+        //CONVERTING FUNCTION FOR MATERIAL AND GEAR SO MIGRATED TO UNIVERSAL FUNCTIONS
+        //if(universalInfo.craftingMaterialSOList.Count != 0)
+        //{
+        //    List<CraftingMaterialWrapper> tempWrapperList = new List<CraftingMaterialWrapper>();
+        //    foreach (CraftingMaterialSO craftingMaterial in universalInfo.craftingMaterialSOList)
+        //    {
+        //        CraftingMaterialWrapper craftingMaterialWrapper = new CraftingMaterialWrapper(craftingMaterial);
+        //        tempWrapperList.Add(craftingMaterialWrapper);
+        //        //universalInfo.craftingMaterialWrapperList.Add(craftingMaterialWrapper);
+        //    }
+        //    universalInfo.craftingMaterialWrapperList = tempWrapperList;
+        //}
+        ////gear wrappers are converted here but loading will depend on the calling function
+        //if (universalInfo.gearList.Count != 0)
+        //{
+        //    List<GearWrapper> tempGearWrapperList = new List<GearWrapper>();
+        //    foreach (GearSO gearSO in universalInfo.gearList)
+        //    {
+        //        GearWrapper gearWrapper = new GearWrapper(gearSO);
+        //        tempGearWrapperList.Add(gearWrapper);
+        //    }
+        //    universalInfo.gearWrapperList = tempGearWrapperList;
+        //}
 
         string universal = JsonUtility.ToJson(universalInfo);
         File.WriteAllText(Application.persistentDataPath + "/UniversalInfo.json", universal);
@@ -321,7 +323,7 @@ public class PlayerUnitWrapper
 }
 
 //serializable wrapper of the craftingMaterialSO
-//universalSaveState will receive the SO itself then convert it to this wrapper fir saving and loading
+//universalInformation must only store wrappers instead of SOs
 [Serializable]
 public class CraftingMaterialWrapper
 {
@@ -346,8 +348,7 @@ public class CraftingMaterialWrapper
 }
 
 //serialized wrapper for GearSO
-//accepted as SO in universalSaveState then converted to wrapper when saving
-//when loading, the calling script is responsible for decoding the wrapper into SO again
+//universalInformation must only store wrappers instead of SOs
 [Serializable]
 public class GearWrapper
 {

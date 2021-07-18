@@ -108,7 +108,7 @@ public enum AllGearClassifications
     OffHand,
     Helm,
     Armor,
-    Boots,
+    Belt,
     Trinket
 }
 
