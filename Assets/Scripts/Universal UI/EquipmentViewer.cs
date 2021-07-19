@@ -58,6 +58,8 @@ public class EquipmentViewer : MonoBehaviour
             PopulateGearPrefab(equippedGearSOList[i], i);
         }
 
+        //this is test
+        InitiateDragNDrops();
 
     }
 
@@ -96,6 +98,20 @@ public class EquipmentViewer : MonoBehaviour
             }
         }
 
+    }
+
+    //TEST SCRIPT TO ACTIVATE THE DRAGNDROPS IN THE INVENTORY SIDE
+    public Canvas testCanvas;
+    public GameObject testEquipmentViewer;
+    public GameObject testdraggingSpace;
+    public GameObject testInventoryContent;
+
+    void InitiateDragNDrops()
+    {
+        foreach (Transform trans in testInventoryContent.transform)
+        {
+            trans.GetComponent<EquipmentDragNDrop>().InitiateEquipmentDragNDrop(testEquipmentViewer, testdraggingSpace, testCanvas.scaleFactor);
+        }
     }
 
 
