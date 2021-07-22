@@ -8,6 +8,10 @@ public class EquipmentDragNDrop : MonoBehaviour, IPointerEnterHandler, IPointerE
     //will be used as scaleFactor for dragging later
     //assigned from InitiateEquipmrntDragNDrop
     float canvasScale;
+
+    //canvas group that allows the dragged object to unblock raycast when ending drag
+    CanvasGroup canvasGroup;
+
     //the prefab itself
     GameObject parentObject;
     //the last child of the object which is the dragging space where in the currently dragged object will be a child in to allow free movement
@@ -26,6 +30,7 @@ public class EquipmentDragNDrop : MonoBehaviour, IPointerEnterHandler, IPointerE
     //acts as awake but the necessary editor objects are already provided
     public void InitiateEquipmentDragNDrop(GameObject parentObject, GameObject draggingSpace, float canvasScale)
     {
+        canvasGroup = gameObject.GetComponent<CanvasGroup>();
         objectRect = gameObject.GetComponent<RectTransform>();
         this.parentObject = parentObject;
         this.canvasScale = canvasScale;
@@ -52,6 +57,8 @@ public class EquipmentDragNDrop : MonoBehaviour, IPointerEnterHandler, IPointerE
     public void OnBeginDrag(PointerEventData eventData)
     {
         transform.SetParent(draggingSpace.transform);
+        canvasGroup.blocksRaycasts = false;
+        
     }
 
     public void OnDrag(PointerEventData eventData)
@@ -60,7 +67,7 @@ public class EquipmentDragNDrop : MonoBehaviour, IPointerEnterHandler, IPointerE
     }
     public void OnEndDrag(PointerEventData eventData)
     {
-
+        canvasGroup.blocksRaycasts = true;
     }
     public void OnPointerClick(PointerEventData eventData)
     {
