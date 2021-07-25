@@ -10,6 +10,8 @@ public class EquipmentViewer : MonoBehaviour
     Transform equipmentSlotPanelTrans;
     //reference SO for gear
     public GearSO referenceGearSO;
+    //onDropCatcher for inventory
+    public InventoryOnDropCatcher inventoryOnDropCatcher;
 
     //will contain the equipped gear SO
     GearSO[] equippedGearSOList = new GearSO[6];
@@ -110,7 +112,7 @@ public class EquipmentViewer : MonoBehaviour
     {
         foreach (Transform trans in testInventoryContent.transform)
         {
-            trans.GetComponent<EquipmentDragNDrop>().InitiateEquipmentDragNDrop(testEquipmentViewer, testdraggingSpace, testCanvas.scaleFactor);
+            trans.GetComponent<EquipmentDragNDrop>().InitiateEquipmentDragNDrop(testEquipmentViewer, testdraggingSpace, inventoryOnDropCatcher, testCanvas.scaleFactor);
         }
     }
 
