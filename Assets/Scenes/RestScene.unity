@@ -3757,6 +3757,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: Gear Prefab
       objectReference: {fileID: 0}
+    - target: {fileID: 8335974971350277751, guid: 7951fb8a920a58e4a8f5b9b121caa556,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 7951fb8a920a58e4a8f5b9b121caa556, type: 3}
 --- !u!224 &1280118650 stripped

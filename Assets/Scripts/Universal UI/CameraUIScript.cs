@@ -262,7 +262,7 @@ public class CameraUIScript : MonoBehaviour
     public void ViewEquipment()
     {
         equipmentViewUI.SetActive(true);
-        equipmentViewer.InitiateEquipment(universalInfo);
+        equipmentViewer.InitiateEquipment(universalInfo.equippedGears, universalInfo.gearWrapperList);
     }
 
 
