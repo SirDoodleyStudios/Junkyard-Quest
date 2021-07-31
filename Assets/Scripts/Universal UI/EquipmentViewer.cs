@@ -4,7 +4,12 @@ using UnityEngine;
 
 public class EquipmentViewer : MonoBehaviour
 {
+    //delegate for disabling the inventory prefabs when the proceed button is clicked
+    public delegate void D_DisableInventoryPrefabs();
+    public event D_DisableInventoryPrefabs d_DisableInventoryPrefabs;
+
     //assigned in editor
+    public CameraUIScript cameraUIScript;
     //contains the gameObjects for equipment slots
     public GameObject equipmentSlotPanel;
     Transform equipmentSlotPanelTrans;
@@ -39,34 +44,6 @@ public class EquipmentViewer : MonoBehaviour
     //called by cameraScriptUI, universalInfo parameter from the UI button press
     public void InitiateEquipment(GearWrapper[] equippedGear, List<GearWrapper> inventoryGear)
     {
-
-
-        //populate the equipped SO list
-        //GearWrapper[] tempWrapperList = universalInfo.equippedGears;
-        //for (int i = 0; tempWrapperList.Length - 1 >= i; i++)
-        //{
-        //    GearWrapper tempGearWrapper = tempWrapperList[i];
-        //    //if the index of the equipped gear is null, add a null in the equippedGearSOList as well
-        //    //the checking here is for the material count because when the list is loaded directly from universalInfo, null becomes an empty GearWrapper instead
-        //    if (tempGearWrapper.gearEffects.Count == 0)
-        //    {
-        //        equippedGearSOList[i] = null;
-        //    }
-        //    //if not null, create a proper SO
-        //    else
-        //    {
-        //        GearSO tempGearSO = Instantiate(referenceGearSO);
-        //        tempGearSO.gearClassifications = tempGearWrapper.gearClassifications;
-        //        tempGearSO.gearSetBonus = tempGearWrapper.gearSetBonus;
-        //        tempGearSO.gearType = tempGearWrapper.gearType;
-        //        tempGearSO.gearEffects = tempGearWrapper.gearEffects;
-        //        equippedGearSOList[i] = tempGearSO;
-
-        //    }
-
-        //    //PopulateGearPrefab(equippedGearSOList[i], i);
-        //}
-
         //for populating the gearList
         foreach (GearWrapper gearWrapper in inventoryGear)
         {
@@ -90,7 +67,7 @@ public class EquipmentViewer : MonoBehaviour
     {
         for (int i = 0; gearSOList.Count - 1 >= i; i++)
         {
-            if (inventoryContentTrans.childCount - 1 >= i && inventoryContentTrans.GetChild(i).gameObject != null)
+            if (inventoryContentTrans.childCount - 1 >= i && inventoryContentTrans.GetChild(i).gameObject != null && !inventoryContentTrans.GetChild(i).gameObject.activeSelf)
             {
                 GameObject gearObject = inventoryContentTrans.GetChild(i).gameObject;
                 GearSOHolder gearSOHolder = gearObject.GetComponent<GearSOHolder>();
@@ -116,45 +93,45 @@ public class EquipmentViewer : MonoBehaviour
 
     //Wont need this anymore
     //the GearSO parameter contains the equippedGear  
-    public void PopulateGearPrefab(GearSO equippedGearSO, int index)
-    {
-        //the checking here is null because that's what we actually send internally
-        if (equippedGearSO != null)
-        {
-            equippedGearSOHolders[index].InitializeGearPrefab(equippedGearSO);
-        }
-        else
-        {
-            switch (index)
-            {
-                case 0:
-                    equippedGearSOHolders[index].InitializeEmptyGearPrefab(AllGearClassifications.MainHand);
-                    break;
-                case 1:
-                    equippedGearSOHolders[index].InitializeEmptyGearPrefab(AllGearClassifications.OffHand);
-                    break;
-                case 2:
-                    equippedGearSOHolders[index].InitializeEmptyGearPrefab(AllGearClassifications.Helm);
-                    break;
-                case 3:
-                    equippedGearSOHolders[index].InitializeEmptyGearPrefab(AllGearClassifications.Armor);
-                    break;
-                case 4:
-                    equippedGearSOHolders[index].InitializeEmptyGearPrefab(AllGearClassifications.Belt);
-                    break;
-                case 5:
-                    equippedGearSOHolders[index].InitializeEmptyGearPrefab(AllGearClassifications.Trinket);
-                    break;
-                default:
-                    break;
-            }
-        }
+    //public void PopulateGearPrefab(GearSO equippedGearSO, int index)
+    //{
+    //    //the checking here is null because that's what we actually send internally
+    //    if (equippedGearSO != null)
+    //    {
+    //        equippedGearSOHolders[index].InitializeGearPrefab(equippedGearSO);
+    //    }
+    //    else
+    //    {
+    //        switch (index)
+    //        {
+    //            case 0:
+    //                equippedGearSOHolders[index].InitializeEmptyGearPrefab(AllGearClassifications.MainHand);
+    //                break;
+    //            case 1:
+    //                equippedGearSOHolders[index].InitializeEmptyGearPrefab(AllGearClassifications.OffHand);
+    //                break;
+    //            case 2:
+    //                equippedGearSOHolders[index].InitializeEmptyGearPrefab(AllGearClassifications.Helm);
+    //                break;
+    //            case 3:
+    //                equippedGearSOHolders[index].InitializeEmptyGearPrefab(AllGearClassifications.Armor);
+    //                break;
+    //            case 4:
+    //                equippedGearSOHolders[index].InitializeEmptyGearPrefab(AllGearClassifications.Belt);
+    //                break;
+    //            case 5:
+    //                equippedGearSOHolders[index].InitializeEmptyGearPrefab(AllGearClassifications.Trinket);
+    //                break;
+    //            default:
+    //                break;
+    //        }
+    //    }
 
-    }
+    //}
 
     //TEST SCRIPT TO ACTIVATE THE DRAGNDROPS IN THE INVENTORY SIDE
     public Canvas testCanvas;
-    public GameObject testEquipmentViewer;
+    public GameObject equipmentViewer;
     public GameObject testdraggingSpace;
     public GameObject testInventoryContent;
 
@@ -163,8 +140,31 @@ public class EquipmentViewer : MonoBehaviour
     {
         foreach (Transform trans in testInventoryContent.transform)
         {
-            trans.GetComponent<EquipmentDragNDrop>().InitiateEquipmentDragNDrop(testEquipmentViewer, testdraggingSpace, inventoryOnDropCatcher, testCanvas.scaleFactor);
+            trans.GetComponent<EquipmentDragNDrop>().InitiateEquipmentDragNDrop(equipmentViewer, testdraggingSpace, inventoryOnDropCatcher, testCanvas.scaleFactor);
         }
+    }
+
+    //function to move gears around lists
+    public void UpdateGearAssignments()
+    {
+
+    }
+
+    //close the window UI
+    public void FinishEquipmentManagementButton()
+    {
+        //creates a new universalInfo to update the wrappers in the list
+        UniversalInformation universalInfo = UniversalSaveState.LoadUniversalInformation();
+        universalInfo.gearWrapperList = UniversalFunctions.ConvertGearSOListToWrapper(gearSOList);
+        //updates the universalInfo in the universalUI
+        cameraUIScript.UpdateUniversalInfo();
+
+        //clear the list of GearSOs since the initiation will populate from the currently saved universalInfo
+        gearSOList.Clear();
+        //disables all gear Prefabs in inventory
+        d_DisableInventoryPrefabs();
+        //disable the equipmentViewer itself
+        gameObject.SetActive(false);
     }
 
 

@@ -13,7 +13,8 @@ public class EquipmentDragNDrop : MonoBehaviour, IPointerEnterHandler, IPointerE
     CanvasGroup canvasGroup;
 
     //the content viewer parent
-    GameObject parentObject;
+    GameObject equipmentViewerObj;
+    EquipmentViewer equipmentViewer;
     //the last child of the object which is the dragging space where in the currently dragged object will be a child in to allow free movement
     GameObject draggingSpace;
     //the parent's EquipmentInventoryScript
@@ -29,8 +30,9 @@ public class EquipmentDragNDrop : MonoBehaviour, IPointerEnterHandler, IPointerE
     enum GearOrigin {equipSlot, inventoryScreen }
     GearOrigin gearOrigin;
     //parameters used for returning
+    //public because it will be accessed by the equippedGearSlot when replacing a gear and sending it back to the inventory
     Transform previousEquipmentSlot;
-    int previousInventoryIndex;
+    public int previousInventoryIndex;
 
     private void Awake()
     {
@@ -44,7 +46,8 @@ public class EquipmentDragNDrop : MonoBehaviour, IPointerEnterHandler, IPointerE
     {
         canvasGroup = gameObject.GetComponent<CanvasGroup>();
         objectRect = gameObject.GetComponent<RectTransform>();
-        this.parentObject = parentObject;
+        equipmentViewerObj = parentObject;
+        equipmentViewer = equipmentViewerObj.GetComponent<EquipmentViewer>();
         this.canvasScale = canvasScale;
         this.draggingSpace = draggingSpace;
         this.inventoryOnDrop = inventoryOnDrop;
@@ -52,6 +55,9 @@ public class EquipmentDragNDrop : MonoBehaviour, IPointerEnterHandler, IPointerE
         //assigned parent equipment inventory screen
         equipmentInventoryObj = transform.parent.gameObject;
         equipmentInventoryDrop = equipmentInventoryObj.GetComponent<EquipmentInventoryDrop>();
+
+        //assigns the function for disabling the gear object
+        equipmentViewer.d_DisableInventoryPrefabs += DisableInventoryPrefab;
 
         //determine where the gear is
         DetermineGearOrigin();
@@ -90,6 +96,13 @@ public class EquipmentDragNDrop : MonoBehaviour, IPointerEnterHandler, IPointerE
         //update origin info
         //must run first before switching parents so that the original index is saved for inventory origin logic
         DetermineGearOrigin();
+
+        //check if the object is in a slot first, if so update the gearSlot identifier immediately
+        if (gearOrigin == GearOrigin.equipSlot)
+        {
+            EquippedGearSlot equipSlot = previousEquipmentSlot.GetComponent<EquippedGearSlot>();
+            equipSlot.UpdateGearSlotAvailability(false);
+        }
 
         //checks if this gear was picked up from inventory or a gearslot
         transform.SetParent(draggingSpace.transform);
@@ -148,6 +161,13 @@ public class EquipmentDragNDrop : MonoBehaviour, IPointerEnterHandler, IPointerE
             transform.SetSiblingIndex(previousInventoryIndex);
             equipmentInventoryDrop.RepositionInventory();
         }
+    }
+
+    //called by a deleaget from EquipmentViewer which is called by the proceed button
+    void DisableInventoryPrefab()
+    {
+        equipmentViewer.d_DisableInventoryPrefabs -= DisableInventoryPrefab;
+        gameObject.SetActive(false);
     }
 
 }
