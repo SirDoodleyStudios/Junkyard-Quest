@@ -31,6 +31,9 @@ public class EquipmentViewer : MonoBehaviour
     //will contain the generated GearSOs from the universalInformation sent by CameraUIScript
     List<GearSO> gearSOList = new List<GearSO>();
 
+    //universalInfo passed by CameraUIScript
+    UniversalInformation universalInfo;
+
     private void Awake()
     {
         equipmentSlotPanelTrans = equipmentSlotPanel.transform;
@@ -42,25 +45,49 @@ public class EquipmentViewer : MonoBehaviour
     }
 
     //called by cameraScriptUI, universalInfo parameter from the UI button press
-    public void InitiateEquipment(GearWrapper[] equippedGear, List<GearWrapper> inventoryGear)
+    public void InitiateEquipment(GearWrapper[] equippedGear, List<GearWrapper> inventoryGear, UniversalInformation universalInfo)
     {
+        //assign the universal info given by the CameraScriptUI
+        this.universalInfo = universalInfo;
+
         //for populating the gearList
         foreach (GearWrapper gearWrapper in inventoryGear)
         {
-            GearSO tempGearSO = Instantiate(referenceGearSO);
-            tempGearSO.gearEffects.AddRange(gearWrapper.gearEffects);
-            tempGearSO.gearClassifications = gearWrapper.gearClassifications;
-            tempGearSO.gearSetBonus = gearWrapper.gearSetBonus;
-            tempGearSO.gearType = gearWrapper.gearType;
-            gearSOList.Add(tempGearSO);
+            gearSOList.Add(ConvertWrapperToGearSO(gearWrapper));
         }
 
+        //for populating the equipList
+        //the counting limit is because the eqip slots are always 6
+        for (int i =0; 5 >= i; i++)
+        {
+            //convert the wrappers and assign them to the proper indexes in the equipment array\
+            //assign null if there is no equipment
+            if (equippedGear[i] != null)
+            {
+                equippedGearSOList[i] = ConvertWrapperToGearSO(equippedGear[i]);
+            }
+            else
+            {
+                equippedGearSOList[i] = null;
+            }
+
+        }
 
         //assign inventory gearSO to prefabs
         PopulateGearContent(gearSOList);
         //assigns references to all instantiated objects
         InitiateDragNDrops();
 
+    }
+    //helper function that will generte a GearSO from a wrapper
+    GearSO ConvertWrapperToGearSO(GearWrapper gearWrapper)
+    {
+        GearSO tempGearSO = Instantiate(referenceGearSO);
+        tempGearSO.gearEffects.AddRange(gearWrapper.gearEffects);
+        tempGearSO.gearClassifications = gearWrapper.gearClassifications;
+        tempGearSO.gearSetBonus = gearWrapper.gearSetBonus;
+        tempGearSO.gearType = gearWrapper.gearType;
+        return tempGearSO;
     }
 
     void PopulateGearContent(List<GearSO> gearSOList)
@@ -144,17 +171,28 @@ public class EquipmentViewer : MonoBehaviour
         }
     }
 
-    //function to move gears around lists
-    public void UpdateGearAssignments()
+    //function to move gearSO from inventory to slot
+    public void MoveGearSOToSlot(GearSO gearSO, int slotIndex)
     {
-
+        //remove from the inventory list
+        gearSOList.Remove(gearSO);
+        //assign the gearSO to slot depending on the index passed
+        equippedGearSOList[slotIndex] = gearSO;
     }
+    //function to move gearSO from slot to Inventory
+    public void MoveGearSOToInventory(GearSO gearSO, int slotIndex)
+    {
+        //make the slot null
+        equippedGearSOList[slotIndex] = null;
+        //add the gearSO back to the inventory
+        gearSOList.Add(gearSO);
+    }
+
 
     //close the window UI
     public void FinishEquipmentManagementButton()
     {
-        //creates a new universalInfo to update the wrappers in the list
-        UniversalInformation universalInfo = UniversalSaveState.LoadUniversalInformation();
+        //update the gearWrappers in the universalInfo
         universalInfo.gearWrapperList = UniversalFunctions.ConvertGearSOListToWrapper(gearSOList);
         //updates the universalInfo in the universalUI
         cameraUIScript.UpdateUniversalInfo();

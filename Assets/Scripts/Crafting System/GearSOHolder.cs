@@ -55,13 +55,13 @@ public class GearSOHolder : MonoBehaviour
         }
     }
 
-    public void InitializeEmptyGearPrefab(AllGearClassifications tempGearClassification)
-    {
-        gearEffectsPanel.SetActive(false);
-        gearIcon.sprite = Resources.Load<Sprite>($"Gear/Empty {tempGearClassification}");
-        gearClassification.text = $"{tempGearClassification}";
-        gearNameObject.SetActive(false);
-    }
+    //public void InitializeEmptyGearPrefab(AllGearClassifications tempGearClassification)
+    //{
+    //    gearEffectsPanel.SetActive(false);
+    //    gearIcon.sprite = Resources.Load<Sprite>($"Gear/Empty {tempGearClassification}");
+    //    gearClassification.text = $"{tempGearClassification}";
+    //    gearNameObject.SetActive(false);
+    //}
 
     //used by EquipmentViewer, this will give the gear prefab an empty variant of the equipment slot
     //these are just for changing visuals
