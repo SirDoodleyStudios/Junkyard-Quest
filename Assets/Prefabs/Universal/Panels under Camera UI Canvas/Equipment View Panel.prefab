@@ -31,7 +31,7 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 2790591882470796321}
-  m_RootOrder: 3
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0}
   m_AnchorMax: {x: 1, y: 1}
@@ -119,7 +119,7 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 2790591882470796321}
-  m_RootOrder: 4
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
@@ -176,6 +176,7 @@ RectTransform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
+  - {fileID: 837672941705994529}
   - {fileID: 7791964971842326878}
   - {fileID: 6244735230277475420}
   - {fileID: 4986076866918803724}
@@ -238,16 +239,91 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 92c5c20a9c0ecac4884b4b6422d85fd2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  cameraUIScript: {fileID: 0}
   equipmentSlotPanel: {fileID: 7791964972435311461}
   referenceGearSO: {fileID: 11400000, guid: c93c95f79d59ffe4a955019c393fcc56, type: 2}
   inventoryOnDropCatcher: {fileID: 629887973}
   inventoryContentTrans: {fileID: 6244735231832065638}
+  equippedContentTrans: {fileID: 7791964972435311460}
   gearPrefabReference: {fileID: 8335974971350277751, guid: 80824f95d22726e45827290fc1e7dad3,
     type: 3}
-  testCanvas: {fileID: 0}
-  testEquipmentViewer: {fileID: 5902317055853657971}
-  testdraggingSpace: {fileID: 5435608759046381604}
-  testInventoryContent: {fileID: 6244735231832065639}
+  canvas: {fileID: 0}
+  equipmentViewer: {fileID: 5902317055853657971}
+  draggingSpace: {fileID: 5435608759046381604}
+--- !u!1 &6155905481249739385
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 837672941705994529}
+  - component: {fileID: 1461102739466628952}
+  - component: {fileID: 5616354158667018863}
+  m_Layer: 5
+  m_Name: BackGround
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &837672941705994529
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6155905481249739385}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 2790591882470796321}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 100, y: 100}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!222 &1461102739466628952
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6155905481249739385}
+  m_CullTransparentMesh: 0
+--- !u!114 &5616354158667018863
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6155905481249739385}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_RaycastTarget: 1
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_Sprite: {fileID: 0}
+  m_Type: 0
+  m_PreserveAspect: 0
+  m_FillCenter: 1
+  m_FillMethod: 4
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+  m_UseSpriteMesh: 0
+  m_PixelsPerUnitMultiplier: 1
 --- !u!114 &2501459608349355697
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -263,6 +339,7 @@ MonoBehaviour:
   firstEquippedElement: {fileID: 0}
   equippedGrid: {fileID: 7791964972435311514}
   equippedRect: {fileID: 7791964972435311460}
+  equipmentViewer: {fileID: 43365988}
   tweenCover: {fileID: 629887971}
   inventoryRect: {fileID: 6244735231832065638}
 --- !u!1001 &452552851626049585
@@ -310,7 +387,7 @@ PrefabInstance:
     - target: {fileID: 4861020163580766525, guid: ce3787b3b293d6a44b865555af7670ce,
         type: 3}
       propertyPath: m_RootOrder
-      value: 2
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 4861020163580766525, guid: ce3787b3b293d6a44b865555af7670ce,
         type: 3}
@@ -400,7 +477,7 @@ PrefabInstance:
     - target: {fileID: 5396217532891692778, guid: ce3787b3b293d6a44b865555af7670ce,
         type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: CloseEquipmentViewButton
+      value: FinishEquipmentManagementButton
       objectReference: {fileID: 0}
     - target: {fileID: 5396217532891692778, guid: ce3787b3b293d6a44b865555af7670ce,
         type: 3}
@@ -537,6 +614,16 @@ PrefabInstance:
       propertyPath: equipmentInventoryDrop
       value: 
       objectReference: {fileID: 2501459608349355697}
+    - target: {fileID: 1905773603149498564, guid: cd9016b66618d41409497804e7d276da,
+        type: 3}
+      propertyPath: equipmentViewer
+      value: 
+      objectReference: {fileID: 43365988}
+    - target: {fileID: 1905773603149498564, guid: cd9016b66618d41409497804e7d276da,
+        type: 3}
+      propertyPath: equipemntInventoryTrans
+      value: 
+      objectReference: {fileID: 6244735231832065638}
     - target: {fileID: 4515679353669244078, guid: cd9016b66618d41409497804e7d276da,
         type: 3}
       propertyPath: m_Sprite
@@ -672,6 +759,16 @@ PrefabInstance:
       propertyPath: equipmentInventoryDrop
       value: 
       objectReference: {fileID: 2501459608349355697}
+    - target: {fileID: 1905773603149498564, guid: cd9016b66618d41409497804e7d276da,
+        type: 3}
+      propertyPath: equipmentViewer
+      value: 
+      objectReference: {fileID: 43365988}
+    - target: {fileID: 1905773603149498564, guid: cd9016b66618d41409497804e7d276da,
+        type: 3}
+      propertyPath: equipemntInventoryTrans
+      value: 
+      objectReference: {fileID: 6244735231832065638}
     - target: {fileID: 4515679353669244078, guid: cd9016b66618d41409497804e7d276da,
         type: 3}
       propertyPath: m_Sprite
@@ -807,6 +904,16 @@ PrefabInstance:
       propertyPath: equipmentInventoryDrop
       value: 
       objectReference: {fileID: 2501459608349355697}
+    - target: {fileID: 1905773603149498564, guid: cd9016b66618d41409497804e7d276da,
+        type: 3}
+      propertyPath: equipmentViewer
+      value: 
+      objectReference: {fileID: 43365988}
+    - target: {fileID: 1905773603149498564, guid: cd9016b66618d41409497804e7d276da,
+        type: 3}
+      propertyPath: equipemntInventoryTrans
+      value: 
+      objectReference: {fileID: 6244735231832065638}
     - target: {fileID: 4515679353669244078, guid: cd9016b66618d41409497804e7d276da,
         type: 3}
       propertyPath: m_Sprite
@@ -942,6 +1049,16 @@ PrefabInstance:
       propertyPath: equipmentInventoryDrop
       value: 
       objectReference: {fileID: 2501459608349355697}
+    - target: {fileID: 1905773603149498564, guid: cd9016b66618d41409497804e7d276da,
+        type: 3}
+      propertyPath: equipemntInventoryTrans
+      value: 
+      objectReference: {fileID: 6244735231832065638}
+    - target: {fileID: 1905773603149498564, guid: cd9016b66618d41409497804e7d276da,
+        type: 3}
+      propertyPath: equipmentViewer
+      value: 
+      objectReference: {fileID: 43365988}
     - target: {fileID: 4515679353669244078, guid: cd9016b66618d41409497804e7d276da,
         type: 3}
       propertyPath: m_Sprite
@@ -1055,7 +1172,7 @@ PrefabInstance:
     - target: {fileID: 5233862899641008517, guid: dde7b30edf9fb4049a70cd0af9ddc7a5,
         type: 3}
       propertyPath: m_RootOrder
-      value: 1
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 5233862899641008517, guid: dde7b30edf9fb4049a70cd0af9ddc7a5,
         type: 3}
@@ -1161,9 +1278,9 @@ PrefabInstance:
     - {fileID: 5233862900250778433, guid: dde7b30edf9fb4049a70cd0af9ddc7a5, type: 3}
     - {fileID: 5233862900250778432, guid: dde7b30edf9fb4049a70cd0af9ddc7a5, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: dde7b30edf9fb4049a70cd0af9ddc7a5, type: 3}
---- !u!224 &6244735230277475420 stripped
+--- !u!224 &6244735231832065638 stripped
 RectTransform:
-  m_CorrespondingSourceObject: {fileID: 5233862899641008517, guid: dde7b30edf9fb4049a70cd0af9ddc7a5,
+  m_CorrespondingSourceObject: {fileID: 5233862900250778559, guid: dde7b30edf9fb4049a70cd0af9ddc7a5,
     type: 3}
   m_PrefabInstance: {fileID: 2165012099501956569}
   m_PrefabAsset: {fileID: 0}
@@ -1173,9 +1290,9 @@ GameObject:
     type: 3}
   m_PrefabInstance: {fileID: 2165012099501956569}
   m_PrefabAsset: {fileID: 0}
---- !u!224 &6244735231832065638 stripped
+--- !u!224 &6244735230277475420 stripped
 RectTransform:
-  m_CorrespondingSourceObject: {fileID: 5233862900250778559, guid: dde7b30edf9fb4049a70cd0af9ddc7a5,
+  m_CorrespondingSourceObject: {fileID: 5233862899641008517, guid: dde7b30edf9fb4049a70cd0af9ddc7a5,
     type: 3}
   m_PrefabInstance: {fileID: 2165012099501956569}
   m_PrefabAsset: {fileID: 0}
@@ -1269,7 +1386,7 @@ PrefabInstance:
     - target: {fileID: 5233862899641008517, guid: dde7b30edf9fb4049a70cd0af9ddc7a5,
         type: 3}
       propertyPath: m_RootOrder
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5233862899641008517, guid: dde7b30edf9fb4049a70cd0af9ddc7a5,
         type: 3}
@@ -1404,18 +1521,6 @@ RectTransform:
     type: 3}
   m_PrefabInstance: {fileID: 2630370772471779547}
   m_PrefabAsset: {fileID: 0}
---- !u!1 &7791964972435311461 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 5233862900250778558, guid: dde7b30edf9fb4049a70cd0af9ddc7a5,
-    type: 3}
-  m_PrefabInstance: {fileID: 2630370772471779547}
-  m_PrefabAsset: {fileID: 0}
---- !u!224 &7791964972435311460 stripped
-RectTransform:
-  m_CorrespondingSourceObject: {fileID: 5233862900250778559, guid: dde7b30edf9fb4049a70cd0af9ddc7a5,
-    type: 3}
-  m_PrefabInstance: {fileID: 2630370772471779547}
-  m_PrefabAsset: {fileID: 0}
 --- !u!114 &7791964972435311514 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 5233862900250778433, guid: dde7b30edf9fb4049a70cd0af9ddc7a5,
@@ -1428,6 +1533,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8a8695521f0d02e499659fee002a26c2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!224 &7791964972435311460 stripped
+RectTransform:
+  m_CorrespondingSourceObject: {fileID: 5233862900250778559, guid: dde7b30edf9fb4049a70cd0af9ddc7a5,
+    type: 3}
+  m_PrefabInstance: {fileID: 2630370772471779547}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &7791964972435311461 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 5233862900250778558, guid: dde7b30edf9fb4049a70cd0af9ddc7a5,
+    type: 3}
+  m_PrefabInstance: {fileID: 2630370772471779547}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &6823148379303381623
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1545,6 +1662,16 @@ PrefabInstance:
       propertyPath: equipmentInventoryDrop
       value: 
       objectReference: {fileID: 2501459608349355697}
+    - target: {fileID: 1905773603149498564, guid: cd9016b66618d41409497804e7d276da,
+        type: 3}
+      propertyPath: equipemntInventoryTrans
+      value: 
+      objectReference: {fileID: 6244735231832065638}
+    - target: {fileID: 1905773603149498564, guid: cd9016b66618d41409497804e7d276da,
+        type: 3}
+      propertyPath: equipmentViewer
+      value: 
+      objectReference: {fileID: 43365988}
     - target: {fileID: 4515679353669244078, guid: cd9016b66618d41409497804e7d276da,
         type: 3}
       propertyPath: m_Sprite
@@ -1680,6 +1807,16 @@ PrefabInstance:
       propertyPath: equipmentInventoryDrop
       value: 
       objectReference: {fileID: 2501459608349355697}
+    - target: {fileID: 1905773603149498564, guid: cd9016b66618d41409497804e7d276da,
+        type: 3}
+      propertyPath: equipmentViewer
+      value: 
+      objectReference: {fileID: 43365988}
+    - target: {fileID: 1905773603149498564, guid: cd9016b66618d41409497804e7d276da,
+        type: 3}
+      propertyPath: equipemntInventoryTrans
+      value: 
+      objectReference: {fileID: 6244735231832065638}
     - target: {fileID: 4515679353669244078, guid: cd9016b66618d41409497804e7d276da,
         type: 3}
       propertyPath: m_Sprite

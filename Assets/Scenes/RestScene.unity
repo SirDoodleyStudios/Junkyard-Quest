@@ -6549,6 +6549,14 @@ PrefabInstance:
       propertyPath: testCanvas
       value: 
       objectReference: {fileID: 2085103220}
+    - target: {fileID: 43365988, guid: 26ddfdd393bc9ee43a51845dca4789de, type: 3}
+      propertyPath: cameraUIScript
+      value: 
+      objectReference: {fileID: 512237410}
+    - target: {fileID: 43365988, guid: 26ddfdd393bc9ee43a51845dca4789de, type: 3}
+      propertyPath: canvas
+      value: 
+      objectReference: {fileID: 2085103220}
     - target: {fileID: 222599717003149968, guid: 26ddfdd393bc9ee43a51845dca4789de,
         type: 3}
       propertyPath: equipemntInventoryTrans

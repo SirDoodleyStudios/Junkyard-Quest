@@ -21,6 +21,7 @@ public class EquippedGearSlot : MonoBehaviour, IDropHandler
 
     //the currently equipped gear in slot
     GameObject equippedGear;
+    GearSO equippedGearSO;
 
     private void Awake()
     {
@@ -50,14 +51,30 @@ public class EquippedGearSlot : MonoBehaviour, IDropHandler
                 break;
         }
 
+
+
     }
+
+    //for initiating the gearSlot if there is already a gear equipped at open
+    //only called one time
+    public void InitiateGearSlot()
+    {
+        if (transform.childCount == 4)
+        {
+            isEquipped = true;
+            equippedGear = transform.GetChild(3).gameObject;
+            equippedGearSO = equippedGear.GetComponent<GearSOHolder>().gearSO;
+        }
+    }
+
     public void OnDrop(PointerEventData eventData)
     {
         GameObject draggedObject = eventData.pointerDrag;
-        GearSO gearSO = draggedObject.GetComponent<GearSOHolder>().gearSO;
+        GearSO draggedGearSO = draggedObject.GetComponent<GearSOHolder>().gearSO;
+
 
         //if object dragged has a gear tag in prefab and if their gear classifications match, it will trigger the onDrop logic
-        if (draggedObject.CompareTag("Gear") && gearSO.gearClassifications == gearClassification)
+        if (draggedObject.CompareTag("Gear") && draggedGearSO.gearClassifications == gearClassification)
         {
 
 
@@ -77,15 +94,19 @@ public class EquippedGearSlot : MonoBehaviour, IDropHandler
 
                 //assign the dragged object as this slot's equipped object
                 equippedGear = draggedObject;
+                equippedGearSO = draggedGearSO;
             }
             //simply assign object and update identifier to true if the identifier is false
             else
             {
                 //assign the dragged object as this slot's equipped object
                 equippedGear = draggedObject;
+                equippedGearSO = draggedGearSO;
                 UpdateGearSlotAvailability(true);
             }
 
+            //move the GearSO to the slot Array
+            equipmentViewer.MoveGearSOToSlot(draggedGearSO, equipemntInventoryTrans.GetSiblingIndex());
 
             //call the resize and reposition function in the inventory parent
             StartCoroutine(equipmentInventoryDrop.ResizeInventoryScreen());
@@ -93,6 +114,8 @@ public class EquippedGearSlot : MonoBehaviour, IDropHandler
 
         //the dragged EquipmentDragNDrop, calls the dragged gear to change it's origin enum
         EquipmentDragNDrop equippedDragged = draggedObject.GetComponent<EquipmentDragNDrop>();
+
+
         equippedDragged.DetermineGearOrigin();
 
     }
@@ -108,6 +131,9 @@ public class EquippedGearSlot : MonoBehaviour, IDropHandler
         Transform equippedGearTrans = equippedGear.transform;
         equippedGearTrans.SetParent(equipemntInventoryTrans);
         equippedGearTrans.SetSiblingIndex(replacementIndex);
+
+        //call the equipmentViewer to reassign the replaced gear back to the inventory gearSOList
+        equipmentViewer.MoveGearSOToInventory(equippedGearSO, transform.GetSiblingIndex());
 
     }
 

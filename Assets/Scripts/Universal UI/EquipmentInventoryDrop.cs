@@ -11,8 +11,12 @@ public class EquipmentInventoryDrop : MonoBehaviour /*IDropHandler*/
     public GameObject firstEquippedElement;
     public GridLayoutGroup equippedGrid;
     public RectTransform equippedRect;
+    //reference to the equipment viewer itself
+    public EquipmentViewer equipmentViewer;
     //the invisible gameObject over the inventory screen that block raycast while tween animation is active
     public Image tweenCover;
+    //the parent equipment viewer
+    //public EquipmentViewer equipmentViewer;
 
     //the inventory grid, will be initialized first then turned off after so that the transforms of the elements are calculated
     public RectTransform inventoryRect;
@@ -182,13 +186,25 @@ public class EquipmentInventoryDrop : MonoBehaviour /*IDropHandler*/
                     break;
                 }
             }
+
+
         }
+
         //call resize and reposition
         StartCoroutine(ResizeInventoryScreen());
 
         //the dragged EquipmentDragNDrop, calls the dragged gear to change it's origin enum
         EquipmentDragNDrop equippedDragged = gearObj.GetComponent<EquipmentDragNDrop>();
+        //call the equipmentViewer to update the gearLists
+        //this will only activate if the object originally came from gearslot
+        if (equippedDragged.gearOrigin == EquipmentDragNDrop.GearOrigin.equipSlot)
+        {
+            equipmentViewer.MoveGearSOToInventory(equippedDragged.gearSO, equippedDragged.previousEquipmentSlot.GetSiblingIndex());
+        }
+        //redetermine origin after placing it back
         equippedDragged.DetermineGearOrigin();
+
+
     }
 
 

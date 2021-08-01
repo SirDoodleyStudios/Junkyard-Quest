@@ -77,9 +77,9 @@ public static class UniversalFunctions
             tempWrapperList.Add(craftingMaterialWrapper);
             //universalInfo.craftingMaterialWrapperList.Add(craftingMaterialWrapper);
         }
-        return tempWrapperList;
-        
+        return tempWrapperList;        
     }
+
 
     //convert a list of GearSO into a list of GearSOWrappers
     public static List<GearWrapper> ConvertGearSOListToWrapper(List<GearSO> gearList)
@@ -92,6 +92,25 @@ public static class UniversalFunctions
             tempGearWrapperList.Add(gearWrapper);
         }
         return tempGearWrapperList;
+    }
+    //array counterpart
+    public static GearWrapper[] ConvertMaterialSOListToWrapperArray(GearSO[] equipArray)
+    {
+        GearWrapper[] tempArray = new GearWrapper[6];
+        for (int i = 0; 5 >= i; i++)
+        {
+            if (equipArray[i] == null)
+            {
+                tempArray[i] = null;
+            }
+            else
+            {
+                GearWrapper gearWrapper = new GearWrapper(equipArray[i]);
+                tempArray[i] = gearWrapper;
+            }
+        }
+        return tempArray;
+
     }
 
 

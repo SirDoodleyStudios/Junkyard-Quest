@@ -17,6 +17,7 @@ public class EquipmentDragNDrop : MonoBehaviour, IPointerEnterHandler, IPointerE
     EquipmentViewer equipmentViewer;
     //the last child of the object which is the dragging space where in the currently dragged object will be a child in to allow free movement
     GameObject draggingSpace;
+    DragMovementDummyScript draggingSpaceScript;
     //the parent's EquipmentInventoryScript
     EquipmentInventoryDrop equipmentInventoryDrop;
     GameObject equipmentInventoryObj;
@@ -26,12 +27,19 @@ public class EquipmentDragNDrop : MonoBehaviour, IPointerEnterHandler, IPointerE
     //this object's rectTransform
     RectTransform objectRect;
 
+    //this object's GearSOHolder and the GearSO in it
+    //accerssed by inv
+    public GearSOHolder gearSOHolder;
+    public GearSO gearSO;
+
     //enum identifiers if the object is from a slot or the inventory
-    enum GearOrigin {equipSlot, inventoryScreen }
-    GearOrigin gearOrigin;
+    //public because the gear origin is checked by EquipmentInventoryDrop when moving gearSOs around
+    public enum GearOrigin {equipSlot, inventoryScreen }
+    public GearOrigin gearOrigin;
     //parameters used for returning
+    //oublic because this is accessed by EquipmentInventoryDrop when moving GearSOs
+    public Transform previousEquipmentSlot;
     //public because it will be accessed by the equippedGearSlot when replacing a gear and sending it back to the inventory
-    Transform previousEquipmentSlot;
     public int previousInventoryIndex;
 
     private void Awake()
@@ -50,11 +58,16 @@ public class EquipmentDragNDrop : MonoBehaviour, IPointerEnterHandler, IPointerE
         equipmentViewer = equipmentViewerObj.GetComponent<EquipmentViewer>();
         this.canvasScale = canvasScale;
         this.draggingSpace = draggingSpace;
+        //draggingSpaceScript = this.draggingSpace.GetComponent<DragMovementDummyScript>();
         this.inventoryOnDrop = inventoryOnDrop;
 
         //assigned parent equipment inventory screen
         equipmentInventoryObj = transform.parent.gameObject;
         equipmentInventoryDrop = equipmentInventoryObj.GetComponent<EquipmentInventoryDrop>();
+
+        //the harbored GearSO, accessed by EquipmentInventoryDrop when calling the function to move gearSO lists
+        gearSOHolder = gameObject.GetComponent<GearSOHolder>();
+        gearSO = gearSOHolder.gearSO;
 
         //assigns the function for disabling the gear object
         equipmentViewer.d_DisableInventoryPrefabs += DisableInventoryPrefab;
@@ -166,7 +179,7 @@ public class EquipmentDragNDrop : MonoBehaviour, IPointerEnterHandler, IPointerE
     //called by a deleaget from EquipmentViewer which is called by the proceed button
     void DisableInventoryPrefab()
     {
-        equipmentViewer.d_DisableInventoryPrefabs -= DisableInventoryPrefab;
+        //equipmentViewer.d_DisableInventoryPrefabs -= DisableInventoryPrefab;
         gameObject.SetActive(false);
     }
 
