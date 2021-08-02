@@ -19,6 +19,9 @@ public class EquippedGearSlot : MonoBehaviour, IDropHandler
     //identifier if slot is already equipped
     bool isEquipped;
 
+    //identifier if gears are dragNDroppable, called in overview
+    bool isDroppable;
+
     //the currently equipped gear in slot
     GameObject equippedGear;
     GearSO equippedGearSO;
@@ -50,9 +53,14 @@ public class EquippedGearSlot : MonoBehaviour, IDropHandler
             default:
                 break;
         }
+        //delegate called by equipmentViewer from overworld
+        equipmentViewer.d_MakeGearsDragNDroppable += MakeSlotDroppable;
 
-
-
+    }
+    //removes allocation to delegate when disabled
+    private void OnDisable()
+    {
+        equipmentViewer.d_MakeGearsDragNDroppable -= MakeSlotDroppable;
     }
 
     //for initiating the gearSlot if there is already a gear equipped at open
@@ -67,56 +75,68 @@ public class EquippedGearSlot : MonoBehaviour, IDropHandler
         }
     }
 
+    //called by delegate called by overworld
+    void MakeSlotDroppable()
+    {
+        isDroppable = true;
+    }
+
     public void OnDrop(PointerEventData eventData)
     {
-        GameObject draggedObject = eventData.pointerDrag;
-        GearSO draggedGearSO = draggedObject.GetComponent<GearSOHolder>().gearSO;
-
-
-        //if object dragged has a gear tag in prefab and if their gear classifications match, it will trigger the onDrop logic
-        if (draggedObject.CompareTag("Gear") && draggedGearSO.gearClassifications == gearClassification)
+        if (isDroppable)
         {
+            GameObject draggedObject = eventData.pointerDrag;
+            GearSO draggedGearSO = draggedObject.GetComponent<GearSOHolder>().gearSO;
 
 
-            draggedObject.transform.SetParent(transform);
-            //assign anchors in center then centralize position
-            RectTransform draggedRect = draggedObject.GetComponent<RectTransform>();
-            //give a tweening snap animation
-            draggedRect.DOAnchorPos(new Vector2(0, 0), .1f, false);
-            //draggedRect.anchoredPosition = new Vector2(0, 0);
-
-            //call the function return the currently equipped object back to inventory using the index number of the new gear
-            //then we leave the identifier as true
-            if (isEquipped)
+            //if object dragged has a gear tag in prefab and if their gear classifications match, it will trigger the onDrop logic
+            if (draggedObject.CompareTag("Gear") && draggedGearSO.gearClassifications == gearClassification)
             {
-                //current equipped gear's return to inventory is processed first before replacement
-                ReplaceGear(draggedObject);
 
-                //assign the dragged object as this slot's equipped object
-                equippedGear = draggedObject;
-                equippedGearSO = draggedGearSO;
+
+                draggedObject.transform.SetParent(transform);
+                //assign anchors in center then centralize position
+                RectTransform draggedRect = draggedObject.GetComponent<RectTransform>();
+                //give a tweening snap animation
+                draggedRect.DOAnchorPos(new Vector2(0, 0), .1f, false);
+                //draggedRect.anchoredPosition = new Vector2(0, 0);
+
+                //call the function return the currently equipped object back to inventory using the index number of the new gear
+                //then we leave the identifier as true
+                if (isEquipped)
+                {
+                    //current equipped gear's return to inventory is processed first before replacement
+                    ReplaceGear(draggedObject);
+
+                    //assign the dragged object as this slot's equipped object
+                    equippedGear = draggedObject;
+                    equippedGearSO = draggedGearSO;
+                }
+                //simply assign object and update identifier to true if the identifier is false
+                else
+                {
+                    //assign the dragged object as this slot's equipped object
+                    equippedGear = draggedObject;
+                    equippedGearSO = draggedGearSO;
+                    UpdateGearSlotAvailability(true);
+                }
+
+                //move the GearSO to the slot Array
+                equipmentViewer.MoveGearSOToSlot(draggedGearSO, equipemntInventoryTrans.GetSiblingIndex());
+
+                //call the resize and reposition function in the inventory parent
+                StartCoroutine(equipmentInventoryDrop.ResizeInventoryScreen());
             }
-            //simply assign object and update identifier to true if the identifier is false
-            else
-            {
-                //assign the dragged object as this slot's equipped object
-                equippedGear = draggedObject;
-                equippedGearSO = draggedGearSO;
-                UpdateGearSlotAvailability(true);
-            }
 
-            //move the GearSO to the slot Array
-            equipmentViewer.MoveGearSOToSlot(draggedGearSO, equipemntInventoryTrans.GetSiblingIndex());
+            //the dragged EquipmentDragNDrop, calls the dragged gear to change it's origin enum
+            EquipmentDragNDrop equippedDragged = draggedObject.GetComponent<EquipmentDragNDrop>();
 
-            //call the resize and reposition function in the inventory parent
-            StartCoroutine(equipmentInventoryDrop.ResizeInventoryScreen());
+
+            equippedDragged.DetermineGearOrigin();
+
+            Debug.Log("dropped");
         }
 
-        //the dragged EquipmentDragNDrop, calls the dragged gear to change it's origin enum
-        EquipmentDragNDrop equippedDragged = draggedObject.GetComponent<EquipmentDragNDrop>();
-
-
-        equippedDragged.DetermineGearOrigin();
 
     }
 

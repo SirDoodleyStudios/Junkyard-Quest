@@ -42,6 +42,10 @@ public class EquipmentDragNDrop : MonoBehaviour, IPointerEnterHandler, IPointerE
     //public because it will be accessed by the equippedGearSlot when replacing a gear and sending it back to the inventory
     public int previousInventoryIndex;
 
+    //bool identifier that allows dragging and dropping
+    //will only be called in overworld or maybe in some event
+    bool isDragNDroppable;
+
     private void Awake()
     {
         
@@ -71,10 +75,22 @@ public class EquipmentDragNDrop : MonoBehaviour, IPointerEnterHandler, IPointerE
 
         //assigns the function for disabling the gear object
         equipmentViewer.d_DisableInventoryPrefabs += DisableInventoryPrefab;
+        //assigns function for making the gear dragNDroppable
+        //only activated when in overworld
+        equipmentViewer.d_MakeGearsDragNDroppable += MakeGearDragNDroppable;
 
         //determine where the gear is
         DetermineGearOrigin();
     }
+
+    //event function called by equipment viewer from overworld
+    //makes the gear draggable and droppable
+    void MakeGearDragNDroppable()
+    {
+        isDragNDroppable = true;
+    }
+
+
     //determines where the gear is placed
     //called at initialize and by gearSlot and EquipmentInventoryDrop and by firs initialization
     //PENDING FUNCTIONALITY CHANGE, WE CAN JUST CALL THIS ONLY DURING INITIALIZE AND ONBEGIN DRAG BUT MAYBE WE'LL NEED THE CALLS FROM GEARSLOT AND INVENTORY SCRIPTS
@@ -106,50 +122,59 @@ public class EquipmentDragNDrop : MonoBehaviour, IPointerEnterHandler, IPointerE
 
     public void OnBeginDrag(PointerEventData eventData)
     {
-        //update origin info
-        //must run first before switching parents so that the original index is saved for inventory origin logic
-        DetermineGearOrigin();
-
-        //check if the object is in a slot first, if so update the gearSlot identifier immediately
-        if (gearOrigin == GearOrigin.equipSlot)
+        if (isDragNDroppable)
         {
-            EquippedGearSlot equipSlot = previousEquipmentSlot.GetComponent<EquippedGearSlot>();
-            equipSlot.UpdateGearSlotAvailability(false);
+            //update origin info
+            //must run first before switching parents so that the original index is saved for inventory origin logic
+            DetermineGearOrigin();
+
+            //check if the object is in a slot first, if so update the gearSlot identifier immediately
+            if (gearOrigin == GearOrigin.equipSlot)
+            {
+                EquippedGearSlot equipSlot = previousEquipmentSlot.GetComponent<EquippedGearSlot>();
+                equipSlot.UpdateGearSlotAvailability(false);
+            }
+
+            //checks if this gear was picked up from inventory or a gearslot
+            transform.SetParent(draggingSpace.transform);
+            canvasGroup.blocksRaycasts = false;
+
+            //make the inventoryDropCatcher targetable by raycasts
+            inventoryOnDrop.AlterOnDropCatcherRaycast(true);
         }
-
-        //checks if this gear was picked up from inventory or a gearslot
-        transform.SetParent(draggingSpace.transform);
-        canvasGroup.blocksRaycasts = false;
-
-        //make the inventoryDropCatcher targetable by raycasts
-        inventoryOnDrop.AlterOnDropCatcherRaycast(true);
-
-
 
     }
 
     public void OnDrag(PointerEventData eventData)
     {
-        objectRect.anchoredPosition += eventData.delta / canvasScale;
+        if (isDragNDroppable)
+        {
+            objectRect.anchoredPosition += eventData.delta / canvasScale;
+        }
+
 
     }
     public void OnEndDrag(PointerEventData eventData)
     {
-        canvasGroup.blocksRaycasts = true;
-
-        //call the EquipmentInventoryDrop script to add the object to inventory screen
-        //checks first if the drag ended at the side of the inventory screen
-        //if (eventData.position.x > Screen.width/2)
-        //{
-        //    equipmentInventoryDrop.PlaceGearInInventory(eventData.pointerDrag, eventData.position.y);
-        //}
-
-        //on endDrag, if gear is still in dragSpace, call the return Function
-        if (transform.parent.GetComponent<DragMovementDummyScript>() != null)
+        if (isDragNDroppable)
         {
-            ReturnGearToPreviousPlace(eventData);
-            inventoryOnDrop.AlterOnDropCatcherRaycast(false);
+            canvasGroup.blocksRaycasts = true;
+
+            //call the EquipmentInventoryDrop script to add the object to inventory screen
+            //checks first if the drag ended at the side of the inventory screen
+            //if (eventData.position.x > Screen.width/2)
+            //{
+            //    equipmentInventoryDrop.PlaceGearInInventory(eventData.pointerDrag, eventData.position.y);
+            //}
+
+            //on endDrag, if gear is still in dragSpace, call the return Function
+            if (transform.parent.GetComponent<DragMovementDummyScript>() != null)
+            {
+                ReturnGearToPreviousPlace(eventData);
+                inventoryOnDrop.AlterOnDropCatcherRaycast(false);
+            }
         }
+
 
     }
     public void OnPointerClick(PointerEventData eventData)

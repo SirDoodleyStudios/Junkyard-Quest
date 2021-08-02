@@ -89,6 +89,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   equipmentInventoryDrop: {fileID: 2501459608349355697}
   inventoryCover: {fileID: 629887971}
+  equipmentViewer: {fileID: 43365988}
 --- !u!1 &5435608759046381604
 GameObject:
   m_ObjectHideFlags: 0

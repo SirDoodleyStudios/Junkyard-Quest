@@ -8,6 +8,10 @@ public class EquipmentViewer : MonoBehaviour
     public delegate void D_DisableInventoryPrefabs();
     public event D_DisableInventoryPrefabs d_DisableInventoryPrefabs;
 
+    //delegate for making all gears drag and droppable, only called in overworld scene
+    public delegate void D_MakeGearsDragNDroppable();
+    public event D_MakeGearsDragNDroppable d_MakeGearsDragNDroppable;
+
     //for initiating dragNDrops, basically giving them all the references that they need
     public delegate void D_InitiateEquipmentDragNDrops(GameObject parentObject, GameObject draggingSpace, InventoryOnDropCatcher inventoryOnDrop, float canvasScale);
     public event D_InitiateEquipmentDragNDrops d_InitiateEquipmentDragNDrops;
@@ -46,6 +50,9 @@ public class EquipmentViewer : MonoBehaviour
     public GameObject draggingSpace;
     //dont need anymore
     //public GameObject inventoryContent;
+
+    //identifier that makes the delegate for activating DragNDroppable gears when in overworld
+    bool isGearManagementEnebled;
 
     private void Awake()
     {
@@ -93,8 +100,22 @@ public class EquipmentViewer : MonoBehaviour
 
         //assign inventory and slot gearSO to prefabs
         PopulateGearContent(gearSOList);
+        //will only be called from overworld
+        //enables all gear drags and droppables
+        if (isGearManagementEnebled)
+        {
+            d_MakeGearsDragNDroppable?.Invoke();
+        }
+    }
+
+    //called by overworld to CameraUI
+    //makes all gears in inventory and slots possible for drag
+    public void MakeGearsDragNDroppable()
+    {
+        isGearManagementEnebled = true;
 
     }
+
     //helper function that will generte a GearSO from a wrapper
     GearSO ConvertWrapperToGearSO(GearWrapper gearWrapper)
     {
@@ -308,7 +329,9 @@ public class EquipmentViewer : MonoBehaviour
         cameraUIScript.UpdateUniversalInfo();
 
         //disables all gear Prefabs in inventory
-        d_DisableInventoryPrefabs();
+        //works like if delegate is not null, invoke delegate event
+        d_DisableInventoryPrefabs?.Invoke();
+
         //disable the equipmentViewer itself
         gameObject.SetActive(false);
     }

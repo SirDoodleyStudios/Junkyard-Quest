@@ -82,6 +82,10 @@ public class OverworldManager : MonoBehaviour
         xBoundary = camera.aspect * camera.orthographicSize;
         yBoundary = camera.orthographicSize;
 
+        //calls the CameraUIScript to call the EquipmentViewer
+        //makes all gears in euipmentViewer draggable
+        cameraUI.EnableGearManagement();
+
 
         Debug.Log(worldState);
 
@@ -177,7 +181,7 @@ public class OverworldManager : MonoBehaviour
             //test
             if (pointedObject.collider != null)
             {
-                Debug.Log("object hovered");
+
             }
 
             //makes sure that the click has a collider

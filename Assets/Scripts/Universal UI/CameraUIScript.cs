@@ -264,6 +264,11 @@ public class CameraUIScript : MonoBehaviour
         equipmentViewUI.SetActive(true);
         equipmentViewer.InitiateEquipment(universalInfo.equippedGears, universalInfo.gearWrapperList, universalInfo);
     }
+    //called by OverWorld only to make all gears in equipment viewer draggable and droppable
+    public void EnableGearManagement()
+    {
+        equipmentViewer.MakeGearsDragNDroppable();
+    }
 
 
 }
