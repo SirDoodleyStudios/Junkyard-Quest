@@ -305,6 +305,10 @@ PrefabInstance:
       propertyPath: cameraUIScript
       value: 
       objectReference: {fileID: 1009712120}
+    - target: {fileID: 43365988, guid: 26ddfdd393bc9ee43a51845dca4789de, type: 3}
+      propertyPath: overworldManager
+      value: 
+      objectReference: {fileID: 2133115988}
     - target: {fileID: 2790591882470796321, guid: 26ddfdd393bc9ee43a51845dca4789de,
         type: 3}
       propertyPath: m_LocalPosition.x

@@ -4,6 +4,11 @@ using UnityEngine;
 
 public class EquipmentViewer : MonoBehaviour
 {
+    //reference for the OverWorld Manager
+    //used only for saving equipment changes
+    //assigned in editor, only assigned in the OverWorld Scene
+    public OverworldManager overworldManager;
+
     //delegate for disabling the inventory prefabs when the proceed button is clicked
     public delegate void D_DisableInventoryPrefabs();
     public event D_DisableInventoryPrefabs d_DisableInventoryPrefabs;
@@ -319,12 +324,20 @@ public class EquipmentViewer : MonoBehaviour
     public void FinishEquipmentManagementButton()
     {
         //update the gearWrappers in the universalInfo
-        universalInfo.gearWrapperList = UniversalFunctions.ConvertGearSOListToWrapper(gearSOList);
-        universalInfo.equippedGears = UniversalFunctions.ConvertMaterialSOListToWrapperArray(equippedGearSOList);
-        UniversalSaveState.SaveUniversalInformation(universalInfo);
+        //universalInfo.gearWrapperList = UniversalFunctions.ConvertGearSOListToWrapper(gearSOList);
+        //universalInfo.equippedGears = UniversalFunctions.ConvertMaterialSOListToWrapperArray(equippedGearSOList);
+        //UniversalSaveState.SaveUniversalInformation(universalInfo);
 
+        List<GearWrapper> gearSOListWrappers = UniversalFunctions.ConvertGearSOListToWrapper(gearSOList);
+        GearWrapper[] equippedGearSOListWrappers = UniversalFunctions.ConvertMaterialSOListToWrapperArray(equippedGearSOList);
+        //this function is only called when in the overWorldScene, overWorldManager is only assigned in overWorld Scene
+        if (overworldManager != null)
+        {
+            overworldManager.SaveEquipmentInOverWorld(equippedGearSOListWrappers, gearSOListWrappers);
+        }
         TESTDEBUGLOG();
 
+        //migrated to overWorld maanger
         //updates the universalInfo in the universalUI
         cameraUIScript.UpdateUniversalInfo();
 

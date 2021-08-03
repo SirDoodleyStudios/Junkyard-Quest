@@ -132,6 +132,20 @@ public class OverworldManager : MonoBehaviour
 
     }
 
+    //this function is called by the equipment viewer
+    //saves the gear lists since you can only manage equipment when in overWorld
+    public void SaveEquipmentInOverWorld(GearWrapper[] equippedGear, List<GearWrapper> gearInventory)
+    {
+        universalInformation.equippedGears = equippedGear;
+        universalInformation.gearWrapperList = gearInventory;
+        //the save of equipment is separated becasue it can be changed multiple times without any change in the overworld
+        //the universalInformation in this state will only update the gear lists
+        UniversalSaveState.SaveUniversalInformation(universalInformation);
+        //updates the universalInfo in the universalUI
+        cameraUI.UpdateUniversalInfo();
+    }
+
+
     void Update()
     {
         //for dragging camera
@@ -358,6 +372,8 @@ public class OverworldManager : MonoBehaviour
         {
             universalInformation.nodeCount = universalInformation.nodeCount + 1;
         }
+        //get the gear slots and inventory list of Gears from load
+        //the current
         UniversalSaveState.SaveUniversalInformation(universalInformation);
     }
 
