@@ -685,7 +685,18 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 3570809740897493390}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 8410980135062712101}
+        m_MethodName: ViewInventory
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!222 &854280914860768339
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -1039,7 +1050,18 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 8907530218386653848}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 8410980135062712101}
+        m_MethodName: ViewEquipment
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!222 &7082155796431797183
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -1955,6 +1977,10 @@ MonoBehaviour:
   deckScrollContent: {fileID: 0}
   referenceJigsawFormat: {fileID: 11400000, guid: 88773f1769c22e84d84ad1051c872f14,
     type: 2}
+  inventoryViewUI: {fileID: 0}
+  inventoryViewer: {fileID: 0}
+  equipmentViewUI: {fileID: 0}
+  equipmentViewer: {fileID: 0}
 --- !u!1 &8410980135081962449
 GameObject:
   m_ObjectHideFlags: 0

@@ -113,5 +113,9 @@ public static class UniversalFunctions
 
     }
 
+    //Called when generating the Card Pools
+    //creates a list of Cards depending on the received player or class
+    //called when a new Cards are to be randomly picked
+
 
 }
