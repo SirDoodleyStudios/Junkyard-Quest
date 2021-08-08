@@ -80,6 +80,7 @@ public class CardOptions : MonoBehaviour
                     disabledPrefabs.GetComponent<Display>().card = deckCard;
                     disabledPrefabs.SetActive(true);
                     hasNoDisabledPrefabs = false;
+
                     break;
                 }
                 //if no card prefab can be recycled, instantiate a new one
@@ -97,6 +98,8 @@ public class CardOptions : MonoBehaviour
                 instantiatedPopups.ResizePopups();
                 instantiatedPrefab.SetActive(true);
             }
+
+
         }
     }
 
