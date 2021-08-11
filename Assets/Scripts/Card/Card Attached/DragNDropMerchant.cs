@@ -4,8 +4,12 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using TMPro;
 
-public class DragNDropMerchant : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
+public class DragNDropMerchant : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IPointerClickHandler
 {
+    //reference to merchantManager, this one is assigned when the card object is instantiated or enabled
+    CardOptions cardOptions;
+    MerchantManager merchantManager;
+
     CardDescriptionLayout cardDescriptionLayout;
 
     //Reference Objects for the prices
@@ -14,7 +18,9 @@ public class DragNDropMerchant : MonoBehaviour, IPointerEnterHandler, IPointerEx
     public int scrapsValueInt;
     private void Awake()
     {
-        SetScrapsValue();
+        cardOptions = transform.parent.parent.parent.parent.parent.GetComponent<CardOptions>();
+        merchantManager = cardOptions.merchantManager;
+        //SetScrapsValue();
     }
     private void Start()
     {
@@ -31,10 +37,35 @@ public class DragNDropMerchant : MonoBehaviour, IPointerEnterHandler, IPointerEx
         cardDescriptionLayout.DisablePopups();
     }
 
-    //called at awake
-    public void SetScrapsValue()
+    //on click, add the card to deck
+    public void OnPointerClick(PointerEventData eventData)
     {
-        int scrapsValueInt = Random.Range(45, 71);
+        //check first if player has enough scraps
+        if (merchantManager.CheckScraps(scrapsValueInt))
+        {
+
+            //on click, send the assigned card to the MerchantManager for adding to deck
+            Card card = gameObject.GetComponent<Display>().card;
+            merchantManager.AddBoughtCard(card);
+            //on click, remove the chosen card from the list in cardOptions
+            cardOptions.RemoveCardFromOptionList(card);
+            //calls disable if the card clicked can be bought
+            DisableCardPrefab();
+        }
+
+    }
+
+    //called by CardOptions when enabling or instantiating the card prefab
+    public void SetScrapsValue(int scrapsValue)
+    {
+        scrapsValueInt = scrapsValue;
         scrapsValueText.text = $"{scrapsValueInt}";
     }
+
+    //disables the card prefab from options
+    void DisableCardPrefab()
+    {
+        gameObject.SetActive(false);
+    }
+
 }

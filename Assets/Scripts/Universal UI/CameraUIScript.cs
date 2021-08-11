@@ -220,6 +220,7 @@ public class CameraUIScript : MonoBehaviour
 
     //function for updating the deck
     //currently only used by forgemanager since the deck is actively updated there
+    //also used by merchantManager
     //can add or remove single cards, bool identifier to determine if add or remove, true for add, false for remove
     public void UpdateCurrentDeck(Card newCardList, bool isToAdd)
     {

@@ -62,9 +62,10 @@ public class CardDescriptionLayout : MonoBehaviour/*, IPointerEnterHandler, IPoi
 
     }
     //everytim the card is disabled, it's discarded or out of use
+    //if the prefab is disabled, call the Disable Popups, used when recycling Card Prefabs
     private void OnDisable()
     {
-
+        DisablePopups();
     }
 
     void AssignDescriptions()
@@ -268,6 +269,7 @@ public class CardDescriptionLayout : MonoBehaviour/*, IPointerEnterHandler, IPoi
 
         }
     }
+
 
 
 

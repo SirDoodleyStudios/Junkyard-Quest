@@ -437,8 +437,9 @@ public class ForgeManager : MonoBehaviour
                         }
                     }
 
+                    //Instead of this, I attached an OnDisable Function in the CardDescriptionLayout
                     //this will disable the Card Tag Popups of the chosen card before unviewing the deck
-                    chosenCardPrefab.GetComponent<CardDescriptionLayout>().DisablePopups();
+                    //chosenCardPrefab.GetComponent<CardDescriptionLayout>().DisablePopups();
                 }
 
             }

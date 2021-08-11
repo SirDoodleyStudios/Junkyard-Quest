@@ -177,6 +177,19 @@ public static class UniversalSaveState
         return loadedState;
     }
 
+    //Save function for the MerchantScene
+    public static void SaveMerchant(MerchantSaveState merchantSaveState)
+    {
+        string merchant = JsonUtility.ToJson(merchantSaveState);
+        File.WriteAllText(Application.persistentDataPath + "/Merchant.json", merchant);
+    }
+    public static MerchantSaveState LoadMerchant()
+    {
+        string merchant = File.ReadAllText(Application.persistentDataPath + "/Merchant.json");
+        MerchantSaveState merchantState = JsonUtility.FromJson<MerchantSaveState>(merchant);
+        return merchantState;
+    }
+
 }
 
 
