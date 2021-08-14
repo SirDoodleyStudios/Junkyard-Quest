@@ -14,6 +14,8 @@ public class CardOptions : MonoBehaviour
     public Transform cardOptionsContent;
     //used contains the deck pools
     public DeckPools deckPools;
+    //The price tag prefab to be attached to the items on sale
+    public GameObject priceTagPrefab;
 
     //generated at initiate function, should be random
     List<Card> playerCardPool = new List<Card>();
@@ -44,6 +46,8 @@ public class CardOptions : MonoBehaviour
         //generate the card pools
         classCardPool = deckPools.GetClassPool(chosenClass);
         playerCardPool = deckPools.GetPlayerPool(chosenPlayer);
+        //assign the received merchantSaveState to be altered and sent back to the MerchantManager when saving
+        merchantSaveState = merchantSave;
 
         //if loaded from file, just assign the merchantSaveStateParameter
         if (isLoadedFromFile)
@@ -56,12 +60,17 @@ public class CardOptions : MonoBehaviour
             for (int i = 0; optionsCount - 1 >= i; i++ )
             {
                 Card instantiatedCard = CardSOFactory.GetCardSO(merchantSave.cardOptions[i].cardEnum);
+                instantiatedCard.effectText = CardTagManager.GetCardEffectDescriptions(instantiatedCard);
                 CardNCosts.Add(instantiatedCard, merchantSaveState.cardOptionCosts[i]);
             }
         }
         //if not loaded, use default loading
         else
         {
+            //this internal int list is going to be used during randomizing so that no card repeats in options
+            //the ints to be stored here are indices of the card pool
+            List<int> repeatPreventer = new List<int>();
+
             //generate 5 player cards
             //NOT USED FOR NOW BECAUSE THERE AREN'T ANY ARLEN CARDS YET, ALIGN WITH THE CLASS CARD LOGIC
             //for (int i = 0; 4 >= i; i++)
@@ -81,7 +90,9 @@ public class CardOptions : MonoBehaviour
                     randomizedIndex = Random.Range(0, classCardPool.Count);
                     instantiatedCard = Instantiate(classCardPool[randomizedIndex]);
                 }
-                while (CardNCosts.ContainsKey(instantiatedCard));
+                while (repeatPreventer.Contains(randomizedIndex));
+                //add the cardpool index
+                repeatPreventer.Add(randomizedIndex);
 
                 instantiatedCard.effectText = CardTagManager.GetCardEffectDescriptions(instantiatedCard);
                 //randomize card scraps cost
@@ -117,14 +128,22 @@ public class CardOptions : MonoBehaviour
             foreach (Transform content in cardOptionsContent)
             {
                 GameObject disabledPrefabs = content.gameObject;
+                Transform disabledPrefabTrans = disabledPrefabs.transform;
                 if (!disabledPrefabs.activeSelf)
                 {
                     disabledPrefabs.GetComponent<Display>().card = cardNCost.Key;
                     disabledPrefabs.SetActive(true);
                     hasNoDisabledPrefabs = false;
+
+                    //price tag is just referenced since it should be existing under the card prefab at this point
+                    GameObject priceTagObj = disabledPrefabTrans.GetChild(disabledPrefabTrans.childCount - 1).gameObject;
+                    PriceTag priceTag = priceTagObj.GetComponent<PriceTag>();
+                    priceTag.SetPriceTag(cardNCost.Value);
+
+                    //Price is now in the priceTag script
                     //the dragNDrpMerchant holds the scrap value
-                    DragNDropMerchant dragNDropMerchant = disabledPrefabs.GetComponent<DragNDropMerchant>();
-                    dragNDropMerchant.SetScrapsValue(cardNCost.Value);
+                    //DragNDropMerchant dragNDropMerchant = disabledPrefabs.GetComponent<DragNDropMerchant>();
+                    //dragNDropMerchant.SetScrapsValue(cardNCost.Value);
                     break;
                 }
                 //if no card prefab can be recycled, instantiate a new one
@@ -138,9 +157,16 @@ public class CardOptions : MonoBehaviour
                 CardDescriptionLayout instantiatedPopups = instantiatedPrefab.GetComponent<CardDescriptionLayout>();
                 instantiatedRect.sizeDelta = new Vector2(Screen.width * .13440860215f, Screen.height * .34389952153f);
                 instantiatedDisplay.card = cardNCost.Key;
-                //the dragNDrpMerchant holds the scrap value
-                DragNDropMerchant dragNDropMerchant = instantiatedPrefab.GetComponent<DragNDropMerchant>();
-                dragNDropMerchant.SetScrapsValue(cardNCost.Value);
+
+                //create the priceTag prefab then instantiate it under the card then set the price
+                GameObject priceTagObj = Instantiate(priceTagPrefab, instantiatedPrefab.transform);
+                PriceTag priceTag = priceTagObj.GetComponent<PriceTag>();
+                priceTag.SetPriceTag(cardNCost.Value);
+                
+
+                //DragNDropMerchant dragNDropMerchant = instantiatedPrefab.GetComponent<DragNDropMerchant>();
+                //dragNDropMerchant.SetScrapsValue(cardNCost.Value);
+
                 //sets the prefixed sizes of the card's fons
                 instantiatedDisplay.FontResize();
                 instantiatedPopups.ResizePopups();

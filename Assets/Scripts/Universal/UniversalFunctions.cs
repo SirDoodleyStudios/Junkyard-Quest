@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
 
 public static class UniversalFunctions
 {
@@ -111,6 +112,15 @@ public static class UniversalFunctions
         }
         return tempArray;
 
+    }
+
+    //helper function that will get a random enum from the public enum lists
+    //called like this enumType = UniversalFunctions.GetRandomEnum<EnumType>()
+    public static enumType GetRandomEnum<enumType>()
+    {
+        Array enumArray = Enum.GetValues(typeof(enumType));
+        enumType randomEnumElement = (enumType)enumArray.GetValue(UnityEngine.Random.Range(0, enumArray.Length));
+        return randomEnumElement;
     }
 
     //Called when generating the Card Pools

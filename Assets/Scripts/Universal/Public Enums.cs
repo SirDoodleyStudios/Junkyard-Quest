@@ -78,7 +78,8 @@ public enum AllMaterialEffects
     DeepSleep, //Rest consumes 2 actions but fully heals HP
     ForgeFriendly, //Forging cost starts at 40 scraps
 
-    Sturdy, //HP bonus
+    //set bonuses separated so that logic for random effect functions don't include them
+    Sturdy = 100, //HP bonus
     Mysterious, //Creativity bonus
     Fancy //scraps bonus
 }

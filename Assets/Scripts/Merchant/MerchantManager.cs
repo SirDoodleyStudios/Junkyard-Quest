@@ -23,9 +23,10 @@ public class MerchantManager : MonoBehaviour
     public GameObject blueprintOptionsUI;
     public GameObject cardRemovalUI;
     CardOptions cardOptionsScript;
+    MaterialOptions materialOptionsScript;
 
     //identifiers for the UIs if they have already been initiated
-    bool isCardOptionsInitialized;
+    bool isOptionsInitialized;
     bool isMaterialOptionsInitialized;
     bool isBlueprintOptionsInitialized;
 
@@ -34,6 +35,9 @@ public class MerchantManager : MonoBehaviour
 
     //int value for remaining scraps of player
     int remainingScraps;
+
+    //identifier to check if the merchantSaveState is loaded fron an existing file
+    bool isLoadedFromFile;
 
     private void Awake()
     {
@@ -50,15 +54,18 @@ public class MerchantManager : MonoBehaviour
 
         //script assignments for the Option scripts
         cardOptionsScript = cardOptionsUI.GetComponent<CardOptions>();
+        materialOptionsScript = materialOptionsUI.GetComponent<MaterialOptions>();
 
         //if there is no MerchantSave, it means that the merchant scene was loaded from current game session
         if (File.Exists(Application.persistentDataPath + "/Merchant.json"))
         {
             merchantSaveState = UniversalSaveState.LoadMerchant();
+            isLoadedFromFile = true;
         }
         else
         {
             merchantSaveState = new MerchantSaveState();
+            isLoadedFromFile = false;
         }
         //initiate the output settings
         InitiateOptionUIs();
@@ -67,16 +74,25 @@ public class MerchantManager : MonoBehaviour
     //for initiating all option UIs
     void InitiateOptionUIs()
     {
-        //For Card Optios initiation
-        CardOptions cardOptionsScript = cardOptionsUI.GetComponent<CardOptions>();
         //if the UI is not yet initialized, initialze it then turn the identifier to true to ensure that it is called only one time
-        if (isCardOptionsInitialized == false)
+        if (isOptionsInitialized == false)
         {
-            //initiate cardOptions fresh in current game session
-            //the merchantSaveState is empty here and won't be used since the false parameter is for initiating 
-            cardOptionsScript.InitiateCardOptions(universalInfo, merchantSaveState, false);
-            isCardOptionsInitialized = true;
+            //initiate Options fresh in current game session
+            //the merchantSaveState is either loaded from file or empty depending on the file check function in awake
+            //the bool parameter will dictate if the optios are to be loaded randomly or from file
+
+            //for card options
+            cardOptionsScript.InitiateCardOptions(universalInfo, merchantSaveState, isLoadedFromFile);
+            //for material options
+            materialOptionsScript.InitiateMaterialOptions(universalInfo, merchantSaveState, isLoadedFromFile);
+            //for blueprint options
+
+            isOptionsInitialized = true;
+
         }
+
+        //for materialOptions initiation
+
     }
 
     //for accessing the options UI
@@ -87,7 +103,13 @@ public class MerchantManager : MonoBehaviour
         cardOptionsUI.SetActive(true);
         //calls the actual command to view available cards
         cardOptionsScript.ViewCardOptions(merchantSaveState);
+    }
 
+    public void MaterialOptionsButton()
+    {
+        materialOptionsUI.SetActive(true);
+        materialOptionsScript.ViewMaterialOptions();
+        
     }
 
     //called when adding a card in deck via merchant buy

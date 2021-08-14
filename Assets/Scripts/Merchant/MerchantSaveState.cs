@@ -6,8 +6,13 @@ using System;
 [Serializable]
 public class MerchantSaveState
 {
+    //for cards
     public List<CardAndJigsaWrapper> cardOptions = new List<CardAndJigsaWrapper>();
     public List<int> cardOptionCosts = new List<int>();
+
+    //for materials
+    public List<CraftingMaterialWrapper> materialOptions = new List<CraftingMaterialWrapper>();
+    public List<int> materialOptionCosts = new List<int>();
 
     //DONT NEED A CONSTRUCTOR
     //dictionary paramieter is from the card options

@@ -13,8 +13,9 @@ public class DragNDropMerchant : MonoBehaviour, IPointerEnterHandler, IPointerEx
     CardDescriptionLayout cardDescriptionLayout;
 
     //Reference Objects for the prices
-    public GameObject scrapsValueObj;
-    public TextMeshProUGUI scrapsValueText;
+    //the object is a prefab instantiated under the card object itself
+    GameObject scrapsValueObj;
+    TextMeshProUGUI scrapsValueText;
     public int scrapsValueInt;
     private void Awake()
     {
@@ -40,10 +41,15 @@ public class DragNDropMerchant : MonoBehaviour, IPointerEnterHandler, IPointerEx
     //on click, add the card to deck
     public void OnPointerClick(PointerEventData eventData)
     {
+        //check the last child of the card which is the newly added price tag
+        scrapsValueObj = transform.GetChild(transform.childCount - 1).gameObject;
+        //assign the int value in the priceTag script
+        PriceTag priceTag = scrapsValueObj.GetComponent<PriceTag>();
+        scrapsValueInt = priceTag.priceTag;
+
         //check first if player has enough scraps
         if (merchantManager.CheckScraps(scrapsValueInt))
         {
-
             //on click, send the assigned card to the MerchantManager for adding to deck
             Card card = gameObject.GetComponent<Display>().card;
             merchantManager.AddBoughtCard(card);
@@ -58,6 +64,11 @@ public class DragNDropMerchant : MonoBehaviour, IPointerEnterHandler, IPointerEx
     //called by CardOptions when enabling or instantiating the card prefab
     public void SetScrapsValue(int scrapsValue)
     {
+        //assign the last child which is the newly added price tag object
+        scrapsValueObj = transform.GetChild(transform.childCount-1).gameObject;
+        //child 1 of scraps object is the text
+        scrapsValueText = scrapsValueObj.transform.GetChild(1).GetComponent<TextMeshProUGUI>();
+
         scrapsValueInt = scrapsValue;
         scrapsValueText.text = $"{scrapsValueInt}";
     }
