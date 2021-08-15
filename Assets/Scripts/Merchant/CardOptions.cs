@@ -36,7 +36,8 @@ public class CardOptions : MonoBehaviour
     //if Merchant.json exists, the list is sent automatically from the Merchant file, if not, proceed to randomization here
     //bool parameter determines whether the card list will come from file or randomized here
     //called at the beginning of merchantManager to initiate the possible contents of the card options
-    public void InitiateCardOptions(UniversalInformation universalInfo, MerchantSaveState merchantSave, bool isLoadedFromFile)
+    //the returned merchantSaveState is used solely for gathering the initial generated options and populating the file immediately
+    public MerchantSaveState InitiateCardOptions(UniversalInformation universalInfo, MerchantSaveState merchantSave, bool isLoadedFromFile)
     {
         //stores the chosen player and class pools
         ChosenPlayer chosenPlayer = universalInfo.chosenPlayer;
@@ -98,8 +99,14 @@ public class CardOptions : MonoBehaviour
                 //randomize card scraps cost
                 int scrapsValueInt = Random.Range(45, 71);
                 CardNCosts.Add(instantiatedCard, scrapsValueInt);
+
+                //gather the randomly generated options and populate the merchantSaveState for the fresh initialize phase
+                CardAndJigsaWrapper instantiatedCJW = new CardAndJigsaWrapper(instantiatedCard);
+                merchantSaveState.cardOptions.Add(instantiatedCJW);
+                merchantSaveState.cardOptionCosts.Add(scrapsValueInt);
             }
         }
+        return merchantSaveState;
 
     }
 
@@ -128,7 +135,6 @@ public class CardOptions : MonoBehaviour
             foreach (Transform content in cardOptionsContent)
             {
                 GameObject disabledPrefabs = content.gameObject;
-                Transform disabledPrefabTrans = disabledPrefabs.transform;
                 if (!disabledPrefabs.activeSelf)
                 {
                     disabledPrefabs.GetComponent<Display>().card = cardNCost.Key;
@@ -136,7 +142,7 @@ public class CardOptions : MonoBehaviour
                     hasNoDisabledPrefabs = false;
 
                     //price tag is just referenced since it should be existing under the card prefab at this point
-                    GameObject priceTagObj = disabledPrefabTrans.GetChild(disabledPrefabTrans.childCount - 1).gameObject;
+                    GameObject priceTagObj = content.GetChild(content.childCount - 1).gameObject;
                     PriceTag priceTag = priceTagObj.GetComponent<PriceTag>();
                     priceTag.SetPriceTag(cardNCost.Value);
 

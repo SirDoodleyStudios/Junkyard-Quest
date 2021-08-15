@@ -81,7 +81,6 @@ public static class UniversalFunctions
         return tempWrapperList;        
     }
 
-
     //convert a list of GearSO into a list of GearSOWrappers
     public static List<GearWrapper> ConvertGearSOListToWrapper(List<GearSO> gearList)
     {

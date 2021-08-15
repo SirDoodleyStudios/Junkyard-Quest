@@ -240,6 +240,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 92c5c20a9c0ecac4884b4b6422d85fd2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  overworldManager: {fileID: 0}
   cameraUIScript: {fileID: 0}
   equipmentSlotPanel: {fileID: 7791964972435311461}
   referenceGearSO: {fileID: 11400000, guid: c93c95f79d59ffe4a955019c393fcc56, type: 2}
@@ -408,22 +409,22 @@ PrefabInstance:
     - target: {fileID: 4861020163580766525, guid: ce3787b3b293d6a44b865555af7670ce,
         type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: -25
+      value: -15
       objectReference: {fileID: 0}
     - target: {fileID: 4861020163580766525, guid: ce3787b3b293d6a44b865555af7670ce,
         type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 25
+      value: 15
       objectReference: {fileID: 0}
     - target: {fileID: 4861020163580766525, guid: ce3787b3b293d6a44b865555af7670ce,
         type: 3}
       propertyPath: m_SizeDelta.x
-      value: 150
+      value: 100
       objectReference: {fileID: 0}
     - target: {fileID: 4861020163580766525, guid: ce3787b3b293d6a44b865555af7670ce,
         type: 3}
       propertyPath: m_SizeDelta.y
-      value: 150
+      value: 100
       objectReference: {fileID: 0}
     - target: {fileID: 4861020163580766525, guid: ce3787b3b293d6a44b865555af7670ce,
         type: 3}

@@ -6,6 +6,10 @@ using UnityEngine.SceneManagement;
 
 public class MerchantManager : MonoBehaviour
 {
+    //delegate that calls all Option Scripts and update all of their internal MerchantSaveStates with the latest one
+    public delegate MerchantSaveState D_UpdateOptionMerchantSaveStates(MerchantSaveState i);
+    public event D_UpdateOptionMerchantSaveStates d_UpdateOptionMerchantSaveStates;
+
     //loaded unviversalInfo
     UniversalInformation universalInfo;
 
@@ -47,7 +51,7 @@ public class MerchantManager : MonoBehaviour
         CardSOFactory.InitializeCardSOFactory(universalInfo.chosenPlayer, universalInfo.chosenClass);
         //initializes the deck viewr
         CardTagManager.InitializeTextDescriptionDictionaries();
-        cameraUIScript.GenerateDeck(universalInfo);
+        cameraUIScript.InitiateUniversalUIInfoData(universalInfo);
         cameraUIScript.AssignUIObjects(universalInfo);
         //available value of scraps taken from cameraScriptUI and universalInfo
         remainingScraps = universalInfo.scraps;
@@ -81,11 +85,27 @@ public class MerchantManager : MonoBehaviour
             //the merchantSaveState is either loaded from file or empty depending on the file check function in awake
             //the bool parameter will dictate if the optios are to be loaded randomly or from file
 
-            //for card options
-            cardOptionsScript.InitiateCardOptions(universalInfo, merchantSaveState, isLoadedFromFile);
-            //for material options
-            materialOptionsScript.InitiateMaterialOptions(universalInfo, merchantSaveState, isLoadedFromFile);
-            //for blueprint options
+            //if loaded from file, no need to update the merchantSaveStates because if loaded, we only handin the info to the OptionsUI
+            if (isLoadedFromFile)
+            {
+                //for card options
+                cardOptionsScript.InitiateCardOptions(universalInfo, merchantSaveState, isLoadedFromFile);
+                //for material options
+                materialOptionsScript.InitiateMaterialOptions(universalInfo, merchantSaveState, isLoadedFromFile);
+                //for blueprint options
+            }
+            //if fresh initiate, we'll be passing the merchantSvaeState around while the options scripts populate their appropriate lists
+            else
+            {
+                //for card options
+                merchantSaveState = cardOptionsScript.InitiateCardOptions(universalInfo, merchantSaveState, isLoadedFromFile);
+                //for material options
+                merchantSaveState = materialOptionsScript.InitiateMaterialOptions(universalInfo, merchantSaveState, isLoadedFromFile);
+                //for blueprint options
+
+                //immediately create the merchantSaveState
+                UpdateMerchantSaveState(merchantSaveState);
+            }
 
             isOptionsInitialized = true;
 
@@ -127,6 +147,14 @@ public class MerchantManager : MonoBehaviour
         ////update the universalInfo in the cameraUIScript
         //cameraUIScript.UpdateUniversalInfo();
     }
+    //called when adding a material in deck via merchant buy
+    public void AddBoughtMaterial(CraftingMaterialSO materialWrapper)
+    {
+        CraftingMaterialWrapper craftingMaterialWrapper = new CraftingMaterialWrapper(materialWrapper);
+        universalInfo.craftingMaterialWrapperList.Add(craftingMaterialWrapper);
+        cameraUIScript.UpdateMaterialInventory(craftingMaterialWrapper, true);
+
+    }
 
     //function called by items to be bought to check if there is enough scraps
     public bool CheckScraps(int scrapsCost)
@@ -149,9 +177,13 @@ public class MerchantManager : MonoBehaviour
     }
 
     //called by the OptionUIs, this triggers the save and update of the MerchantSaveState file
+    //caled when exiting the Options view
     public void UpdateMerchantSaveState(MerchantSaveState merchantSaveState)
     {
         UniversalSaveState.SaveMerchant(merchantSaveState);
+        //save the current universalInfo as well
+        //CURRENTLY TURNED OFF FOR TESTING
+        UniversalSaveState.SaveUniversalInformation(universalInfo);
     }
 
     //Function to leave MerchantManager

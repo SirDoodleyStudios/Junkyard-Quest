@@ -41,7 +41,7 @@ public class RestManager : MonoBehaviour
         CardSOFactory.InitializeCardSOFactory(universalInfo.chosenPlayer, universalInfo.chosenClass);
         //initializes the deck viewr
         CardTagManager.InitializeTextDescriptionDictionaries();
-        cameraUIScript.GenerateDeck(universalInfo);
+        cameraUIScript.InitiateUniversalUIInfoData(universalInfo);
         cameraUIScript.AssignUIObjects(universalInfo);
 
         //default remaining actions is 3, might get changed with gear modifiers

@@ -253,7 +253,7 @@ public class CombatManager : MonoBehaviour
             isPlayerBeingOverkilled = combatSaveState.isPlayerBeingOverkilled;
 
             //update universal UI
-            cameraUIScript.GenerateDeck(universalInfo);
+            cameraUIScript.InitiateUniversalUIInfoData(universalInfo);
             cameraUIScript.AssignUIObjects(universalInfo);
             //this is here to override the Cretivity text in UI from being mapped from combatSaveState
             //if combat is loaded from file, get current creativity from combatSaveState
@@ -293,7 +293,7 @@ public class CombatManager : MonoBehaviour
             enemyAIManager.PseudoStartCombat(universalInfo.enemyCount);
 
             //update the universal UI panel
-            cameraUIScript.GenerateDeck(universalInfo);
+            cameraUIScript.InitiateUniversalUIInfoData(universalInfo);
             cameraUIScript.AssignUIObjects(universalInfo);
             //immediately turns the currCreativity in univesalInfo to 0, this ensures that the combat start bonus does not repeat when loading from file in combat
             if (universalInformation.playerStats.currCreativity != 0)

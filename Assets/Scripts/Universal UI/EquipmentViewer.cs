@@ -47,7 +47,7 @@ public class EquipmentViewer : MonoBehaviour
     List<GearSO> gearSOList = new List<GearSO>();
 
     //universalInfo passed by CameraUIScript
-    UniversalInformation universalInfo;
+    //UniversalInformation universalInfo;
 
     //TEST SCRIPT TO ACTIVATE THE DRAGNDROPS IN THE INVENTORY SIDE
     public Canvas canvas;
@@ -70,10 +70,10 @@ public class EquipmentViewer : MonoBehaviour
     }
 
     //called by cameraScriptUI, universalInfo parameter from the UI button press
-    public void InitiateEquipment(GearWrapper[] equippedGear, List<GearWrapper> inventoryGear, UniversalInformation universalInfo)
+    public void InitiateEquipment(GearWrapper[] equippedGear, List<GearWrapper> inventoryGear/*, UniversalInformation universalInfo*/)
     {
         //assign the universal info given by the CameraScriptUI
-        this.universalInfo = universalInfo;
+        //this.universalInfo = universalInfo;
 
         //clear the list first to prevent duplicating
         gearSOList.Clear();
@@ -335,7 +335,6 @@ public class EquipmentViewer : MonoBehaviour
         {
             overworldManager.SaveEquipmentInOverWorld(equippedGearSOListWrappers, gearSOListWrappers);
         }
-        TESTDEBUGLOG();
 
         //migrated to overWorld maanger
         //updates the universalInfo in the universalUI

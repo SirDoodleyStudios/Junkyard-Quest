@@ -57,7 +57,7 @@ public class ForgeManager : MonoBehaviour
         CardSOFactory.InitializeCardSOFactory(universalInfo.chosenPlayer, universalInfo.chosenClass);
         //initializes the deck viewr
         CardTagManager.InitializeTextDescriptionDictionaries();
-        cameraUIScript.GenerateDeck(universalInfo);
+        cameraUIScript.InitiateUniversalUIInfoData(universalInfo);
         cameraUIScript.AssignUIObjects(universalInfo);
 
 

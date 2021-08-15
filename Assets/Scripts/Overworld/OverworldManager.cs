@@ -62,7 +62,7 @@ public class OverworldManager : MonoBehaviour
 
         //after generating map, call method in CameraUIScript to assign the HP, creativity and other UI Visuals and loads the deck as well
         CardTagManager.InitializeTextDescriptionDictionaries();
-        cameraUI.GenerateDeck(universalInformation);
+        cameraUI.InitiateUniversalUIInfoData(universalInformation);
         cameraUI.AssignUIObjects(universalInformation);
 
         //once inserted before GenerateMap()

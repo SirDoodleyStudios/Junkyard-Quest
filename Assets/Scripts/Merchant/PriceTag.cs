@@ -6,12 +6,16 @@ using TMPro;
 public class PriceTag : MonoBehaviour
 {
     public int priceTag;
+    //the price tag's transform
+    RectTransform tagRect;
 
     public TextMeshProUGUI scrapValueText;
     private void Awake()
     {
-        //the TMPro child is at child 1
-        //scrapValueText = transform.GetChild(1).GetComponent<TextMeshProUGUI>();
+        tagRect = gameObject.GetComponent<RectTransform>();
+        //price tag size will differ depending on screen resoulution
+        tagRect.sizeDelta = new Vector2 (Screen.width * .10f, Screen.height * .05f);
+
     }
     //called by the OptionsScript when enabling or instantiating the item
     public void SetPriceTag(int sentPrice)

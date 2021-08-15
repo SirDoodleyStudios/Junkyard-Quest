@@ -45,6 +45,15 @@ public class CameraUIScript : MonoBehaviour
     public GameObject equipmentViewUI;
     public EquipmentViewer equipmentViewer;
 
+    //holders for the inventory view
+    //this is used when the UI is called instead of just using universalInfo itself
+    //it is this way because scenes that will edit the inventory contents can avoid saving the universalInfo everytime a change is made
+    //we ca update this for the inventory view only before saving entirely similar to the UpdateCardList function
+    List<AllGearTypes> inventoryBlueprints = new List<AllGearTypes>();
+    List<CraftingMaterialWrapper> inventoryMaterials = new List<CraftingMaterialWrapper>();
+    List<GearWrapper> inventoryGears = new List<GearWrapper>();
+    GearWrapper[] equippedGears = new GearWrapper[6];
+
 
     public void Awake()
     {
@@ -136,7 +145,8 @@ public class CameraUIScript : MonoBehaviour
     }
 
     //initially part of AssignUIObjects but now separated
-    public void GenerateDeck(UniversalInformation universalInfo)
+    //called by sceneManager's Awake
+    public void InitiateUniversalUIInfoData(UniversalInformation universalInfo)
     {
         //initializes theCardSO factory
         CardSOFactory.InitializeCardSOFactory(universalInfo.chosenPlayer, universalInfo.chosenClass);
@@ -156,8 +166,15 @@ public class CameraUIScript : MonoBehaviour
 
             }
             cardList.Add(tempCard);
-
         }
+
+        //initiates the Universal UI's inventory and Equipment list
+        inventoryMaterials.AddRange(universalInfo.craftingMaterialWrapperList);
+        inventoryGears.AddRange(universalInfo.gearWrapperList);
+        inventoryBlueprints.AddRange(universalInfo.bluePrints);
+        //remained equal association for the time being
+        equippedGears = universalInfo.equippedGears;
+
     }
 
     //single method for viewing a card collection in view
@@ -241,6 +258,45 @@ public class CameraUIScript : MonoBehaviour
         return cardList;
     }
 
+    //update inventory in Universal UI\
+    //only the UI info gets updated, the changes aren't saved in universalInfo yet for optimization purposes
+    //used for scenes that alter your inventory items
+    
+    public void UpdateMaterialInventory(CraftingMaterialWrapper materialWrapper, bool isToAdd)
+    {
+        if (isToAdd)
+        {
+            inventoryMaterials.Add(materialWrapper);
+        }
+        else
+        {
+            inventoryMaterials.Remove(materialWrapper);
+        }
+    }
+    public void UpdateGearInventory(GearWrapper gearWrapper, bool isToAdd)
+    {
+        if (isToAdd)
+        {
+            inventoryGears.Add(gearWrapper);
+        }
+        else
+        {
+            inventoryGears.Remove(gearWrapper);
+        }
+    }
+    public void UpdateBlueprintInventory(AllGearTypes blueprint, bool isToAdd)
+    {
+        if (isToAdd)
+        {
+            inventoryBlueprints.Add(blueprint);
+        }
+        else
+        {
+            inventoryBlueprints.Remove(blueprint);
+        }
+    }
+
+
     //when a manager script wants to view a deck but not the whole deck
     //currently used by ForgeManager for viewing the deck but only with available cards to choose from
     public void ViewFilteredDeck(List<Card> filteredDeck)
@@ -255,7 +311,8 @@ public class CameraUIScript : MonoBehaviour
     public void ViewInventory()
     {
         inventoryViewUI.SetActive(true);
-        inventoryViewer.InitializeInventoryView(universalInfo.bluePrints, universalInfo.craftingMaterialWrapperList, universalInfo.gearWrapperList);
+        //inventoryViewer.InitializeInventoryView(universalInfo.bluePrints, universalInfo.craftingMaterialWrapperList, universalInfo.gearWrapperList);
+        inventoryViewer.InitializeInventoryView(inventoryBlueprints, inventoryMaterials, inventoryGears);
 
     }
 
@@ -263,7 +320,8 @@ public class CameraUIScript : MonoBehaviour
     public void ViewEquipment()
     {
         equipmentViewUI.SetActive(true);
-        equipmentViewer.InitiateEquipment(universalInfo.equippedGears, universalInfo.gearWrapperList, universalInfo);
+        //equipmentViewer.InitiateEquipment(universalInfo.equippedGears, universalInfo.gearWrapperList/*, universalInfo*/);
+        equipmentViewer.InitiateEquipment(equippedGears, inventoryGears);
     }
     //called by OverWorld only to make all gears in equipment viewer draggable and droppable
     public void EnableGearManagement()

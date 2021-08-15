@@ -15,7 +15,6 @@ public class DragNDropMerchant : MonoBehaviour, IPointerEnterHandler, IPointerEx
     //Reference Objects for the prices
     //the object is a prefab instantiated under the card object itself
     GameObject scrapsValueObj;
-    TextMeshProUGUI scrapsValueText;
     public int scrapsValueInt;
     private void Awake()
     {
@@ -61,17 +60,18 @@ public class DragNDropMerchant : MonoBehaviour, IPointerEnterHandler, IPointerEx
 
     }
 
+    //PRICE IS NOW HARBORED IN THE PRICETAGSCRIPT IN THE PRICETAGPREFAB
     //called by CardOptions when enabling or instantiating the card prefab
-    public void SetScrapsValue(int scrapsValue)
-    {
-        //assign the last child which is the newly added price tag object
-        scrapsValueObj = transform.GetChild(transform.childCount-1).gameObject;
-        //child 1 of scraps object is the text
-        scrapsValueText = scrapsValueObj.transform.GetChild(1).GetComponent<TextMeshProUGUI>();
+    //public void SetScrapsValue(int scrapsValue)
+    //{
+    //    //assign the last child which is the newly added price tag object
+    //    scrapsValueObj = transform.GetChild(transform.childCount-1).gameObject;
+    //    //child 1 of scraps object is the text
+    //    scrapsValueText = scrapsValueObj.transform.GetChild(1).GetComponent<TextMeshProUGUI>();
 
-        scrapsValueInt = scrapsValue;
-        scrapsValueText.text = $"{scrapsValueInt}";
-    }
+    //    scrapsValueInt = scrapsValue;
+    //    scrapsValueText.text = $"{scrapsValueInt}";
+    //}
 
     //disables the card prefab from options
     void DisableCardPrefab()
