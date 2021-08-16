@@ -15,6 +15,8 @@ public class PriceTag : MonoBehaviour
         tagRect = gameObject.GetComponent<RectTransform>();
         //price tag size will differ depending on screen resoulution
         tagRect.sizeDelta = new Vector2 (Screen.width * .10f, Screen.height * .05f);
+        //place the price tag under the object 
+        tagRect.anchoredPosition = new Vector2(0, -Screen.height*.05f);
 
     }
     //called by the OptionsScript when enabling or instantiating the item

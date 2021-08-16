@@ -28,6 +28,7 @@ public class MerchantManager : MonoBehaviour
     public GameObject cardRemovalUI;
     CardOptions cardOptionsScript;
     MaterialOptions materialOptionsScript;
+    BlueprintOptions blueprintOptionsScript;
 
     //identifiers for the UIs if they have already been initiated
     bool isOptionsInitialized;
@@ -59,6 +60,7 @@ public class MerchantManager : MonoBehaviour
         //script assignments for the Option scripts
         cardOptionsScript = cardOptionsUI.GetComponent<CardOptions>();
         materialOptionsScript = materialOptionsUI.GetComponent<MaterialOptions>();
+        blueprintOptionsScript = blueprintOptionsUI.GetComponent<BlueprintOptions>();
 
         //if there is no MerchantSave, it means that the merchant scene was loaded from current game session
         if (File.Exists(Application.persistentDataPath + "/Merchant.json"))
@@ -93,6 +95,7 @@ public class MerchantManager : MonoBehaviour
                 //for material options
                 materialOptionsScript.InitiateMaterialOptions(universalInfo, merchantSaveState, isLoadedFromFile);
                 //for blueprint options
+                blueprintOptionsScript.InitiateBlueprintOptions(merchantSaveState, isLoadedFromFile);
             }
             //if fresh initiate, we'll be passing the merchantSvaeState around while the options scripts populate their appropriate lists
             else
@@ -102,6 +105,7 @@ public class MerchantManager : MonoBehaviour
                 //for material options
                 merchantSaveState = materialOptionsScript.InitiateMaterialOptions(universalInfo, merchantSaveState, isLoadedFromFile);
                 //for blueprint options
+                merchantSaveState = blueprintOptionsScript.InitiateBlueprintOptions(merchantSaveState, isLoadedFromFile);
 
                 //immediately create the merchantSaveState
                 UpdateMerchantSaveState(merchantSaveState);
@@ -132,6 +136,12 @@ public class MerchantManager : MonoBehaviour
         
     }
 
+    public void BlueprintOptionsButton()
+    {
+        blueprintOptionsUI.SetActive(true);
+        blueprintOptionsScript.ViewBlueprintOptions();
+    }
+
     //called when adding a card in deck via merchant buy
     public void AddBoughtCard(Card card)
     {
@@ -148,12 +158,18 @@ public class MerchantManager : MonoBehaviour
         //cameraUIScript.UpdateUniversalInfo();
     }
     //called when adding a material in deck via merchant buy
-    public void AddBoughtMaterial(CraftingMaterialSO materialWrapper)
+    public void AddBoughtMaterial(CraftingMaterialSO materialSO)
     {
-        CraftingMaterialWrapper craftingMaterialWrapper = new CraftingMaterialWrapper(materialWrapper);
+        CraftingMaterialWrapper craftingMaterialWrapper = new CraftingMaterialWrapper(materialSO);
         universalInfo.craftingMaterialWrapperList.Add(craftingMaterialWrapper);
         cameraUIScript.UpdateMaterialInventory(craftingMaterialWrapper, true);
-
+    }
+    //called when adding a blueprint in deck via merchant buy
+    public void AddBoughtBlueprint(BluePrintSO blueprintSO)
+    {
+        AllGearTypes blueprint = blueprintSO.blueprint;
+        universalInfo.bluePrints.Add(blueprintSO.blueprint);
+        cameraUIScript.UpdateBlueprintInventory(blueprint, true);
     }
 
     //function called by items to be bought to check if there is enough scraps

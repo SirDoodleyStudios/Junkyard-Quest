@@ -1070,7 +1070,7 @@ GameObject:
   - component: {fileID: -2352533872945521137}
   m_Layer: 5
   m_Name: Blueprint Choice Prefab
-  m_TagString: Material
+  m_TagString: Blueprint
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

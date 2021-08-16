@@ -14,6 +14,10 @@ public class MerchantSaveState
     public List<CraftingMaterialWrapper> materialOptions = new List<CraftingMaterialWrapper>();
     public List<int> materialOptionCosts = new List<int>();
 
+    //for blueprints
+    public List<AllGearTypes> blueprintOptions = new List<AllGearTypes>();
+    public List<int> blueprintOptionCosts = new List<int>();
+
     //DONT NEED A CONSTRUCTOR
     //dictionary paramieter is from the card options
     //public MerchantSaveState(Dictionary<CardAndJigsaWrapper, int> cardNCosts)

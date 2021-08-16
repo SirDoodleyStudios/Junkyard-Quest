@@ -260,8 +260,7 @@ public class CameraUIScript : MonoBehaviour
 
     //update inventory in Universal UI\
     //only the UI info gets updated, the changes aren't saved in universalInfo yet for optimization purposes
-    //used for scenes that alter your inventory items
-    
+    //used for scenes that alter your inventory items    
     public void UpdateMaterialInventory(CraftingMaterialWrapper materialWrapper, bool isToAdd)
     {
         if (isToAdd)
