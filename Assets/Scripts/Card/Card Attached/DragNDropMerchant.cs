@@ -12,6 +12,10 @@ public class DragNDropMerchant : MonoBehaviour, IPointerEnterHandler, IPointerEx
 
     CardDescriptionLayout cardDescriptionLayout;
 
+    //bool identifier that will determine whether the card options are for adding or removing
+    //taked from the bool identifer in merchhantManager
+    bool isAddToDeck;
+
     //Reference Objects for the prices
     //the object is a prefab instantiated under the card object itself
     GameObject scrapsValueObj;
@@ -21,6 +25,12 @@ public class DragNDropMerchant : MonoBehaviour, IPointerEnterHandler, IPointerEx
         cardOptions = transform.parent.parent.parent.parent.parent.GetComponent<CardOptions>();
         merchantManager = cardOptions.merchantManager;
         //SetScrapsValue();
+
+        //if parent 
+        if (transform)
+        {
+
+        }
     }
     private void Start()
     {

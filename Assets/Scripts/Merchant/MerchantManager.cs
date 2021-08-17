@@ -6,9 +6,9 @@ using UnityEngine.SceneManagement;
 
 public class MerchantManager : MonoBehaviour
 {
-    //delegate that calls all Option Scripts and update all of their internal MerchantSaveStates with the latest one
-    public delegate MerchantSaveState D_UpdateOptionMerchantSaveStates(MerchantSaveState i);
-    public event D_UpdateOptionMerchantSaveStates d_UpdateOptionMerchantSaveStates;
+    ////delegate that calls all Option Scripts and update all of their internal MerchantSaveStates with the latest one
+    //public delegate MerchantSaveState D_UpdateOptionMerchantSaveStates(MerchantSaveState i);
+    //public event D_UpdateOptionMerchantSaveStates d_UpdateOptionMerchantSaveStates;
 
     //loaded unviversalInfo
     UniversalInformation universalInfo;
@@ -43,6 +43,11 @@ public class MerchantManager : MonoBehaviour
 
     //identifier to check if the merchantSaveState is loaded fron an existing file
     bool isLoadedFromFile;
+
+    //identifier that determines if the cards are for buyung or not, determined at the buttons
+    //true is for cardOptions butin, false is for cardRemoval
+    //checked by the card itself for the dragNDropMerchant
+    public bool isAddToDeck;
 
     private void Awake()
     {
@@ -127,6 +132,8 @@ public class MerchantManager : MonoBehaviour
         cardOptionsUI.SetActive(true);
         //calls the actual command to view available cards
         cardOptionsScript.ViewCardOptions(merchantSaveState);
+
+        isAddToDeck = true;
     }
 
     public void MaterialOptionsButton()
@@ -140,6 +147,10 @@ public class MerchantManager : MonoBehaviour
     {
         blueprintOptionsUI.SetActive(true);
         blueprintOptionsScript.ViewBlueprintOptions();
+    }
+    public void CardRemovalButton()
+    {
+        isAddToDeck = false;
     }
 
     //called when adding a card in deck via merchant buy
