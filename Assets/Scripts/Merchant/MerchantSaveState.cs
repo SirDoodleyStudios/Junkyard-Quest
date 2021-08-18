@@ -18,14 +18,8 @@ public class MerchantSaveState
     public List<AllGearTypes> blueprintOptions = new List<AllGearTypes>();
     public List<int> blueprintOptionCosts = new List<int>();
 
-    //DONT NEED A CONSTRUCTOR
-    //dictionary paramieter is from the card options
-    //public MerchantSaveState(Dictionary<CardAndJigsaWrapper, int> cardNCosts)
-    //{
-    //    foreach (KeyValuePair<CardAndJigsaWrapper, int> cardNCost in cardNCosts)
-    //    {
-    //        cardOptions.Add(cardNCost.Key);
-    //        cardOptionCosts.Add(cardNCost.Value);
-    //    }
-    //}
+    //for card removals, bool that determines if the removal has already been used
+    public bool isCardRemovalAvailable;
+
+
 }

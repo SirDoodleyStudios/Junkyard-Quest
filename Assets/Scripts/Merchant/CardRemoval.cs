@@ -12,19 +12,8 @@ public class CardRemoval : MonoBehaviour
     public MerchantManager merchantManager;
     //the content view
     public Transform cardOptionsContent;
-    //used contains the deck pools
-    public DeckPools deckPools;
-    //The price tag prefab to be attached to the items on sale
-    public GameObject priceTagPrefab;
 
-    //generated at initiate function, should be random
-    List<Card> playerCardPool = new List<Card>();
-    List<Card> classCardPool = new List<Card>();
 
-    //will contain the actual list of cards generated for merchant
-    //List<Card> cardList = new List<Card>();
-    //contains the scrapValue of each card in the cardList
-    List<int> cardListCosts = new List<int>();
     //dictionary that holds the Card and it's corresponding cost
     Dictionary<Card, int> CardNCosts = new Dictionary<Card, int>();
 
@@ -57,6 +46,12 @@ public class CardRemoval : MonoBehaviour
                     disabledPrefabs.GetComponent<Display>().card = deckCard;
                     disabledPrefabs.SetActive(true);
                     hasNoDisabledPrefabs = false;
+
+                    //the DragNDrop scriopt of the card, for setting the bool identifier to true
+                    //true parameter makes the click on card for buying
+                    DragNDropMerchant dragNDrop = disabledPrefabs.GetComponent<DragNDropMerchant>();
+                    dragNDrop.InitiateMerchantCard(true);
+
                     break;
                 }
                 //if no card prefab can be recycled, instantiate a new one
@@ -70,6 +65,12 @@ public class CardRemoval : MonoBehaviour
                 CardDescriptionLayout instantiatedPopups = instantiatedPrefab.GetComponent<CardDescriptionLayout>();
                 instantiatedRect.sizeDelta = new Vector2(Screen.width * .13440860215f, Screen.height * .34389952153f);
                 instantiatedDisplay.card = deckCard;
+
+                //the DragNDrop scriopt of the card, for setting the bool identifier to true
+                //true parameter makes the click on card for buying
+                DragNDropMerchant dragNDrop = instantiatedPrefab.GetComponent<DragNDropMerchant>();
+                dragNDrop.InitiateMerchantCard(true);
+
                 instantiatedDisplay.FontResize();
                 instantiatedPopups.ResizePopups();
                 instantiatedPrefab.SetActive(true);

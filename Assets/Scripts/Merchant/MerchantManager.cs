@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.IO;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class MerchantManager : MonoBehaviour
 {
@@ -29,14 +30,12 @@ public class MerchantManager : MonoBehaviour
     CardOptions cardOptionsScript;
     MaterialOptions materialOptionsScript;
     BlueprintOptions blueprintOptionsScript;
+    CardRemoval cardRemovalScript;
+    //reference to the Card Removal button, will be disabled after the first use
+    public Button cardRemovalButton;
 
     //identifiers for the UIs if they have already been initiated
     bool isOptionsInitialized;
-    bool isMaterialOptionsInitialized;
-    bool isBlueprintOptionsInitialized;
-
-    //list of available merchant Items
-    List<Card> cardList = new List<Card>();
 
     //int value for remaining scraps of player
     int remainingScraps;
@@ -44,10 +43,6 @@ public class MerchantManager : MonoBehaviour
     //identifier to check if the merchantSaveState is loaded fron an existing file
     bool isLoadedFromFile;
 
-    //identifier that determines if the cards are for buyung or not, determined at the buttons
-    //true is for cardOptions butin, false is for cardRemoval
-    //checked by the card itself for the dragNDropMerchant
-    public bool isAddToDeck;
 
     private void Awake()
     {
@@ -66,6 +61,7 @@ public class MerchantManager : MonoBehaviour
         cardOptionsScript = cardOptionsUI.GetComponent<CardOptions>();
         materialOptionsScript = materialOptionsUI.GetComponent<MaterialOptions>();
         blueprintOptionsScript = blueprintOptionsUI.GetComponent<BlueprintOptions>();
+        cardRemovalScript = cardRemovalUI.GetComponent<CardRemoval>();
 
         //if there is no MerchantSave, it means that the merchant scene was loaded from current game session
         if (File.Exists(Application.persistentDataPath + "/Merchant.json"))
@@ -101,6 +97,9 @@ public class MerchantManager : MonoBehaviour
                 materialOptionsScript.InitiateMaterialOptions(universalInfo, merchantSaveState, isLoadedFromFile);
                 //for blueprint options
                 blueprintOptionsScript.InitiateBlueprintOptions(merchantSaveState, isLoadedFromFile);
+                //enables or disables the button for card removal
+                cardRemovalButton.interactable = merchantSaveState.isCardRemovalAvailable;
+
             }
             //if fresh initiate, we'll be passing the merchantSvaeState around while the options scripts populate their appropriate lists
             else
@@ -111,6 +110,8 @@ public class MerchantManager : MonoBehaviour
                 merchantSaveState = materialOptionsScript.InitiateMaterialOptions(universalInfo, merchantSaveState, isLoadedFromFile);
                 //for blueprint options
                 merchantSaveState = blueprintOptionsScript.InitiateBlueprintOptions(merchantSaveState, isLoadedFromFile);
+                //for card removal identifier, always false 
+                merchantSaveState.isCardRemovalAvailable = true;
 
                 //immediately create the merchantSaveState
                 UpdateMerchantSaveState(merchantSaveState);
@@ -132,8 +133,6 @@ public class MerchantManager : MonoBehaviour
         cardOptionsUI.SetActive(true);
         //calls the actual command to view available cards
         cardOptionsScript.ViewCardOptions(merchantSaveState);
-
-        isAddToDeck = true;
     }
 
     public void MaterialOptionsButton()
@@ -150,7 +149,9 @@ public class MerchantManager : MonoBehaviour
     }
     public void CardRemovalButton()
     {
-        isAddToDeck = false;
+        cardRemovalUI.SetActive(true);
+        //view deck in cardRemovalUI sent with the cardList generated
+        cardRemovalScript.ViewSavedDeck(cameraUIScript.FetchDeck());
     }
 
     //called when adding a card in deck via merchant buy
@@ -181,6 +182,22 @@ public class MerchantManager : MonoBehaviour
         AllGearTypes blueprint = blueprintSO.blueprint;
         universalInfo.bluePrints.Add(blueprintSO.blueprint);
         cameraUIScript.UpdateBlueprintInventory(blueprint, true);
+    }
+    //called when removing a card
+    public void RemoveCardFromDeck(Card card)
+    {
+        //update the cardList saved in cameraScriptUI, does not edit the deck from save file
+        cameraUIScript.UpdateCurrentDeck(card, false);
+        //create wrapper for saving to universalInfo
+        CardAndJigsaWrapper CJW = new CardAndJigsaWrapper(card);
+        universalInfo.currentDeckWithJigsaw.Remove(CJW);
+        //disables the rmove card button after removal
+        cardRemovalButton.interactable = false;
+        merchantSaveState.isCardRemovalAvailable = false;
+        //save the deck in universalUI and update the universalUI
+        UniversalSaveState.SaveUniversalInformation(universalInfo);
+        cameraUIScript.UpdateUniversalInfo();
+
     }
 
     //function called by items to be bought to check if there is enough scraps

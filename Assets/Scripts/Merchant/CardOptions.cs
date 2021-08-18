@@ -146,6 +146,11 @@ public class CardOptions : MonoBehaviour
                     PriceTag priceTag = priceTagObj.GetComponent<PriceTag>();
                     priceTag.SetPriceTag(cardNCost.Value);
 
+                    //the DragNDrop scriopt of the card, for setting the bool identifier to true
+                    //true parameter makes the click on card for buying
+                    DragNDropMerchant dragNDrop = disabledPrefabs.GetComponent<DragNDropMerchant>();
+                    dragNDrop.InitiateMerchantCard(true);
+
                     //Price is now in the priceTag script
                     //the dragNDrpMerchant holds the scrap value
                     //DragNDropMerchant dragNDropMerchant = disabledPrefabs.GetComponent<DragNDropMerchant>();
@@ -168,7 +173,11 @@ public class CardOptions : MonoBehaviour
                 GameObject priceTagObj = Instantiate(priceTagPrefab, instantiatedPrefab.transform);
                 PriceTag priceTag = priceTagObj.GetComponent<PriceTag>();
                 priceTag.SetPriceTag(cardNCost.Value);
-                
+
+                //the DragNDrop scriopt of the card, for setting the bool identifier to true
+                //true parameter makes the click on card for buying
+                DragNDropMerchant dragNDrop = instantiatedPrefab.GetComponent<DragNDropMerchant>();
+                dragNDrop.InitiateMerchantCard(true);
 
                 //DragNDropMerchant dragNDropMerchant = instantiatedPrefab.GetComponent<DragNDropMerchant>();
                 //dragNDropMerchant.SetScrapsValue(cardNCost.Value);

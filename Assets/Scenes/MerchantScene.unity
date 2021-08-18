@@ -256,7 +256,7 @@ PrefabInstance:
         type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
-      objectReference: {fileID: 958011488}
+      objectReference: {fileID: 0}
     - target: {fileID: 3564208109532121667, guid: 84101873d49d53441abfd209810cbd6a,
         type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
@@ -2635,16 +2635,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 958011486}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 80a1ad97f58254c4aa711735c306f6cf, type: 3}
+  m_Script: {fileID: 11500000, guid: 75966949264b74b4baa4165b3f0154f7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   cardObjectPrefab: {fileID: 6316217203015278146, guid: 89937b96a4ad28a4da1ce717ebeb54b7,
     type: 3}
   merchantManager: {fileID: 1270527857}
   cardOptionsContent: {fileID: 31802798}
-  deckPools: {fileID: 1537017276}
-  priceTagPrefab: {fileID: 2686750672630061447, guid: 0eb422b0939959d46b7b49c7fe862c9f,
-    type: 3}
 --- !u!114 &958011489
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3506,8 +3503,8 @@ MonoBehaviour:
   cardOptionsUI: {fileID: 2021554952}
   materialOptionsUI: {fileID: 1230625809}
   blueprintOptionsUI: {fileID: 579316615}
-  cardRemovalUI: {fileID: 0}
-  isAddToDeck: 0
+  cardRemovalUI: {fileID: 958011486}
+  cardRemovalButton: {fileID: 1504862087}
 --- !u!4 &1270527858
 Transform:
   m_ObjectHideFlags: 0
@@ -4367,7 +4364,18 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1504862088}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1270527857}
+        m_MethodName: CardRemovalButton
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &1504862088
 MonoBehaviour:
   m_ObjectHideFlags: 0
