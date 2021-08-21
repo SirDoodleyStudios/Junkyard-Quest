@@ -113,6 +113,17 @@ public enum AllGearClassifications
     Trinket
 }
 
+//EVENTS
+public enum AllEvents
+{
+    //choose 1 of 2 unknown materials
+    TwoChestsOneKey,
+    //get a random gear by sacrificing 2 materials
+    GearScale,
+    //change the Jigsaw links of a chosen forged card
+    JigsawKit
+}
+
 
 //ENEMY RELATED
 //
