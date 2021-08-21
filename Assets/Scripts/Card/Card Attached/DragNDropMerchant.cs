@@ -71,15 +71,17 @@ public class DragNDropMerchant : MonoBehaviour, IPointerEnterHandler, IPointerEx
     //on click, add the card to deck
     public void OnPointerClick(PointerEventData eventData)
     {
-        //check the last child of the card which is the newly added price tag
-        scrapsValueObj = transform.GetChild(transform.childCount - 1).gameObject;
-        //assign the int value in the priceTag script
-        PriceTag priceTag = scrapsValueObj.GetComponent<PriceTag>();
-        scrapsValueInt = priceTag.priceTag;
+
 
         //function for click depends on the buy or remove parameter
         if (isAddToDeck)
         {
+            //check the last child of the card which is the newly added price tag
+            scrapsValueObj = transform.GetChild(transform.childCount - 1).gameObject;
+            //assign the int value in the priceTag script
+            PriceTag priceTag = scrapsValueObj.GetComponent<PriceTag>();
+            scrapsValueInt = priceTag.priceTag;
+
             //check first if player has enough scraps
             if (merchantManager.CheckScraps(scrapsValueInt))
             {

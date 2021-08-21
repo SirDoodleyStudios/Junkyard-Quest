@@ -184,19 +184,33 @@ public class MerchantManager : MonoBehaviour
         cameraUIScript.UpdateBlueprintInventory(blueprint, true);
     }
     //called when removing a card
+    //will only be called once since card removal is limited to 1 use per merchant visit
+    //unlike the other options, it will save the current merchantSavState immediately after being called
     public void RemoveCardFromDeck(Card card)
     {
         //update the cardList saved in cameraScriptUI, does not edit the deck from save file
         cameraUIScript.UpdateCurrentDeck(card, false);
-        //create wrapper for saving to universalInfo
-        CardAndJigsaWrapper CJW = new CardAndJigsaWrapper(card);
-        universalInfo.currentDeckWithJigsaw.Remove(CJW);
+
+        //fetch the deck then convert it to a new CJW list to save to universalInfo
+        List<Card> tempDeck = cameraUIScript.FetchDeck();
+        List<CardAndJigsaWrapper> tempCJWList = new List<CardAndJigsaWrapper>();
+        foreach (Card tempCard in tempDeck)
+        {
+            CardAndJigsaWrapper CJW = new CardAndJigsaWrapper(tempCard);
+            tempCJWList.Add(CJW);
+        }
+        universalInfo.currentDeckWithJigsaw = tempCJWList;        
+
         //disables the rmove card button after removal
         cardRemovalButton.interactable = false;
         merchantSaveState.isCardRemovalAvailable = false;
         //save the deck in universalUI and update the universalUI
-        UniversalSaveState.SaveUniversalInformation(universalInfo);
+        UpdateMerchantSaveState(merchantSaveState);
         cameraUIScript.UpdateUniversalInfo();
+
+        //also calls the back button of the CardRemovalScript to close the window after removing card
+        cardRemovalScript.CardOptionBackButton();
+
 
     }
 

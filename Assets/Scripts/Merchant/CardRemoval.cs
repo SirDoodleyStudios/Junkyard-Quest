@@ -13,13 +13,11 @@ public class CardRemoval : MonoBehaviour
     //the content view
     public Transform cardOptionsContent;
 
-
-    //dictionary that holds the Card and it's corresponding cost
-    Dictionary<Card, int> CardNCosts = new Dictionary<Card, int>();
-
-    //current merchantSaveState to be altered and sent back to MerchantManager once player closes the Option UI
-    MerchantSaveState merchantSaveState;
-
+    //NOT NEEDED FOR CARD REMOVAL
+    ////dictionary that holds the Card and it's corresponding cost
+    //Dictionary<Card, int> CardNCosts = new Dictionary<Card, int>();
+    ////current merchantSaveState to be altered and sent back to MerchantManager once player closes the Option UI
+    //MerchantSaveState merchantSaveState;
 
     public void ViewSavedDeck(List<Card> cardList)
     {
@@ -48,9 +46,9 @@ public class CardRemoval : MonoBehaviour
                     hasNoDisabledPrefabs = false;
 
                     //the DragNDrop scriopt of the card, for setting the bool identifier to true
-                    //true parameter makes the click on card for buying
+                    //false parameter makes the card click for removing the card from deck
                     DragNDropMerchant dragNDrop = disabledPrefabs.GetComponent<DragNDropMerchant>();
-                    dragNDrop.InitiateMerchantCard(true);
+                    dragNDrop.InitiateMerchantCard(false);
 
                     break;
                 }
@@ -67,9 +65,9 @@ public class CardRemoval : MonoBehaviour
                 instantiatedDisplay.card = deckCard;
 
                 //the DragNDrop scriopt of the card, for setting the bool identifier to true
-                //true parameter makes the click on card for buying
+                //false parameter makes the card click for removing the card from deck
                 DragNDropMerchant dragNDrop = instantiatedPrefab.GetComponent<DragNDropMerchant>();
-                dragNDrop.InitiateMerchantCard(true);
+                dragNDrop.InitiateMerchantCard(false);
 
                 instantiatedDisplay.FontResize();
                 instantiatedPopups.ResizePopups();
@@ -78,14 +76,17 @@ public class CardRemoval : MonoBehaviour
         }
     }
 
+
+    //NOT NEEDD FOR CARD REMOVAL
     //function called to remove the bought card from the card list
-    public void RemoveCardFromOptionList(Card card)
-    {
-        //cardList.Remove(card);
-        CardNCosts.Remove(card);
-    }
+    //public void RemoveCardFromOptionList(Card card)
+    //{
+    //    //cardList.Remove(card);
+    //    CardNCosts.Remove(card);
+    //}
 
     //back button
+    //SAVE FUNCTION WILL ONLY APPLY WHEN CARD IS CLICKED SINCE IT WILL DISABLE THE CARD REMOVAL OPTION IMMEDIATELY
     public void CardOptionBackButton()
     {
         //disables all children prefab of cards
@@ -96,31 +97,28 @@ public class CardRemoval : MonoBehaviour
         //disable the CardOptionUI
         gameObject.SetActive(false);
 
-        //updates the card related options in the current instance of merchantSaveState
-        UpdateCardOptionsSaveState();
-        merchantManager.UpdateMerchantSaveState(merchantSaveState);
-
     }
 
+    //NOT NEEDED FOR CARD REMOVAL
     //helper function
     //retrieves the current cardList and their costs and separates them to two lists so that it can be saved in the merchantSaveState file
     //called when exiting from the card Options UI
-    public void UpdateCardOptionsSaveState()
-    {
-        //List holders
-        List<CardAndJigsaWrapper> tempCJWList = new List<CardAndJigsaWrapper>();
-        List<int> tempCostList = new List<int>();
+    //public void UpdateCardOptionsSaveState()
+    //{
+    //    //List holders
+    //    List<CardAndJigsaWrapper> tempCJWList = new List<CardAndJigsaWrapper>();
+    //    List<int> tempCostList = new List<int>();
 
-        //converts the current dictionary from Card,int to CJW,int
-        foreach (KeyValuePair<Card, int> cardNCost in CardNCosts)
-        {
-            CardAndJigsaWrapper CJW = new CardAndJigsaWrapper(cardNCost.Key);
-            tempCJWList.Add(CJW);
-            tempCostList.Add(cardNCost.Value);
-        }
-        //assign the listst in the merchantSaveState instance
-        merchantSaveState.cardOptions = tempCJWList;
-        merchantSaveState.cardOptionCosts = tempCostList;
-    }
+    //    //converts the current dictionary from Card,int to CJW,int
+    //    foreach (KeyValuePair<Card, int> cardNCost in CardNCosts)
+    //    {
+    //        CardAndJigsaWrapper CJW = new CardAndJigsaWrapper(cardNCost.Key);
+    //        tempCJWList.Add(CJW);
+    //        tempCostList.Add(cardNCost.Value);
+    //    }
+    //    //assign the listst in the merchantSaveState instance
+    //    merchantSaveState.cardOptions = tempCJWList;
+    //    merchantSaveState.cardOptionCosts = tempCostList;
+    //}
 
 }
