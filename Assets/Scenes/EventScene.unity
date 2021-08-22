@@ -335,7 +335,18 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 247752060}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 712957817}
+        m_MethodName: ChoiceButton1
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &247752060
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -528,7 +539,18 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 312246543}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 712957817}
+        m_MethodName: ChoiceButton0
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &312246543
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -802,6 +824,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f3c7bdd859ed62e4a897bbf7f14acdbc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  eventChoicesUIPanel: {fileID: 1730900198}
+  eventDescriptionText: {fileID: 1493123027}
+  thisManager: {fileID: 712957817}
+  referenceMaterialPrefab: {fileID: 0}
+  referenceMaterialSO: {fileID: 0}
+  referenceGearPrefab: {fileID: 0}
+  referenceGearSO: {fileID: 0}
+  referenceBlueprintPrefab: {fileID: 0}
+  referenceBlueprintSO: {fileID: 0}
+  cardPrefab: {fileID: 0}
 --- !u!4 &712957818
 Transform:
   m_ObjectHideFlags: 0
@@ -897,7 +929,18 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 907605782}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 712957817}
+        m_MethodName: ChoiceButton3
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &907605782
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1082,7 +1125,18 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1417970026}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 712957817}
+        m_MethodName: ChoiceButton2
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &1417970026
 MonoBehaviour:
   m_ObjectHideFlags: 0

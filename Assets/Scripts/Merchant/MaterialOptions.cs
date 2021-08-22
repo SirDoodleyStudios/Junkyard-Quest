@@ -102,51 +102,6 @@ public class MaterialOptions : MonoBehaviour
         return merchantSaveState;
     }
 
-    //public void ViewMaterialOptionsOld()
-    //{
-    //    for (int i = 0; materialNCost.Count > i; i++)
-    //    {
-    //        //if the prefab is already existing, if it is, it sould always be disabled already
-    //        //to check if there are children, under bluePrintContent, use childCount and i comparison
-    //        //the foreach above ensures that all blueprint objects are at the beginning so if the current object checked is not a blueprint, we instantiate a new one
-    //        if (materialContentTrans.childCount - 1 >= i && materialContentTrans.GetChild(i).gameObject != null)
-    //        {
-    //            GameObject materialObject = materialContentTrans.GetChild(i).gameObject;
-    //            Transform materialTrans = materialObject.transform;
-    //            CraftingMaterialSOHolder materialSOHolder = materialObject.GetComponent<CraftingMaterialSOHolder>();
-
-    //            //create the priceTag prefab then instantiate it under the card then set the price
-    //            GameObject priceTagObj = materialTrans.GetChild(materialTrans.childCount - 1).gameObject;
-    //            PriceTag priceTag = priceTagObj.GetComponent<PriceTag>();
-    //            priceTag.SetPriceTag(materialCostList[i]);
-
-    //            //assign accordingly with the SO in list
-    //            //enable the option
-    //            materialObject.SetActive(true);
-    //            //CraftingMaterialSO instantiatedMatSO = Instantiate(materialSOList[i]);
-    //            materialSOHolder.ShowMaterialInViewer(materialSOList[i]);
-    //        }
-    //        //if there is no blueprint Prefab under the content, instantiate a new one
-    //        else
-    //        {
-    //            //instantiate under material content
-    //            GameObject materialObject = Instantiate(materialPrefabReference, materialContentTrans);
-    //            CraftingMaterialSOHolder materialSOHolder = materialObject.GetComponent<CraftingMaterialSOHolder>();
-
-    //            //create the priceTag prefab then instantiate it under the card then set the price
-    //            GameObject priceTagObj = Instantiate(priceTagPrefab, materialObject.transform);
-    //            PriceTag priceTag = priceTagObj.GetComponent<PriceTag>();
-    //            priceTag.SetPriceTag(materialCostList[i]);
-
-    //            //assign accordingly with the SO in list
-    //            //enable the option
-    //            materialObject.SetActive(true);
-    //            //CraftingMaterialSO instantiatedMatSO = Instantiate(materialSOList[i]);
-    //            materialSOHolder.ShowMaterialInViewer(materialSOList[i]);
-    //        }
-    //    }
-    //}
-
     public void ViewMaterialOptions()
     {
         foreach(KeyValuePair<CraftingMaterialSO, int> MNC in materialNCost)

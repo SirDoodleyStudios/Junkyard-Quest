@@ -8,7 +8,7 @@ public static class EventFactory
     private static Dictionary<AllEvents, Type> EventDictionary;
     private static bool isEventsInitialized => EventDictionary != null;
 
-    public static void InitializeCardFactory()
+    public static void InitializeEventFactory()
     {
         //if effect factory is not yet initialized, proceed
         if (isEventsInitialized)
