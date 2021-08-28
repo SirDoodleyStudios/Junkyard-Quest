@@ -23,11 +23,14 @@ public abstract class EventAbstractClass
     protected List<TextMeshProUGUI> buttonTextList = new List<TextMeshProUGUI>();
 
     //used as reference by most multi-stage events to determine what sequence the event is in
+    //very important for determining where yoou left off from event
+    protected EventSaveState eventSaveState;
     protected int eventSequence;
 
     //assigns the reference gameObjects
-    public void InitializeEventReferences(EventsManager refManager, Transform refButtonPanel, TextMeshProUGUI refDescText)
+    public void InitializeEventReferences(UniversalInformation universalInfoLoaded, EventsManager refManager, Transform refButtonPanel, TextMeshProUGUI refDescText, EventSaveState eventSavePassed)
     {
+        universalInfo = universalInfoLoaded;
         eventManager = refManager;
         eventDescText = refDescText;
         choiceButtonsPanel = refButtonPanel;
@@ -37,14 +40,19 @@ public abstract class EventAbstractClass
             buttonTextList.Add(buttonText);
         }
 
+        //taken from file, it's defaul 0 if file passed is a dummy
+        eventSaveState = eventSavePassed;
+        eventSequence = eventSavePassed.eventSequence;
     }
 
     //main function to begin activation of event
     //always overriden by the children
     public virtual void ActivateEvent()
     {
-        universalInfo = UniversalSaveState.LoadUniversalInformation();
-        eventSequence = 0;
+        //default is 0 but this gets overrided if there is a save file
+        //eventSequence = 0;
+        //update the sequence in saveState
+        eventSaveState.eventSequence = eventSequence;
         PopulateChoices();
     }
     //called through the events manager when a choice is made by a player or when a choice button is clicked
@@ -52,6 +60,7 @@ public abstract class EventAbstractClass
     //the int parameter is from the idex of the button choice
     public virtual void EventChoiceMade(int buttonIndex)
     {
+        UpdateEventState();
         EventTextDeterminer();
     }
     //called when a choice is done
@@ -91,10 +100,14 @@ public abstract class EventAbstractClass
     }
 
     //used for events that alter meterials in inventory
-    public void AlterMaterialInventory()
+
+    public void AlterMaterialInventory(bool isRandomized)
     {
         //true if randomized
-        eventManager.CreateMaterial(true);
+        //call manager to create the material then returns it and add it in the universalInfo file
+        eventManager.CreateMaterial(isRandomized);
+
+
     }
     //used for events that alter gear inventory
     public void AlterGearInventory()
@@ -107,9 +120,10 @@ public abstract class EventAbstractClass
 
     }
     //used for events that alters HP
-    public void AlterHP()
+    //true for heal, false for damage
+    public void AlterHP(bool isToAdd, int amount)
     {
-
+        eventManager.AlterUIHP(isToAdd, amount);
     }
     //used for events that alters Creativity
     public void AlterCreativity()
@@ -121,9 +135,20 @@ public abstract class EventAbstractClass
     {
 
     }
-    //used for leaving the event
+
+    //function called by manager when saving
+    //returns the states and sequences of the event
+    public void UpdateEventState()
+    {
+        eventSaveState.eventSequence = eventSequence;
+        UniversalSaveState.SaveEvent(eventSaveState);
+        eventManager.SaveFromChoice();
+    }
+
+    //function for leaving and ending event
     public void LeaveEvent()
     {
-
+        eventManager.EndEvent();
     }
+
 }

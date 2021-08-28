@@ -190,6 +190,20 @@ public static class UniversalSaveState
         return merchantState;
     }
 
+    //Save function for Events
+    public static void SaveEvent(EventSaveState eventSaveState)
+    {
+        string eventState = JsonUtility.ToJson(eventSaveState);
+        File.WriteAllText(Application.persistentDataPath + "/Event.json", eventState);
+    }
+    public static EventSaveState LoadEvent()
+    {
+        string eventState = File.ReadAllText(Application.persistentDataPath + "/Event.json");
+        EventSaveState eventSaveState = JsonUtility.FromJson<EventSaveState>(eventState);
+        return eventSaveState;
+    }
+    
+
 }
 
 

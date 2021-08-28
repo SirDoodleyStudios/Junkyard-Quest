@@ -5,6 +5,9 @@ using UnityEngine;
 //choose 1 of 2 unknown materials
 public class Event_TwoChestsOneKey : EventAbstractClass
 {
+    //constant amounts
+    int bashDamage = 10;
+
     public override AllEvents eventEnum => AllEvents.TwoChestsOneKey;
     //called by the event Manager
     public override void ActivateEvent()
@@ -24,11 +27,11 @@ public class Event_TwoChestsOneKey : EventAbstractClass
         {
             //one chest is going to have another key inside it
             //0 for left, 1 for right
-            int luckyChest = Random.Range(0, 1);
+            int luckyChest = Random.Range(0, 2);
             //if the lucky chest is opened, player gets a material
             if (buttonIndex == luckyChest)
             {
-                AlterMaterialInventory();
+                AlterMaterialInventory(true);
                 eventSequence = 1;
             }
             //if not, player has the choice to break the chest that will injure you 
@@ -48,13 +51,14 @@ public class Event_TwoChestsOneKey : EventAbstractClass
                 //if roll is lower than 70, lose HP and get nothing
                 if (chance < 70)
                 {
-                    AlterHP();
+                    AlterHP(false, bashDamage);
                     eventSequence = 3;
                 }
                 //if roll reached 70
                 else
                 {
-                    AlterHP();
+                    AlterMaterialInventory(true);
+                    AlterHP(false, bashDamage);
                     eventSequence = 4;
                 }
             }
@@ -98,7 +102,7 @@ public class Event_TwoChestsOneKey : EventAbstractClass
         {
             //assign texts unique per event
             eventDescription = "You opened the chest. Inside, you see a useful looking material. Awesome!";
-            eventChoices.Add("Bash the remaining chest open for more loot");
+            eventChoices.Add($"Bash the remaining chest open for more loot (Take {bashDamage} damage)");
             eventChoices.Add("Move along with high spirits");
             choiceCount = 2;
         }
@@ -107,26 +111,27 @@ public class Event_TwoChestsOneKey : EventAbstractClass
         {
             //assign texts unique per event
             eventDescription = "You opened the chest. There's nothing inside.";
-            eventChoices.Add("Bash the remaining chest open, you deserve loot!");
+            eventChoices.Add($"Bash the remaining chest open, you deserve loot! (Take {bashDamage} damage)");
             eventChoices.Add("Leave the area thinking that it's just not your day today.");
             choiceCount = 2;
         }
-        //event when the remaining chest has loot
-        else if (eventSequence == 3)
-        {
-            //assign texts unique per event
-            eventDescription = "You bashed the chest open leaving your hand with bruises. It was worth it! you find a useful looking material Inside";
-            eventChoices.Add("Leave the area with a smile");
-            choiceCount = 1;
-        }
         //event when no loot was gained from the two chests
-        else if (eventSequence == 4)
+        else if (eventSequence == 3)
         {
             //assign texts unique per event
             eventDescription = "You bashed the chest open leaving your hand with bruises only to find nothing but the scattered fragments of the chest.";
             eventChoices.Add("Leave the area");
             choiceCount = 1;
         }
+        //event when the remaining chest has loot
+        else if (eventSequence == 4)
+        {
+            //assign texts unique per event
+            eventDescription = "You bashed the chest open leaving your hand with bruises. It was worth it! you find a useful looking material Inside";
+            eventChoices.Add("Leave the area with a smile");
+            choiceCount = 1;
+        }
+
         PopulateChoices();
 
     }

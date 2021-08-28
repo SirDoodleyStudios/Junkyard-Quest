@@ -23,6 +23,7 @@ public class UniversalInformation
     public List<CardAndJigsaWrapper> currentDeckWithJigsaw;
 
     //information for the player unit
+    //playerStats is not altered when saving in UniversalInfo, only save through playerStatsWrapper
     public PlayerUnit playerStats;
     public PlayerUnitWrapper playerStatsWrapper;
     public int scraps;
