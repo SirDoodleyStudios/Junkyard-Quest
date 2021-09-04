@@ -176,6 +176,7 @@ public class SelectionManager : MonoBehaviour
         tempBPList.Add(AllGearTypes.Sword);
         tempBPList.Add(AllGearTypes.Axe);
         universalInformation.bluePrints = tempBPList;
+
         //TEST FOR INCLUDING MATERIALS IMMEDIATELY
         List<CraftingMaterialSO> tempCraftList = new List<CraftingMaterialSO>();
         //empty gear test list
@@ -193,6 +194,8 @@ public class SelectionManager : MonoBehaviour
             universalInformation.equippedGears[i] = null;
         }
 
+        //set the initial universalInfo node as boon to trigger the starting kit
+        universalInformation.nodeActivity = NodeActivityEnum.Boon;
 
         UniversalSaveState.SaveUniversalInformation(universalInformation);
 

@@ -23,6 +23,9 @@ public class RewardObject : MonoBehaviour
     //DeckPools deckPoolDirectories;
     List<int> cardPoolIndex;
 
+    //used by MaterialDrafting check parameters
+    List<CraftingMaterialWrapper> craftingMaterials;
+
 
     public void Awake()
     {
@@ -32,6 +35,7 @@ public class RewardObject : MonoBehaviour
     }
 
     //called by rewards manager
+    //only used for setting what type of reward will this object contain
     public void AssignReward(CombatRewards rewardKey, GameObject reward, int scraps)
     {
         rewardEnum = rewardKey;
@@ -44,44 +48,56 @@ public class RewardObject : MonoBehaviour
         {
             scrapsValue = scraps;
         }
-
-        else if(rewardKey == CombatRewards.CardDraft)
+        //if not scaprs, set the parameter at 0
+        else
         {
             scrapsValue = 0;
+        }
 
-            ////extract the player and class for the pools
-            //universalInfo = UniversalSaveState.LoadUniversalInformation();
-            ////contains the deck directories gameObject
-            //deckPoolDirectories = transform.parent.parent.GetChild(0).GetComponent<DeckPools>();
+        //else if(rewardKey == CombatRewards.CardDraft)
+        //{
+        //    scrapsValue = 0;
 
-            //cardPoolIndex = new List<int>();
-            ////total card pools if we add the class and player decks, this is necessary because carddraft will combine the decks and pick from indices of combined decks
-            ////the indices are created here so that we can store it and n
-            //int deckPoolTotal = deckPoolDirectories.GetPlayerPool(universalInfo.chosenPlayer).Count + deckPoolDirectories.GetClassPool(universalInfo.chosenClass).Count;
-            //for (int i = 0; 3 > i; i++)
-            //{
-            //    //prevents an index from repeating
-            //    int tempInt = Random.Range(0, deckPoolTotal);
-            //    if (!cardPoolIndex.Contains(tempInt))
-            //    {
-            //        cardPoolIndex.Add(tempInt);
-            //    }
-            //    else
-            //    {
-            //        i--;
-            //    }          
+        //    ////extract the player and class for the pools
+        //    //universalInfo = UniversalSaveState.LoadUniversalInformation();
+        //    ////contains the deck directories gameObject
+        //    //deckPoolDirectories = transform.parent.parent.GetChild(0).GetComponent<DeckPools>();
 
-            //}
+        //    //cardPoolIndex = new List<int>();
+        //    ////total card pools if we add the class and player decks, this is necessary because carddraft will combine the decks and pick from indices of combined decks
+        //    ////the indices are created here so that we can store it and n
+        //    //int deckPoolTotal = deckPoolDirectories.GetPlayerPool(universalInfo.chosenPlayer).Count + deckPoolDirectories.GetClassPool(universalInfo.chosenClass).Count;
+        //    //for (int i = 0; 3 > i; i++)
+        //    //{
+        //    //    //prevents an index from repeating
+        //    //    int tempInt = Random.Range(0, deckPoolTotal);
+        //    //    if (!cardPoolIndex.Contains(tempInt))
+        //    //    {
+        //    //        cardPoolIndex.Add(tempInt);
+        //    //    }
+        //    //    else
+        //    //    {
+        //    //        i--;
+        //    //    }          
 
-        }           
+        //    //}
+
+        //}           
        
     }
-
+    //gets called by manager if loaded reward is cardDraft
     public void PreLoadCardDraft(List<int> preDraft)
     {
         cardPoolIndex = new List<int>();
         cardPoolIndex = preDraft;
     }
+    //gets called by manager if loaded reward is material
+    public void PreLoadMaterialDraft(List<CraftingMaterialWrapper> preDraft)
+    {
+        craftingMaterials = new List<CraftingMaterialWrapper>();
+        craftingMaterials = preDraft;
+    }
+
 
 
     //This is called by buttons assigned from editor
@@ -105,6 +121,13 @@ public class RewardObject : MonoBehaviour
             cardDrafting.objectOriginIndex = transform.GetSiblingIndex();
             cardDrafting.InitializeDraftPool(universalInfo.chosenPlayer, universalInfo.chosenClass);
             cardDrafting.StartCardDraft(cardPoolIndex);
+        }
+        else if (rewardEnum == CombatRewards.Material)
+        {
+            MaterialDrafting materialDrafting = rewardWindow.transform.GetComponent<MaterialDrafting>();
+            materialDrafting.objectOriginIndex = transform.GetSiblingIndex();
+
+
         }
 
         //functionality migrated to the rewards manager and activated after picking the draft

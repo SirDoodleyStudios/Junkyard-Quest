@@ -181,7 +181,9 @@ MonoBehaviour:
     type: 3}
   scrapGainPrefab: {fileID: 6617119017027338497, guid: bb7a1f42b447a80428a10af1e691be38,
     type: 3}
-  treasureGainPrefab: {fileID: 0}
+  materialPrefab: {fileID: 0}
+  gearPrefab: {fileID: 8335974971350277751, guid: 7951fb8a920a58e4a8f5b9b121caa556,
+    type: 3}
   isRewardsSceneInitiated: 0
   rewardsList: 
   rewardsAvailabilityList: 

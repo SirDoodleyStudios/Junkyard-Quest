@@ -10,7 +10,8 @@ public class RewardsManager : MonoBehaviour
     //reward gameObject Prefabs
     public GameObject cardDraftPrefab;
     public GameObject scrapGainPrefab;
-    public GameObject treasureGainPrefab;
+    public GameObject materialPrefab;
+    public GameObject gearPrefab;
 
     //loaded and saved universal Info Instance
     //same for RewardsSaveState
@@ -91,8 +92,19 @@ public class RewardsManager : MonoBehaviour
             //if all enemies are overkilled, add another reward
             if (universalInfo.enemyCount == universalInfo.overkills)
             {
-                rewardsList.Add(CombatRewards.Treasures);
+                rewardsList.Add(CombatRewards.Material);
             }
+        }
+        //called at the beginning of the run, has a fixed reward count and reward types
+        else if (universalInfo.nodeActivity == NodeActivityEnum.Boon)
+        {
+            //list is fixed
+            rewardsList.Add(CombatRewards.CardDraft);
+            rewardsList.Add(CombatRewards.CardDraft);
+            rewardsList.Add(CombatRewards.CardDraft);
+            rewardsList.Add(CombatRewards.Material);
+            rewardsList.Add(CombatRewards.Material);
+            rewardsList.Add(CombatRewards.Gear);
         }
 
         //the bool is for GenerateRewardsObjects if the command is from file or not
@@ -108,13 +120,20 @@ public class RewardsManager : MonoBehaviour
         //stores the determined rewards list and availability list
         RewardsSaveState rewardsSaveState = new RewardsSaveState();
         //temporary list to hold all the lists inside rewardsSaveState so that we can match indices
+        //for cardDraft
         List<List<int>> cardDrafts = new List<List<int>>(); ;
         //int counter t6o determine what list to load during CardDraftLoading
         int cardListCounter = 0;
+
+        //for MaterialDraft
+        List<List<CraftingMaterialWrapper>> materialDrafts = new List<List<CraftingMaterialWrapper>>();
+        int materialListCounter = 0;
+
         //Load the RewardsSaveState immediately if isLoadedfromFile
         if (isLoadedFromFile)
         {
             rewardsSaveState = UniversalSaveState.LoadRewardsState();
+
             //decode the CardDraftListWrapper into a list of lists
             CardDraftListWrapper cardDraftListWrapper = rewardsSaveState.cardDraftListWrapper;
             cardDrafts.Add(cardDraftListWrapper.possibleCardDraft1);
@@ -124,6 +143,14 @@ public class RewardsManager : MonoBehaviour
             cardDrafts.Add(cardDraftListWrapper.possibleCardDraft5);
             cardDrafts.Add(cardDraftListWrapper.possibleCardDraft6);
 
+            //decode the MaterialDraftListWrapper into a list of lists
+            MaterialDraftListWrapper materialDraftListWrapper = rewardsSaveState.materialDraftListWrapper;
+            materialDrafts.Add(materialDraftListWrapper.possibleMaterialDraft1);
+            materialDrafts.Add(materialDraftListWrapper.possibleMaterialDraft2);
+            materialDrafts.Add(materialDraftListWrapper.possibleMaterialDraft3);
+            materialDrafts.Add(materialDraftListWrapper.possibleMaterialDraft4);
+            materialDrafts.Add(materialDraftListWrapper.possibleMaterialDraft5);
+            materialDrafts.Add(materialDraftListWrapper.possibleMaterialDraft6);
         }
 
         //iterate through the rewardsList to one by one generate their respective rewardObjects
@@ -245,6 +272,30 @@ public class RewardsManager : MonoBehaviour
 
                 }
 
+            }
+
+
+            //for materialReward
+            else if (rewardsList[i] == CombatRewards.Material)
+            {
+                if (choiceObject.activeSelf)
+                {
+                    //assign the reward type
+                    rewardObject.AssignReward(rewardsList[i], rewardsRepository[rewardsList[i]], 0);
+
+                    if (!isLoadedFromFile)
+                    {
+                        //send the preloaded draft to reward object
+                        //rewardObject.PreLoadMaterialDraft();
+                        //increase counter so that the next loaded CardDraft will take the next list
+                        cardListCounter++;
+                    }
+                    else
+                    {
+
+                    }
+
+                }
             }
 
 
@@ -375,6 +426,46 @@ public class CardDraftListWrapper
         {
             possibleCardDraft6 = draftList;
         }
-    }
+    }    
 
+}
+
+[Serializable]
+public class MaterialDraftListWrapper
+{
+    public List<CraftingMaterialWrapper> possibleMaterialDraft1;
+    public List<CraftingMaterialWrapper> possibleMaterialDraft2;
+    public List<CraftingMaterialWrapper> possibleMaterialDraft3;
+    public List<CraftingMaterialWrapper> possibleMaterialDraft4;
+    public List<CraftingMaterialWrapper> possibleMaterialDraft5;
+    public List<CraftingMaterialWrapper> possibleMaterialDraft6;
+
+    public void AssignList(List<CraftingMaterialWrapper> draftList)
+    {
+        //everytime AssignList is called, the List< parametr will be assigned on empty Lists
+        if (possibleMaterialDraft1 == null)
+        {
+            possibleMaterialDraft1 = draftList;
+        }
+        else if (possibleMaterialDraft2 == null)
+        {
+            possibleMaterialDraft2 = draftList;
+        }
+        else if (possibleMaterialDraft3 == null)
+        {
+            possibleMaterialDraft3 = draftList;
+        }
+        else if (possibleMaterialDraft4 == null)
+        {
+            possibleMaterialDraft4 = draftList;
+        }
+        else if (possibleMaterialDraft5 == null)
+        {
+            possibleMaterialDraft5 = draftList;
+        }
+        else if (possibleMaterialDraft6 == null)
+        {
+            possibleMaterialDraft6 = draftList;
+        }
+    }
 }

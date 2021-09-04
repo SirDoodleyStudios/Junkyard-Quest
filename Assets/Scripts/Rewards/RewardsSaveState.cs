@@ -20,5 +20,8 @@ public class RewardsSaveState
 
     //wrapper class that contains the list of cardDraft ints
     public CardDraftListWrapper cardDraftListWrapper = new CardDraftListWrapper();
+
+    //contains the predetermined materials
+    public MaterialDraftListWrapper materialDraftListWrapper = new MaterialDraftListWrapper();
     
 }
