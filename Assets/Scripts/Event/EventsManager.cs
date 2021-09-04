@@ -168,6 +168,7 @@ public class EventsManager : MonoBehaviour
     public void AlterUIHP(bool isToAdd, int amount)
     {
         //alter the HP values in the save file
+        //remember that playerStatsWrapper is for loading while playerUnit is for Saving
         int tempCurrHP = universalInfo.playerStatsWrapper.currHP;
         int tempMaxHP = universalInfo.playerStatsWrapper.HP;
 
@@ -186,8 +187,8 @@ public class EventsManager : MonoBehaviour
         cameraUIScript.UpdateUIObjectsHP(tempCurrHP, tempMaxHP);
 
         //update currentUniversalInfo
-        universalInfo.playerStatsWrapper.currHP = tempCurrHP;
-        universalInfo.playerStatsWrapper.HP = tempMaxHP;
+        universalInfo.playerStats.currHP = tempCurrHP;
+        universalInfo.playerStats.HP = tempMaxHP;
     }
 
     //Function to showcase the obtained item
@@ -201,6 +202,7 @@ public class EventsManager : MonoBehaviour
     public void SaveFromChoice()
     {
         UniversalSaveState.SaveUniversalInformation(universalInfo);
+        cameraUIScript.UpdateUniversalInfo();
     }
 
 
