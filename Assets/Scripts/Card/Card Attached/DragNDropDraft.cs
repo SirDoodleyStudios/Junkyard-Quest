@@ -33,7 +33,6 @@ public class DragNDropDraft : MonoBehaviour, IPointerEnterHandler, IPointerExitH
     public void OnPointerClick(PointerEventData eventData)
     {
         //calls cardDrafting to add the chosen card to the deck
-        Debug.Log(cardDisplay.card);
         cardDrafting.AddtoDeck(cardDisplay.card);
     }
 }

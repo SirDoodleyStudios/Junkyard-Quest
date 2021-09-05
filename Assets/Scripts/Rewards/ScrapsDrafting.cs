@@ -13,9 +13,18 @@ public class ScrapsDrafting : MonoBehaviour
     GridLayoutGroup gridLayout;
     RectTransform parentCanvas;
     int scrapsValue;
+    //reference for the Universal UI script
+    public CameraUIScript cameraUIScript;
 
     private void Awake()
     {
+        //set the current object at index 3 sibling so that universal Header is remains as sibling 4 so that we can access universalUI while choosing from draft
+        transform.SetSiblingIndex(3);
+        //find the UniversalUI whic is always the last sibling of under the canvas
+        //curently, we use child 4 as the last sibling under canvas
+        cameraUIScript = transform.parent.GetChild(4).GetChild(0).GetComponent<CameraUIScript>();
+
+
         //first child is the holder of cards
         parentCanvas = transform.parent.GetComponent<RectTransform>();
         gridLayout = choiceHolder.GetComponent<GridLayoutGroup>();
@@ -81,13 +90,19 @@ public class ScrapsDrafting : MonoBehaviour
         {
             case 0:
                 universalInfo.scraps += scrapsValue;
+                //update the UniversalUI to reflect change
+                cameraUIScript.UpdateUIObjectsActiveScraps(universalInfo.scraps + scrapsValue);
                 break;
             case 1:
                 universalInfo.playerStats.HP += (int)Mathf.Floor(scrapsValue / 10);
                 universalInfo.playerStats.currHP += (int)Mathf.Floor(scrapsValue / 10);
+                //update the UniversalUI to reflect change
+                cameraUIScript.UpdateUIObjectsHP(universalInfo.playerStats.currHP, universalInfo.playerStats.HP);
                 break;
             case 2:
                 universalInfo.playerStats.creativity += (int)Mathf.Floor(scrapsValue / 50);
+                //update the UniversalUI to reflect change
+                cameraUIScript.UpdateUIObjectsCretivity(universalInfo.playerStats.currCreativity, universalInfo.playerStats.creativity);
                 break;
             default:
                 break;
@@ -95,6 +110,7 @@ public class ScrapsDrafting : MonoBehaviour
 
         //save after changing
         UniversalSaveState.SaveUniversalInformation(universalInfo);
+        cameraUIScript.UpdateUniversalInfo();
 
         //index 2 of the canvas panel is always the rewards manager
         RewardsManager rewardManager = transform.parent.GetChild(2).GetComponent<RewardsManager>();

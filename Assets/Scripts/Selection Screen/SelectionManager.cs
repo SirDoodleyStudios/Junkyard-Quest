@@ -199,7 +199,9 @@ public class SelectionManager : MonoBehaviour
 
         UniversalSaveState.SaveUniversalInformation(universalInformation);
 
-        SceneManager.LoadScene("OverworldScene");
+        //change in next scene, must go first to reward scene to give player his starting kit
+        SceneManager.LoadScene("RewardsScene");
+        //SceneManager.LoadScene("OverworldScene");
     }
 
     

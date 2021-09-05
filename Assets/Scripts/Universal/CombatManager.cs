@@ -1149,6 +1149,8 @@ public class CombatManager : MonoBehaviour
         //alters the creativity in player unit to be 0 after victory
         playerFunctions.AlterCreativity(-playerFunctions.playerUnit.currCreativity);
         universalInfo.playerStats = playerFunctions.playerUnit;
+        //set the nodeActivity to Combat to properly determine the rewards
+        universalInfo.nodeActivity = NodeActivityEnum.Combat;
         UniversalSaveState.SaveUniversalInformation(universalInfo);
 
         //delete the combat file

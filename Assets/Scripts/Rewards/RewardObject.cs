@@ -24,7 +24,7 @@ public class RewardObject : MonoBehaviour
     List<int> cardPoolIndex;
 
     //used by MaterialDrafting check parameters
-    List<CraftingMaterialWrapper> craftingMaterials;
+    List<CraftingMaterialSO> craftingMaterials;
 
 
     public void Awake()
@@ -92,9 +92,9 @@ public class RewardObject : MonoBehaviour
         cardPoolIndex = preDraft;
     }
     //gets called by manager if loaded reward is material
-    public void PreLoadMaterialDraft(List<CraftingMaterialWrapper> preDraft)
+    public void PreLoadMaterialDraft(List<CraftingMaterialSO> preDraft)
     {
-        craftingMaterials = new List<CraftingMaterialWrapper>();
+        craftingMaterials = new List<CraftingMaterialSO>();
         craftingMaterials = preDraft;
     }
 
@@ -104,8 +104,12 @@ public class RewardObject : MonoBehaviour
     //reward objects are buttons
     public void InstantiateChoiceWindow()
     {
-        //instantiate the scrap drafting object under the canvas object
+        //set the current object at index 3 sibling so that universal Header is remains as sibling 4 so that we can access universalUI while choosing from draft
         GameObject rewardWindow = Instantiate(rewardPrefab, transform.parent.parent);
+        //setting it as index 3 will allow the header universalUI to still be accessed when choosing draft
+        //mighrated to the Drafting Scripts instead
+        //rewardWindow.transform.SetSiblingIndex(3);
+
         if (rewardEnum == CombatRewards.Scraps)
         {
             ScrapsDrafting scrapsDrafting = rewardWindow.transform.GetComponent<ScrapsDrafting>();
@@ -126,6 +130,7 @@ public class RewardObject : MonoBehaviour
         {
             MaterialDrafting materialDrafting = rewardWindow.transform.GetComponent<MaterialDrafting>();
             materialDrafting.objectOriginIndex = transform.GetSiblingIndex();
+            materialDrafting.InitializeMaterialChoices(craftingMaterials);
 
 
         }

@@ -11,9 +11,25 @@ public class MaterialDrafting : MonoBehaviour
     public GameObject choiceHolder;
     GridLayoutGroup gridLayout;
     RectTransform parentCanvas;
+    //skip button reference
+    Button skipButton;
+
+    //reference for the Universal UI script
+    public CameraUIScript cameraUIScript;
 
     private void Awake()
     {
+        //set the current object at index 3 sibling so that universal Header is last sibling
+        transform.SetSiblingIndex(3);
+        //find the UniversalUI whic is always the last sibling of under the canvas
+        //curently, we use child 4 as the last sibling under canvas
+        cameraUIScript = transform.parent.GetChild(4).GetChild(0).GetComponent<CameraUIScript>();
+
+        //the skip button is always the last child under the cardDrafting object
+        skipButton = transform.GetChild(transform.childCount - 1).GetComponent<Button>();
+        //assign the button for skipCard
+        skipButton.onClick.AddListener(() => SkipMaterial());
+
         //first child is the holder of cards
         parentCanvas = transform.parent.GetComponent<RectTransform>();
         gridLayout = choiceHolder.GetComponent<GridLayoutGroup>();
@@ -22,10 +38,46 @@ public class MaterialDrafting : MonoBehaviour
     }
 
     //called by RewardObject to show material choices
-    public void InitializeMaterialChoices()
+    //this list must only contain 2 materials
+    public void InitializeMaterialChoices(List<CraftingMaterialSO> materials)
     {
-        
+        for (int i = 0; 1 >= i; i++)
+        {
+            GameObject materialObj = choiceHolder.transform.GetChild(i).gameObject;
+            CraftingMaterialSOHolder materialSOHolder = materialObj.GetComponent<CraftingMaterialSOHolder>();
+            materialSOHolder.ShowMaterialInViewer(materials[i]);
+            materialObj.SetActive(true);
+        }
     }
+
+    //add the material in inventory, called by the dragNDrop
+    public void AddToInventory(CraftingMaterialSO addedSO)
+    {
+        UniversalInformation universalInfo = UniversalSaveState.LoadUniversalInformation();
+        //generate the wrapper
+        CraftingMaterialWrapper materialWrapper = new CraftingMaterialWrapper(addedSO);
+        universalInfo.craftingMaterialWrapperList.Add(materialWrapper);
+        //update universalUI
+        cameraUIScript.UpdateMaterialInventory(materialWrapper, true);
+
+        UniversalSaveState.SaveUniversalInformation(universalInfo);
+        cameraUIScript.UpdateUniversalInfo();
+
+        //calls rewardManager to disable to reward object
+        RewardsManager rewardManager = transform.parent.GetChild(2).GetComponent<RewardsManager>();
+        rewardManager.ClaimReward(objectOriginIndex);
+
+        Destroy(gameObject);
+    }
+
+    void SkipMaterial()
+    {
+        //Used when skip is for abandoning the choice instead of just closing the draftWindow
+        //RewardsManager rewardManager = transform.parent.GetChild(2).GetComponent<RewardsManager>();
+        //rewardManager.ClaimReward(objectOriginIndex);
+        Destroy(gameObject);
+    }
+
 
     //public MerchantSaveState InitiateMaterialOptions(UniversalInformation universalInfo, bool isLoadedFromFile)
     //{

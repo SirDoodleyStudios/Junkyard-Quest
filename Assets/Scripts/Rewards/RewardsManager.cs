@@ -7,11 +7,16 @@ using System;
 
 public class RewardsManager : MonoBehaviour
 {
+    //assigned in editor
+    public CameraUIScript cameraUIScript;
+
     //reward gameObject Prefabs
     public GameObject cardDraftPrefab;
     public GameObject scrapGainPrefab;
-    public GameObject materialPrefab;
+    public GameObject materialDraftPrefab;
+    public CraftingMaterialSO materialSO;
     public GameObject gearPrefab;
+    public GearSO gearSO;
 
     //loaded and saved universal Info Instance
     //same for RewardsSaveState
@@ -20,6 +25,8 @@ public class RewardsManager : MonoBehaviour
 
     //this is a holder class for the list<int> for cardDrafts
     CardDraftListWrapper cardDraftListWrapper;
+    //this is a holder class for the List<CraftingMaterialWrapper> for materialDrafts
+    MaterialDraftListWrapper materialDraftListWrapper;
 
     //indicator if the rewardsscene has already been initialized, this is determined if we load or not
     public bool isRewardsSceneInitiated;
@@ -38,18 +45,26 @@ public class RewardsManager : MonoBehaviour
     //keeps track of what rewards window is currently open, this field is used for saving and loading
     CombatRewards currentReward;
 
-    // Start is called before the first frame update
-    //must remain in start because for some reason, the rewardObjects' sprite won't render first
-    void Start()
+    private void Awake()
     {
         //calls initialization of descriptions first for card draft window
         CardTagManager.InitializeTextDescriptionDictionaries();
 
         universalInfo = UniversalSaveState.LoadUniversalInformation();
+        cameraUIScript.InitiateUniversalUIInfoData(universalInfo);
+        cameraUIScript.AssignUIObjects(universalInfo);
+    }
+
+    // Start is called before the first frame update
+    //must remain in start because for some reason, the rewardObjects' sprite won't render first
+    void Start()
+    {
+
 
         rewardsRepository.Add(CombatRewards.CardDraft, cardDraftPrefab);
         rewardsRepository.Add(CombatRewards.Abilities, cardDraftPrefab);
         rewardsRepository.Add(CombatRewards.Scraps, scrapGainPrefab);
+        rewardsRepository.Add(CombatRewards.Material, materialDraftPrefab);
         //rewardsRepository.Add(CombatRewards.Treasures, treasureGainPrefab);
 
         //if Rewrds save file exists, go call function the LoadFromFileOverride
@@ -104,7 +119,9 @@ public class RewardsManager : MonoBehaviour
             rewardsList.Add(CombatRewards.CardDraft);
             rewardsList.Add(CombatRewards.Material);
             rewardsList.Add(CombatRewards.Material);
-            rewardsList.Add(CombatRewards.Gear);
+            //test material, gear is the real 6th starting kit
+            rewardsList.Add(CombatRewards.Material);
+            //rewardsList.Add(CombatRewards.Gear);
         }
 
         //the bool is for GenerateRewardsObjects if the command is from file or not
@@ -126,7 +143,8 @@ public class RewardsManager : MonoBehaviour
         int cardListCounter = 0;
 
         //for MaterialDraft
-        List<List<CraftingMaterialWrapper>> materialDrafts = new List<List<CraftingMaterialWrapper>>();
+        //this is the converted list holder of the saved materialWrappers to SOs
+        List<List<CraftingMaterialSO>> materialSODrafts = new List<List<CraftingMaterialSO>>();
         int materialListCounter = 0;
 
         //Load the RewardsSaveState immediately if isLoadedfromFile
@@ -145,12 +163,29 @@ public class RewardsManager : MonoBehaviour
 
             //decode the MaterialDraftListWrapper into a list of lists
             MaterialDraftListWrapper materialDraftListWrapper = rewardsSaveState.materialDraftListWrapper;
-            materialDrafts.Add(materialDraftListWrapper.possibleMaterialDraft1);
-            materialDrafts.Add(materialDraftListWrapper.possibleMaterialDraft2);
-            materialDrafts.Add(materialDraftListWrapper.possibleMaterialDraft3);
-            materialDrafts.Add(materialDraftListWrapper.possibleMaterialDraft4);
-            materialDrafts.Add(materialDraftListWrapper.possibleMaterialDraft5);
-            materialDrafts.Add(materialDraftListWrapper.possibleMaterialDraft6);
+            List<List<CraftingMaterialWrapper>> tempWrapperListsHolder = new List<List<CraftingMaterialWrapper>>();
+            tempWrapperListsHolder.Add(materialDraftListWrapper.possibleMaterialDraft1);
+            tempWrapperListsHolder.Add(materialDraftListWrapper.possibleMaterialDraft2);
+            tempWrapperListsHolder.Add(materialDraftListWrapper.possibleMaterialDraft3);
+            tempWrapperListsHolder.Add(materialDraftListWrapper.possibleMaterialDraft4);
+            tempWrapperListsHolder.Add(materialDraftListWrapper.possibleMaterialDraft5);
+            tempWrapperListsHolder.Add(materialDraftListWrapper.possibleMaterialDraft6);
+            //iterate through the wrapperList to convert their elements into SOs
+            foreach (List<CraftingMaterialWrapper> tempWrapperList in tempWrapperListsHolder)
+            {
+                //temporary list that will hold the converted SO List
+                List<CraftingMaterialSO> tempSOList = new List<CraftingMaterialSO>();
+                foreach (CraftingMaterialWrapper tempWrapper in tempWrapperList)
+                {
+                    //construct SO from the wrapper
+                    CraftingMaterialSO tempMaterialSO = Instantiate(materialSO);
+                    tempMaterialSO.materialPrefix = tempWrapper.materialPrefix;
+                    tempMaterialSO.materialType = tempWrapper.materialType;
+                    tempMaterialSO.materialEffects.AddRange(tempWrapper.materialEffects);
+                    tempSOList.Add(tempMaterialSO);
+                }
+                materialSODrafts.Add(tempSOList);
+            }
         }
 
         //iterate through the rewardsList to one by one generate their respective rewardObjects
@@ -160,8 +195,6 @@ public class RewardsManager : MonoBehaviour
             GameObject choiceObject = transform.GetChild(i).gameObject;
             //gets the object in holder and assign an object prefab depending on the combatRewards key enumerated in rewardsList
             RewardObject rewardObject = choiceObject.GetComponent<RewardObject>();
-
-
 
             //if loaded from file, simply assign the bool saved in the list based on the matched current index
             if (isLoadedFromFile)
@@ -173,8 +206,6 @@ public class RewardsManager : MonoBehaviour
             {
                 choiceObject.SetActive(true);
             }
-
-
 
             //if the reward to be loaded is scraps, calculate the scraps amount depending on overkills
             if (rewardsList[i] == CombatRewards.Scraps)
@@ -285,14 +316,63 @@ public class RewardsManager : MonoBehaviour
 
                     if (!isLoadedFromFile)
                     {
-                        //send the preloaded draft to reward object
-                        //rewardObject.PreLoadMaterialDraft();
-                        //increase counter so that the next loaded CardDraft will take the next list
-                        cardListCounter++;
+                        //temporary holder of the generated MaterialSO
+                        List<CraftingMaterialSO> tempMatSOList = new List<CraftingMaterialSO>();
+                        //generate two random materials as choices
+                        for (int j = 0; 1 >= j; j++)
+                        {
+                            //randomize ints for the components of the material being built
+                            CraftingMaterialSO instantiatedMatSO = Instantiate(materialSO);
+
+                            instantiatedMatSO.materialType = UniversalFunctions.GetRandomEnum<AllMaterialTypes>();
+                            //material prefix should not have "Normal" which is index 0 in AllMaterialPrefixes enum
+                            //reiterates until the randomized prefix is not Normal anymore
+                            AllMaterialPrefixes materialPrefix;
+                            do
+                            {
+                                materialPrefix = UniversalFunctions.GetRandomEnum<AllMaterialPrefixes>();
+                            }
+                            while ((int)materialPrefix == 0);
+                            instantiatedMatSO.materialPrefix = materialPrefix;
+                            //for randomizing the material effects
+                            for (int k = 0; 1 >= k; k++)
+                            {
+                                AllMaterialEffects materialEffect;
+                                //prevents repeat of material Effect by rerolling the material Effect enum if the SO's material Effect List already contains the randomized effect
+                                //the materialEffect < 100 condition is for preventing set bonuses that are in the 100+ spot of the enum are not taken during randomization
+                                do
+                                {
+                                    materialEffect = UniversalFunctions.GetRandomEnum<AllMaterialEffects>();
+                                }
+                                while (instantiatedMatSO.materialEffects.Contains(materialEffect) || (int)materialEffect >= 100);
+                                instantiatedMatSO.materialEffects.Add(materialEffect);
+                            }
+                            //add generated materialSO to temporary list
+                            tempMatSOList.Add(instantiatedMatSO);
+                        }
+                        //preload the generated objects
+                        rewardObject.PreLoadMaterialDraft(tempMatSOList);
+
+                        //convert the generated SOs to Wrappers
+                        List<CraftingMaterialWrapper> wrappersToBeSaved = UniversalFunctions.ConvertCraftingMaterialSOListToWrapper(tempMatSOList);
+
+                        //create instance of the materialDraft wrapper class then insert the generated list to the wrapper
+                        if (materialDraftListWrapper == null)
+                        {
+                            materialDraftListWrapper = new MaterialDraftListWrapper();
+                            materialDraftListWrapper.AssignList(wrappersToBeSaved);
+                        }
+                        else
+                        {
+                            materialDraftListWrapper.AssignList(wrappersToBeSaved);
+                        }
                     }
                     else
                     {
-
+                        //send the preloaded draft to reward object
+                        rewardObject.PreLoadMaterialDraft(materialSODrafts[materialListCounter]);
+                        //increase counter so that the next loaded CardDraft will take the next list
+                        materialListCounter++;
                     }
 
                 }
@@ -308,10 +388,13 @@ public class RewardsManager : MonoBehaviour
         }
         rewardsSaveState.rewardsList = rewardsList;
         rewardsSaveState.rewardsAvailabilityList = rewardsAvailabilityList;
+
         //only save the cardDraftListWrapper if from rewardObjects are not loaded
+        //DONT REMEMBER WHY WE ONLY SAVE IF THE GENERATION IS NOT FROM SAVE FILE
         if (!isLoadedFromFile)
         {
             rewardsSaveState.cardDraftListWrapper = cardDraftListWrapper;
+            rewardsSaveState.materialDraftListWrapper = materialDraftListWrapper;
         }
 
         UniversalSaveState.SaveRewardsState(rewardsSaveState);
@@ -379,11 +462,17 @@ public class RewardsManager : MonoBehaviour
 
         if (rewardsList.Count == claimedRewardCounter)
         {
-            //delete the file before going back to overworld
-            File.Delete(Application.persistentDataPath + "/Rewards.json");
-            SceneManager.LoadScene("OverworldScene");
+            BackToOerworldButton();
         }
 
+    }
+    //Function for going back to Overworld
+    //called when button is pressed or if all reward options are taken
+    public void BackToOerworldButton()
+    {
+        //delete the file before going back to overworld
+        File.Delete(Application.persistentDataPath + "/Rewards.json");
+        SceneManager.LoadScene("OverworldScene");
     }
 
 }
@@ -442,6 +531,8 @@ public class MaterialDraftListWrapper
 
     public void AssignList(List<CraftingMaterialWrapper> draftList)
     {
+        //convert to craftingMaterialSO first
+
         //everytime AssignList is called, the List< parametr will be assigned on empty Lists
         if (possibleMaterialDraft1 == null)
         {

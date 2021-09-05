@@ -16,12 +16,21 @@ public class CardDrafting : MonoBehaviour
     //Skil buttoon
     Button skipButton;
 
-
     //reference to the Deck Directory Holder
     DeckPools deckPoolDirectories;
     List<Card> poolCards = new List<Card>();
+
+    //reference for the Universal UI script
+    CameraUIScript cameraUIScript;
+
     private void Awake()
     {
+        //set the current object at index 3 sibling so that universal Header is remains as sibling 4 so that we can access universalUI while choosing from draft
+        transform.SetSiblingIndex(3);
+        //find the UniversalUI whic is always the last sibling of under the canvas
+        //curently, we use child 4 as the last sibling under canvas, the cameraUI Script is under its first child
+        cameraUIScript = transform.parent.GetChild(4).GetChild(0).GetComponent<CameraUIScript>();
+
         //the skip button is always the last child under the cardDrafting object
         skipButton = transform.GetChild(transform.childCount - 1).GetComponent<Button>();
         //assign the button for skipCard
@@ -129,9 +138,14 @@ public class CardDrafting : MonoBehaviour
     public void AddtoDeck(Card card)
     {
         UniversalInformation universalInfo = UniversalSaveState.LoadUniversalInformation();
-        universalInfo.currentDeck.Add(card.enumCardName);
-        UniversalSaveState.SaveUniversalInformation(universalInfo);
+        CardAndJigsaWrapper newCard = new CardAndJigsaWrapper(card);
+        universalInfo.currentDeckWithJigsaw.Add(newCard);
+        //update the universalUIDeck
+        cameraUIScript.UpdateCurrentDeck(card, true);
 
+        //universalInfo.currentDeck.Add(card.enumCardName); removed becuase we use CardAndJigsawWrapper now
+        UniversalSaveState.SaveUniversalInformation(universalInfo);
+        cameraUIScript.UpdateUniversalInfo();
 
         //calls rewardManager to disable to reward object
         RewardsManager rewardManager = transform.parent.GetChild(2).GetComponent<RewardsManager>();
@@ -145,8 +159,9 @@ public class CardDrafting : MonoBehaviour
     //skip card button
     void SkipCard()
     {
-        RewardsManager rewardManager = transform.parent.GetChild(2).GetComponent<RewardsManager>();
-        rewardManager.ClaimReward(objectOriginIndex);
+        //Used when skip is for abandoning the choice instead of just closing the draftWindow
+        //RewardsManager rewardManager = transform.parent.GetChild(2).GetComponent<RewardsManager>();
+        //rewardManager.ClaimReward(objectOriginIndex);
         Destroy(gameObject);
     }
 
