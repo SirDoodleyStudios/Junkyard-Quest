@@ -1280,7 +1280,7 @@ GameObject:
   - component: {fileID: 5893788664308647644}
   m_Layer: 5
   m_Name: Gear Prefab
-  m_TagString: Material
+  m_TagString: Gear
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

@@ -23,5 +23,8 @@ public class RewardsSaveState
 
     //contains the predetermined materials
     public MaterialDraftListWrapper materialDraftListWrapper = new MaterialDraftListWrapper();
+
+    //contains the predetermined gears
+    public GearDraftListWrapper gearDraftListWrapper = new GearDraftListWrapper();
     
 }

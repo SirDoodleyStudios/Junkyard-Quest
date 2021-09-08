@@ -15,7 +15,7 @@ public class RewardsManager : MonoBehaviour
     public GameObject scrapGainPrefab;
     public GameObject materialDraftPrefab;
     public CraftingMaterialSO materialSO;
-    public GameObject gearPrefab;
+    public GameObject gearDraftPrefab;
     public GearSO gearSO;
 
     //loaded and saved universal Info Instance
@@ -27,6 +27,8 @@ public class RewardsManager : MonoBehaviour
     CardDraftListWrapper cardDraftListWrapper;
     //this is a holder class for the List<CraftingMaterialWrapper> for materialDrafts
     MaterialDraftListWrapper materialDraftListWrapper;
+    //this is a holder class for the List<GearWrapper> for gearDrating
+    GearDraftListWrapper gearDraftListWrapper;
 
     //indicator if the rewardsscene has already been initialized, this is determined if we load or not
     public bool isRewardsSceneInitiated;
@@ -65,6 +67,7 @@ public class RewardsManager : MonoBehaviour
         rewardsRepository.Add(CombatRewards.Abilities, cardDraftPrefab);
         rewardsRepository.Add(CombatRewards.Scraps, scrapGainPrefab);
         rewardsRepository.Add(CombatRewards.Material, materialDraftPrefab);
+        rewardsRepository.Add(CombatRewards.Gear, gearDraftPrefab);
         //rewardsRepository.Add(CombatRewards.Treasures, treasureGainPrefab);
 
         //if Rewrds save file exists, go call function the LoadFromFileOverride
@@ -76,15 +79,31 @@ public class RewardsManager : MonoBehaviour
         {
             //create new save file instance
             GenerateRewardsList();
-
         }
+
+        //sets the universalInfo's scene to rewards to properly set it as reward, since if this is just at the start of the run, it will be set as PlayerSelectScreen
+        universalInfo.scene = SceneList.Rewards;
     }
 
     //for spawning the choices in the rewards panel
     //this will just generate a list
     void GenerateRewardsList()
     {
-        if (universalInfo.nodeActivity == NodeActivityEnum.Combat)
+        //called at the beginning of the run, has a fixed reward count and reward types
+        if (universalInfo.scene == SceneList.PlayerSelectScreen)
+        {
+            //list is fixed
+            rewardsList.Add(CombatRewards.CardDraft);
+            rewardsList.Add(CombatRewards.CardDraft);
+            rewardsList.Add(CombatRewards.CardDraft);
+            rewardsList.Add(CombatRewards.Material);
+            rewardsList.Add(CombatRewards.Material);
+            //test material, gear is the real 6th starting kit
+            //rewardsList.Add(CombatRewards.Material);
+            rewardsList.Add(CombatRewards.Gear);
+        }
+
+        else if (universalInfo.nodeActivity == NodeActivityEnum.Combat)
         {
             rewardsList.Add(CombatRewards.CardDraft);
             rewardsList.Add(CombatRewards.Scraps);
@@ -110,18 +129,48 @@ public class RewardsManager : MonoBehaviour
                 rewardsList.Add(CombatRewards.Material);
             }
         }
-        //called at the beginning of the run, has a fixed reward count and reward types
+        //called when going in a boon node
         else if (universalInfo.nodeActivity == NodeActivityEnum.Boon)
         {
-            //list is fixed
+            //always get 1 card and 1 scraps reward
             rewardsList.Add(CombatRewards.CardDraft);
-            rewardsList.Add(CombatRewards.CardDraft);
-            rewardsList.Add(CombatRewards.CardDraft);
-            rewardsList.Add(CombatRewards.Material);
-            rewardsList.Add(CombatRewards.Material);
-            //test material, gear is the real 6th starting kit
-            rewardsList.Add(CombatRewards.Material);
-            //rewardsList.Add(CombatRewards.Gear);
+            rewardsList.Add(CombatRewards.Scraps);
+
+            //randomly generate rewards
+            int randomPercent = UnityEngine.Random.Range(1, 100);
+
+            //20% chance to get no bonus loot, so we start at 20 base
+            //20% chance of getting additional card
+            if (21 <= randomPercent && randomPercent <= 40)
+            {
+                rewardsList.Add(CombatRewards.CardDraft);
+            }
+            //20% of getting additional scraps
+            else if (41 <= randomPercent && randomPercent <= 60)
+            {
+                rewardsList.Add(CombatRewards.Scraps);
+            }
+            //10% chance of getting a material
+            else if (61 <= randomPercent && randomPercent <= 70)
+            {
+                rewardsList.Add(CombatRewards.Material);
+            }
+            //10% chance of getting a blueprint
+            else if (71 <= randomPercent && randomPercent <= 80)
+            {
+
+            }
+            //10% chance of getting a gear
+            else if (81 <= randomPercent && randomPercent <= 90)
+            {
+
+            }
+            //10% chance of getting an ability
+            else if (81 <= randomPercent && randomPercent <= 90)
+            {
+                rewardsList.Add(CombatRewards.Abilities);
+            }
+
         }
 
         //the bool is for GenerateRewardsObjects if the command is from file or not
@@ -147,31 +196,36 @@ public class RewardsManager : MonoBehaviour
         List<List<CraftingMaterialSO>> materialSODrafts = new List<List<CraftingMaterialSO>>();
         int materialListCounter = 0;
 
+        //for GearDraft
+        //this is the convertef list holder of the saved gearWrappersto SOs
+        List<List<GearSO>> gearSODrafts = new List<List<GearSO>>();
+        int gearListCounter = 0;
+
         //Load the RewardsSaveState immediately if isLoadedfromFile
         if (isLoadedFromFile)
         {
             rewardsSaveState = UniversalSaveState.LoadRewardsState();
 
             //decode the CardDraftListWrapper into a list of lists
-            CardDraftListWrapper cardDraftListWrapper = rewardsSaveState.cardDraftListWrapper;
-            cardDrafts.Add(cardDraftListWrapper.possibleCardDraft1);
-            cardDrafts.Add(cardDraftListWrapper.possibleCardDraft2);
-            cardDrafts.Add(cardDraftListWrapper.possibleCardDraft3);
-            cardDrafts.Add(cardDraftListWrapper.possibleCardDraft4);
-            cardDrafts.Add(cardDraftListWrapper.possibleCardDraft5);
-            cardDrafts.Add(cardDraftListWrapper.possibleCardDraft6);
+            CardDraftListWrapper tempCardDraftList = rewardsSaveState.cardDraftListWrapper;
+            cardDrafts.Add(tempCardDraftList.possibleCardDraft1);
+            cardDrafts.Add(tempCardDraftList.possibleCardDraft2);
+            cardDrafts.Add(tempCardDraftList.possibleCardDraft3);
+            cardDrafts.Add(tempCardDraftList.possibleCardDraft4);
+            cardDrafts.Add(tempCardDraftList.possibleCardDraft5);
+            cardDrafts.Add(tempCardDraftList.possibleCardDraft6);
 
             //decode the MaterialDraftListWrapper into a list of lists
-            MaterialDraftListWrapper materialDraftListWrapper = rewardsSaveState.materialDraftListWrapper;
-            List<List<CraftingMaterialWrapper>> tempWrapperListsHolder = new List<List<CraftingMaterialWrapper>>();
-            tempWrapperListsHolder.Add(materialDraftListWrapper.possibleMaterialDraft1);
-            tempWrapperListsHolder.Add(materialDraftListWrapper.possibleMaterialDraft2);
-            tempWrapperListsHolder.Add(materialDraftListWrapper.possibleMaterialDraft3);
-            tempWrapperListsHolder.Add(materialDraftListWrapper.possibleMaterialDraft4);
-            tempWrapperListsHolder.Add(materialDraftListWrapper.possibleMaterialDraft5);
-            tempWrapperListsHolder.Add(materialDraftListWrapper.possibleMaterialDraft6);
+            MaterialDraftListWrapper tempMaterialDraftList = rewardsSaveState.materialDraftListWrapper;
+            List<List<CraftingMaterialWrapper>> tempMaterialWrapperListHolder = new List<List<CraftingMaterialWrapper>>();
+            tempMaterialWrapperListHolder.Add(tempMaterialDraftList.possibleMaterialDraft1);
+            tempMaterialWrapperListHolder.Add(tempMaterialDraftList.possibleMaterialDraft2);
+            tempMaterialWrapperListHolder.Add(tempMaterialDraftList.possibleMaterialDraft3);
+            tempMaterialWrapperListHolder.Add(tempMaterialDraftList.possibleMaterialDraft4);
+            tempMaterialWrapperListHolder.Add(tempMaterialDraftList.possibleMaterialDraft5);
+            tempMaterialWrapperListHolder.Add(tempMaterialDraftList.possibleMaterialDraft6);
             //iterate through the wrapperList to convert their elements into SOs
-            foreach (List<CraftingMaterialWrapper> tempWrapperList in tempWrapperListsHolder)
+            foreach (List<CraftingMaterialWrapper> tempWrapperList in tempMaterialWrapperListHolder)
             {
                 //temporary list that will hold the converted SO List
                 List<CraftingMaterialSO> tempSOList = new List<CraftingMaterialSO>();
@@ -186,6 +240,33 @@ public class RewardsManager : MonoBehaviour
                 }
                 materialSODrafts.Add(tempSOList);
             }
+
+            //decode the GearDraftListWrapper into list of lists
+            GearDraftListWrapper tempGearDraftList = rewardsSaveState.gearDraftListWrapper;
+            List<List<GearWrapper>> tempWrapperListsHolder = new List<List<GearWrapper>>();
+            tempWrapperListsHolder.Add(tempGearDraftList.possibleGearDraft1);
+            tempWrapperListsHolder.Add(tempGearDraftList.possibleGearDraft2);
+            tempWrapperListsHolder.Add(tempGearDraftList.possibleGearDraft3);
+            tempWrapperListsHolder.Add(tempGearDraftList.possibleGearDraft4);
+            tempWrapperListsHolder.Add(tempGearDraftList.possibleGearDraft5);
+            tempWrapperListsHolder.Add(tempGearDraftList.possibleGearDraft6);
+            //iterate through the wrapperList to convert their elements into SOs
+            foreach (List<GearWrapper> tempWrapperList in tempWrapperListsHolder)
+            {
+                //temporary list that will hold the converted SO List
+                List<GearSO> tempSOList = new List<GearSO>();
+                foreach (GearWrapper tempWrapper in tempWrapperList)
+                {
+                    //construct SO from the wrapper
+                    GearSO tempGearSO = Instantiate(gearSO);
+                    tempGearSO.gearType = tempWrapper.gearType;
+                    tempGearSO.gearSetBonus = tempWrapper.gearSetBonus;
+                    tempGearSO.gearEffects.AddRange(tempWrapper.gearEffects);
+                    tempSOList.Add(tempGearSO);
+                }
+                gearSODrafts.Add(tempSOList);
+            }
+
         }
 
         //iterate through the rewardsList to one by one generate their respective rewardObjects
@@ -220,10 +301,16 @@ public class RewardsManager : MonoBehaviour
                     baseScraps = 50;
                     overkillMultiplier = 1;
                 }
-                else if(universalInfo.nodeActivity == NodeActivityEnum.Rival)
+                else if (universalInfo.nodeActivity == NodeActivityEnum.Rival)
                 {
                     baseScraps = 100;
                     overkillMultiplier = 5;
+                }
+                //for boon nodes
+                else if (universalInfo.nodeActivity == NodeActivityEnum.Boon)
+                {
+                    baseScraps = UnityEngine.Random.Range(30, 70);
+                    overkillMultiplier = 0;
                 }
                 //should be called in skirmishes only
                 else
@@ -247,7 +334,7 @@ public class RewardsManager : MonoBehaviour
 
 
             //if cardDraft, assign 0 scraps and send a list of ints for the indices to be used for the randomized card draft
-            else if(rewardsList[i] == CombatRewards.CardDraft)
+            else if (rewardsList[i] == CombatRewards.CardDraft)
             {
                 if (choiceObject.activeSelf)
                 {
@@ -378,7 +465,70 @@ public class RewardsManager : MonoBehaviour
                 }
             }
 
+            else if (rewardsList[i] == CombatRewards.Gear)
+            {
+                if (choiceObject.activeSelf)
+                {
+                    //assign the reward type
+                    rewardObject.AssignReward(rewardsList[i], rewardsRepository[rewardsList[i]], 0);
 
+                    if (!isLoadedFromFile)
+                    {
+                        //temporary holder of the generated MaterialSO
+                        List<GearSO> tempGearSOList = new List<GearSO>();
+                        //generate two random materials as choices
+                        for (int j = 0; 1 >= j; j++)
+                        {
+                            //randomize ints for the components of the material being built
+                            GearSO instantiatedGearSO = Instantiate(gearSO);
+
+                            instantiatedGearSO.gearType = UniversalFunctions.GetRandomEnum<AllGearTypes>();
+                            //normal gears found in world are all normal prefix
+                            instantiatedGearSO.gearSetBonus = AllMaterialPrefixes.Normal;
+
+                            //for randomizing the gear effects
+                            for (int k = 0; 1 >= k; k++)
+                            {
+                                AllMaterialEffects materialEffect;
+                                //prevents repeat of material Effect by rerolling the material Effect enum if the SO's material Effect List already contains the randomized effect
+                                //the materialEffect < 100 condition is for preventing set bonuses that are in the 100+ spot of the enum are not taken during randomization
+                                do
+                                {
+                                    materialEffect = UniversalFunctions.GetRandomEnum<AllMaterialEffects>();
+                                }
+                                while (instantiatedGearSO.gearEffects.Contains(materialEffect) || (int)materialEffect >= 100);
+                                instantiatedGearSO.gearEffects.Add(materialEffect);
+                            }
+                            //add generated materialSO to temporary list
+                            tempGearSOList.Add(instantiatedGearSO);
+                        }
+                        //preload the generated objects
+                        rewardObject.PreLoadGearDraft(tempGearSOList);
+
+                        //convert the generated SOs to Wrappers
+                        List<GearWrapper> wrappersToBeSaved = UniversalFunctions.ConvertGearSOListToWrapper(tempGearSOList);
+
+                        //create instance of the materialDraft wrapper class then insert the generated list to the wrapper
+                        if (gearDraftListWrapper == null)
+                        {
+                            gearDraftListWrapper = new GearDraftListWrapper();
+                            gearDraftListWrapper.AssignList(wrappersToBeSaved);
+                        }
+                        else
+                        {
+                            gearDraftListWrapper.AssignList(wrappersToBeSaved);
+                        }
+                    }
+                    else
+                    {
+                        //send the preloaded draft to reward object
+                        rewardObject.PreLoadGearDraft(gearSODrafts[gearListCounter]);
+                        //increase counter so that the next loaded draft will take the next list
+                        gearListCounter++;
+                    }
+                }
+
+            }
         }
 
         //save changes to save file
@@ -395,6 +545,7 @@ public class RewardsManager : MonoBehaviour
         {
             rewardsSaveState.cardDraftListWrapper = cardDraftListWrapper;
             rewardsSaveState.materialDraftListWrapper = materialDraftListWrapper;
+            rewardsSaveState.gearDraftListWrapper = gearDraftListWrapper;
         }
 
         UniversalSaveState.SaveRewardsState(rewardsSaveState);
@@ -559,4 +710,47 @@ public class MaterialDraftListWrapper
             possibleMaterialDraft6 = draftList;
         }
     }
+}
+
+[Serializable]
+public class GearDraftListWrapper
+{
+    public List<GearWrapper> possibleGearDraft1;
+    public List<GearWrapper> possibleGearDraft2;
+    public List<GearWrapper> possibleGearDraft3;
+    public List<GearWrapper> possibleGearDraft4;
+    public List<GearWrapper> possibleGearDraft5;
+    public List<GearWrapper> possibleGearDraft6;
+
+    public void AssignList(List<GearWrapper> draftList)
+    {
+        //convert to craftingMaterialSO first
+
+        //everytime AssignList is called, the List< parametr will be assigned on empty Lists
+        if (possibleGearDraft1 == null)
+        {
+            possibleGearDraft1 = draftList;
+        }
+        else if (possibleGearDraft2 == null)
+        {
+            possibleGearDraft2 = draftList;
+        }
+        else if (possibleGearDraft3 == null)
+        {
+            possibleGearDraft3 = draftList;
+        }
+        else if (possibleGearDraft4 == null)
+        {
+            possibleGearDraft4 = draftList;
+        }
+        else if (possibleGearDraft5 == null)
+        {
+            possibleGearDraft5 = draftList;
+        }
+        else if (possibleGearDraft6 == null)
+        {
+            possibleGearDraft6 = draftList;
+        }
+    }
+
 }

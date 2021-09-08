@@ -25,11 +25,11 @@ public class CardDrafting : MonoBehaviour
 
     private void Awake()
     {
-        //set the current object at index 3 sibling so that universal Header is remains as sibling 4 so that we can access universalUI while choosing from draft
-        transform.SetSiblingIndex(3);
+        //set the current object at index 4 sibling so that universal Header is remains as sibling 4 so that we can access universalUI while choosing from draft
+        transform.SetSiblingIndex(4);
         //find the UniversalUI whic is always the last sibling of under the canvas
-        //curently, we use child 4 as the last sibling under canvas, the cameraUI Script is under its first child
-        cameraUIScript = transform.parent.GetChild(4).GetChild(0).GetComponent<CameraUIScript>();
+        //curently, we use child 5 as the last sibling under canvas, the cameraUI Script is under its first child
+        cameraUIScript = transform.parent.GetChild(5).GetChild(0).GetComponent<CameraUIScript>();
 
         //the skip button is always the last child under the cardDrafting object
         skipButton = transform.GetChild(transform.childCount - 1).GetComponent<Button>();

@@ -26,6 +26,9 @@ public class RewardObject : MonoBehaviour
     //used by MaterialDrafting check parameters
     List<CraftingMaterialSO> craftingMaterials;
 
+    //used by GearDrafting check parameters
+    List<GearSO> gears;
+
 
     public void Awake()
     {
@@ -97,6 +100,12 @@ public class RewardObject : MonoBehaviour
         craftingMaterials = new List<CraftingMaterialSO>();
         craftingMaterials = preDraft;
     }
+    //gets called by manager if loaded reward is gear
+    public void PreLoadGearDraft(List<GearSO> preDraft)
+    {
+        gears = new List<GearSO>();
+        gears = preDraft;
+    }
 
 
 
@@ -131,8 +140,12 @@ public class RewardObject : MonoBehaviour
             MaterialDrafting materialDrafting = rewardWindow.transform.GetComponent<MaterialDrafting>();
             materialDrafting.objectOriginIndex = transform.GetSiblingIndex();
             materialDrafting.InitializeMaterialChoices(craftingMaterials);
-
-
+        }
+        else if (rewardEnum == CombatRewards.Gear)
+        {
+            GearDrafting gearDrafting = rewardWindow.transform.GetComponent<GearDrafting>();
+            gearDrafting.objectOriginIndex = transform.GetSiblingIndex();
+            gearDrafting.InitializeGearChoices(gears);
         }
 
         //functionality migrated to the rewards manager and activated after picking the draft

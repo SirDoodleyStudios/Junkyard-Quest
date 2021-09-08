@@ -195,7 +195,8 @@ public class SelectionManager : MonoBehaviour
         }
 
         //set the initial universalInfo node as boon to trigger the starting kit
-        universalInformation.nodeActivity = NodeActivityEnum.Boon;
+        //universalInformation.nodeActivity = NodeActivityEnum.Boon;
+        universalInformation.scene = SceneList.PlayerSelectScreen;
 
         UniversalSaveState.SaveUniversalInformation(universalInformation);
 
