@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System;
-
+using System.Linq;
 public static class UniversalFunctions
 {
     //for decoding CardAndJigsawWrapper to JigsawFormat
@@ -120,6 +120,24 @@ public static class UniversalFunctions
         Array enumArray = Enum.GetValues(typeof(enumType));
         enumType randomEnumElement = (enumType)enumArray.GetValue(UnityEngine.Random.Range(0, enumArray.Length));
         return randomEnumElement;
+    }
+
+    //called when a blueprint choice is being presented to the player
+    //blueprints must not be repeated in inventory
+    public static List<AllGearTypes> SearchAvailableBlueprints(List<AllGearTypes> possessedBlueprints)
+    {
+        //convert the whole AllGearTypes to a list
+        List<AllGearTypes> availableBlueprinte = Enum.GetValues(typeof(AllGearTypes)).Cast<AllGearTypes>().ToList();
+        //remove the AllGearTypes already in player's inventory
+        foreach (AllGearTypes toBeRemoved in possessedBlueprints)
+        {
+            if (availableBlueprinte.Contains(toBeRemoved))
+            {
+                availableBlueprinte.Remove(toBeRemoved);
+            }
+        }
+        //the list to be return are all AllGearTypes that are not in player's inventory
+        return availableBlueprinte;
     }
 
     //Called when generating the Card Pools

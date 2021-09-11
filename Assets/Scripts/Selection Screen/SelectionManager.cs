@@ -172,10 +172,10 @@ public class SelectionManager : MonoBehaviour
         universalInformation.remainingRestActions = 99;
 
         //TEST LOGIC TO INCLUDE BLUEPRINTS IMMEDIATELY
-        List<AllGearTypes> tempBPList = new List<AllGearTypes>();
-        tempBPList.Add(AllGearTypes.Sword);
-        tempBPList.Add(AllGearTypes.Axe);
-        universalInformation.bluePrints = tempBPList;
+        //List<AllGearTypes> tempBPList = new List<AllGearTypes>();
+        //tempBPList.Add(AllGearTypes.Sword);
+        //tempBPList.Add(AllGearTypes.Axe);
+        //universalInformation.bluePrints = tempBPList;
 
         //TEST FOR INCLUDING MATERIALS IMMEDIATELY
         List<CraftingMaterialSO> tempCraftList = new List<CraftingMaterialSO>();

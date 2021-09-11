@@ -29,6 +29,9 @@ public class RewardObject : MonoBehaviour
     //used by GearDrafting check parameters
     List<GearSO> gears;
 
+    //used for blueprintDrafting check parameters
+    List<BluePrintSO> blueprints;
+
 
     public void Awake()
     {
@@ -106,7 +109,12 @@ public class RewardObject : MonoBehaviour
         gears = new List<GearSO>();
         gears = preDraft;
     }
-
+    //gets called by the manager if loaded reward is vlueprit
+    public void PreLoadBlueprintDraft(List<BluePrintSO> predraft)
+    {
+        blueprints = new List<BluePrintSO>();
+        blueprints = predraft;
+    }
 
 
     //This is called by buttons assigned from editor
@@ -146,6 +154,13 @@ public class RewardObject : MonoBehaviour
             GearDrafting gearDrafting = rewardWindow.transform.GetComponent<GearDrafting>();
             gearDrafting.objectOriginIndex = transform.GetSiblingIndex();
             gearDrafting.InitializeGearChoices(gears);
+        }
+        else if (rewardEnum == CombatRewards.Blueprint)
+        {
+            BlueprintDrafting blueprintDrafting = rewardWindow.transform.GetComponent<BlueprintDrafting>();
+            blueprintDrafting.objectOriginIndex = transform.GetSiblingIndex();
+            blueprintDrafting.InitializeBlueprintChoices(blueprints);
+
         }
 
         //functionality migrated to the rewards manager and activated after picking the draft

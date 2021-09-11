@@ -188,6 +188,9 @@ MonoBehaviour:
   gearDraftPrefab: {fileID: 6617119017027338497, guid: 73da6954c0cc08445a69b5d3b97d6399,
     type: 3}
   gearSO: {fileID: 11400000, guid: c93c95f79d59ffe4a955019c393fcc56, type: 2}
+  blueprintDraftPrefab: {fileID: 6617119017027338497, guid: d757fe67e7657894ba12188425b9bea7,
+    type: 3}
+  blueprintSO: {fileID: 11400000, guid: e57e7914012a47747a147cb5c4f79323, type: 2}
   isRewardsSceneInitiated: 0
   rewardsList: 
   rewardsAvailabilityList: 

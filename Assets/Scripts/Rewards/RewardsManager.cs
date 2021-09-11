@@ -17,6 +17,8 @@ public class RewardsManager : MonoBehaviour
     public CraftingMaterialSO materialSO;
     public GameObject gearDraftPrefab;
     public GearSO gearSO;
+    public GameObject blueprintDraftPrefab;
+    public BluePrintSO blueprintSO;
 
     //loaded and saved universal Info Instance
     //same for RewardsSaveState
@@ -29,6 +31,8 @@ public class RewardsManager : MonoBehaviour
     MaterialDraftListWrapper materialDraftListWrapper;
     //this is a holder class for the List<GearWrapper> for gearDrating
     GearDraftListWrapper gearDraftListWrapper;
+    //holder for List<AllGearTypes> since blueprints don't have wrappers and just needs the blueprint type key enum
+    BlueprintDraftListWrapper blueprintDraftListWrapper;
 
     //indicator if the rewardsscene has already been initialized, this is determined if we load or not
     public bool isRewardsSceneInitiated;
@@ -61,13 +65,12 @@ public class RewardsManager : MonoBehaviour
     //must remain in start because for some reason, the rewardObjects' sprite won't render first
     void Start()
     {
-
-
         rewardsRepository.Add(CombatRewards.CardDraft, cardDraftPrefab);
         rewardsRepository.Add(CombatRewards.Abilities, cardDraftPrefab);
         rewardsRepository.Add(CombatRewards.Scraps, scrapGainPrefab);
         rewardsRepository.Add(CombatRewards.Material, materialDraftPrefab);
         rewardsRepository.Add(CombatRewards.Gear, gearDraftPrefab);
+        rewardsRepository.Add(CombatRewards.Blueprint, blueprintDraftPrefab);
         //rewardsRepository.Add(CombatRewards.Treasures, treasureGainPrefab);
 
         //if Rewrds save file exists, go call function the LoadFromFileOverride
@@ -97,7 +100,7 @@ public class RewardsManager : MonoBehaviour
             rewardsList.Add(CombatRewards.CardDraft);
             rewardsList.Add(CombatRewards.CardDraft);
             rewardsList.Add(CombatRewards.Material);
-            rewardsList.Add(CombatRewards.Material);
+            rewardsList.Add(CombatRewards.Blueprint);
             //test material, gear is the real 6th starting kit
             //rewardsList.Add(CombatRewards.Material);
             rewardsList.Add(CombatRewards.Gear);
@@ -201,6 +204,10 @@ public class RewardsManager : MonoBehaviour
         List<List<GearSO>> gearSODrafts = new List<List<GearSO>>();
         int gearListCounter = 0;
 
+        //for blueprintDraft
+        List<List<BluePrintSO>> blueprintSODrafts = new List<List<BluePrintSO>>();
+        int blueprintListCounter = 0;
+
         //Load the RewardsSaveState immediately if isLoadedfromFile
         if (isLoadedFromFile)
         {
@@ -266,7 +273,34 @@ public class RewardsManager : MonoBehaviour
                 }
                 gearSODrafts.Add(tempSOList);
             }
+            
+            //decode the blueprintDraftListWrapper into list of lists
+            BlueprintDraftListWrapper tempBlueprintDraftList = rewardsSaveState.blueprintDraftListWrapper;
+            List<List<AllGearTypes>> tempBlueprintTypeListHolder = new List<List<AllGearTypes>>();
+            tempBlueprintTypeListHolder.Add(tempBlueprintDraftList.possibleBlueprintDraft1);
+            tempBlueprintTypeListHolder.Add(tempBlueprintDraftList.possibleBlueprintDraft2);
+            tempBlueprintTypeListHolder.Add(tempBlueprintDraftList.possibleBlueprintDraft3);
+            tempBlueprintTypeListHolder.Add(tempBlueprintDraftList.possibleBlueprintDraft4);
+            tempBlueprintTypeListHolder.Add(tempBlueprintDraftList.possibleBlueprintDraft5);
+            tempBlueprintTypeListHolder.Add(tempBlueprintDraftList.possibleBlueprintDraft6);
 
+            foreach (List<AllGearTypes> tempBlueprintTypeList in tempBlueprintTypeListHolder)
+            {
+                //temporarily hold the generated bluePrint SO
+                List<BluePrintSO> tempSOList = new List<BluePrintSO>();
+                foreach (AllGearTypes blueprintKey in tempBlueprintTypeList)
+                {
+                    BluePrintSO instantiatedBlueprint = Instantiate(blueprintSO);
+                    instantiatedBlueprint.blueprint = blueprintKey;
+                    //assign the blueprint values
+                    instantiatedBlueprint.bluePrintSprite = Resources.Load<Sprite>($"Blueprints/{blueprintKey}");
+                    //send the blueprint ot the AssignBluprintValues to fill out the vecttor and allowable type list
+                    instantiatedBlueprint = UniversalFunctions.AssignUniqueBlueprintValues(instantiatedBlueprint);
+                    tempSOList.Add(instantiatedBlueprint);
+                }
+                blueprintSODrafts.Add(tempSOList);
+            }
+            
         }
 
         //iterate through the rewardsList to one by one generate their respective rewardObjects
@@ -529,6 +563,83 @@ public class RewardsManager : MonoBehaviour
                 }
 
             }
+
+            else if (rewardsList[i] == CombatRewards.Blueprint)
+            {
+                if (choiceObject.activeSelf)
+                {
+                    //assign the reward type
+                    rewardObject.AssignReward(rewardsList[i], rewardsRepository[rewardsList[i]], 0);
+
+                    if (!isLoadedFromFile)
+                    {
+                        //will contain the randomized oprion to be saved
+                        List<BluePrintSO> tempBlueprintSOList = new List<BluePrintSO>();
+                        List<AllGearTypes> tempBlueprintKeyList = new List<AllGearTypes>();
+
+                        //list that wioll take note of radomly generated blueprints so that we can prevent repeating of options
+                        // the initial list will contain only blueprints that are not in the player's inventory
+                        List<AllGearTypes> repeatPreventer = new List<AllGearTypes>();
+                        repeatPreventer = UniversalFunctions.SearchAvailableBlueprints(universalInfo.bluePrints);
+                        for (int l = 0; 1 >= l; l++)
+                        {
+                            BluePrintSO tempBlueprint = Instantiate(blueprintSO);
+                            //call function to randomly get blueprint enums\
+                            //will prevent from repeating options
+
+                            //do
+                            //{
+                            //    randomizedBlueprint = UniversalFunctions.GetRandomEnum<AllGearTypes>();
+                            //}
+                            //while (repeatPreventer.Contains(randomizedBlueprint));
+                            //add the generated indedx to prevent a repeat
+                            //repeatPreventer.Add(randomizedBlueprint);
+
+                            //get a random bluepint from the list then remove the selected blueprint to prevent repetition
+                            int randomizedIndex = UnityEngine.Random.Range(0, repeatPreventer.Count);
+                            AllGearTypes randomizedBlueprint = repeatPreventer[randomizedIndex];
+                            repeatPreventer.RemoveAt(randomizedIndex);
+
+
+                            //assign the blueprint values
+                            tempBlueprint.blueprint = randomizedBlueprint;
+                            tempBlueprint.bluePrintSprite = Resources.Load<Sprite>($"Blueprints/{randomizedBlueprint}");
+                            //send the blueprint ot the AssignBluprintValues to fill out the vecttor and allowable type list
+                            tempBlueprint = UniversalFunctions.AssignUniqueBlueprintValues(tempBlueprint);
+                            //add to the list to be loaded in reward object
+                            tempBlueprintSOList.Add(tempBlueprint);
+                            tempBlueprintKeyList.Add(randomizedBlueprint);
+
+                            //this is activated when all blueprints are already taken, immediately break
+                            if (repeatPreventer.Count == 0)
+                            {
+                                break;
+                            }
+                        }
+                        rewardObject.PreLoadBlueprintDraft(tempBlueprintSOList);
+
+                        //create instance of the materialDraft wrapper class then insert the generated list to the wrapper
+                        if (blueprintDraftListWrapper == null)
+                        {
+                            blueprintDraftListWrapper = new BlueprintDraftListWrapper();
+                            blueprintDraftListWrapper.AssignList(tempBlueprintKeyList);
+                        }
+                        else
+                        {
+                            blueprintDraftListWrapper.AssignList(tempBlueprintKeyList);
+                        }
+                    }
+                    else
+                    {
+
+                        //send the preloaded draft to reward object
+                        rewardObject.PreLoadBlueprintDraft(blueprintSODrafts[blueprintListCounter]);
+                        //increase counter so that the next loaded draft will take the next list
+                        blueprintListCounter++;
+                    }
+                }
+                
+            }
         }
 
         //save changes to save file
@@ -546,6 +657,7 @@ public class RewardsManager : MonoBehaviour
             rewardsSaveState.cardDraftListWrapper = cardDraftListWrapper;
             rewardsSaveState.materialDraftListWrapper = materialDraftListWrapper;
             rewardsSaveState.gearDraftListWrapper = gearDraftListWrapper;
+            rewardsSaveState.blueprintDraftListWrapper = blueprintDraftListWrapper;
         }
 
         UniversalSaveState.SaveRewardsState(rewardsSaveState);
@@ -753,4 +865,43 @@ public class GearDraftListWrapper
         }
     }
 
+}
+
+[Serializable]
+public class BlueprintDraftListWrapper
+{
+    public List<AllGearTypes> possibleBlueprintDraft1;
+    public List<AllGearTypes> possibleBlueprintDraft2;
+    public List<AllGearTypes> possibleBlueprintDraft3;
+    public List<AllGearTypes> possibleBlueprintDraft4;
+    public List<AllGearTypes> possibleBlueprintDraft5;
+    public List<AllGearTypes> possibleBlueprintDraft6;
+
+    public void AssignList(List<AllGearTypes> draftList)
+    {
+        if (possibleBlueprintDraft1 == null)
+        {
+            possibleBlueprintDraft1 = draftList;
+        }
+        else if (possibleBlueprintDraft2 == null)
+        {
+            possibleBlueprintDraft2 = draftList;
+        }
+        else if (possibleBlueprintDraft3 == null)
+        {
+            possibleBlueprintDraft3 = draftList;
+        }
+        else if (possibleBlueprintDraft4 == null)
+        {
+            possibleBlueprintDraft4 = draftList;
+        }
+        else if (possibleBlueprintDraft5 == null)
+        {
+            possibleBlueprintDraft5 = draftList;
+        }
+        else if (possibleBlueprintDraft6 == null)
+        {
+            possibleBlueprintDraft6 = draftList;
+        }
+    }
 }

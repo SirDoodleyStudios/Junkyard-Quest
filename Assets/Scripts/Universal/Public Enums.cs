@@ -20,7 +20,7 @@ public enum NodeActivityEnum { Combat, Event, Merchant, Forge, Rest, Boon, Rival
 public enum LinkActivityEnum {Skirmish, Chest, Booth, SmallEvent}
 
 //Options for Combat Rewards
-public enum CombatRewards {CardDraft, Scraps, Material, Abilities, Gear }
+public enum CombatRewards {CardDraft, Scraps, Material, Abilities, Gear, Blueprint }
 
 public enum CardClass { Neutral, Warrior, Rogue, Mage, Arlen, Cedric, Francine, Tilly, Princess }
 

@@ -96,7 +96,7 @@ public class MerchantManager : MonoBehaviour
                 //for material options
                 materialOptionsScript.InitiateMaterialOptions(universalInfo, merchantSaveState, isLoadedFromFile);
                 //for blueprint options
-                blueprintOptionsScript.InitiateBlueprintOptions(merchantSaveState, isLoadedFromFile);
+                blueprintOptionsScript.InitiateBlueprintOptions(universalInfo, merchantSaveState, isLoadedFromFile);
                 //enables or disables the button for card removal
                 cardRemovalButton.interactable = merchantSaveState.isCardRemovalAvailable;
 
@@ -109,7 +109,7 @@ public class MerchantManager : MonoBehaviour
                 //for material options
                 merchantSaveState = materialOptionsScript.InitiateMaterialOptions(universalInfo, merchantSaveState, isLoadedFromFile);
                 //for blueprint options
-                merchantSaveState = blueprintOptionsScript.InitiateBlueprintOptions(merchantSaveState, isLoadedFromFile);
+                merchantSaveState = blueprintOptionsScript.InitiateBlueprintOptions(universalInfo, merchantSaveState, isLoadedFromFile);
                 //for card removal identifier, always false 
                 merchantSaveState.isCardRemovalAvailable = true;
 

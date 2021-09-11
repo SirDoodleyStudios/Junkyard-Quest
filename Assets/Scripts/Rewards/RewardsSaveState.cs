@@ -26,5 +26,8 @@ public class RewardsSaveState
 
     //contains the predetermined gears
     public GearDraftListWrapper gearDraftListWrapper = new GearDraftListWrapper();
+
+    //contains the prefetermind blueprints
+    public BlueprintDraftListWrapper blueprintDraftListWrapper = new BlueprintDraftListWrapper();
     
 }

@@ -211,7 +211,23 @@ public class EventsManager : MonoBehaviour
     public void EndEvent()
     {
         UniversalSaveState.SaveUniversalInformation(universalInfo);
+        if (File.Exists(Application.persistentDataPath + "/Event.json"))
+        {
+            Debug.Log("Before Delete: event file exists");
+        }
+        else
+        {
+            Debug.Log("Before Delete: event file doesn't exist");
+        }
         File.Delete(Application.persistentDataPath + "/Event.json");
+        if (File.Exists(Application.persistentDataPath + "/Event.json"))
+        {
+            Debug.Log("After Delete: event file exists");
+        }
+        else
+        {
+            Debug.Log("After Delete: event file doesn't exist");
+        }
         SceneManager.LoadScene("OverWorldScene");
     }
 

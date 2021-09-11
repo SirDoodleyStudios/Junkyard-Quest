@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
+using System.IO;
 
 public abstract class EventAbstractClass
 {
@@ -26,6 +27,9 @@ public abstract class EventAbstractClass
     //very important for determining where yoou left off from event
     protected EventSaveState eventSaveState;
     protected int eventSequence;
+
+    //used as an identifier that the player is leaving the event, this prevents other functions that might occur after calling the eventfunction
+    protected bool isLeaving;
 
     //assigns the reference gameObjects
     public void InitializeEventReferences(UniversalInformation universalInfoLoaded, EventsManager refManager, Transform refButtonPanel, TextMeshProUGUI refDescText, EventSaveState eventSavePassed)
@@ -141,13 +145,19 @@ public abstract class EventAbstractClass
     public void UpdateEventState()
     {
         eventSaveState.eventSequence = eventSequence;
-        UniversalSaveState.SaveEvent(eventSaveState);
+        //will only save in update if player is not leaving
+        //this prevents an additional Event file being created once the leave function deletes the existing file
+        if (!isLeaving)
+        {
+            UniversalSaveState.SaveEvent(eventSaveState);
+        }
         eventManager.SaveFromChoice();
     }
 
     //function for leaving and ending event
     public void LeaveEvent()
     {
+        isLeaving = true;
         eventManager.EndEvent();
     }
 

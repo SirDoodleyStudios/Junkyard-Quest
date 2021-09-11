@@ -33,7 +33,7 @@ public class BlueprintOptions : MonoBehaviour
 
     //called by merchant manager when initializing everything at the beginning
     //bool parameter indicates if the optios to be loaded are for file
-    public MerchantSaveState InitiateBlueprintOptions(MerchantSaveState merchantSave, bool isLoadedFromFile)
+    public MerchantSaveState InitiateBlueprintOptions(UniversalInformation universalInfo, MerchantSaveState merchantSave, bool isLoadedFromFile)
     {
         //assign the transform of the content object
         blueprintContentTrans = blueprintContent.transform;
@@ -61,7 +61,9 @@ public class BlueprintOptions : MonoBehaviour
         else
         {
             //list that wioll take note of radomly generated blueprints so that we can prevent repeating of options
+            // the initial list will contain only blueprints that are not in the player's inventory
             List<AllGearTypes> repeatPreventer = new List<AllGearTypes>();
+            repeatPreventer = UniversalFunctions.SearchAvailableBlueprints(universalInfo.bluePrints);
 
             //randomize blueprints that will show up in options
             for (int i = 0; 3 >= i; i++)
@@ -69,14 +71,19 @@ public class BlueprintOptions : MonoBehaviour
                 BluePrintSO tempBlueprint = Instantiate(referenceBluePrintSO);
                 //call function to randomly get blueprint enums\
                 //will prevent from repeating options
-                AllGearTypes randomizedBlueprint;
-                do
-                {
-                    randomizedBlueprint = UniversalFunctions.GetRandomEnum<AllGearTypes>();
-                }
-                while (repeatPreventer.Contains(randomizedBlueprint));
-                //add the generated indedx to prevent a repeat
-                repeatPreventer.Add(randomizedBlueprint);
+                //AllGearTypes randomizedBlueprint;
+                //do
+                //{
+                //    randomizedBlueprint = UniversalFunctions.GetRandomEnum<AllGearTypes>();
+                //}
+                //while (repeatPreventer.Contains(randomizedBlueprint));
+                ////add the generated indedx to prevent a repeat
+                //repeatPreventer.Add(randomizedBlueprint);
+
+                //get a random bluepint from the list then remove the selected blueprint to prevent repetition
+                int randomizedIndex = UnityEngine.Random.Range(0, repeatPreventer.Count);
+                AllGearTypes randomizedBlueprint = repeatPreventer[randomizedIndex];
+                repeatPreventer.RemoveAt(randomizedIndex);
 
                 //assign the blueprint values
                 tempBlueprint.blueprint = randomizedBlueprint;
@@ -93,6 +100,12 @@ public class BlueprintOptions : MonoBehaviour
                 //add to merchantSaveState for returning to merchantManager
                 merchantSaveState.blueprintOptions.Add(randomizedBlueprint);
                 merchantSaveState.blueprintOptionCosts.Add(randomizedCost);
+
+                //this is activated when all blueprints are already taken, immediately break
+                if (repeatPreventer.Count == 0)
+                {
+                    break;
+                }
             }
         }
 
