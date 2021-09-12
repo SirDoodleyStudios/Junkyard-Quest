@@ -11,7 +11,8 @@ public class LinkActivities : MonoBehaviour
         for (int i = 0; i <= 2; i++)
         {
             //creates a random list of activities, to be updated later to have a logic in identifying probabilities
-            linkActivities.Add((LinkActivityEnum)Random.Range(0, 3));
+            //linkActivities.Add((LinkActivityEnum)Random.Range(0, 3));
+            linkActivities.Add(UniversalFunctions.GetRandomEnum<LinkActivityEnum>());
         }
     }
 

@@ -33,6 +33,8 @@ public class OverworldManager : MonoBehaviour
     //stores the current selected node
     public GameObject currentNode;
     public GameObject targetNode;
+    //this is used to temporarily hold the activities between the current and target node for saving it in the file
+    List<LinkActivityEnum> activityList = new List<LinkActivityEnum>();
 
     //list that holds all starting positions
     List<GameObject> startingReachableNodes = new List<GameObject>();
@@ -313,6 +315,8 @@ public class OverworldManager : MonoBehaviour
                             nodeWrapper = new  NextNodeWrapper(currentNodeIden.nodeActivityEnum, currentNodeIden.isTraversed, partnerLink.isTraversed);
                             partnerLink.MakeLinkTraversed();
                             currentNodeIden.MakeNodeTraversed();
+                            //store the link activities of link sandwiched between current and target node
+                            activityList.AddRange(partnerLink.GetComponent<LinkActivities>().linkActivities);
                         }
                         // the else if for pairOuterNodeLink, has risks
                         //else if (initialNodeIden.pairOuterNodeLink.ContainsKey(currentNode))
@@ -323,6 +327,8 @@ public class OverworldManager : MonoBehaviour
                             nodeWrapper = new NextNodeWrapper(currentNodeIden.nodeActivityEnum, currentNodeIden.isTraversed, partnerLink.isTraversed);
                             partnerLink.MakeLinkTraversed();
                             currentNodeIden.MakeNodeTraversed();
+                            //store the link activities of link sandwiched between current and target node
+                            activityList.AddRange(partnerLink.GetComponent<LinkActivities>().linkActivities);
                         }
                         //else
                         //{
@@ -362,7 +368,7 @@ public class OverworldManager : MonoBehaviour
         circleGenerator.SaveOverworldState();
 
         //for overworld releveant data like current node selected
-        SaveKeyOverworld saveKeyOverworld = new SaveKeyOverworld(worldState, currentNode.transform, adjacentNodes, camera.transform.position, nodeWrapper);
+        SaveKeyOverworld saveKeyOverworld = new SaveKeyOverworld(worldState, currentNode.transform, adjacentNodes, camera.transform.position, nodeWrapper, activityList);
         UniversalSaveState.SaveOverWorldData(saveKeyOverworld);
 
         //for saving the universalInformation
@@ -415,13 +421,18 @@ public class SaveKeyOverworld
     //migrated from UniversalInformation
     public OverworldManager.NextNodeWrapper nodeWrapper;
 
+    //will contain the activities list taken from the link activities between the current node and target node in overWorld
+    public List<LinkActivityEnum> linkActivities = new List<LinkActivityEnum>();
+
     //param 1 = overworldManager state
     //param 2 = currentNode
     //param 3 = current node's adjacent nodes
     //param 4 = position of mouse
     //param 5 = wrapper for enum for the next node Activity, identifier if next node is already traversed, identifier if next link is already traversed
+    //param 6 = list of linkActivities from the generated link between source and target nodes
 
-    public SaveKeyOverworld(OverworldState worldState, Transform nodeTrans, List<GameObject> adjacentNodes, Vector2 cameraPos, OverworldManager.NextNodeWrapper nodeInfo)
+    public SaveKeyOverworld(OverworldState worldState, Transform nodeTrans, List<GameObject> adjacentNodes, Vector2 cameraPos, OverworldManager.NextNodeWrapper nodeInfo, 
+        List<LinkActivityEnum> activityList)
     {
         moveState = worldState;
         nodeIndex = nodeTrans.GetSiblingIndex();
@@ -431,7 +442,7 @@ public class SaveKeyOverworld
         cameraX = cameraPos.x;
         cameraY = cameraPos.y;
         nodeWrapper = nodeInfo;
-
+        linkActivities = activityList;
         if (adjacentNodes.Count != 0)
         {
             foreach (GameObject node in adjacentNodes)

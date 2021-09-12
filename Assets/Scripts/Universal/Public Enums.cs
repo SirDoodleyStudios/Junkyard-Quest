@@ -17,7 +17,15 @@ public enum ChosenClass { Warrior, Rogue, Mage};
 public enum NodeActivityEnum { Combat, Event, Merchant, Forge, Rest, Boon, Rival }
 //Link activites are not seen from overworld and random like darkest dungeon
 //SCENES DEPENDENT
-public enum LinkActivityEnum {Skirmish, Chest, Booth, SmallEvent}
+
+//skirmish - small battle, unskippable
+//Danger Skirmish - elite battle but can be skipped
+//chest - free stuff
+//Booths - like overworld counterparts but only offers a one time service. 
+//MerchantBooth will randomly offer just one selection. Only one of the oprions are available
+//BreakBooth will make player choose either health recovery or gain creativity for next battle
+//Gamble is mini games for rewards
+public enum LinkActivityEnum {Skirmish, DangerSkirmish, Chest, MerchantBooth, ForgeBooth, CraftBooth, BreakBooth, Gamble, SmallEvent}
 
 //Options for Combat Rewards
 public enum CombatRewards {CardDraft, Scraps, Material, Abilities, Gear, Blueprint }

@@ -32,7 +32,8 @@ public class LinkStatusSave : MonoBehaviour
     private void Start()
     {
         //this will only workk for firs execution saves
-        circleGenerator = gameObject.transform.parent.gameObject.transform.parent.gameObject.GetComponent<CircleGenerator>();
+        //circleGenerator = gameObject.transform.parent.gameObject.transform.parent.gameObject.GetComponent<CircleGenerator>();
+        circleGenerator = transform.parent.parent.GetComponent<CircleGenerator>();
         objectRect = gameObject.GetComponent<RectTransform>();
         linkIdentifier = gameObject.GetComponent<LinkCollisionIdentifier>();
         circleGenerator.d_StoreObjectState += LinkObjectSettings;
