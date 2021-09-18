@@ -19,13 +19,12 @@ public enum NodeActivityEnum { Combat, Event, Merchant, Forge, Rest, Boon, Rival
 //SCENES DEPENDENT
 
 //skirmish - small battle, unskippable
-//Danger Skirmish - elite battle but can be skipped
-//chest - free stuff
+//chest - free stuff but rare
 //Booths - like overworld counterparts but only offers a one time service. 
 //MerchantBooth will randomly offer just one selection. Only one of the oprions are available
 //BreakBooth will make player choose either health recovery or gain creativity for next battle
-//Gamble is mini games for rewards
-public enum LinkActivityEnum {Skirmish, DangerSkirmish, Chest, MerchantBooth, ForgeBooth, CraftBooth, BreakBooth, Gamble, SmallEvent}
+//mini games for rewards
+public enum LinkActivityEnum {Skirmish, Chest, MerchantBooth, ForgeBooth, CraftBooth, BreakBooth, Minigame}
 
 //Options for Combat Rewards
 public enum CombatRewards {CardDraft, Scraps, Material, Abilities, Gear, Blueprint }

@@ -735,7 +735,16 @@ public class RewardsManager : MonoBehaviour
     {
         //delete the file before going back to overworld
         File.Delete(Application.persistentDataPath + "/Rewards.json");
-        SceneManager.LoadScene("OverworldScene");
+        //go back to overworld or linkActivity
+        if (File.Exists(Application.persistentDataPath + "/LinkActivities.json"))
+        {
+            SceneManager.LoadScene("LinkActivitiesScene");
+        }
+        else
+        {
+            SceneManager.LoadScene("OverworldScene");
+        }
+
     }
 
 }

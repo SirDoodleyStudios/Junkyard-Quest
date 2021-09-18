@@ -19,10 +19,10 @@ public class ScrapsDrafting : MonoBehaviour
     private void Awake()
     {
         //set the current object at index 3 sibling so that universal Header is remains as sibling 4 so that we can access universalUI while choosing from draft
-        transform.SetSiblingIndex(3);
+        transform.SetSiblingIndex(5);
         //find the UniversalUI whic is always the last sibling of under the canvas
         //curently, we use child 4 as the last sibling under canvas
-        cameraUIScript = transform.parent.GetChild(4).GetChild(0).GetComponent<CameraUIScript>();
+        cameraUIScript = transform.parent.GetChild(3).GetChild(0).GetComponent<CameraUIScript>();
 
 
         //first child is the holder of cards

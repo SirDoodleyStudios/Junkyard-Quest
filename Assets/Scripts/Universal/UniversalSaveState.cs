@@ -202,7 +202,21 @@ public static class UniversalSaveState
         EventSaveState eventSaveState = JsonUtility.FromJson<EventSaveState>(eventState);
         return eventSaveState;
     }
-    
+
+    //Save Function for LinkActivities
+    public static void SaveLinkActivities(LinkActivitiesSaveState linkActivitySaveState)
+    {
+        string linkActivityState = JsonUtility.ToJson(linkActivitySaveState);
+        File.WriteAllText(Application.persistentDataPath + "/LinkActivities.json", linkActivityState);
+    }
+    public static LinkActivitiesSaveState LoadLinkActivities()
+    {
+        string linkActivityState = File.ReadAllText(Application.persistentDataPath + "/LinkActivities.json");
+        LinkActivitiesSaveState linkActivitySaveState = JsonUtility.FromJson<LinkActivitiesSaveState>(linkActivityState);
+        return linkActivitySaveState;
+    }
+
+
 
 }
 

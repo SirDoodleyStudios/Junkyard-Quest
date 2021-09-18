@@ -5,6 +5,13 @@ using System;
 using System.Linq;
 public static class UniversalFunctions
 {
+    //called for initializing all necessary static scripts
+    public static void InitializeStaticScripts()
+    {
+        
+    }
+
+
     //for decoding CardAndJigsawWrapper to JigsawFormat
     public static JigsawFormat LoadJigsawFormat(JigsawFormat jigsawFormat, CardAndJigsaWrapper cardJigsawWrapper)
     {

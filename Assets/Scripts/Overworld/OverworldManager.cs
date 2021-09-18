@@ -378,6 +378,11 @@ public class OverworldManager : MonoBehaviour
         {
             universalInformation.nodeCount = universalInformation.nodeCount + 1;
         }
+
+        //always make this identifier false
+        //will only be true if the file was recently saved from LinkActivities script
+        //universalInformation.isFromLinkActivity = false;
+
         //get the gear slots and inventory list of Gears from load
         //the current
         UniversalSaveState.SaveUniversalInformation(universalInformation);

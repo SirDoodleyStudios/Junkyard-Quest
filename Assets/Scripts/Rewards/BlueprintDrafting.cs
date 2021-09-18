@@ -21,10 +21,10 @@ public class BlueprintDrafting : MonoBehaviour
     private void Awake()
     {
         //set the current object at index 4 sibling so that universal Header is last sibling
-        transform.SetSiblingIndex(4);
+        transform.SetSiblingIndex(5);
         //find the UniversalUI whic is always the last sibling of under the canvas
         //curently, we use child 5 as the last sibling under canvas
-        cameraUIScript = transform.parent.GetChild(5).GetChild(0).GetComponent<CameraUIScript>();
+        cameraUIScript = transform.parent.GetChild(3).GetChild(0).GetComponent<CameraUIScript>();
 
         //the skip button is always the last child under the cardDrafting object
         skipButton = transform.GetChild(transform.childCount - 1).GetComponent<Button>();

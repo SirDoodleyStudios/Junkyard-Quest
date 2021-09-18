@@ -17,7 +17,7 @@ public class MovingNode : MonoBehaviour
     //called by external script to make the node move
     public void MovePlayerNode(Vector3 destination)
     {
-        objectRect.DOAnchorPos(destination, .05f, false);
+        objectRect.DOAnchorPos(destination, .3f, false);
     }
 
 }
