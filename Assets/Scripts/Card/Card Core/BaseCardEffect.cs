@@ -230,27 +230,32 @@ public abstract class BaseCardEffect
         {
             foreach (Transform enemy in targetObject.transform)
             {
-                //this cache is for accessing unitStatusholder of all enemies in enemy holder
-                targetUnitStatus = enemy.gameObject.GetComponent<UnitStatusHolder>();
-                //cache override from AffectAll enemies
-                targetUnit = enemy.gameObject.GetComponent<BaseUnitFunctions>();
-                for (int i = 1; hits >= i; i++)
+                //checks first if the enemy object is disabled so that it's scripts doesnt get called during AOE effects
+                if (enemy.gameObject.activeSelf)
                 {
-                    //targetUnit.TakeDamage(damage);
-                    targetUnit.TakeDamage(modifiedDamage);
-                    //if the hit counter in actor's UnitStatusHolder is active, start counting hits
-                    if (actorUnitStatus.isHitCounting)
+                    //this cache is for accessing unitStatusholder of all enemies in enemy holder
+                    targetUnitStatus = enemy.gameObject.GetComponent<UnitStatusHolder>();
+                    //cache override from AffectAll enemies
+                    targetUnit = enemy.gameObject.GetComponent<BaseUnitFunctions>();
+                    for (int i = 1; hits >= i; i++)
                     {
-                        actorUnitStatus.AlterStatusStackByHitCounter();
+                        //targetUnit.TakeDamage(damage);
+                        targetUnit.TakeDamage(modifiedDamage);
+                        //if the hit counter in actor's UnitStatusHolder is active, start counting hits
+                        if (actorUnitStatus.isHitCounting)
+                        {
+                            actorUnitStatus.AlterStatusStackByHitCounter();
+                        }
+
+                        //checks if the the target has any return Damage statuses like counter and spikes
+                        //if so, deal damage to actor depending on amount calculated with ReturnDamangeCalculator
+                        int returnDamage = targetUnitStatus.ReturnDamageCalculator(modifiedDamage);
+                        if (returnDamage > 0)
+                        {
+                            actorUnit.TakeDamage(returnDamage);
+                        }
                     }
 
-                    //checks if the the target has any return Damage statuses like counter and spikes
-                    //if so, deal damage to actor depending on amount calculated with ReturnDamangeCalculator
-                    int returnDamage = targetUnitStatus.ReturnDamageCalculator(modifiedDamage);
-                    if (returnDamage > 0)
-                    {
-                        actorUnit.TakeDamage(returnDamage);
-                    }
                 }
             }
             AOE = false;
