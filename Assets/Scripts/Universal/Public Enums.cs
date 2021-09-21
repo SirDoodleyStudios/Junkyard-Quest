@@ -24,7 +24,25 @@ public enum NodeActivityEnum { Combat, Event, Merchant, Forge, Rest, Boon, Rival
 //MerchantBooth will randomly offer just one selection. Only one of the oprions are available
 //BreakBooth will make player choose either health recovery or gain creativity for next battle
 //mini games for rewards
-public enum LinkActivityEnum {Skirmish, Chest, MerchantBooth, ForgeBooth, CraftBooth, BreakBooth, Minigame}
+public enum LinkActivityEnum 
+{
+    Skirmish,
+    HPGain,
+    CreativityGain,
+    ScrapsGain,
+    TicketGain,
+    CardRemove,
+    StrengthTest,
+    EnduranceTest,
+    LuckTest,
+    IntelligenctTest,
+    LinkGamble,
+    NameGamble,
+    TypeGamble,
+    MaterialTrade,
+    GearTrade,
+    BlueprintTrade
+}
 
 //Options for Combat Rewards
 public enum CombatRewards {CardDraft, Scraps, Material, Abilities, Gear, Blueprint }

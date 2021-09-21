@@ -7,8 +7,9 @@ public class CardRemoval : MonoBehaviour
 {
     //assigned in editor
     //card prefab to instantiate
+    //use the card variant for merchant because they contain the dragNDrop with remove
     public GameObject cardObjectPrefab;
-    //reference MerchantManager
+    //reference MerchantManager, only used in merchantManager, can be ignored in other scenes
     public MerchantManager merchantManager;
     //the content view
     public Transform cardOptionsContent;

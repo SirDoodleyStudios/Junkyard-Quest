@@ -30,6 +30,8 @@ public class LinkActivitiesManager : MonoBehaviour
     RectTransform movingNodeRect;
     //gameObject of the next node
     GameObject nextTargetNode;
+    //reference that contains the script for Card Removal
+    public CardRemoval cardRemoval;
     //the proceed button, uninteractable by default
     public Button proceedButton;
 
@@ -49,6 +51,9 @@ public class LinkActivitiesManager : MonoBehaviour
     //references to save files
     UniversalInformation universalInfo;
     SaveKeyOverworld overworldData;
+
+    //the playerstats to be updated and for pulling values from
+    PlayerUnit playerStats;
 
     //bool identifier if an loaded from file
     //indicates if we'll load from file or generate a fresh one
@@ -76,6 +81,7 @@ public class LinkActivitiesManager : MonoBehaviour
         overworldData = UniversalSaveState.LoadOverWorldData();
         cameraUIScript.InitiateUniversalUIInfoData(universalInfo);
         cameraUIScript.AssignUIObjects(universalInfo);
+        playerStats = universalInfo.playerStats;
         //assign the movingNode script
         movingNodeScript = movingNodeObj.GetComponent<MovingNode>();
         movingNodeRect = movingNodeObj.GetComponent<RectTransform>();
@@ -232,17 +238,162 @@ public class LinkActivitiesManager : MonoBehaviour
             linkActivitySaveState.currentLinkNodeIndex = currentLinkNodeIndex;
             UniversalSaveState.SaveLinkActivities(linkActivitySaveState);
 
+            //get's the linkActivity to activate
+            LinkActivityEnum activity = linkActivityEnums[currentLinkNodeIndex - 1];
+
             //determines what scene is next
             //the current node at this instance is already the target node
-            if (linkActivityEnums[currentLinkNodeIndex-1] == LinkActivityEnum.Skirmish)
+            //if (activity == LinkActivityEnum.Skirmish)
+            //{
+            //    SceneManager.LoadScene("CombatScene");
+            //}
+            //else
+            //{
+            //    SceneManager.LoadScene("CombatScene");
+            //    Debug.Log($"supposed to be {linkActivityEnums[currentLinkNodeIndex-1]}");
+            //}
+
+            //REMOVE THE currentLinkNodeIndex++ IN THE SWITCH
+            //FIND OUT WHY THE NODE MOVEMENT DOES NOT WORK PROPERLY FOR NON-SCREEN TRANSITION ACTIVITIES
+            switch (activity)
             {
-                SceneManager.LoadScene("CombatScene");
+                case LinkActivityEnum.Skirmish:
+                    SceneManager.LoadScene("CombatScene");
+                    break;
+
+                case LinkActivityEnum.HPGain:
+                    int hpGain = (int)(playerStats.HP * .05f);
+                    playerStats.currHP = Mathf.Min(playerStats.currHP + hpGain, playerStats.HP);
+                    cameraUIScript.UpdateUIObjectsHP(playerStats.currHP, playerStats.HP);
+                    universalInfo.playerStats = playerStats;
+                    UniversalSaveState.SaveUniversalInformation(universalInfo);
+                    //gains will update the scene UniversalUI since we wont transition
+                    cameraUIScript.UpdateUniversalInfo();
+                    //gain activities will always make the proceed button interactable since there is no scene transition
+                    proceedButton.interactable = true;
+                    //gain activities will immediately increment the currentLinkNodeCounter so that we can get the next destination
+                    currentLinkNodeIndex++;
+                    Debug.Log($"{activity}");
+                    break;
+
+                case LinkActivityEnum.CreativityGain:
+                    int creativityGain = (int)(playerStats.creativity * .05f);
+                    playerStats.currCreativity = Mathf.Min(playerStats.currCreativity + creativityGain, playerStats.creativity);
+                    cameraUIScript.UpdateUIObjectsCretivity(playerStats.currCreativity, playerStats.creativity);
+                    universalInfo.playerStats = playerStats;
+                    UniversalSaveState.SaveUniversalInformation(universalInfo);
+                    //gains will update the scene UniversalUI since we wont transition
+                    cameraUIScript.UpdateUniversalInfo();
+                    //gain activities will always make the proceed button interactable since there is no scene transition
+                    proceedButton.interactable = true;
+                    //gain activities will immediately increment the currentLinkNodeCounter so that we can get the next destination
+                    currentLinkNodeIndex++;
+                    Debug.Log($"{activity}");
+                    break;
+
+                case LinkActivityEnum.ScrapsGain:
+                    int scrapsGain = UnityEngine.Random.Range(10,30);
+                    universalInfo.scraps = universalInfo.scraps + scrapsGain;
+                    cameraUIScript.UpdateUIObjectsActiveScraps(universalInfo.scraps);
+                    //gains will update the scene UniversalUI since we wont transition
+                    cameraUIScript.UpdateUniversalInfo();
+                    //gain activities will always make the proceed button interactable since there is no scene transition
+                    proceedButton.interactable = true;
+                    //gain activities will immediately increment the currentLinkNodeCounter so that we can get the next destination
+                    currentLinkNodeIndex++;
+                    Debug.Log($"{activity}");
+                    break;
+
+                case LinkActivityEnum.TicketGain:
+                    //currently for test only so we can proceed
+                    proceedButton.interactable = true;
+                    currentLinkNodeIndex++;
+                    Debug.Log($"{activity}");
+                    break;
+
+                case LinkActivityEnum.CardRemove:
+                    //currently for test only so we can proceed
+                    proceedButton.interactable = true;
+                    currentLinkNodeIndex++;
+                    Debug.Log($"{activity}");
+                    //cardRemoval.ViewSavedDeck(cameraUIScript.FetchDeck());
+                    break;
+
+                case LinkActivityEnum.StrengthTest:
+                    //currently for test only so we can proceed
+                    proceedButton.interactable = true;
+                    currentLinkNodeIndex++;
+                    Debug.Log($"{activity}");
+                    break;
+
+                case LinkActivityEnum.EnduranceTest:
+                    //currently for test only so we can proceed
+                    proceedButton.interactable = true;
+                    currentLinkNodeIndex++;
+                    Debug.Log($"{activity}");
+                    break;
+
+                case LinkActivityEnum.LuckTest:
+                    //currently for test only so we can proceed
+                    proceedButton.interactable = true;
+                    currentLinkNodeIndex++;
+                    Debug.Log($"{activity}");
+                    break;
+
+                case LinkActivityEnum.IntelligenctTest:
+                    //currently for test only so we can proceed
+                    proceedButton.interactable = true;
+                    currentLinkNodeIndex++;
+                    Debug.Log($"{activity}");
+                    break;
+
+                case LinkActivityEnum.LinkGamble:
+                    //currently for test only so we can proceed
+                    proceedButton.interactable = true;
+                    currentLinkNodeIndex++;
+                    Debug.Log($"{activity}");
+                    break;
+
+                case LinkActivityEnum.NameGamble:
+                    //currently for test only so we can proceed
+                    proceedButton.interactable = true;
+                    currentLinkNodeIndex++;
+                    Debug.Log($"{activity}");
+                    break;
+
+                case LinkActivityEnum.TypeGamble:
+                    //currently for test only so we can proceed
+                    proceedButton.interactable = true;
+                    currentLinkNodeIndex++;
+                    Debug.Log($"{activity}");
+                    break;
+
+                case LinkActivityEnum.MaterialTrade:
+                    //currently for test only so we can proceed
+                    proceedButton.interactable = true;
+                    currentLinkNodeIndex++;
+                    Debug.Log($"{activity}");
+                    break;
+
+                case LinkActivityEnum.GearTrade:
+                    //currently for test only so we can proceed
+                    proceedButton.interactable = true;
+                    currentLinkNodeIndex++;
+                    Debug.Log($"{activity}");
+                    break;
+
+                case LinkActivityEnum.BlueprintTrade:
+                    //currently for test only so we can proceed
+                    proceedButton.interactable = true;
+                    currentLinkNodeIndex++;
+                    Debug.Log($"{activity}");
+                    break;
+
+                default:
+                    break;
             }
-            else
-            {
-                SceneManager.LoadScene("CombatScene");
-                Debug.Log($"supposed to be {linkActivityEnums[currentLinkNodeIndex-1]}");
-            }
+
+
         }
 
     }
