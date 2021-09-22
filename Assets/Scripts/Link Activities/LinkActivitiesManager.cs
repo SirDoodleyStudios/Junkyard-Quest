@@ -30,8 +30,11 @@ public class LinkActivitiesManager : MonoBehaviour
     RectTransform movingNodeRect;
     //gameObject of the next node
     GameObject nextTargetNode;
-    //reference that contains the script for Card Removal
-    public CardRemoval cardRemoval;
+    //target objects for activities
+    public GameObject tradePanel;
+    TradeActivities tradeActivities;
+    public GameObject CardRemovalPanel;
+    CardRemoval cardRemoval;
     //the proceed button, uninteractable by default
     public Button proceedButton;
 
@@ -85,7 +88,9 @@ public class LinkActivitiesManager : MonoBehaviour
         //assign the movingNode script
         movingNodeScript = movingNodeObj.GetComponent<MovingNode>();
         movingNodeRect = movingNodeObj.GetComponent<RectTransform>();
-
+        //assign activity scripts
+        tradeActivities = tradePanel.GetComponent<TradeActivities>();
+        cardRemoval = CardRemovalPanel.GetComponent<CardRemoval>();
 
     }
 
@@ -171,10 +176,10 @@ public class LinkActivitiesManager : MonoBehaviour
         }
 
         //assigns the next node object immediately
-        if (currentLinkNodeIndex <= 3)
-        {
-            nextTargetNode = nodePanel.transform.GetChild(currentLinkNodeIndex + 1).gameObject;
-        }
+        //if (currentLinkNodeIndex <= 3)
+        //{
+        //    nextTargetNode = nodePanel.transform.GetChild(currentLinkNodeIndex + 1).gameObject;
+        //}
 
     }
     //supporting method just to get the anchoredPosition of the starting node
@@ -190,6 +195,12 @@ public class LinkActivitiesManager : MonoBehaviour
     //called through button when player wants to proceed, cals the moving node to move to the next node spot
     public void ProceedToNextNodeButton()
     {
+        //assigns the next node after clicking the proceed button
+        if (currentLinkNodeIndex <= 3)
+        {
+            nextTargetNode = nodePanel.transform.GetChild(currentLinkNodeIndex + 1).gameObject;
+        }
+
         //upon clicking, makes the button uninteractable to avoid clicking before scene transition
         proceedButton.interactable = false;
 
@@ -271,8 +282,6 @@ public class LinkActivitiesManager : MonoBehaviour
                     cameraUIScript.UpdateUniversalInfo();
                     //gain activities will always make the proceed button interactable since there is no scene transition
                     proceedButton.interactable = true;
-                    //gain activities will immediately increment the currentLinkNodeCounter so that we can get the next destination
-                    currentLinkNodeIndex++;
                     Debug.Log($"{activity}");
                     break;
 
@@ -286,8 +295,6 @@ public class LinkActivitiesManager : MonoBehaviour
                     cameraUIScript.UpdateUniversalInfo();
                     //gain activities will always make the proceed button interactable since there is no scene transition
                     proceedButton.interactable = true;
-                    //gain activities will immediately increment the currentLinkNodeCounter so that we can get the next destination
-                    currentLinkNodeIndex++;
                     Debug.Log($"{activity}");
                     break;
 
@@ -299,22 +306,18 @@ public class LinkActivitiesManager : MonoBehaviour
                     cameraUIScript.UpdateUniversalInfo();
                     //gain activities will always make the proceed button interactable since there is no scene transition
                     proceedButton.interactable = true;
-                    //gain activities will immediately increment the currentLinkNodeCounter so that we can get the next destination
-                    currentLinkNodeIndex++;
                     Debug.Log($"{activity}");
                     break;
 
                 case LinkActivityEnum.TicketGain:
                     //currently for test only so we can proceed
                     proceedButton.interactable = true;
-                    currentLinkNodeIndex++;
                     Debug.Log($"{activity}");
                     break;
 
                 case LinkActivityEnum.CardRemove:
                     //currently for test only so we can proceed
                     proceedButton.interactable = true;
-                    currentLinkNodeIndex++;
                     Debug.Log($"{activity}");
                     //cardRemoval.ViewSavedDeck(cameraUIScript.FetchDeck());
                     break;
@@ -322,70 +325,66 @@ public class LinkActivitiesManager : MonoBehaviour
                 case LinkActivityEnum.StrengthTest:
                     //currently for test only so we can proceed
                     proceedButton.interactable = true;
-                    currentLinkNodeIndex++;
                     Debug.Log($"{activity}");
                     break;
 
                 case LinkActivityEnum.EnduranceTest:
                     //currently for test only so we can proceed
                     proceedButton.interactable = true;
-                    currentLinkNodeIndex++;
                     Debug.Log($"{activity}");
                     break;
 
                 case LinkActivityEnum.LuckTest:
                     //currently for test only so we can proceed
                     proceedButton.interactable = true;
-                    currentLinkNodeIndex++;
                     Debug.Log($"{activity}");
                     break;
 
                 case LinkActivityEnum.IntelligenctTest:
                     //currently for test only so we can proceed
                     proceedButton.interactable = true;
-                    currentLinkNodeIndex++;
                     Debug.Log($"{activity}");
                     break;
 
                 case LinkActivityEnum.LinkGamble:
                     //currently for test only so we can proceed
                     proceedButton.interactable = true;
-                    currentLinkNodeIndex++;
                     Debug.Log($"{activity}");
                     break;
 
                 case LinkActivityEnum.NameGamble:
                     //currently for test only so we can proceed
                     proceedButton.interactable = true;
-                    currentLinkNodeIndex++;
                     Debug.Log($"{activity}");
                     break;
 
                 case LinkActivityEnum.TypeGamble:
                     //currently for test only so we can proceed
                     proceedButton.interactable = true;
-                    currentLinkNodeIndex++;
                     Debug.Log($"{activity}");
                     break;
 
                 case LinkActivityEnum.MaterialTrade:
+                    tradePanel.SetActive(true);
+                    tradeActivities.InitializeTradeActivities(activity, universalInfo);
                     //currently for test only so we can proceed
                     proceedButton.interactable = true;
-                    currentLinkNodeIndex++;
                     Debug.Log($"{activity}");
                     break;
 
                 case LinkActivityEnum.GearTrade:
+                    tradePanel.SetActive(true);
+                    tradeActivities.InitializeTradeActivities(activity, universalInfo);
                     //currently for test only so we can proceed
                     proceedButton.interactable = true;
-                    currentLinkNodeIndex++;
                     Debug.Log($"{activity}");
                     break;
 
                 case LinkActivityEnum.BlueprintTrade:
+                    tradePanel.SetActive(true);
+                    tradeActivities.InitializeTradeActivities(activity, universalInfo);
                     //currently for test only so we can proceed
                     proceedButton.interactable = true;
-                    currentLinkNodeIndex++;
                     Debug.Log($"{activity}");
                     break;
 
