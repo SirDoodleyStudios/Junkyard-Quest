@@ -157,8 +157,23 @@ public class LinkActivitiesManager : MonoBehaviour
             linkActivitySaveState = UniversalSaveState.LoadLinkActivities();
             currentLinkNodeIndex = linkActivitySaveState.currentLinkNodeIndex;
 
-            //sets the player node 
-            StartCoroutine(SetBeginningNode());
+
+
+            //checks if the save is in path or in activity
+            if (linkActivitySaveState.isInActivity)
+            {
+                //sets the player node 
+                StartCoroutine(SetBeginningNode());
+                //activate the activity itsels
+                StartCoroutine(ActivateLinkActivity());
+
+            }
+            //if not, proceed to open path
+            else
+            {
+                //sets the player node 
+                StartCoroutine(SetBeginningNode());
+            }
         }
         //if not loaded, generate new data
         else
@@ -245,9 +260,7 @@ public class LinkActivitiesManager : MonoBehaviour
             //universalInfo.isFromLinkActivity = true;
             UniversalSaveState.SaveUniversalInformation(universalInfo);
 
-            //save the currentNodeIndex after moving
-            linkActivitySaveState.currentLinkNodeIndex = currentLinkNodeIndex;
-            UniversalSaveState.SaveLinkActivities(linkActivitySaveState);
+
 
             //get's the linkActivity to activate
             LinkActivityEnum activity = linkActivityEnums[currentLinkNodeIndex - 1];
@@ -366,7 +379,7 @@ public class LinkActivitiesManager : MonoBehaviour
 
                 case LinkActivityEnum.MaterialTrade:
                     tradePanel.SetActive(true);
-                    tradeActivities.InitializeTradeActivities(activity, universalInfo);
+                    linkActivitySaveState = tradeActivities.InitializeTradeActivities(activity, universalInfo, linkActivitySaveState);
                     //currently for test only so we can proceed
                     proceedButton.interactable = true;
                     Debug.Log($"{activity}");
@@ -374,7 +387,7 @@ public class LinkActivitiesManager : MonoBehaviour
 
                 case LinkActivityEnum.GearTrade:
                     tradePanel.SetActive(true);
-                    tradeActivities.InitializeTradeActivities(activity, universalInfo);
+                    linkActivitySaveState = tradeActivities.InitializeTradeActivities(activity, universalInfo, linkActivitySaveState);
                     //currently for test only so we can proceed
                     proceedButton.interactable = true;
                     Debug.Log($"{activity}");
@@ -382,7 +395,7 @@ public class LinkActivitiesManager : MonoBehaviour
 
                 case LinkActivityEnum.BlueprintTrade:
                     tradePanel.SetActive(true);
-                    tradeActivities.InitializeTradeActivities(activity, universalInfo);
+                    linkActivitySaveState = tradeActivities.InitializeTradeActivities(activity, universalInfo, linkActivitySaveState);
                     //currently for test only so we can proceed
                     proceedButton.interactable = true;
                     Debug.Log($"{activity}");
@@ -393,8 +406,18 @@ public class LinkActivitiesManager : MonoBehaviour
             }
 
 
+            //save the currentNodeIndex after moving
+            linkActivitySaveState.currentLinkNodeIndex = currentLinkNodeIndex;
+            UpdateLinkSaveState(true);
         }
 
+    }
+
+    //usually called when an activity is ending or starting(?)
+    public void UpdateLinkSaveState(bool isActivity)
+    {
+        linkActivitySaveState.isInActivity = isActivity;
+        UniversalSaveState.SaveLinkActivities(linkActivitySaveState);
     }
 
 }

@@ -294,6 +294,16 @@ public class CameraUIScript : MonoBehaviour
             inventoryBlueprints.Remove(blueprint);
         }
     }
+    //full updates are used when the lists are going to be updated by overriding the list itself
+    //mostly used if there is removal
+    public void UpdateFullGearInventory(List<GearWrapper> gearWrappers)
+    {
+        inventoryGears = gearWrappers;
+    }
+    public void UpdateFullMaterialInventory(List<CraftingMaterialWrapper> craftingMaterialWrappers)
+    {
+        inventoryMaterials = craftingMaterialWrappers;
+    }
 
 
     //when a manager script wants to view a deck but not the whole deck
@@ -326,6 +336,13 @@ public class CameraUIScript : MonoBehaviour
     public void EnableGearManagement()
     {
         equipmentViewer.MakeGearsDragNDroppable();
+    }
+
+    //Confirm Choice Function
+    //called when making a choice to allow chonfirmation stage
+    public void ChoiceConfirmation()
+    {
+
     }
 
 }
