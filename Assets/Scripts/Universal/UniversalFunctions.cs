@@ -129,8 +129,10 @@ public static class UniversalFunctions
         return randomEnumElement;
     }
 
+
     //called when a blueprint choice is being presented to the player
     //blueprints must not be repeated in inventory
+    //used for list of blueprints
     public static List<AllGearTypes> SearchAvailableBlueprints(List<AllGearTypes> possessedBlueprints)
     {
         //convert the whole AllGearTypes to a list

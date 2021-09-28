@@ -221,7 +221,7 @@ public class TradeActivities : MonoBehaviour
         }
 
 
-        //enerate new one if not loaded from file
+        //generate new one if not loaded from file
         else
         {
             if (tradeType == LinkActivityEnum.BlueprintTrade)
@@ -229,7 +229,10 @@ public class TradeActivities : MonoBehaviour
                 BluePrintSO tempBlueprint = Instantiate(referenceBlueprintSO);
 
                 //assign the blueprint values
-                AllGearTypes randomizedBlueprint = UniversalFunctions.GetRandomEnum<AllGearTypes>();
+                //fetch the list of blueprints not yet in player possession
+                List<AllGearTypes> availableBlueprints = UniversalFunctions.SearchAvailableBlueprints(universalInfo.bluePrints);
+                AllGearTypes randomizedBlueprint = availableBlueprints[Random.Range(0, availableBlueprints.Count-1)];
+
                 tempBlueprint.blueprint = randomizedBlueprint;
                 tempBlueprint.bluePrintSprite = Resources.Load<Sprite>($"Blueprints/{randomizedBlueprint}");
                 //send the blueprint ot the AssignBluprintValues to fill out the vecttor and allowable type list
@@ -330,12 +333,12 @@ public class TradeActivities : MonoBehaviour
                 Debug.Log("offerObject nulling");
                 offerObj = null;
             }
-
-            //remove the DragNDrop script
-            Destroy(offerObj.GetComponent<TradeDragNDrop>());
         }
 
-        
+        //remove the DragNDrop script from the offer object 
+        Destroy(offerObj.GetComponent<TradeDragNDrop>());
+
+
     }
 
     void PopulateBlueprintContent(List<BluePrintSO> blueprintSOList)

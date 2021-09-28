@@ -27,7 +27,7 @@ public enum NodeActivityEnum { Combat, Event, Merchant, Forge, Rest, Boon, Rival
 public enum LinkActivityEnum 
 {
     Skirmish,
-    HPGain,
+    HealthGain,
     CreativityGain,
     ScrapsGain,
     TicketGain,
@@ -35,7 +35,7 @@ public enum LinkActivityEnum
     StrengthTest,
     EnduranceTest,
     LuckTest,
-    IntelligenctTest,
+    IntelligenceTest,
     LinkGamble,
     NameGamble,
     TypeGamble,

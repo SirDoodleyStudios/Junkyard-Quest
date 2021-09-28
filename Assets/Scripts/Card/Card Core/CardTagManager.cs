@@ -18,6 +18,9 @@ public class CardTagManager
 
     //for material effect descriptions
     public static Dictionary<AllMaterialEffects, string> materialEffectDescriptions = new Dictionary<AllMaterialEffects, string>();
+
+    //for link activities Descriptions
+    public static Dictionary<LinkActivityEnum, string> linkActivitiesDescriptions = new Dictionary<LinkActivityEnum, string>();
     //This is called by combatmanager awake then activates all initializers
 
     //identifier so that the static dictionaries dont retrigger addition of entries
@@ -34,6 +37,7 @@ public class CardTagManager
             CardEffectDictionaryInitialize();
             AbilityCardDescriptionInitialize();
             MaterialEffectDescriptionInitialize();
+            LinkActivitiesDescriptionInitialize();
         }
         isInitialized = true;
 
@@ -249,6 +253,53 @@ public class CardTagManager
     public static string GetMaterialEffectDescription(AllMaterialEffects materialEffect)
     {
         return materialEffectDescriptions[materialEffect];
+    }
+
+    //for link activity activities
+    static void LinkActivitiesDescriptionInitialize()
+    {
+        //Version where instruction are displayed for activities
+        //linkActivitiesDescriptions.Add(LinkActivityEnum.Skirmish, "Skirmish: Fight against enemies.");
+        //linkActivitiesDescriptions.Add(LinkActivityEnum.BlueprintTrade, "Blueprint Trade: Choice to exchange one of your blueprints for a random one.");
+        //linkActivitiesDescriptions.Add(LinkActivityEnum.MaterialTrade, "Material Trade: Choice to exchange one of your materials for a random one.");
+        //linkActivitiesDescriptions.Add(LinkActivityEnum.GearTrade, "Blueprint Trade: Choice to exchange one of your gears for a random one.");
+        //linkActivitiesDescriptions.Add(LinkActivityEnum.HealthGain, "Halth Gain: Heal a small amount of HP");
+        //linkActivitiesDescriptions.Add(LinkActivityEnum.CreativityGain, "Creativity Gain: Gain a small amount of Creativity for the next battle");
+        //linkActivitiesDescriptions.Add(LinkActivityEnum.ScrapsGain, "Scraps Gain: Get a small amount of scraps");
+        //linkActivitiesDescriptions.Add(LinkActivityEnum.TicketGain, "Ticket Gain: Get one or two tickets");
+        //linkActivitiesDescriptions.Add(LinkActivityEnum.CardRemove, "Card Remove: Remove a card from your deck");
+        //linkActivitiesDescriptions.Add(LinkActivityEnum.StrengthTest, "Strength Test: Overkill the opponent in one turn of combat. You get prizes if you win but you take damage if you lose.");
+        //linkActivitiesDescriptions.Add(LinkActivityEnum.EnduranceTest, "Endurance Test: Do not take damage in one turn of combat. You get prizes if you win but you take damage if you lose.");
+        //linkActivitiesDescriptions.Add(LinkActivityEnum.LuckTest, "Luck Test: Hit the correct enemy of three in one turn of combat. You get prizes if you win but you take damage if you lose.");
+        //linkActivitiesDescriptions.Add(LinkActivityEnum.IntelligenceTest, "Intelligence Test: Reach the card link quota in one turn. You get prizes if you win but you take damage if you lose.");
+        //linkActivitiesDescriptions.Add(LinkActivityEnum.LinkGamble, "Link Gamble: Pay one ticket to play. A card will be shown from your deck, if the next card drawn can be linked with the shown card, you win." +
+        //    "You get more tickets as a prize.");
+        //linkActivitiesDescriptions.Add(LinkActivityEnum.NameGamble, "Name Gamble: Pay one ticket to play. A card will be shown from your deck, if the next card drawn has the same initial letter" +
+        //    "with the shown card, you win. You get more tickets as a prize.");
+        //linkActivitiesDescriptions.Add(LinkActivityEnum.TypeGamble, "Type Gamble: Pay one ticket to play. A card will be shown from your deck, if the next card drawn is the same type as the shown card," +
+        //    "you win. You get more tickets as a prize");
+
+        linkActivitiesDescriptions.Add(LinkActivityEnum.Skirmish, "Skirmish");
+        linkActivitiesDescriptions.Add(LinkActivityEnum.BlueprintTrade, "Blueprint Trade");
+        linkActivitiesDescriptions.Add(LinkActivityEnum.MaterialTrade, "Material Trade");
+        linkActivitiesDescriptions.Add(LinkActivityEnum.GearTrade, "Blueprint Trade");
+        linkActivitiesDescriptions.Add(LinkActivityEnum.HealthGain, "Health Gain");
+        linkActivitiesDescriptions.Add(LinkActivityEnum.CreativityGain, "Creativity Gain");
+        linkActivitiesDescriptions.Add(LinkActivityEnum.ScrapsGain, "Scraps Gain");
+        linkActivitiesDescriptions.Add(LinkActivityEnum.TicketGain, "Ticket Gain");
+        linkActivitiesDescriptions.Add(LinkActivityEnum.CardRemove, "Card Remove");
+        linkActivitiesDescriptions.Add(LinkActivityEnum.StrengthTest, "Strength Test");
+        linkActivitiesDescriptions.Add(LinkActivityEnum.EnduranceTest, "Endurance Test");
+        linkActivitiesDescriptions.Add(LinkActivityEnum.LuckTest, "Luck Test");
+        linkActivitiesDescriptions.Add(LinkActivityEnum.IntelligenceTest, "Intelligence Test");
+        linkActivitiesDescriptions.Add(LinkActivityEnum.LinkGamble, "Link Gamble");
+        linkActivitiesDescriptions.Add(LinkActivityEnum.NameGamble, "Name Gamble");
+        linkActivitiesDescriptions.Add(LinkActivityEnum.TypeGamble, "Type Gamble");
+
+    }
+    public static string GetLinkActivitiesDescription(LinkActivityEnum linkActivityEnum)
+    {
+        return linkActivitiesDescriptions[linkActivityEnum];
     }
 
 }
