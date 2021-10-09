@@ -17,4 +17,13 @@ public class LinkActivitiesSaveState
     public GearWrapper gearWrapper;
     public CraftingMaterialWrapper craftingMaterialWrapper;
     public AllGearTypes blueprint;
+
+    //for Gambles
+    //contains the chosen cards
+    public List<CardAndJigsaWrapper> gambleCards = new List<CardAndJigsaWrapper>();
+    //tells which card is the activity in
+    public int drawIndex;
+    //tells whether the player can still take the gamble
+    public bool isStillGamble;
+
 }

@@ -395,7 +395,8 @@ public class LinkActivitiesManager : MonoBehaviour
                     ////FOR TESTING ONLY, SHOULD  BE TRUE, BUT WE HAVENT IMPLEMENTED LOGIC FOR THIS ACTIVITY YET
                     //isStillInLinkActivitiesScene = false;
                     gamblePanel.SetActive(true);
-                    gambleActivities.InitializeGambleActivity(activity);
+                    gambleActivities.InitializeGambleActivity(activity, linkActivitySaveState);
+                    isStillInLinkActivitiesScene = true;
                     break;
 
                 case LinkActivityEnum.NameGamble:
@@ -405,7 +406,8 @@ public class LinkActivitiesManager : MonoBehaviour
                     ////FOR TESTING ONLY, SHOULD  BE TRUE, BUT WE HAVENT IMPLEMENTED LOGIC FOR THIS ACTIVITY YET
                     //isStillInLinkActivitiesScene = false;
                     gamblePanel.SetActive(true);
-                    gambleActivities.InitializeGambleActivity(activity);
+                    gambleActivities.InitializeGambleActivity(activity, linkActivitySaveState);
+                    isStillInLinkActivitiesScene = true;
                     break;
 
                 case LinkActivityEnum.TypeGamble:
@@ -415,7 +417,8 @@ public class LinkActivitiesManager : MonoBehaviour
                     ////FOR TESTING ONLY, SHOULD  BE TRUE, BUT WE HAVENT IMPLEMENTED LOGIC FOR THIS ACTIVITY YET
                     //isStillInLinkActivitiesScene = false;
                     gamblePanel.SetActive(true);
-                    gambleActivities.InitializeGambleActivity(activity);
+                    gambleActivities.InitializeGambleActivity(activity, linkActivitySaveState);
+                    isStillInLinkActivitiesScene = true;
                     break;
 
                 case LinkActivityEnum.MaterialTrade:
