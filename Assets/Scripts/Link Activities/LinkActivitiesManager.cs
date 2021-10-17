@@ -173,7 +173,7 @@ public class LinkActivitiesManager : MonoBehaviour
 
 
             //checks if the save is in path or in activity
-            if (linkActivitySaveState.isInActivity)
+            if (linkActivitySaveState.isStillInActivity)
             {
                 //sets the player node 
                 StartCoroutine(SetBeginningNode());
@@ -460,7 +460,7 @@ public class LinkActivitiesManager : MonoBehaviour
     //usually called when an activity is ending or starting(?)
     public void UpdateLinkSaveState(bool isActivity)
     {
-        linkActivitySaveState.isInActivity = isActivity;
+        linkActivitySaveState.isStillInActivity = isActivity;
         UniversalSaveState.SaveLinkActivities(linkActivitySaveState);
     }
 

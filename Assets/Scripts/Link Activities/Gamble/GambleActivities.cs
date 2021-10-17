@@ -62,7 +62,7 @@ public class GambleActivities : MonoBehaviour
         currentDeck = cameraUIScript.FetchDeck();
 
         //if loaded from file
-        if (linkSaveState.isInActivity)
+        if (linkSaveState.isStillInActivity)
         {
             List<Card> savedGambleCards = new List<Card>();
 
@@ -113,8 +113,6 @@ public class GambleActivities : MonoBehaviour
         secondDrawObj.GetComponent<Display>().card = secondDraw;
         thirdDrawObj.GetComponent<Display>().card = thirdDraw;
 
-
-
         //reveal the base card
         baseCardObj.GetComponentInParent<Image>().enabled = false;
         baseCardObj.SetActive(true);
@@ -122,15 +120,50 @@ public class GambleActivities : MonoBehaviour
         //assign base card as the comparison card
         cardForComparison = baseCard;
 
+        //assign the linkSaveState to local variable
+        linkActivitiesSaveState = linkSaveState;
+
         //Set Instructions text
         SetInstructions();
 
         //Save the cards determined and drawIndex currently
-        linkSaveState.gambleCards.Add(new CardAndJigsaWrapper(baseCard));
-        linkSaveState.gambleCards.Add(new CardAndJigsaWrapper(firstDraw));
-        linkSaveState.gambleCards.Add(new CardAndJigsaWrapper(secondDraw));
-        linkSaveState.gambleCards.Add(new CardAndJigsaWrapper(thirdDraw));
-        return linkSaveState;
+        List<CardAndJigsaWrapper> tempHolder = new List<CardAndJigsaWrapper>();
+        tempHolder.Add(new CardAndJigsaWrapper(baseCard));
+        tempHolder.Add(new CardAndJigsaWrapper(firstDraw));
+        tempHolder.Add(new CardAndJigsaWrapper(secondDraw));
+        tempHolder.Add(new CardAndJigsaWrapper(thirdDraw));
+        linkActivitiesSaveState.gambleCards = tempHolder;
+
+        //linkSaveState.gambleCards.Add(new CardAndJigsaWrapper(baseCard));
+        //linkSaveState.gambleCards.Add(new CardAndJigsaWrapper(firstDraw));
+        //linkSaveState.gambleCards.Add(new CardAndJigsaWrapper(secondDraw));
+        //linkSaveState.gambleCards.Add(new CardAndJigsaWrapper(thirdDraw));
+
+        //if cards are loaded from file, iterate reveal Cards depending on the saved drawIndex
+        //identify where the player is in the gambling draw
+        //checks first if drawIndex has drawn the base card since it should always be activated
+        if (linkSaveState.drawIndex > 0)
+        {
+            //holder for the original drawIndex in file so that it doesnt get overriden when revelaing cards at initialization
+            int tempDrawIndex = linkSaveState.drawIndex;
+            for (int i = 1; tempDrawIndex >= i; i++)
+            {
+                //the local draw index is the card object's heirarchy position in the editor
+                //0 = card back, 1 = base draw. 2 = first, 3= second, 4 = third draw
+                drawIndex = i + 1;
+                RevealCardButton();
+            }
+        }
+        //if drawIndex in file is 0 then player has not taken a gamble yet so message text should be blank
+        else if(linkSaveState.drawIndex == 0)
+        {
+            messagesText.text = "";
+        }
+
+
+
+
+        return linkActivitiesSaveState;
     }
 
     //method for setting up the instructions 
@@ -182,8 +215,26 @@ public class GambleActivities : MonoBehaviour
             takeGambleButton.interactable = false;
         }
 
+        //checks the draw index if we're already on the final draw to disable the takeGambleOption
+        //index 4 is the third draw
+        if (drawIndex == 4)
+        {
+            takeGambleButton.interactable = false;
+            //saves in the linkActivitySaveState the current position of the drawIndex
+            //the minus 1 is because the drawIndex in the linkActivity file does not include the card back while the drawIndex is local includes the cradback because it's in the editor heirarchy
+            linkActivitiesSaveState.drawIndex = drawIndex - 1;
+            UniversalSaveState.SaveLinkActivities(linkActivitiesSaveState);
+        }
+        else
+        {
+            //saves in the linkActivitySaveState the current position of the drawIndex
+            //the minus 1 is because the drawIndex in the linkActivity file does not include the card back while the drawIndex is local includes the cradback because it's in the editor heirarchy
+            linkActivitiesSaveState.drawIndex = drawIndex - 1;
+            UniversalSaveState.SaveLinkActivities(linkActivitiesSaveState);
 
-        drawIndex++;
+            drawIndex++;
+        }
+
 
     }
 
@@ -267,6 +318,8 @@ public class GambleActivities : MonoBehaviour
     //button for returning back to linkActivities if player decides to skip gamble
     public void ReturnToLinkActivitiesButton()
     {
+        linkActivitiesSaveState.isStillInActivity = false;
+        UniversalSaveState.SaveLinkActivities(linkActivitiesSaveState);
         gameObject.SetActive(false);
     }
 

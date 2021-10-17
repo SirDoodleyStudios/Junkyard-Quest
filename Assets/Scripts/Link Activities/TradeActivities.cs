@@ -83,7 +83,7 @@ public class TradeActivities : MonoBehaviour
 
         //populate the offer object
         //will edit the LinkActivitySaveState with the new generated offer objects
-        PopulateOfferContent(tradeType, linkActivitySaveStateInternal.isInActivity);
+        PopulateOfferContent(tradeType, linkActivitySaveStateInternal.isStillInActivity);
 
         if (tradeType == LinkActivityEnum.BlueprintTrade)
         {
