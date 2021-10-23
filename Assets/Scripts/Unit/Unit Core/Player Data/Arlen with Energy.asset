@@ -15,7 +15,7 @@ MonoBehaviour:
   HP: 1000
   creativity: 50
   currCreativity: 0
-  draw: 10
+  draw: 5
   currHP: 1000
   energy: 80
   chosenPlayer: 0

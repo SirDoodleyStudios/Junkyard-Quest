@@ -198,6 +198,10 @@ public class SelectionManager : MonoBehaviour
         //universalInformation.nodeActivity = NodeActivityEnum.Boon;
         universalInformation.scene = SceneList.PlayerSelectScreen;
 
+        //Test for initial tickets count
+        //original should only be 3?
+        universalInformation.tickets = 30;
+
         UniversalSaveState.SaveUniversalInformation(universalInformation);
 
         //change in next scene, must go first to reward scene to give player his starting kit

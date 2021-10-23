@@ -51,6 +51,11 @@ public class CombatSaveState
     //if this is true, the next player turn will activate defeat function
     public bool isPlayerBeingOverkilled;
 
+    //this int is the draw count for the current turn only if loading from file
+    //used mainly for the ticekt function since ticket function retains hand, the next turn hand would probably have more than the default draw
+    //not an issue in continued gameplay but an issue if resuming from save
+    public int temporaryDrawAtLoad;
+
 
     public CombatSaveState(DeckManager deckManager, PlayerUnit playerUnit, UnitStatusHolder playerStatuses, List<GameObject> enemyObjects)
     {
@@ -93,6 +98,8 @@ public class CombatSaveState
         initialDeck.AddRange(discardPile);
         initialDeck.AddRange(consumePile);
         initialDeck.AddRange(playerHandList);
+        //set the current playerHandList saved as the temporaryDrawAtLoad since this is the amount that we want to draw at next time player opens up game in combat
+        temporaryDrawAtLoad = playerHandList.Count;
 
         //for Player variables
         //player unit has a wrapper class in universalSaveState

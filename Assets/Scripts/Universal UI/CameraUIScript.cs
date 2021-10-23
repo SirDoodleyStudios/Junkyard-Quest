@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using UnityEngine.SceneManagement;
 
 public class CameraUIScript : MonoBehaviour
 {
@@ -18,6 +19,8 @@ public class CameraUIScript : MonoBehaviour
     public TextMeshProUGUI currCreativityText;
     public TextMeshProUGUI creativityText;
     public TextMeshProUGUI scrapsText;
+    public TextMeshProUGUI ticketEffectText;
+    public TextMeshProUGUI ticketCountText;
 
     RectTransform objectRect;
 
@@ -53,6 +56,10 @@ public class CameraUIScript : MonoBehaviour
     List<CraftingMaterialWrapper> inventoryMaterials = new List<CraftingMaterialWrapper>();
     List<GearWrapper> inventoryGears = new List<GearWrapper>();
     GearWrapper[] equippedGears = new GearWrapper[6];
+
+    //ticket button
+    //called here to disable an enable at times by the sceneManager
+    public Button ticketButton;
 
 
     public void Awake()
@@ -119,6 +126,7 @@ public class CameraUIScript : MonoBehaviour
         currCreativityText.text = $"{playerStats.currCreativity }";
         creativityText.text = $"{playerStats.creativity}";
         scrapsText.text = $"{universalInfo.scraps}";
+        ticketCountText.text = $"{universalInfo.tickets }";
 
     }
 
@@ -143,9 +151,18 @@ public class CameraUIScript : MonoBehaviour
     {
         scrapsText.text = $"{scrapsChange}";
     }
+    //for updating the ticket count  text in UI only
+    //bool parameter is for changin interactability
+    public void UpdateUIObjectsTickets(int ticketsChange, bool buttonAvailability)
+    {
+        ticketCountText.text = $"{ticketsChange}";
+        ticketButton.interactable = buttonAvailability;
+    }
+
 
     //initially part of AssignUIObjects but now separated
     //called by sceneManager's Awake
+    //Depending on the current scene, it will send what kind of effect a ticket will have
     public void InitiateUniversalUIInfoData(UniversalInformation universalInfo)
     {
         //initializes theCardSO factory
@@ -174,6 +191,39 @@ public class CameraUIScript : MonoBehaviour
         inventoryBlueprints.AddRange(universalInfo.bluePrints);
         //remained equal association for the time being
         equippedGears = universalInfo.equippedGears;
+
+        //placeholder for the current scene
+        Scene sceneHolder = SceneManager.GetActiveScene();
+        //assign the effect text for tickets depending on scene
+        if (sceneHolder.name == "CombatScene")
+        {
+            ticketEffectText.text = "Retain hand for 1 turn";
+        }
+        else if (sceneHolder.name == "ForgeScene")
+        {
+            ticketEffectText.text = "Reset forge cost";
+        }
+        else if (sceneHolder.name == "MerchantScene")
+        {
+            ticketEffectText.text = "Get 20% discount";
+        }
+        else if (sceneHolder.name == "OverworldScene")
+        {
+            ticketEffectText.text = "Heal 10% HP";
+        }
+        else if (sceneHolder.name == "RestScene")
+        {
+            ticketEffectText.text = "Gain 1 action";
+        }
+        else if (sceneHolder.name == "LinkActivitiesScene")
+        {
+            ticketEffectText.text = "Skip next activity";
+        }
+        else
+        {
+            ticketEffectText.text = "No use for ticket";
+        }
+
 
     }
 
@@ -337,6 +387,8 @@ public class CameraUIScript : MonoBehaviour
     {
         equipmentViewer.MakeGearsDragNDroppable();
     }
+
+
 
     //Confirm Choice Function
     //called when making a choice to allow chonfirmation stage

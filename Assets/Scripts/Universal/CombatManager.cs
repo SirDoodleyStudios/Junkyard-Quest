@@ -84,12 +84,17 @@ public class CombatManager : MonoBehaviour
     TargetArrowHandler targetArrowHandler;
 
     //the loaded stats from universalInformation
-    UniversalInformation universalInformation = new UniversalInformation();
+    UniversalInformation universalInfo = new UniversalInformation();
 
     //identifier that the turn cis the first turn loaded from file
     bool isFirstTurnLoaded;
     //identifier if player is currently being overkilled
     bool isPlayerBeingOverkilled;
+    //identifier if ticket is used
+    bool isTicketUsed;
+    //identifier if the draw is the first draw after opening up game and loading from a saved file
+    //this is used at startup only so that any irregular draws from retain functions is loaded properly
+    bool isFirstDrawFromLoad;
 
     public void Awake()
     {
@@ -145,14 +150,14 @@ public class CombatManager : MonoBehaviour
 
         //load the universalInformation saved from the selection and overworld screen
         // sends playerfunctions to playerPrefab and card list to deckmanager
-        universalInformation = UniversalSaveState.LoadUniversalInformation();
-        CardSOFactory.InitializeCardSOFactory(universalInformation.chosenPlayer, universalInformation.chosenClass);
-        playerFunctions.LoadPlayerUnitFromFile(universalInformation.playerStats);
+        universalInfo = UniversalSaveState.LoadUniversalInformation();
+        CardSOFactory.InitializeCardSOFactory(universalInfo.chosenPlayer, universalInfo.chosenClass);
+        playerFunctions.LoadPlayerUnitFromFile(universalInfo.playerStats);
 
 
         //moved to be at the end of InitiateCombatState
         //this is so that the test jigsaw generator can only activate if there is no combatFile loaded
-        deckManager.InitializeBattleDeck(universalInformation.currentDeckWithJigsaw);
+        deckManager.InitializeBattleDeck(universalInfo.currentDeckWithJigsaw);
 
 
         //Card Drafting migrated to rewardsscene
@@ -185,7 +190,10 @@ public class CombatManager : MonoBehaviour
     {
         if (File.Exists(Application.persistentDataPath + "/Combat.json"))
         {
-            UniversalInformation universalInfo = UniversalSaveState.LoadUniversalInformation();
+            //will only apply the isFirstDrawFromLoad if data is loaded from file and at initiation phase only
+            isFirstDrawFromLoad = true;
+
+            //UniversalInformation universalInfo = UniversalSaveState.LoadUniversalInformation();
             CombatSaveState combatSaveState = UniversalSaveState.LoadCombatState();
 
             //instantiate copies of the base SO per spawn in list and assign them to respective enemyHolder position
@@ -263,8 +271,8 @@ public class CombatManager : MonoBehaviour
         //if combat file does not exist, get ebemy base unit from enemyPools
         else
         {
-            UniversalInformation universalInfo = UniversalSaveState.LoadUniversalInformation();
-            List<EnemyUnit> enemySpawn = enemyPools.GetEnemySpawn(universalInformation.nodeCount);
+            //UniversalInformation universalInfo = UniversalSaveState.LoadUniversalInformation();
+            List<EnemyUnit> enemySpawn = enemyPools.GetEnemySpawn(this.universalInfo.nodeCount);
 
             //gives the player Worn-out Status if universalInfo has a worn-out count
             if(universalInfo.wornOutCount > 0)
@@ -296,10 +304,10 @@ public class CombatManager : MonoBehaviour
             cameraUIScript.InitiateUniversalUIInfoData(universalInfo);
             cameraUIScript.AssignUIObjects(universalInfo);
             //immediately turns the currCreativity in univesalInfo to 0, this ensures that the combat start bonus does not repeat when loading from file in combat
-            if (universalInformation.playerStats.currCreativity != 0)
+            if (this.universalInfo.playerStats.currCreativity != 0)
             {
-                universalInformation.playerStats.currCreativity = 0;
-                UniversalSaveState.SaveUniversalInformation(universalInformation);
+                this.universalInfo.playerStats.currCreativity = 0;
+                UniversalSaveState.SaveUniversalInformation(this.universalInfo);
             }
         }
 
@@ -322,6 +330,10 @@ public class CombatManager : MonoBehaviour
         else
         {
             state = CombatState.PlayerTurn;
+
+            //enable the ticket button again and disable the identifier
+            cameraUIScript.UpdateUIObjectsTickets(universalInfo.tickets, true);
+            isTicketUsed = false;
 
             //for getting status effects from unitStatusHolder of player
             UnitStatusHolder unitStatusHolder = player.GetComponent<UnitStatusHolder>();
@@ -352,7 +364,19 @@ public class CombatManager : MonoBehaviour
             //the energy 
             playerFunctions.currEnergy = 0;
             EnergyUpdater(playerFunctions.defaultEnergy + unitStatusHolder.EnergyAlteringModifierCalculator());
-            DrawHand(playerFunctions.defaultDraw + unitStatusHolder.DrawAlteringModifierCalculator());
+
+            //if combat is loaded is loaded from file and it's the first draw in the session, use the saved draw count from last save
+            if (isFirstDrawFromLoad)
+            {
+                isFirstDrawFromLoad = false;
+                DrawHand(UniversalSaveState.LoadCombatState().temporaryDrawAtLoad);
+            }
+            //else proceed with standard draws
+            else
+            {
+                DrawHand(playerFunctions.defaultDraw + unitStatusHolder.DrawAlteringModifierCalculator());
+            }
+
 
             //makes the endTurnButton interactable again during player turn
             EndTurnButt.interactable = true;
@@ -388,7 +412,12 @@ public class CombatManager : MonoBehaviour
 
 
         //saves combatState and generate save file
-        UniversalSaveState.SaveCombatState(combatSaveState);      
+        UniversalSaveState.SaveCombatState(combatSaveState);
+
+        //also saves the universalInfo for data that only exists in universalInfo like scraps and tickets
+        //recently added in the ticket update
+        UniversalSaveState.SaveUniversalInformation(universalInfo);
+        cameraUIScript.UpdateUniversalInfo();
 
     }
 
@@ -1064,7 +1093,13 @@ public class CombatManager : MonoBehaviour
             {
                 activeCard = cardInHand.gameObject;
                 //deckManager.DiscardCards(activeCard);
-                StartCoroutine(deckManager.DiscardCards(activeCard));
+
+                //using a ticket will retain the remaining cards in hand instead of discardin them
+                if (!isTicketUsed)
+                {
+                    StartCoroutine(deckManager.DiscardCards(activeCard));
+                }
+
             }
            
         }
@@ -1099,6 +1134,14 @@ public class CombatManager : MonoBehaviour
         d_StartTurn();
         //save after all start turn prep is done
         SaveCombatState();
+    }
+
+    //Function for using tickets, prevents discarding after ending turn
+    public void TicketButton()
+    {
+        universalInfo.tickets -= 1;
+        isTicketUsed = true;
+        cameraUIScript.UpdateUIObjectsTickets(universalInfo.tickets, false);
     }
 
     public void DefeatFunction()

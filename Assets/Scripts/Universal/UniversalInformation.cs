@@ -28,6 +28,7 @@ public class UniversalInformation
     public PlayerUnitWrapper playerStatsWrapper;
     public int scraps;
     public int currentForgeCost;
+    public int tickets;
 
     //information about enemy
     //will be used to find the base SO in resources depending on the key
