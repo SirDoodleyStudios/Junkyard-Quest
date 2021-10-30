@@ -47,6 +47,17 @@ public class RestManager : MonoBehaviour
         //default remaining actions is 3, might get changed with gear modifiers
         remainingActions = universalInfo.remainingRestActions;
 
+        //determine state of the ticket button
+        //at initial load, ticket should be available
+        if (universalInfo.isTicketUsed)
+        {
+            cameraUIScript.UpdateUIObjectsTickets(universalInfo.tickets, false);
+        }
+        else
+        {
+            cameraUIScript.UpdateUIObjectsTickets(universalInfo.tickets, true);
+        }
+
     }
 
     private void Start()
@@ -69,7 +80,7 @@ public class RestManager : MonoBehaviour
         universalInfo.playerStats.currHP = tempHP;
         universalInfo.wornOutCount = 0;
         cameraUIScript.AssignUIObjects(universalInfo);
-        UpdateRemainingActions();
+        UpdateRemainingActions(-1);
     }
 
     public void MeditateButton()
@@ -78,7 +89,7 @@ public class RestManager : MonoBehaviour
         int tempCreativity = Mathf.Min((universalInfo.playerStats.currCreativity += creativeRecovery), universalInfo.playerStats.creativity);
         universalInfo.playerStats.currCreativity = tempCreativity;
         cameraUIScript.AssignUIObjects(universalInfo);
-        UpdateRemainingActions();
+        UpdateRemainingActions(-1);
     }
 
     public void CraftingButton()
@@ -98,9 +109,12 @@ public class RestManager : MonoBehaviour
     }
 
     //function to disable all action buttons when remaining actions count is 0
-    public void UpdateRemainingActions()
+    //int parameter is for how many actions are added or reduced
+    //positive actionCount is add and negative is subtract
+    public void UpdateRemainingActions(int actionCount)
     {
-        remainingActions--;
+
+        remainingActions += actionCount;
         remainingActionsCountText.text = $"{remainingActions}";
         if (remainingActions == 0)
         {
@@ -110,6 +124,17 @@ public class RestManager : MonoBehaviour
                 if (actionTrans.gameObject.activeSelf)
                 {
                     actionTrans.GetComponent<Button>().interactable = false;
+                }
+            }
+        }
+        else
+        {
+            foreach (Transform actionTrans in actionsPanel.transform)
+            {
+                //checks if object is active first
+                if (actionTrans.gameObject.activeSelf)
+                {
+                    actionTrans.GetComponent<Button>().interactable = true;
                 }
             }
         }
@@ -127,7 +152,22 @@ public class RestManager : MonoBehaviour
     {
         //sets the remaining actions back to 3 when exiting
         universalInfo.remainingRestActions = 3;
+        //sets the ticket used identifier back to unused
+        universalInfo.isTicketUsed = false;
         UniversalSaveState.SaveUniversalInformation(universalInfo);
         SceneManager.LoadScene("OverWorldScene");
+    }
+
+    //used for the ticket button
+    //ticket will add remainingActions in rest by 1
+    public void TicketButton()
+    {
+        universalInfo.tickets -= 1;
+        UpdateRemainingActions(1);
+        cameraUIScript.UpdateUIObjectsTickets(universalInfo.tickets, false);
+        //sets the ticket used identifier back to unused
+        universalInfo.isTicketUsed = true;
+        UniversalSaveState.SaveUniversalInformation(universalInfo);
+
     }
 }

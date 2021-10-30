@@ -90,8 +90,9 @@ public class CombatManager : MonoBehaviour
     bool isFirstTurnLoaded;
     //identifier if player is currently being overkilled
     bool isPlayerBeingOverkilled;
-    //identifier if ticket is used
-    bool isTicketUsed;
+    //migrated to UniversalInfo
+    ////identifier if ticket is used
+    //bool isTicketUsed;
     //identifier if the draw is the first draw after opening up game and loading from a saved file
     //this is used at startup only so that any irregular draws from retain functions is loaded properly
     bool isFirstDrawFromLoad;
@@ -332,8 +333,16 @@ public class CombatManager : MonoBehaviour
             state = CombatState.PlayerTurn;
 
             //enable the ticket button again and disable the identifier
-            cameraUIScript.UpdateUIObjectsTickets(universalInfo.tickets, true);
-            isTicketUsed = false;
+            if (universalInfo.tickets > 0)
+            {
+                cameraUIScript.UpdateUIObjectsTickets(universalInfo.tickets, true);
+            }
+            else
+            {
+                cameraUIScript.UpdateUIObjectsTickets(universalInfo.tickets, false);
+            }
+            //always set this identifier as false at start of turn
+            universalInfo.isTicketUsed = false;
 
             //for getting status effects from unitStatusHolder of player
             UnitStatusHolder unitStatusHolder = player.GetComponent<UnitStatusHolder>();
@@ -1095,7 +1104,7 @@ public class CombatManager : MonoBehaviour
                 //deckManager.DiscardCards(activeCard);
 
                 //using a ticket will retain the remaining cards in hand instead of discardin them
-                if (!isTicketUsed)
+                if (!universalInfo.isTicketUsed)
                 {
                     StartCoroutine(deckManager.DiscardCards(activeCard));
                 }
@@ -1140,7 +1149,7 @@ public class CombatManager : MonoBehaviour
     public void TicketButton()
     {
         universalInfo.tickets -= 1;
-        isTicketUsed = true;
+        universalInfo.isTicketUsed = true;
         cameraUIScript.UpdateUIObjectsTickets(universalInfo.tickets, false);
     }
 
@@ -1194,6 +1203,8 @@ public class CombatManager : MonoBehaviour
         universalInfo.playerStats = playerFunctions.playerUnit;
         //set the nodeActivity to Combat to properly determine the rewards
         universalInfo.nodeActivity = NodeActivityEnum.Combat;
+        //reset the ticket use identifier to false
+        universalInfo.isTicketUsed = false;
         UniversalSaveState.SaveUniversalInformation(universalInfo);
 
         //delete the combat file

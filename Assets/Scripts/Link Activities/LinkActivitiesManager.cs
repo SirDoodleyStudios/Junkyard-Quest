@@ -372,6 +372,8 @@ public class LinkActivitiesManager : MonoBehaviour
                     //currently for test only so we can proceed
                     proceedButton.interactable = true;
                     Debug.Log($"{activity}");
+                    //FOR TESTING ONLY, SHOULD  BE TRUE, BUT WE HAVENT IMPLEMENTED LOGIC FOR THIS ACTIVITY YET
+                    isStillInLinkActivitiesScene = false;
                     break;
 
                 case LinkActivityEnum.LuckTest:
@@ -386,6 +388,8 @@ public class LinkActivitiesManager : MonoBehaviour
                     //currently for test only so we can proceed
                     proceedButton.interactable = true;
                     Debug.Log($"{activity}");
+                    //FOR TESTING ONLY, SHOULD  BE TRUE, BUT WE HAVENT IMPLEMENTED LOGIC FOR THIS ACTIVITY YET
+                    isStillInLinkActivitiesScene = false;
                     break;
 
                 case LinkActivityEnum.LinkGamble:
@@ -397,6 +401,7 @@ public class LinkActivitiesManager : MonoBehaviour
                     gamblePanel.SetActive(true);
                     gambleActivities.InitializeGambleActivity(activity, linkActivitySaveState);
                     isStillInLinkActivitiesScene = true;
+                    proceedButton.interactable = true;
                     break;
 
                 case LinkActivityEnum.NameGamble:
@@ -408,6 +413,7 @@ public class LinkActivitiesManager : MonoBehaviour
                     gamblePanel.SetActive(true);
                     gambleActivities.InitializeGambleActivity(activity, linkActivitySaveState);
                     isStillInLinkActivitiesScene = true;
+                    proceedButton.interactable = true;
                     break;
 
                 case LinkActivityEnum.TypeGamble:
@@ -419,6 +425,7 @@ public class LinkActivitiesManager : MonoBehaviour
                     gamblePanel.SetActive(true);
                     gambleActivities.InitializeGambleActivity(activity, linkActivitySaveState);
                     isStillInLinkActivitiesScene = true;
+                    proceedButton.interactable = true;
                     break;
 
                 case LinkActivityEnum.MaterialTrade:

@@ -451,7 +451,7 @@ public class CraftingManager : MonoBehaviour
         //saves to universalInfo, restmanager has the saving function
         //updates materials and gear in the save file
         restManager.UpdateMaterialAndGearList(materialSOList, craftedGear);
-        restManager.UpdateRemainingActions();
+        restManager.UpdateRemainingActions(-1);
 
     }
     //proceed button for the Created Gear Scene, just for disabling the UiI and clearing the showcase prefab

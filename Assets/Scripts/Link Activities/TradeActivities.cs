@@ -511,7 +511,10 @@ public class TradeActivities : MonoBehaviour
         Destroy(offerObj);
 
         //disable all contents and content holders
-        d_DisableInventoryObjects();
+        if (d_DisableInventoryObjects!=null)
+        {
+            d_DisableInventoryObjects();
+        }
         materialInventoryContent.SetActive(false);
         blueprintInventoryContent.SetActive(false);
         gearInventoryContent.SetActive(false);
