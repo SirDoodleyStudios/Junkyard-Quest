@@ -315,6 +315,7 @@ public class ForgeManager : MonoBehaviour
         if (universalInfo.scraps >= scrapsRequirement)
         {
             UpdateScrapsValues();
+            CalculateScrapsRequirement(false);
         }
 
         SaveForgeChanges();
@@ -335,19 +336,17 @@ public class ForgeManager : MonoBehaviour
         AlterForgeButtonInteractability();
     }
 
-    //function that alters scraps requirement and update the scraps text\
+
+
+    //function that alters scraps requirement and update the scraps text
+    //bool identifier is for determining if the values are to be reset, the resetting function is when the player clicks the ticker button
     void UpdateScrapsValues()
     {
 
         int tempScraps = universalInfo.scraps - scrapsRequirement;
         universalInfo.scraps = tempScraps;
-
         //updates the scraps value in header UI
         cameraUIScript.AssignUIObjects(universalInfo);
-
-        //consistently increase scraps requirement everytime it's called
-        scrapsRequirement += 10;
-        universalInfo.currentForgeCost = scrapsRequirement;
 
         //if the scraps requirement now exceeds the player's scraps, turn the cost value to red
         if (tempScraps < scrapsRequirement)
@@ -359,9 +358,51 @@ public class ForgeManager : MonoBehaviour
         {
             scrapsText.text = $"{scrapsRequirement}";
         }
+    }
 
+    //originally part of UpdateScrapsValues() but now separated since this function is needed alone for altering the cost only and not actually proceeding with the transaction
+    void CalculateScrapsRequirement(bool isCostReset)
+    {
+        //consistently increase scraps requirement everytime it's called
+        //if the costReset is true, set the scraps cost backt o default 40
+        if (isCostReset)
+        {
+            scrapsRequirement = 50;
+        }
+        else
+        {
+            scrapsRequirement += 10;
+        }
+
+        universalInfo.currentForgeCost = scrapsRequirement;
+
+        //check if the current scrapsRequirement is still affordable
+        if (universalInfo.scraps < scrapsRequirement)
+        {
+            scrapsText.color = new Color(1, 0, 0, 1);
+            scrapsText.text = $"{scrapsRequirement}";
+        }
+        else
+        {
+            scrapsText.color = new Color(1, 1, 1, 1);
+            scrapsText.text = $"{scrapsRequirement}";
+        }
+
+        //once in updateScrapValues but now migrated here because calculate is alwaysbeing called but Update is always called before calculate
         UniversalSaveState.SaveUniversalInformation(universalInfo);
     }
+
+    //for the ticket function
+    public void TicketButton()
+    {
+        universalInfo.tickets -= 1;
+        CalculateScrapsRequirement(true);
+        cameraUIScript.UpdateUIObjectsTickets(universalInfo.tickets, false);
+        //sets the ticket used identifier back to unused
+        universalInfo.isTicketUsed = true;
+        UniversalSaveState.SaveUniversalInformation(universalInfo);
+    }
+
 
     //called for saving
     void SaveForgeChanges()
