@@ -21,5 +21,8 @@ public class MerchantSaveState
     //for card removals, bool that determines if the removal has already been used
     public bool isCardRemovalAvailable;
 
+    //for keeping track of the discount button when using tickets
+    public bool isDiscountActivated;
+
 
 }

@@ -49,7 +49,7 @@ public class RestManager : MonoBehaviour
 
         //determine state of the ticket button
         //at initial load, ticket should be available
-        if (universalInfo.isTicketUsed)
+        if (universalInfo.isTicketUsed || universalInfo.tickets <= 0 )
         {
             cameraUIScript.UpdateUIObjectsTickets(universalInfo.tickets, false);
         }

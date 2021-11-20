@@ -244,7 +244,8 @@ public class GambleActivities : MonoBehaviour
         //check the type of gamble first to know if the drawn card is correct
         if (gambleActivityType == LinkActivityEnum.LinkGamble)
         {
-            if (cardForComparison.jigsawEffect.outputLink == drawnCard.jigsawEffect.inputLink)
+            //the first condition before the && is just being used for test. If the gamble type is LikActivity, the logic should generate a pool of all the cards with links
+            if (cardForComparison.jigsawEffect != null && cardForComparison.jigsawEffect.outputLink == drawnCard.jigsawEffect.inputLink)
             {
                 return true;
             }

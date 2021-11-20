@@ -205,7 +205,7 @@ public class CameraUIScript : MonoBehaviour
         }
         else if (sceneHolder.name == "MerchantScene")
         {
-            ticketEffectText.text = "Get 20% discount";
+            ticketEffectText.text = "Get 20% discount on everything";
         }
         else if (sceneHolder.name == "OverworldScene")
         {

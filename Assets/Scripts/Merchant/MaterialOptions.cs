@@ -102,8 +102,20 @@ public class MaterialOptions : MonoBehaviour
         return merchantSaveState;
     }
 
-    public void ViewMaterialOptions()
+    public void ViewMaterialOptions(bool isTicketUsed)
     {
+        //multiplier to price depending if the discount ticket is activated
+        float priceMultiplier;
+        if (isTicketUsed)
+        {
+            //get discount of 20% if ticket is used
+            priceMultiplier = .8f;
+        }
+        else
+        {
+            priceMultiplier = 1;
+        }
+
         foreach(KeyValuePair<CraftingMaterialSO, int> MNC in materialNCost)
         {
             bool hasNoDisabledPrefabs = true;            
@@ -118,7 +130,7 @@ public class MaterialOptions : MonoBehaviour
                     //create the priceTag prefab then instantiate it under the card then set the price
                     GameObject priceTagObj = content.GetChild(content.childCount - 1).gameObject;
                     PriceTag priceTag = priceTagObj.GetComponent<PriceTag>();
-                    priceTag.SetPriceTag(MNC.Value);
+                    priceTag.SetPriceTag(Mathf.RoundToInt(MNC.Value * priceMultiplier));
 
                     //assign accordingly with the SO in list
                     //enable the option
@@ -140,7 +152,7 @@ public class MaterialOptions : MonoBehaviour
                 //create the priceTag prefab then instantiate it under the card then set the price
                 GameObject priceTagObj = Instantiate(priceTagPrefab, materialObject.transform);
                 PriceTag priceTag = priceTagObj.GetComponent<PriceTag>();
-                priceTag.SetPriceTag(MNC.Value);
+                priceTag.SetPriceTag(Mathf.RoundToInt(MNC.Value*priceMultiplier));
 
                 //assign accordingly with the SO in list
                 //enable the option

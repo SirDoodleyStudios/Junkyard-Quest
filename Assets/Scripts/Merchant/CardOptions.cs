@@ -112,8 +112,20 @@ public class CardOptions : MonoBehaviour
 
     //shows the randomly generated options for cards
 
-    public void ViewCardOptions(MerchantSaveState currSaveState)
+    public void ViewCardOptions(MerchantSaveState currSaveState, bool isTicketUsed)
     {
+        //multiplier to price depending if the discount ticket is activated
+        float priceMultiplier;
+        if (isTicketUsed)
+        {
+            //get discount of 50% if ticket is used
+            priceMultiplier = .8f;
+        }
+        else
+        {
+            priceMultiplier = 1;
+        }
+
         //assigns the merchantSaveState from the merchantManager
         merchantSaveState = currSaveState;
 
@@ -144,7 +156,7 @@ public class CardOptions : MonoBehaviour
                     //price tag is just referenced since it should be existing under the card prefab at this point
                     GameObject priceTagObj = content.GetChild(content.childCount - 1).gameObject;
                     PriceTag priceTag = priceTagObj.GetComponent<PriceTag>();
-                    priceTag.SetPriceTag(cardNCost.Value);
+                    priceTag.SetPriceTag(Mathf.RoundToInt(cardNCost.Value*priceMultiplier));
 
                     //the DragNDrop scriopt of the card, for setting the bool identifier to true
                     //true parameter makes the click on card for buying
@@ -172,7 +184,7 @@ public class CardOptions : MonoBehaviour
                 //create the priceTag prefab then instantiate it under the card then set the price
                 GameObject priceTagObj = Instantiate(priceTagPrefab, instantiatedPrefab.transform);
                 PriceTag priceTag = priceTagObj.GetComponent<PriceTag>();
-                priceTag.SetPriceTag(cardNCost.Value);
+                priceTag.SetPriceTag(Mathf.RoundToInt(cardNCost.Value * priceMultiplier));
 
                 //the DragNDrop scriopt of the card, for setting the bool identifier to true
                 //true parameter makes the click on card for buying

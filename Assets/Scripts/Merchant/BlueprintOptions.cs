@@ -114,8 +114,20 @@ public class BlueprintOptions : MonoBehaviour
     }
 
     //function used to populate the blueprint content with blueprint objects
-    public void ViewBlueprintOptions()
+    public void ViewBlueprintOptions(bool isTicketUsed)
     {
+        //multiplier to price depending if the discount ticket is activated
+        float priceMultiplier;
+        if (isTicketUsed)
+        {
+            //get discount of 50% if ticket is used
+            priceMultiplier = .8f;
+        }
+        else
+        {
+            priceMultiplier = 1;
+        }
+
         //generate choices depending on how many blueprints are in blueprint list
         //if an there is already an existing prefab in the blueprint choices, enable that then just assign the bluprintSO
 
@@ -133,7 +145,7 @@ public class BlueprintOptions : MonoBehaviour
                     //create the priceTag prefab then instantiate it under the blueprint then set the price
                     GameObject priceTagObj = content.GetChild(content.childCount - 1).gameObject;
                     PriceTag priceTag = priceTagObj.GetComponent<PriceTag>();
-                    priceTag.SetPriceTag(BNC.Value);
+                    priceTag.SetPriceTag(Mathf.RoundToInt(BNC.Value*priceMultiplier));
 
                     //assign accordingly with the SO in list
                     //enable the option
@@ -154,7 +166,7 @@ public class BlueprintOptions : MonoBehaviour
                 //create the priceTag prefab then instantiate it under the card then set the price
                 GameObject priceTagObj = Instantiate(priceTagPrefab, blueprintObject.transform);
                 PriceTag priceTag = priceTagObj.GetComponent<PriceTag>();
-                priceTag.SetPriceTag(BNC.Value);
+                priceTag.SetPriceTag(Mathf.RoundToInt(BNC.Value * priceMultiplier));
 
                 //assign accordingly with the SO in list
                 //enable the option

@@ -43,7 +43,6 @@ public class MerchantManager : MonoBehaviour
     //identifier to check if the merchantSaveState is loaded fron an existing file
     bool isLoadedFromFile;
 
-
     private void Awake()
     {
 
@@ -67,6 +66,16 @@ public class MerchantManager : MonoBehaviour
         if (File.Exists(Application.persistentDataPath + "/Merchant.json"))
         {
             merchantSaveState = UniversalSaveState.LoadMerchant();
+            //determine state of the ticket button
+            //at initial load, ticket should be available
+            if (universalInfo.isTicketUsed || universalInfo.tickets <= 0)
+            {
+                cameraUIScript.UpdateUIObjectsTickets(universalInfo.tickets, false);
+            }
+            else
+            {
+                cameraUIScript.UpdateUIObjectsTickets(universalInfo.tickets, true);
+            }
             isLoadedFromFile = true;
         }
         else
@@ -132,20 +141,23 @@ public class MerchantManager : MonoBehaviour
     {
         cardOptionsUI.SetActive(true);
         //calls the actual command to view available cards
-        cardOptionsScript.ViewCardOptions(merchantSaveState);
+        //parameter is the bool identifier if ticket is activated
+        cardOptionsScript.ViewCardOptions(merchantSaveState, universalInfo.isTicketUsed);
     }
 
     public void MaterialOptionsButton()
     {
         materialOptionsUI.SetActive(true);
-        materialOptionsScript.ViewMaterialOptions();
+        //parameter is the bool identifier if ticket is activated
+        materialOptionsScript.ViewMaterialOptions(universalInfo.isTicketUsed);
         
     }
 
     public void BlueprintOptionsButton()
     {
         blueprintOptionsUI.SetActive(true);
-        blueprintOptionsScript.ViewBlueprintOptions();
+        //parameter is the bool identifier if ticket is activated
+        blueprintOptionsScript.ViewBlueprintOptions(universalInfo.isTicketUsed);
     }
     public void CardRemovalButton()
     {
@@ -224,6 +236,7 @@ public class MerchantManager : MonoBehaviour
             //update text in universalUI
             cameraUIScript.UpdateUIObjectsActiveScraps(remainingScraps);
             universalInfo.scraps = remainingScraps;
+            //reset the
             return true;
         }
         //if remainingScraps not enough, return false
@@ -234,10 +247,26 @@ public class MerchantManager : MonoBehaviour
 
     }
 
+    //for the ticket function
+    public void TicketButton()
+    {
+        universalInfo.tickets -= 1;
+        cameraUIScript.UpdateUIObjectsTickets(universalInfo.tickets, false);
+        //sets the ticket used identifier back to unused
+        universalInfo.isTicketUsed = true;
+
+        UpdateMerchantSaveState(merchantSaveState);
+        //UniversalSaveState.SaveUniversalInformation(universalInfo);
+    }
+
     //called by the OptionUIs, this triggers the save and update of the MerchantSaveState file
     //caled when exiting the Options view
     public void UpdateMerchantSaveState(MerchantSaveState merchantSaveState)
     {
+        //used for overriding the current merchantSaveState known to this script
+        this.merchantSaveState = merchantSaveState;
+        
+
         UniversalSaveState.SaveMerchant(merchantSaveState);
         //save the current universalInfo as well
         //CURRENTLY TURNED OFF FOR TESTING
