@@ -75,15 +75,7 @@ public class LinkActivitiesManager : MonoBehaviour
 
     private void Awake()
     {
-        //checks first if there is a linkActivity save file
-        if (File.Exists(Application.persistentDataPath + "/LinkActivities.json"))
-        {
-            isLoadedFromFile = true;
-        }
-        else
-        {
-            isLoadedFromFile = false;
-        }
+
 
         //calls initialization of descriptions first for card draft window
         CardTagManager.InitializeTextDescriptionDictionaries();
@@ -99,6 +91,17 @@ public class LinkActivitiesManager : MonoBehaviour
         tradeActivities = tradePanel.GetComponent<TradeActivities>();
         cardRemoval = CardRemovalPanel.GetComponent<CardRemoval>();
         gambleActivities = gamblePanel.GetComponent<GambleActivities>();
+
+        //checks first if there is a linkActivity save file
+        if (File.Exists(Application.persistentDataPath + "/LinkActivities.json"))
+        {
+            isLoadedFromFile = true;
+            cameraUIScript.UpdateUIObjectsTickets(universalInfo.tickets, !universalInfo.isTicketUsed);
+        }
+        else
+        {
+            isLoadedFromFile = false;
+        }
 
     }
 
@@ -278,183 +281,192 @@ public class LinkActivitiesManager : MonoBehaviour
             //get's the linkActivity to activate
             LinkActivityEnum activity = linkActivityEnums[currentLinkNodeIndex - 1];
 
-            //determines what scene is next
-            //the current node at this instance is already the target node
-            //if (activity == LinkActivityEnum.Skirmish)
-            //{
-            //    SceneManager.LoadScene("CombatScene");
-            //}
-            //else
-            //{
-            //    SceneManager.LoadScene("CombatScene");
-            //    Debug.Log($"supposed to be {linkActivityEnums[currentLinkNodeIndex-1]}");
-            //}
-
             //internal bool that will determine if the linksaveState will be saved with a true or false isInActivity
             //activities with scene transitions should always leave the scene with a false isInActivity
             //will only become false when going for combat activities that transitions to combatScenes
             //also false for activities that doesnt require additional screens like gains
             bool isStillInLinkActivitiesScene = true;
 
-            //REMOVE THE currentLinkNodeIndex++ IN THE SWITCH
-            //FIND OUT WHY THE NODE MOVEMENT DOES NOT WORK PROPERLY FOR NON-SCREEN TRANSITION ACTIVITIES
-            switch (activity)
+
+            //check if ticket is used first, if yes we just dont activate the linkActivity function
+            if (universalInfo.isTicketUsed)
             {
-                case LinkActivityEnum.Skirmish:
-                    SceneManager.LoadScene("CombatScene");
-                    isStillInLinkActivitiesScene = false;
-                    break;
+                proceedButton.interactable = true;
+                Debug.Log($"Ticket Skip");
+                isStillInLinkActivitiesScene = false;
 
-                case LinkActivityEnum.HealthGain:
-                    int hpGain = (int)(playerStats.HP * .05f);
-                    playerStats.currHP = Mathf.Min(playerStats.currHP + hpGain, playerStats.HP);
-                    cameraUIScript.UpdateUIObjectsHP(playerStats.currHP, playerStats.HP);
-                    universalInfo.playerStats = playerStats;
+                //set the identifier back to false so ticket can be used in next activity
+                //won't activate if player is on the third activity node since the next one is th overworld node
+                if (currentLinkNodeIndex != 3)
+                {
+                    universalInfo.isTicketUsed = false;
+                    cameraUIScript.UpdateUIObjectsTickets(universalInfo.tickets, true);
                     UniversalSaveState.SaveUniversalInformation(universalInfo);
-                    //gains will update the scene UniversalUI since we wont transition
-                    cameraUIScript.UpdateUniversalInfo();
-                    //gain activities will always make the proceed button interactable since there is no scene transition
-                    proceedButton.interactable = true;
-                    Debug.Log($"{activity}");
-                    isStillInLinkActivitiesScene = false;
-                    break;
+                }
 
-                case LinkActivityEnum.CreativityGain:
-                    int creativityGain = (int)(playerStats.creativity * .05f);
-                    playerStats.currCreativity = Mathf.Min(playerStats.currCreativity + creativityGain, playerStats.creativity);
-                    cameraUIScript.UpdateUIObjectsCretivity(playerStats.currCreativity, playerStats.creativity);
-                    universalInfo.playerStats = playerStats;
-                    UniversalSaveState.SaveUniversalInformation(universalInfo);
-                    //gains will update the scene UniversalUI since we wont transition
-                    cameraUIScript.UpdateUniversalInfo();
-                    //gain activities will always make the proceed button interactable since there is no scene transition
-                    proceedButton.interactable = true;
-                    Debug.Log($"{activity}");
-                    isStillInLinkActivitiesScene = false;
-                    break;
-
-                case LinkActivityEnum.ScrapsGain:
-                    int scrapsGain = UnityEngine.Random.Range(10,30);
-                    universalInfo.scraps = universalInfo.scraps + scrapsGain;
-                    cameraUIScript.UpdateUIObjectsActiveScraps(universalInfo.scraps);
-                    //gains will update the scene UniversalUI since we wont transition
-                    cameraUIScript.UpdateUniversalInfo();
-                    //gain activities will always make the proceed button interactable since there is no scene transition
-                    proceedButton.interactable = true;
-                    Debug.Log($"{activity}");
-                    isStillInLinkActivitiesScene = false;
-                    break;
-
-                case LinkActivityEnum.TicketGain:
-                    //currently for test only so we can proceed
-                    proceedButton.interactable = true;
-                    Debug.Log($"{activity}");
-                    isStillInLinkActivitiesScene = false;
-                    break;
-
-                case LinkActivityEnum.CardRemove:
-                    //currently for test only so we can proceed
-                    proceedButton.interactable = true;
-                    Debug.Log($"{activity}");
-                    //FOR TESTING ONLY, SHOULD  BE TRUE, BUT WE HAVENT IMPLEMENTED LOGIC FOR THIS ACTIVITY YET
-                    isStillInLinkActivitiesScene = false;
-                    break;
-
-                case LinkActivityEnum.StrengthTest:
-                    //currently for test only so we can proceed
-                    proceedButton.interactable = true;
-                    Debug.Log($"{activity}");
-                    //FOR TESTING ONLY, SHOULD  BE TRUE, BUT WE HAVENT IMPLEMENTED LOGIC FOR THIS ACTIVITY YET
-                    isStillInLinkActivitiesScene = false;
-                    break;
-
-                case LinkActivityEnum.EnduranceTest:
-                    //currently for test only so we can proceed
-                    proceedButton.interactable = true;
-                    Debug.Log($"{activity}");
-                    //FOR TESTING ONLY, SHOULD  BE TRUE, BUT WE HAVENT IMPLEMENTED LOGIC FOR THIS ACTIVITY YET
-                    isStillInLinkActivitiesScene = false;
-                    break;
-
-                case LinkActivityEnum.LuckTest:
-                    //currently for test only so we can proceed
-                    proceedButton.interactable = true;
-                    Debug.Log($"{activity}");
-                    //FOR TESTING ONLY, SHOULD  BE TRUE, BUT WE HAVENT IMPLEMENTED LOGIC FOR THIS ACTIVITY YET
-                    isStillInLinkActivitiesScene = false;
-                    break;
-
-                case LinkActivityEnum.IntelligenceTest:
-                    //currently for test only so we can proceed
-                    proceedButton.interactable = true;
-                    Debug.Log($"{activity}");
-                    //FOR TESTING ONLY, SHOULD  BE TRUE, BUT WE HAVENT IMPLEMENTED LOGIC FOR THIS ACTIVITY YET
-                    isStillInLinkActivitiesScene = false;
-                    break;
-
-                case LinkActivityEnum.LinkGamble:
-                    //currently for test only so we can proceed
-                    //proceedButton.interactable = true;
-                    //Debug.Log($"{activity}");
-                    ////FOR TESTING ONLY, SHOULD  BE TRUE, BUT WE HAVENT IMPLEMENTED LOGIC FOR THIS ACTIVITY YET
-                    //isStillInLinkActivitiesScene = false;
-                    gamblePanel.SetActive(true);
-                    gambleActivities.InitializeGambleActivity(activity, linkActivitySaveState);
-                    isStillInLinkActivitiesScene = true;
-                    proceedButton.interactable = true;
-                    break;
-
-                case LinkActivityEnum.NameGamble:
-                    //currently for test only so we can proceed
-                    //proceedButton.interactable = true;
-                    //Debug.Log($"{activity}");
-                    ////FOR TESTING ONLY, SHOULD  BE TRUE, BUT WE HAVENT IMPLEMENTED LOGIC FOR THIS ACTIVITY YET
-                    //isStillInLinkActivitiesScene = false;
-                    gamblePanel.SetActive(true);
-                    gambleActivities.InitializeGambleActivity(activity, linkActivitySaveState);
-                    isStillInLinkActivitiesScene = true;
-                    proceedButton.interactable = true;
-                    break;
-
-                case LinkActivityEnum.TypeGamble:
-                    ////currently for test only so we can proceed
-                    //proceedButton.interactable = true;
-                    //Debug.Log($"{activity}");
-                    ////FOR TESTING ONLY, SHOULD  BE TRUE, BUT WE HAVENT IMPLEMENTED LOGIC FOR THIS ACTIVITY YET
-                    //isStillInLinkActivitiesScene = false;
-                    gamblePanel.SetActive(true);
-                    gambleActivities.InitializeGambleActivity(activity, linkActivitySaveState);
-                    isStillInLinkActivitiesScene = true;
-                    proceedButton.interactable = true;
-                    break;
-
-                case LinkActivityEnum.MaterialTrade:
-                    tradePanel.SetActive(true);
-                    linkActivitySaveState = tradeActivities.InitializeTradeActivities(activity, universalInfo, linkActivitySaveState);
-                    //currently for test only so we can proceed
-                    proceedButton.interactable = true;
-                    Debug.Log($"{activity}");
-                    break;
-
-                case LinkActivityEnum.GearTrade:
-                    tradePanel.SetActive(true);
-                    linkActivitySaveState = tradeActivities.InitializeTradeActivities(activity, universalInfo, linkActivitySaveState);
-                    //currently for test only so we can proceed
-                    proceedButton.interactable = true;
-                    Debug.Log($"{activity}");
-                    break;
-
-                case LinkActivityEnum.BlueprintTrade:
-                    tradePanel.SetActive(true);
-                    linkActivitySaveState = tradeActivities.InitializeTradeActivities(activity, universalInfo, linkActivitySaveState);
-                    //currently for test only so we can proceed
-                    proceedButton.interactable = true;
-                    Debug.Log($"{activity}");
-                    break;
-
-                default:
-                    break;
             }
+            //REMOVE THE currentLinkNodeIndex++ IN THE SWITCH
+            else
+            {
+                switch (activity)
+                {
+                    case LinkActivityEnum.Skirmish:
+                        SceneManager.LoadScene("CombatScene");
+                        isStillInLinkActivitiesScene = false;
+                        break;
+
+                    case LinkActivityEnum.HealthGain:
+                        int hpGain = (int)(playerStats.HP * .05f);
+                        playerStats.currHP = Mathf.Min(playerStats.currHP + hpGain, playerStats.HP);
+                        cameraUIScript.UpdateUIObjectsHP(playerStats.currHP, playerStats.HP);
+                        universalInfo.playerStats = playerStats;
+                        UniversalSaveState.SaveUniversalInformation(universalInfo);
+                        //gains will update the scene UniversalUI since we wont transition
+                        cameraUIScript.UpdateUniversalInfo();
+                        //gain activities will always make the proceed button interactable since there is no scene transition
+                        proceedButton.interactable = true;
+                        Debug.Log($"{activity}");
+                        isStillInLinkActivitiesScene = false;
+                        break;
+
+                    case LinkActivityEnum.CreativityGain:
+                        int creativityGain = (int)(playerStats.creativity * .05f);
+                        playerStats.currCreativity = Mathf.Min(playerStats.currCreativity + creativityGain, playerStats.creativity);
+                        cameraUIScript.UpdateUIObjectsCretivity(playerStats.currCreativity, playerStats.creativity);
+                        universalInfo.playerStats = playerStats;
+                        UniversalSaveState.SaveUniversalInformation(universalInfo);
+                        //gains will update the scene UniversalUI since we wont transition
+                        cameraUIScript.UpdateUniversalInfo();
+                        //gain activities will always make the proceed button interactable since there is no scene transition
+                        proceedButton.interactable = true;
+                        Debug.Log($"{activity}");
+                        isStillInLinkActivitiesScene = false;
+                        break;
+
+                    case LinkActivityEnum.ScrapsGain:
+                        int scrapsGain = UnityEngine.Random.Range(10, 30);
+                        universalInfo.scraps = universalInfo.scraps + scrapsGain;
+                        cameraUIScript.UpdateUIObjectsActiveScraps(universalInfo.scraps);
+                        //gains will update the scene UniversalUI since we wont transition
+                        cameraUIScript.UpdateUniversalInfo();
+                        //gain activities will always make the proceed button interactable since there is no scene transition
+                        proceedButton.interactable = true;
+                        Debug.Log($"{activity}");
+                        isStillInLinkActivitiesScene = false;
+                        break;
+
+                    case LinkActivityEnum.TicketGain:
+                        //currently for test only so we can proceed
+                        proceedButton.interactable = true;
+                        Debug.Log($"{activity}");
+                        isStillInLinkActivitiesScene = false;
+                        break;
+
+                    case LinkActivityEnum.CardRemove:
+                        //currently for test only so we can proceed
+                        proceedButton.interactable = true;
+                        Debug.Log($"{activity}");
+                        //FOR TESTING ONLY, SHOULD  BE TRUE, BUT WE HAVENT IMPLEMENTED LOGIC FOR THIS ACTIVITY YET
+                        isStillInLinkActivitiesScene = false;
+                        break;
+
+                    case LinkActivityEnum.StrengthTest:
+                        //currently for test only so we can proceed
+                        proceedButton.interactable = true;
+                        Debug.Log($"{activity}");
+                        //FOR TESTING ONLY, SHOULD  BE TRUE, BUT WE HAVENT IMPLEMENTED LOGIC FOR THIS ACTIVITY YET
+                        isStillInLinkActivitiesScene = false;
+                        break;
+
+                    case LinkActivityEnum.EnduranceTest:
+                        //currently for test only so we can proceed
+                        proceedButton.interactable = true;
+                        Debug.Log($"{activity}");
+                        //FOR TESTING ONLY, SHOULD  BE TRUE, BUT WE HAVENT IMPLEMENTED LOGIC FOR THIS ACTIVITY YET
+                        isStillInLinkActivitiesScene = false;
+                        break;
+
+                    case LinkActivityEnum.LuckTest:
+                        //currently for test only so we can proceed
+                        proceedButton.interactable = true;
+                        Debug.Log($"{activity}");
+                        //FOR TESTING ONLY, SHOULD  BE TRUE, BUT WE HAVENT IMPLEMENTED LOGIC FOR THIS ACTIVITY YET
+                        isStillInLinkActivitiesScene = false;
+                        break;
+
+                    case LinkActivityEnum.IntelligenceTest:
+                        //currently for test only so we can proceed
+                        proceedButton.interactable = true;
+                        Debug.Log($"{activity}");
+                        //FOR TESTING ONLY, SHOULD  BE TRUE, BUT WE HAVENT IMPLEMENTED LOGIC FOR THIS ACTIVITY YET
+                        isStillInLinkActivitiesScene = false;
+                        break;
+
+                    case LinkActivityEnum.LinkGamble:
+                        //currently for test only so we can proceed
+                        //proceedButton.interactable = true;
+                        //Debug.Log($"{activity}");
+                        ////FOR TESTING ONLY, SHOULD  BE TRUE, BUT WE HAVENT IMPLEMENTED LOGIC FOR THIS ACTIVITY YET
+                        //isStillInLinkActivitiesScene = false;
+                        gamblePanel.SetActive(true);
+                        gambleActivities.InitializeGambleActivity(activity, linkActivitySaveState);
+                        isStillInLinkActivitiesScene = true;
+                        proceedButton.interactable = true;
+                        break;
+
+                    case LinkActivityEnum.NameGamble:
+                        //currently for test only so we can proceed
+                        //proceedButton.interactable = true;
+                        //Debug.Log($"{activity}");
+                        ////FOR TESTING ONLY, SHOULD  BE TRUE, BUT WE HAVENT IMPLEMENTED LOGIC FOR THIS ACTIVITY YET
+                        //isStillInLinkActivitiesScene = false;
+                        gamblePanel.SetActive(true);
+                        gambleActivities.InitializeGambleActivity(activity, linkActivitySaveState);
+                        isStillInLinkActivitiesScene = true;
+                        proceedButton.interactable = true;
+                        break;
+
+                    case LinkActivityEnum.TypeGamble:
+                        ////currently for test only so we can proceed
+                        //proceedButton.interactable = true;
+                        //Debug.Log($"{activity}");
+                        ////FOR TESTING ONLY, SHOULD  BE TRUE, BUT WE HAVENT IMPLEMENTED LOGIC FOR THIS ACTIVITY YET
+                        //isStillInLinkActivitiesScene = false;
+                        gamblePanel.SetActive(true);
+                        gambleActivities.InitializeGambleActivity(activity, linkActivitySaveState);
+                        isStillInLinkActivitiesScene = true;
+                        proceedButton.interactable = true;
+                        break;
+
+                    case LinkActivityEnum.MaterialTrade:
+                        tradePanel.SetActive(true);
+                        linkActivitySaveState = tradeActivities.InitializeTradeActivities(activity, universalInfo, linkActivitySaveState);
+                        //currently for test only so we can proceed
+                        proceedButton.interactable = true;
+                        Debug.Log($"{activity}");
+                        break;
+
+                    case LinkActivityEnum.GearTrade:
+                        tradePanel.SetActive(true);
+                        linkActivitySaveState = tradeActivities.InitializeTradeActivities(activity, universalInfo, linkActivitySaveState);
+                        //currently for test only so we can proceed
+                        proceedButton.interactable = true;
+                        Debug.Log($"{activity}");
+                        break;
+
+                    case LinkActivityEnum.BlueprintTrade:
+                        tradePanel.SetActive(true);
+                        linkActivitySaveState = tradeActivities.InitializeTradeActivities(activity, universalInfo, linkActivitySaveState);
+                        //currently for test only so we can proceed
+                        proceedButton.interactable = true;
+                        Debug.Log($"{activity}");
+                        break;
+
+                    default:
+                        break;
+                }
+            }
+            
 
 
             //save the currentNodeIndex after moving
@@ -462,6 +474,18 @@ public class LinkActivitiesManager : MonoBehaviour
             UpdateLinkSaveState(isStillInLinkActivitiesScene);
         }
 
+    }
+
+    //button for ticket
+    //makes it so that the next node activity is activated
+    public void TicketButton()
+    {
+        universalInfo.tickets -= 1;
+        cameraUIScript.UpdateUIObjectsTickets(universalInfo.tickets, false);
+        //sets the ticket used identifier back to unused
+        universalInfo.isTicketUsed = true;
+
+        UniversalSaveState.SaveUniversalInformation(universalInfo);
     }
 
     //usually called when an activity is ending or starting(?)
