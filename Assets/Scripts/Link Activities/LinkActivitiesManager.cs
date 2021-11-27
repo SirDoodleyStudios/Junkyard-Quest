@@ -287,7 +287,6 @@ public class LinkActivitiesManager : MonoBehaviour
             //also false for activities that doesnt require additional screens like gains
             bool isStillInLinkActivitiesScene = true;
 
-
             //check if ticket is used first, if yes we just dont activate the linkActivity function
             if (universalInfo.isTicketUsed)
             {
@@ -356,7 +355,9 @@ public class LinkActivitiesManager : MonoBehaviour
                         break;
 
                     case LinkActivityEnum.TicketGain:
-                        //currently for test only so we can proceed
+                        universalInfo.tickets += 1;
+                        cameraUIScript.UpdateUIObjectsTickets(universalInfo.tickets, cameraUIScript.ticketButton.interactable);
+                        cameraUIScript.UpdateUniversalInfo();
                         proceedButton.interactable = true;
                         Debug.Log($"{activity}");
                         isStillInLinkActivitiesScene = false;
@@ -409,7 +410,7 @@ public class LinkActivitiesManager : MonoBehaviour
                         ////FOR TESTING ONLY, SHOULD  BE TRUE, BUT WE HAVENT IMPLEMENTED LOGIC FOR THIS ACTIVITY YET
                         //isStillInLinkActivitiesScene = false;
                         gamblePanel.SetActive(true);
-                        gambleActivities.InitializeGambleActivity(activity, linkActivitySaveState);
+                        gambleActivities.InitializeGambleActivity(activity, linkActivitySaveState, this);
                         isStillInLinkActivitiesScene = true;
                         proceedButton.interactable = true;
                         break;
@@ -421,7 +422,7 @@ public class LinkActivitiesManager : MonoBehaviour
                         ////FOR TESTING ONLY, SHOULD  BE TRUE, BUT WE HAVENT IMPLEMENTED LOGIC FOR THIS ACTIVITY YET
                         //isStillInLinkActivitiesScene = false;
                         gamblePanel.SetActive(true);
-                        gambleActivities.InitializeGambleActivity(activity, linkActivitySaveState);
+                        gambleActivities.InitializeGambleActivity(activity, linkActivitySaveState, this);
                         isStillInLinkActivitiesScene = true;
                         proceedButton.interactable = true;
                         break;
@@ -433,7 +434,7 @@ public class LinkActivitiesManager : MonoBehaviour
                         ////FOR TESTING ONLY, SHOULD  BE TRUE, BUT WE HAVENT IMPLEMENTED LOGIC FOR THIS ACTIVITY YET
                         //isStillInLinkActivitiesScene = false;
                         gamblePanel.SetActive(true);
-                        gambleActivities.InitializeGambleActivity(activity, linkActivitySaveState);
+                        gambleActivities.InitializeGambleActivity(activity, linkActivitySaveState, this);
                         isStillInLinkActivitiesScene = true;
                         proceedButton.interactable = true;
                         break;
@@ -493,6 +494,23 @@ public class LinkActivitiesManager : MonoBehaviour
     {
         linkActivitySaveState.isStillInActivity = isActivity;
         UniversalSaveState.SaveLinkActivities(linkActivitySaveState);
+    }
+
+    //called by GambleActivities for the results of the gamble
+    //bool parameter identifies if player won or not
+    public void GambleResults(int cost, int reward, bool isGambleWon)
+    {
+        if (isGambleWon)
+        {
+            universalInfo.tickets += reward;
+        }
+        else
+        {
+            universalInfo.tickets = Mathf.Max(0, universalInfo.tickets - cost);
+        }
+        UniversalSaveState.SaveUniversalInformation(universalInfo);
+        cameraUIScript.UpdateUIObjectsTickets(universalInfo.tickets, cameraUIScript.ticketButton.interactable);
+        cameraUIScript.UpdateUniversalInfo();
     }
 
 }

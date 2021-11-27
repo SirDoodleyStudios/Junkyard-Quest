@@ -17,6 +17,9 @@ public class GambleActivities : MonoBehaviour
     //texts to be assigned with messages
     public TextMeshProUGUI instructionsText;
     public TextMeshProUGUI messagesText;
+    //texts for the cost and reward numbers
+    public TextMeshProUGUI costText;
+    public TextMeshProUGUI rewardText;
     //the takeGamble Button that must be disabled once the player got it wrong
     public Button takeGambleButton;
     //holds te referecenceJigsawFormatSO, used for instantiating cards
@@ -24,6 +27,8 @@ public class GambleActivities : MonoBehaviour
 
     //holds the linkActivitySaveState passed by the linkActivityManager
     LinkActivitiesSaveState linkActivitiesSaveState;
+    //reference to the LinkActivitiesManager
+    LinkActivitiesManager linkActivitiesManager;
 
     //type of gamble link activity
     LinkActivityEnum gambleActivityType;
@@ -53,8 +58,14 @@ public class GambleActivities : MonoBehaviour
     }
 
     //initializing function
-    public LinkActivitiesSaveState InitializeGambleActivity(LinkActivityEnum gambleType, LinkActivitiesSaveState linkSaveState)
+    public LinkActivitiesSaveState InitializeGambleActivity(LinkActivityEnum gambleType, LinkActivitiesSaveState linkSaveState, LinkActivitiesManager manager)
     {
+        //assign the original manager to access the universalInfo in it for the ticketChanges
+        linkActivitiesManager = manager;
+
+        //assign the linkSaveState to local variable
+        linkActivitiesSaveState = linkSaveState;
+
         //assign the gamble type
         gambleActivityType = gambleType;
 
@@ -64,6 +75,10 @@ public class GambleActivities : MonoBehaviour
         //if loaded from file
         if (linkSaveState.isStillInActivity)
         {
+            //load the cost and rewards loaded from the linkSaveState file
+            //int parameter is just nothing since the logic for this is an else
+            SetCostAndRewards(9);
+
             List<Card> savedGambleCards = new List<Card>();
 
             foreach (CardAndJigsaWrapper CJW in linkSaveState.gambleCards)
@@ -95,6 +110,9 @@ public class GambleActivities : MonoBehaviour
         }
         else
         {
+            //set the initial costs and rewards
+            SetCostAndRewards(1);
+
             //get random card
             baseCard = currentDeck[Random.Range(0, currentDeck.Count - 1)];
 
@@ -120,8 +138,7 @@ public class GambleActivities : MonoBehaviour
         //assign base card as the comparison card
         cardForComparison = baseCard;
 
-        //assign the linkSaveState to local variable
-        linkActivitiesSaveState = linkSaveState;
+
 
         //Set Instructions text
         SetInstructions();
@@ -206,12 +223,12 @@ public class GambleActivities : MonoBehaviour
         {
             //adjust base card for comparisson to be next
             cardForComparison = drawnCard;
-            SetMessage(drawIndex);
+            SetCostAndRewards(drawIndex);
         }
         else
         {
             //index 0 is for fail message
-            SetMessage(0);
+            SetCostAndRewards(0);
             takeGambleButton.interactable = false;
         }
 
@@ -283,32 +300,76 @@ public class GambleActivities : MonoBehaviour
             return false;
         }
     }
-    //determines the message to be shown after choosing to reveal
+    //determines the next values to be shown after choosing to reveal
     //int paramter is to determine what message should be shown, will differ based on success and failure
     //int parameter is based on drawIndex, it's the the card currently opened's index
-    void SetMessage(int messageVariant)
+    void SetCostAndRewards(int resultVariants)
     {
-        //at first success
-        if(messageVariant == 2)
+        int ticketCost;
+        int ticketReward;
+
+        //at first instance of gamble without any guesses done yet
+        if (resultVariants == 1)
         {
-            messagesText.text = "Awesome!, wanna guess again for double prizes?";
+            ticketCost = Random.Range(1, 3);
+            ticketReward = Random.Range(1, 3);
+        }
+        //at first success
+        else if (resultVariants == 2)
+        {
+            //deal with ticket changes first before updating new values and text
+            linkActivitiesManager.GambleResults(linkActivitiesSaveState.ticketCost, linkActivitiesSaveState.ticketRewards, true);
+            ticketCost = Random.Range(2, 4);
+            ticketReward = Random.Range(2, 4);
+            messagesText.text = "You won!, play again for more prizes";
         }
         //at second success
-        else if(messageVariant == 3)
+        else if (resultVariants == 3)
         {
-            messagesText.text = "Magnificent! wanna guess one last time for double double prizes??";
+            //deal with ticket changes first before updating new values and text
+            linkActivitiesManager.GambleResults(linkActivitiesSaveState.ticketCost, linkActivitiesSaveState.ticketRewards, true);
+            ticketCost = Random.Range(3, 5);
+            ticketReward = Random.Range(3, 5);
+            messagesText.text = "You won again!, play for even more prizes";
         }
-        //at third success
-        else if(messageVariant == 4)
+        //happens at failure
+        else if (resultVariants == 0)
         {
-            messagesText.text = "Congrats! you are a Guess Master!";
+            //deal with ticket changes first before updating new values and text
+            linkActivitiesManager.GambleResults(linkActivitiesSaveState.ticketCost, linkActivitiesSaveState.ticketRewards, false);
+            ticketCost = 0;
+            ticketReward = 0;
+            messagesText.text = "You lost, thanks for playing!";
         }
-        //at failure
-        else if (messageVariant == 0)
+        //happens at final success
+        else if (resultVariants == 4)
         {
-            messagesText.text = "Too bad, you guessed wrong :(";
+            //deal with ticket changes first before updating new values and text
+            linkActivitiesManager.GambleResults(linkActivitiesSaveState.ticketCost, linkActivitiesSaveState.ticketRewards, true);
+            ticketCost = 0;
+            ticketReward = 0;
+            messagesText.text = "Complete victory! ... get out";
         }
+        //happens at initial load from file 
+        else
+        {
+            ticketCost = linkActivitiesSaveState.ticketCost;
+            ticketReward = linkActivitiesSaveState.ticketRewards;
+        }
+
+        linkActivitiesSaveState.ticketCost = ticketCost;
+        linkActivitiesSaveState.ticketRewards = ticketReward;
+        costText.text = $"{ticketCost}";
+        rewardText.text = $"{ticketReward}";
+        UniversalSaveState.SaveLinkActivities(linkActivitiesSaveState);
     }
+
+    //function to determine the costs and rewards of a gambling stage
+    void DealCostAndReward(int ticketChange)
+    {
+
+    }
+
     //saving function called for every click of the gamble button and during initialize
     void SaveLinkActivityState()
     {

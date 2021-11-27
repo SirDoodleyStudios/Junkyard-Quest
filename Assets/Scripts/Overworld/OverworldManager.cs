@@ -88,6 +88,12 @@ public class OverworldManager : MonoBehaviour
         //makes all gears in euipmentViewer draggable
         cameraUI.EnableGearManagement();
 
+        //disable the ticket button based on the isTicketUsed identifier saved in universalInfo
+        if (universalInformation.isTicketUsed)
+        {
+            cameraUI.UpdateUIObjectsTickets(universalInformation.tickets, false);
+        }
+
 
         Debug.Log(worldState);
 
@@ -145,6 +151,37 @@ public class OverworldManager : MonoBehaviour
         UniversalSaveState.SaveUniversalInformation(universalInformation);
         //updates the universalInfo in the universalUI
         cameraUI.UpdateUniversalInfo();
+    }
+
+    //ticket button
+    //change effects depending on player class
+    public void TicketButton()
+    {
+        universalInformation.tickets -= 1;
+        cameraUI.UpdateUIObjectsTickets(universalInformation.tickets, false);
+        //sets the ticket used identifier back to unused
+        universalInformation.isTicketUsed = true;
+
+        //ticket when warrior heals HP by 20% in overworld
+        if (universalInformation.chosenClass == ChosenClass.Warrior)
+        {
+            int healthRecovery = Mathf.RoundToInt(universalInformation.playerStats.currHP * .20f);
+            //prevents the HP from being recovered beyond max
+            int tempHP = Mathf.Min((universalInformation.playerStats.currHP += healthRecovery), universalInformation.playerStats.HP);
+            universalInformation.playerStats.currHP = tempHP;
+            universalInformation.wornOutCount = 0;
+            cameraUI.AssignUIObjects(universalInformation);
+        }
+        else if (universalInformation.chosenClass == ChosenClass.Rogue)
+        {
+
+        }
+        else if (universalInformation.chosenClass == ChosenClass.Mage)
+        {
+
+        }
+
+        UniversalSaveState.SaveUniversalInformation(universalInformation);
     }
 
 
@@ -458,6 +495,8 @@ public class SaveKeyOverworld
         }
 
     }
+
+
 }
 
 

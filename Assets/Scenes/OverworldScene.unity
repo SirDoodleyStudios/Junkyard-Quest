@@ -1070,6 +1070,36 @@ PrefabInstance:
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
       value: UnityEngine.Object, UnityEngine
       objectReference: {fileID: 0}
+    - target: {fileID: 4869136364699960685, guid: 7ace611ce9ace6a48b28171a857353a3,
+        type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4869136364699960685, guid: 7ace611ce9ace6a48b28171a857353a3,
+        type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4869136364699960685, guid: 7ace611ce9ace6a48b28171a857353a3,
+        type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 4869136364699960685, guid: 7ace611ce9ace6a48b28171a857353a3,
+        type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 2133115988}
+    - target: {fileID: 4869136364699960685, guid: 7ace611ce9ace6a48b28171a857353a3,
+        type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: TicketButton
+      objectReference: {fileID: 0}
+    - target: {fileID: 4869136364699960685, guid: 7ace611ce9ace6a48b28171a857353a3,
+        type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
     - target: {fileID: 6542773283137808374, guid: 7ace611ce9ace6a48b28171a857353a3,
         type: 3}
       propertyPath: m_Name

@@ -693,7 +693,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Cost to Play
+  m_text: Cost of Losing
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -2264,6 +2264,8 @@ MonoBehaviour:
   thirdDrawObj: {fileID: 597524628}
   instructionsText: {fileID: 583122964}
   messagesText: {fileID: 1935798516}
+  costText: {fileID: 1080476084}
+  rewardText: {fileID: 1329115239}
   takeGambleButton: {fileID: 6973703139957495785}
   referenceJigsawFormat: {fileID: 0}
 --- !u!1 &766983138

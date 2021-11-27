@@ -209,7 +209,19 @@ public class CameraUIScript : MonoBehaviour
         }
         else if (sceneHolder.name == "OverworldScene")
         {
-            ticketEffectText.text = "Heal 10% HP";
+            if (universalInfo.chosenClass == ChosenClass.Warrior)
+            {
+                ticketEffectText.text = "Heal 20% HP";
+            }
+            else if (universalInfo.chosenClass == ChosenClass.Rogue)
+            {
+                ticketEffectText.text = "Freely move to an empty node";
+            }
+            else if (universalInfo.chosenClass == ChosenClass.Mage)
+            {
+                ticketEffectText.text = "Freely move to an empty node";
+            }
+
         }
         else if (sceneHolder.name == "RestScene")
         {

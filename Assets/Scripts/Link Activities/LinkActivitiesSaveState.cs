@@ -24,5 +24,7 @@ public class LinkActivitiesSaveState
     //tells which card is the activity in
     //0 = base card, 1 = first draw, 2 = second draw, 3 = third draw
     public int drawIndex;
+    public int ticketCost;
+    public int ticketRewards;
 
 }
